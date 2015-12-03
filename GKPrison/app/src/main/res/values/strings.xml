@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">GKPrison</string>
+    <string name="app_name">国科狱务公开</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_base">BaseActivity</string>
 </resources>

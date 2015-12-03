@@ -1,11 +1,43 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <android.support.v4.view.ViewPager
+        android:id="@+id/layout_content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
-</RelativeLayout>
+    <RadioGroup
+        android:id="@+id/rg_bottom_guide"
+        android:layout_width="match_parent"
+        android:layout_gravity="bottom"
+        android:background="@color/bg"
+        android:layout_height="50dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        <RadioButton
+            android:id="@+id/rb_bottom_guide_home"
+            style="@style/main_tab_style"
+            android:drawableTop="@drawable/tab_home_bg_selector"
+            android:drawablePadding="3dp"
+            android:text="首页"/>
+
+        <RadioButton
+            android:id="@+id/rb_bottom_guide_visit"
+            style="@style/main_tab_style"
+            android:drawableTop="@drawable/tab_visit_bg_selector"
+            android:drawablePadding="3dp"
+            android:text="探监服务"/>
+
+        <RadioButton
+            android:id="@+id/rb_bottom_guide_canteen"
+            style="@style/main_tab_style"
+            android:drawableTop="@drawable/tab_canteen_bg_selector"
+            android:drawablePadding="3dp"
+            android:text="小卖部"/>
+    </RadioGroup>
+</LinearLayout>
