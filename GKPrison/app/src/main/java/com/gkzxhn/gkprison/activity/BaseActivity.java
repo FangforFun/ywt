@@ -1,17 +1,19 @@
 package com.gkzxhn.gkprison.activity;
 
 import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 
 /**
- * activity基类
+ * activity鍩虹被
  */
 public abstract class BaseActivity extends FragmentActivity {
 
@@ -23,6 +25,10 @@ public abstract class BaseActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
         setContentView(R.layout.activity_base);
         mContext = this;
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
@@ -39,12 +45,12 @@ public abstract class BaseActivity extends FragmentActivity {
     protected abstract View initView();
 
     /**
-     * 填充数据
+     * 濉厖鏁版嵁
      */
     protected abstract void initData();
 
     /**
-     * 设置标题
+     * 璁剧疆鏍囬
      * @param title
      */
     protected void setTitle(String title){
