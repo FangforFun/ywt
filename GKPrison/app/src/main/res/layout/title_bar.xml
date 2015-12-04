@@ -17,4 +17,14 @@
         android:textColor="@color/white"
         android:textSize="20sp"/>
 
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:visibility="gone"
+        android:src="@drawable/back"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:paddingLeft="10dp"/>
+
 </RelativeLayout>

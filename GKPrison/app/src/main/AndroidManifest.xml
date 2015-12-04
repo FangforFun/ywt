@@ -16,6 +16,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.PrisonIntroductionActivity"
+            android:label="@string/title_activity_prison_introduction" >
+        </activity>
+        <activity
+            android:name=".activity.LawsRegulationsActivity"
+            android:label="@string/title_activity_laws_regulations" >
+        </activity>
     </application>
 
 </manifest>

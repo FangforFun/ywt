@@ -71,9 +71,9 @@ public class MainActivity extends BaseActivity {
                         home_viewPager.setCurrentItem(0);
                         setTitle("首页");
                         break;
-                    case R.id.rb_bottom_guide_visit: // 探监服务
+                    case R.id.rb_bottom_guide_visit: // 远程会见
                         home_viewPager.setCurrentItem(1);
-                        setTitle("探监服务");
+                        setTitle("远程会见");
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
                         home_viewPager.setCurrentItem(2);
@@ -97,7 +97,7 @@ public class MainActivity extends BaseActivity {
                     setTitle("首页");
                 } else if (i == 1) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
-                    setTitle("探监服务");
+                    setTitle("远程会见");
                 } else if (i == 2) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
                     setTitle("小卖部");

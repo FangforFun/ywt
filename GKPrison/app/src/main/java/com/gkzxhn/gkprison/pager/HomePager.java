@@ -1,18 +1,25 @@
 package com.gkzxhn.gkprison.pager;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.LawsRegulationsActivity;
+import com.gkzxhn.gkprison.activity.PrisonIntroductionActivity;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -20,15 +27,21 @@ import com.gkzxhn.gkprison.R;
 public class HomePager extends BasePager{
 
     private ViewPager vp_carousel;
-    private TextView tv_carousel_title;
-    private RadioGroup rg_carousel;
+    private TextView tv_carousel_title; // 轮播图标题
+    private RadioGroup rg_carousel; // 轮播图底部小圆圈
     private RadioButton rb_carousel_01;
     private RadioButton rb_carousel_02;
     private RadioButton rb_carousel_03;
     private GridView gv_home_options;
+    private TextView tv_focus_attention; // 焦点关注
+    private LinearLayout ll_home_news;
+    private ImageView iv_home_news_icon;
+    private TextView tv_home_news_title;
+    private TextView tv_home_news_content;
     private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
-    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.social_assistance, R.drawable.sms, R.drawable.family_service};
-    private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "社会帮教", "监狱长信箱", "家属服务"};
+    private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.sms_press, R.drawable.family_service_press};
+    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.sms, R.drawable.family_service};
+    private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "探监服务", "监狱长信箱", "家属服务"};
 
     public HomePager(Context context) {
         super(context);
@@ -44,11 +57,19 @@ public class HomePager extends BasePager{
         rb_carousel_02 = (RadioButton) view.findViewById(R.id.rb_carousel_02);
         rb_carousel_03 = (RadioButton) view.findViewById(R.id.rb_carousel_03);
         gv_home_options = (GridView) view.findViewById(R.id.gv_home_options);
+        tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
+        ll_home_news = (LinearLayout) view.findViewById(R.id.ll_home_news);
+        iv_home_news_icon = (ImageView) view.findViewById(R.id.iv_home_news_icon);
+        tv_home_news_title = (TextView) view.findViewById(R.id.tv_home_news_title);
+        tv_home_news_content = (TextView) view.findViewById(R.id.tv_home_news_content);
         return view;
     }
 
     @Override
     public void initData() {
+        Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
+        drawables[0].setBounds(0, 0, 40, 40);
+        tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         vp_carousel.setAdapter(new MyCarouselAdapter());
         vp_carousel.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -78,6 +99,7 @@ public class HomePager extends BasePager{
         });
         vp_carousel.setCurrentItem(0);// 默认选中第0个
         gv_home_options.setAdapter(new MyOptionsAdapter());
+        ll_home_news.setOnClickListener(this);
     }
 
     private class MyCarouselAdapter extends PagerAdapter{
@@ -125,8 +147,8 @@ public class HomePager extends BasePager{
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            OptionsViewHolder holder;
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            final OptionsViewHolder holder;
             if(convertView == null){
                 convertView = View.inflate(context, R.layout.home_options_item, null);
                 holder = new OptionsViewHolder();
@@ -138,6 +160,45 @@ public class HomePager extends BasePager{
             }
             holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
             holder.tv_home_options.setText(OPTIONS_TVS[position]);
+            final View finalConvertView = convertView;
+            convertView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    Intent intent;
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            finalConvertView.setBackgroundColor(context.getResources().getColor(R.color.theme));
+                            holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.white));
+                            holder.iv_home_options.setImageResource(OPTIONS_IVS_PRESS[position]);
+                            break;
+                        case MotionEvent.ACTION_MOVE:
+
+                            break;
+                        case MotionEvent.ACTION_UP:
+                            finalConvertView.setBackgroundColor(context.getResources().getColor(R.color.white));
+                            holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.tv_bg));
+                            holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
+                            showToastMsgShort("hehehe" + position);
+                            switch (position) {
+                                case 0:
+                                    intent = new Intent(context, PrisonIntroductionActivity.class);
+                                    context.startActivity(intent);
+                                    break;
+                                case 1:
+                                    intent = new Intent(context, LawsRegulationsActivity.class);
+                                    context.startActivity(intent);
+                                    break;
+                            }
+                            break;
+                        case MotionEvent.ACTION_CANCEL:
+                            finalConvertView.setBackgroundColor(context.getResources().getColor(R.color.white));
+                            holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.tv_bg));
+                            holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
+                            break;
+                    }
+                    return true;
+                }
+            });
             return convertView;
         }
     }
@@ -145,5 +206,15 @@ public class HomePager extends BasePager{
     private static class OptionsViewHolder{
         ImageView iv_home_options;
         TextView tv_home_options;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.ll_home_news:
+                showToastMsgShort(tv_home_news_title.getText().toString().trim());
+                break;
+        }
+        super.onClick(v);
     }
 }
