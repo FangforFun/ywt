@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <TextView
+            android:id="@+id/tv_meeting_msg"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:text="暂无会见信息"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textColor="@color/white"
+            android:background="@color/tv_mid"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:layout_below="@id/tv_meeting_msg">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="*根据《中华人民共和国监狱法》每位犯人每月只能接受一次会见"
+                android:textSize="16sp"
+                android:textColor="@color/tv_mid"
+                android:lineSpacingExtra="3dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tv_gray"
+                    android:text="姓        名"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_meeting_request_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="刘思佳"
+                    android:textColor="@color/tv_mid"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tv_gray"
+                    android:text="身份证号"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/tv_meeting_request_id_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="430482199404074444"
+                    android:textColor="@color/tv_mid"
+                    android:layout_marginLeft="20dp"
+                    android:textSize="16sp"/>
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/et_meeting_request_phone"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_bg_shape"
+                android:hint="手机号码"
+                android:paddingRight="10dp"
+                android:textColorHint="@color/et_hint"
+                android:paddingLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*用于接受申请结果"
+                android:textColor="@color/tv_gray"
+                android:paddingLeft="10dp"
+                android:textSize="12sp"/>
+
+            <EditText
+                android:id="@+id/et_meeting_request_time"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edit_bg_shape"
+                android:hint="申请会见时间"
+                android:textColorHint="@color/et_hint"
+                android:drawableRight="@drawable/down"
+                android:paddingRight="15dp"
+                android:paddingLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="*请选择时间"
+                android:textColor="@color/tv_gray"
+                android:paddingLeft="10dp"
+                android:textSize="12sp"/>
+
+            <Button
+                android:id="@+id/bt_commit_request"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="提交申请"
+                android:background="@drawable/bt_bg_shape"/>
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

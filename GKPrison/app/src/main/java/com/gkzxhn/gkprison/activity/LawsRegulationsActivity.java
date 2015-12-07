@@ -18,7 +18,7 @@ public class LawsRegulationsActivity extends BaseActivity {
 
     private ListView lv_laws_regulations;
     private final int[] ITEM_IVS = {R.drawable.laws_item_01, R.drawable.laws_item_02, R.drawable.laws_item_03, R.drawable.laws_item_04, R.drawable.laws_item_05};
-    private final String[] ITEM_TVS = {"司法部门关于进一步深化狱务公开的意见", "中华人民共和国赔偿法", "中华人民共和国劳动法", "中华人民共和国职业病防治法", "中华人民共和国刑事诉讼法"};
+    private final String[] ITEM_TVS = {"关于进一步深化狱务公开的意见", "中华人民共和国赔偿法", "中华人民共和国劳动法", "中华人民共和国职业病防治法", "中华人民共和国刑事诉讼法"};
 
     @Override
     protected View initView() {

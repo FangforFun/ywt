@@ -14,7 +14,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.pager.BasePager;
 import com.gkzxhn.gkprison.pager.CanteenPager;
 import com.gkzxhn.gkprison.pager.HomePager;
-import com.gkzxhn.gkprison.pager.VisitPager;
+import com.gkzxhn.gkprison.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
         pagerList = new ArrayList<>();
         pagerList.clear();
         pagerList.add(new HomePager(mContext));
-        pagerList.add(new VisitPager(mContext));
+        pagerList.add(new RemoteMeetPager(mContext));
         pagerList.add(new CanteenPager(mContext));
 
         home_viewPager.setAdapter(new MyPagerAdapter());
