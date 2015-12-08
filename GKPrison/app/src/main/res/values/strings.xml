@@ -6,5 +6,10 @@
     <string name="title_activity_base">BaseActivity</string>
     <string name="title_activity_prison_introduction">PrisonIntroductionActivity</string>
     <string name="title_activity_laws_regulations">LawsRegulationsActivity</string>
-    <string name="title_activity_prison_open">PrisonOpenActivity</string>
+    <string name="title_activity_visiting_service">VisitingServiceActivity</string>
+    <string name="title_activity_prison_warden">PrisonWardenActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_family_service">FamilyServiceActivity</string>
 </resources>

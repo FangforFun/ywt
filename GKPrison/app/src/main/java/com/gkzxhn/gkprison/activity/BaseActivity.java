@@ -23,6 +23,8 @@ public abstract class BaseActivity extends FragmentActivity implements View.OnCl
     protected RelativeLayout rl_content;
     protected TextView tv_title;
     protected ImageView iv_back;
+    protected ImageView iv_messge;
+    protected TextView tv_messge;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +39,8 @@ public abstract class BaseActivity extends FragmentActivity implements View.OnCl
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
+        iv_messge = (ImageView)findViewById(R.id.iv_messge);
+        tv_messge = (TextView)findViewById(R.id.tv_messge);
         View view = initView();
         rl_content.addView(view);
         initData();
@@ -85,6 +89,13 @@ public abstract class BaseActivity extends FragmentActivity implements View.OnCl
         iv_back.setVisibility(visibility);
     }
 
+    protected void setImageVisibility(int visibility){
+        iv_messge.setVisibility(visibility);
+    }
+
+    protected void setTextVisibility(int visibility){
+        tv_messge.setVisibility(visibility);
+    }
     @Override
     public void onClick(View v) {
         //子类选择性重写

@@ -20,7 +20,8 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.activity.PrisonIntroductionActivity;
-import com.gkzxhn.gkprison.activity.PrisonOpenActivity;
+import com.gkzxhn.gkprison.activity.PrisonWardenActivity;
+import com.gkzxhn.gkprison.activity.VisitingServiceActivity;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -190,9 +191,19 @@ public class HomePager extends BasePager{
                                     context.startActivity(intent);
                                     break;
                                 case 2:
-                                    intent = new Intent(context, PrisonOpenActivity.class);
+                                    break;
+                                case 3:
+                                    intent = new Intent(context, VisitingServiceActivity.class);
                                     context.startActivity(intent);
                                     break;
+                                case 4:
+                                    intent = new Intent(context, PrisonWardenActivity.class);
+                                    context.startActivity(intent);
+                                    break;
+                                case 5:
+                                    
+                                    break;
+
                             }
                             break;
                         case MotionEvent.ACTION_CANCEL:
