@@ -24,6 +24,18 @@
             android:name=".activity.LawsRegulationsActivity"
             android:label="@string/title_activity_laws_regulations" >
         </activity>
+        <activity
+            android:name=".activity.VisitingServiceActivity"
+            android:label="@string/title_activity_visiting_service" >
+        </activity>
+        <activity
+            android:name=".activity.PrisonWardenActivity"
+            android:label="@string/title_activity_prison_warden" >
+        </activity>
+        <activity
+            android:name=".activity.FamilyServiceActivity"
+            android:label="@string/title_activity_family_service" >
+        </activity>
     </application>
 
 </manifest>

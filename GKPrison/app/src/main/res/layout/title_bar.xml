@@ -26,5 +26,28 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="8dp"
         android:paddingLeft="10dp"/>
+    <ImageView
+        android:id="@+id/iv_messge"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@drawable/messge"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/tv_messge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/white"
+        android:text="汇款"
+        android:textSize="14sp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="10dp"
+        android:visibility="gone"/>
 
 </RelativeLayout>
