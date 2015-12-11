@@ -21,6 +21,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.activity.PrisonIntroductionActivity;
+import com.gkzxhn.gkprison.activity.PrisonOpenActivity;
 import com.gkzxhn.gkprison.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.activity.VisitingServiceActivity;
 
@@ -192,6 +193,8 @@ public class HomePager extends BasePager{
                                     context.startActivity(intent);
                                     break;
                                 case 2:
+                                    intent = new Intent(context, PrisonOpenActivity.class);
+                                    context.startActivity(intent);
                                     break;
                                 case 3:
                                     intent = new Intent(context, VisitingServiceActivity.class);

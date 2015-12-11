@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.utils.DensityUtil;
 
 /**
  * 法律法规页面

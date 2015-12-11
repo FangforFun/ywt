@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="transparent">#00000000</color>
     <color name="theme">#6495ed</color>
+    <color name="half_transparent_theme">#886495ed</color>
     <color name="white">#ffffff</color>
     <color name="bg">#f0f0f0</color>
     <color name="tv_mid">#666666</color>
