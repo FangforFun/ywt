@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Layout;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -25,17 +26,20 @@ public abstract class BaseActivity extends FragmentActivity implements View.OnCl
     protected ImageView iv_back;
     protected ImageView iv_messge;
     protected TextView tv_messge;
+    protected View rl_title;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
+//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+//        }
         setContentView(R.layout.activity_base);
         mContext = this;
+        rl_title = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -87,6 +91,10 @@ public abstract class BaseActivity extends FragmentActivity implements View.OnCl
      */
     protected void setBackVisibility(int visibility){
         iv_back.setVisibility(visibility);
+    }
+
+    protected void setActionBarGone(int visibility){
+        rl_title.setVisibility(visibility);
     }
 
     protected void setImageVisibility(int visibility){

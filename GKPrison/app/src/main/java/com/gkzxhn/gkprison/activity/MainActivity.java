@@ -70,14 +70,17 @@ public class MainActivity extends BaseActivity {
                     case R.id.rb_bottom_guide_home: // 首页
                         home_viewPager.setCurrentItem(0);
                         setTitle("首页");
+                        setActionBarGone(View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_visit: // 远程会见
                         home_viewPager.setCurrentItem(1);
                         setTitle("远程会见");
+                        setActionBarGone(View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
                         home_viewPager.setCurrentItem(2);
                         setTitle("小卖部");
+                        setActionBarGone(View.GONE);
                         break;
                     default:
                         break;
@@ -95,12 +98,15 @@ public class MainActivity extends BaseActivity {
                 if (i == 0) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_home);
                     setTitle("首页");
+                    setActionBarGone(View.VISIBLE);
                 } else if (i == 1) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
                     setTitle("远程会见");
+                    setActionBarGone(View.VISIBLE);
                 } else if (i == 2) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
                     setTitle("小卖部");
+                    setActionBarGone(View.GONE);
                 }
             }
 
