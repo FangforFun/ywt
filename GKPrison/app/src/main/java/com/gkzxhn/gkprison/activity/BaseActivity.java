@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Layout;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -13,12 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
 
 /**
  * activity基类
  */
-public abstract class BaseActivity extends SlidingFragmentActivity implements View.OnClickListener{
+public abstract class BaseActivity extends FragmentActivity implements View.OnClickListener{
 
     protected Context mContext;
     protected RelativeLayout rl_content;
@@ -26,10 +26,11 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected ImageView iv_back;
     protected ImageView iv_messge;
     protected TextView tv_messge;
-    protected ImageView iv_home_menu;
+    protected View rl_title;
+
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 //        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
@@ -37,14 +38,13 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
 //            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 //        }
         setContentView(R.layout.activity_base);
-        setBehindContentView(R.layout.menu_frame);
         mContext = this;
+        rl_title = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         iv_messge = (ImageView)findViewById(R.id.iv_messge);
         tv_messge = (TextView)findViewById(R.id.tv_messge);
-        iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         View view = initView();
         rl_content.addView(view);
         initData();
@@ -93,16 +93,12 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         iv_back.setVisibility(visibility);
     }
 
-    protected void setImageVisibility(int visibility){
-        iv_messge.setVisibility(visibility);
+    protected void setActionBarGone(int visibility){
+        rl_title.setVisibility(visibility);
     }
 
-    /**
-     * 设置侧拉菜单按钮是否可见
-     * @param visibility
-     */
-    protected void setMenuVisibility(int visibility){
-        iv_home_menu.setVisibility(visibility);
+    protected void setImageVisibility(int visibility){
+        iv_messge.setVisibility(visibility);
     }
 
     protected void setTextVisibility(int visibility){

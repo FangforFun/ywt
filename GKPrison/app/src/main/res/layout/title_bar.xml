@@ -1,21 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_title"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
-    android:background="@color/theme"
-    >
-
-    <!--android:fitsSystemWindows="true"-->
-    <!--android:clipToPadding="true"-->
-
-    <ImageView
-        android:id="@+id/iv_home_menu"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/icon_menu"
-        android:layout_centerVertical="true"
-        android:visibility="gone"
-        android:layout_marginLeft="10dp"/>
+    android:layout_height="60dp"
+    android:background="@color/theme">
 
     <TextView
         android:id="@+id/tv_title"
@@ -23,7 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="德山监狱信息公开平台"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:textColor="@color/white"
         android:textSize="20sp"/>
 
@@ -33,7 +22,8 @@
         android:layout_height="22dp"
         android:visibility="gone"
         android:src="@drawable/back"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:paddingLeft="10dp"/>
     <ImageView
         android:id="@+id/iv_messge"
@@ -41,7 +31,8 @@
         android:layout_height="20dp"
         android:src="@drawable/messge"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginRight="10dp"
         android:visibility="gone"
         />
@@ -53,7 +44,8 @@
         android:text="汇款"
         android:textSize="14sp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
         android:layout_marginRight="10dp"
         android:visibility="gone"/>
 
