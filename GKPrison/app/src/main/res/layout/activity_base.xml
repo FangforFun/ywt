@@ -4,7 +4,8 @@
 
     <include
         android:id="@+id/ly_title_bar"
-        layout="@layout/title_bar" />
+        layout="@layout/title_bar"
+        />
 
     <RelativeLayout
         android:id="@+id/rl_content"

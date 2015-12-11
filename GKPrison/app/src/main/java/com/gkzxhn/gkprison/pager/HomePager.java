@@ -18,6 +18,7 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.activity.PrisonIntroductionActivity;
 import com.gkzxhn.gkprison.activity.PrisonOpenActivity;
@@ -204,7 +205,8 @@ public class HomePager extends BasePager{
                                     context.startActivity(intent);
                                     break;
                                 case 5:
-                                    
+                                    intent = new Intent(context, FamilyServiceActivity.class);
+                                    context.startActivity(intent);
                                     break;
 
                             }
