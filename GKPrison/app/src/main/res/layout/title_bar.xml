@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:text="德山监狱信息公开平台"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
         android:textColor="@color/white"
         android:textSize="20sp"/>
 
@@ -22,8 +21,7 @@
         android:layout_height="22dp"
         android:visibility="gone"
         android:src="@drawable/back"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
         android:paddingLeft="10dp"/>
     <ImageView
         android:id="@+id/iv_messge"
@@ -31,8 +29,7 @@
         android:layout_height="20dp"
         android:src="@drawable/messge"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
         android:visibility="gone"
         />
@@ -44,8 +41,7 @@
         android:text="汇款"
         android:textSize="14sp"
         android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="8dp"
+        android:layout_centerVertical="true"
         android:layout_marginRight="10dp"
         android:visibility="gone"/>
 
