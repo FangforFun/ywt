@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.fragment;
 
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -11,6 +12,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.RemittanceActivity;
+import com.gkzxhn.gkprison.activity.ShoppingRecoderActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,6 +39,20 @@ public class MenuFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView menu_option_tv = (TextView) view.findViewById(R.id.tv_menu_option);
                 showToastMsgShort(menu_option_tv.getText().toString());
+                Intent intent;
+                switch (position){
+                    case 2:
+                        intent = new Intent(context, RemittanceActivity.class);
+                        context.startActivity(intent);
+                        break;
+                    case 3:
+                        intent = new Intent(context, ShoppingRecoderActivity.class);
+                        context.startActivity(intent);
+                        break;
+
+                }
+
+
             }
         });
     }

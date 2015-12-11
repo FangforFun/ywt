@@ -37,6 +37,14 @@
             android:label="@string/title_activity_family_service" >
         </activity>
         <activity android:name=".activity.PrisonOpenActivity" />
+        <activity
+            android:name=".activity.RemittanceActivity"
+            android:label="@string/title_activity_remittance" >
+        </activity>
+        <activity
+            android:name=".activity.ShoppingRecoderActivity"
+            android:label="@string/title_activity_shopping_recoder" >
+        </activity>
     </application>
 
 </manifest>
