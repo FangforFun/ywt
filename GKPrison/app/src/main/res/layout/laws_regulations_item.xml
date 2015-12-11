@@ -12,7 +12,7 @@
         android:textSize="16sp"
         android:textColor="@color/tv_bg"
         android:gravity="center_vertical"
-        android:drawablePadding="5dp"
+        android:drawablePadding="10dp"
         android:drawableLeft="@drawable/laws_item_01"
         android:paddingLeft="10dp"/>
 

@@ -36,6 +36,7 @@
             android:name=".activity.FamilyServiceActivity"
             android:label="@string/title_activity_family_service" >
         </activity>
+        <activity android:name=".activity.PrisonOpenActivity" />
     </application>
 
 </manifest>
