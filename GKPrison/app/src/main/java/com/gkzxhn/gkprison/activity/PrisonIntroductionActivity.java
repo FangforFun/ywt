@@ -6,35 +6,47 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.view.RollViewPager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 监狱简介
  */
 public class PrisonIntroductionActivity extends BaseActivity {
 
-    private ViewPager vp_carousel;
-    private RadioGroup rg_carousel; // 轮播图底部小圆圈
-    private RadioButton rb_carousel_01;
-    private RadioButton rb_carousel_02;
-    private RadioButton rb_carousel_03;
-    private RadioButton rb_carousel_04;
-    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img3};
     private TextView tv_prison_introduction;
+    private RelativeLayout rl_carousel;
+    private RollViewPager vp_carousel;
+    private View layout_roll_view;
+    private LinearLayout dots_ll;
+    private TextView top_news_title;
+    private LinearLayout top_news_viewpager;
+    private final List<String> list_news_title = new ArrayList<>();
+    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img3};
+    /**
+     * 轮播图导航点集合
+     */
+    private List<View> dotList = new ArrayList<>();
+
     @Override
     protected View initView() {
         View view = View.inflate(mContext, R.layout.activity_prison_introduction, null);
-        vp_carousel = (ViewPager) view.findViewById(R.id.vp_carousel);
-        rg_carousel = (RadioGroup) view.findViewById(R.id.rg_carousel);
-        rb_carousel_01 = (RadioButton) view.findViewById(R.id.rb_carousel_01);
-        rb_carousel_02 = (RadioButton) view.findViewById(R.id.rb_carousel_02);
-        rb_carousel_03 = (RadioButton) view.findViewById(R.id.rb_carousel_03);
-        rb_carousel_04 = (RadioButton) view.findViewById(R.id.rb_carousel_04);
         tv_prison_introduction = (TextView) view.findViewById(R.id.tv_prison_introduction);
+        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
+        layout_roll_view = View.inflate(mContext, R.layout.layout_roll_view, null);
+        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
+        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
+        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
+        rl_carousel.addView(layout_roll_view);
         return view;
     }
 
@@ -42,37 +54,43 @@ public class PrisonIntroductionActivity extends BaseActivity {
     protected void initData() {
         setTitle("监狱简介");
         setBackVisibility(View.VISIBLE);
-        vp_carousel.setAdapter(new MyCarouselAdapter());
-        vp_carousel.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(mContext, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                switch (position) {
-                    case 0:
-                        rg_carousel.check(R.id.rb_carousel_01);
-                        break;
-                    case 1:
-                        rg_carousel.check(R.id.rb_carousel_02);
-                        break;
-                    case 2:
-                        rg_carousel.check(R.id.rb_carousel_03);
-                        break;
-                    case 3:
-                        rg_carousel.check(R.id.rb_carousel_04);
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
+            public void viewClick(int position) {
+                showToastMsgShort(list_news_title.get(position));
             }
         });
-        vp_carousel.setCurrentItem(0);// 默认选中第0个
+        list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
+        list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
+        list_news_title.add("我狱杨晓红干警被评为“最美警花3”");
+        list_news_title.add("我狱杨晓红干警被评为“最美警花4”");
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        vp_carousel.initImgUrl(list_news_title.size());
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
+    }
+
+    private void initDot() {
+        dotList.clear();
+        dots_ll.removeAllViews();
+        for (int i = 0; i < 4; i++) {
+            View view = new View(mContext);
+            if (i == 0) {
+                view.setBackgroundResource(R.drawable.rb_shape_blue);
+            } else {
+                view.setBackgroundResource(R.drawable.rb_shape_gray);
+            }
+            // 指定点的大小
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    30, 30);
+            // 间距
+            layoutParams.setMargins(10, 0, 10, 0);
+            dots_ll.addView(view, layoutParams);
+
+            dotList.add(view);
+        }
     }
 
     @Override
@@ -80,56 +98,4 @@ public class PrisonIntroductionActivity extends BaseActivity {
         super.onClick(v);
     }
 
-    private class MyCarouselAdapter extends PagerAdapter {
-
-        @Override
-        public int getCount() {
-            return CAROUSEL_IVS.length;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View view = View.inflate(mContext, R.layout.carousel_item, null);
-            ImageView iv_carousel = (ImageView) view.findViewById(R.id.iv_carousel);
-            iv_carousel.setImageResource(CAROUSEL_IVS[position]);
-            container.addView(view);
-            view.setOnTouchListener(new View.OnTouchListener() {
-                private int downX;
-                private int upX;
-                private long downTime;
-                private long upTime;
-
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            downX = (int) event.getX();
-                            downTime = System.currentTimeMillis();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                            upX = (int) event.getX();
-                            upTime = System.currentTimeMillis();
-                            if (downX == upX && upTime - downTime < 500) {
-                                showToastMsgShort("点我干嘛呀...");
-                            }
-                            break;
-                        case MotionEvent.ACTION_CANCEL:
-                            break;
-                    }
-                    return true;
-                }
-            });
-            return view;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
-    }
 }

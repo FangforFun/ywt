@@ -9,4 +9,5 @@
     <color name="tv_bg">#333333</color>
     <color name="tv_gray">#999999</color>
     <color name="et_hint">#dadada</color>
+    <color name="item_press">#ebebeb</color>
 </resources>

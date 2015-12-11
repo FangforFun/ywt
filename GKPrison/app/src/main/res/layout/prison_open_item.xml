@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_below="@id/view_02"
-        android:background="@color/white">
+        android:background="@drawable/item_selector">
 
         <ImageView
             android:id="@+id/iv_home_news_icon"
@@ -30,25 +30,23 @@
             <TextView
                 android:id="@+id/tv_home_news_title"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:text="昭通市食药监局到昭通监狱开展警示教育"
                 android:maxLines="2"
                 android:gravity="center_vertical"
                 android:textColor="@color/tv_bg"
+                android:layout_marginTop="10dp"
                 android:textSize="16sp"/>
 
             <TextView
                 android:id="@+id/tv_home_news_content"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
-                android:maxLines="4"
+                android:maxLines="3"
                 android:textColor="@color/tv_mid"
-                android:textSize="14sp"
-                />
-
+                android:textSize="14sp" />
         </LinearLayout>
 
         <ImageView

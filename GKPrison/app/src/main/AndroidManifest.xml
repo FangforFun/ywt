@@ -37,6 +37,18 @@
             android:label="@string/title_activity_family_service" >
         </activity>
         <activity android:name=".activity.PrisonOpenActivity" />
+        <activity
+            android:name=".activity.UserInfoActivity"
+            android:label="@string/title_activity_user_info" >
+        </activity>
+        <activity
+            android:name=".activity.SettingActivity"
+            android:label="@string/title_activity_setting" >
+        </activity>
+        <activity
+            android:name=".activity.SystemMessageActivity"
+            android:label="@string/title_activity_system_message" >
+        </activity>
     </application>
 
 </manifest>

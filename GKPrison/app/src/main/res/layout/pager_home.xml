@@ -8,72 +8,6 @@
         android:id="@+id/rl_carousel"
         android:layout_width="match_parent"
         android:layout_height="150dp">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_carousel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_alignParentBottom="true"
-            android:background="#3000">
-
-            <TextView
-                android:id="@+id/tv_carousel_title"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginRight="100dp"
-                android:text="我狱杨晓红干警被评为“最美警花”"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:textSize="14sp"
-                android:textColor="@color/white"
-                android:paddingLeft="10dp"/>
-
-            <RadioGroup
-                android:id="@+id/rg_carousel"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_centerVertical="true"
-                android:layout_alignParentRight="true"
-                android:gravity="center"
-                >
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_01"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_margin="5dp"
-                    android:button="@null"
-                    android:checked="true"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_02"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_margin="5dp"
-                    android:button="@null"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_03"
-                    android:layout_width="10dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="10dp"
-                    android:button="@null"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-            </RadioGroup>
-        </RelativeLayout>
     </RelativeLayout>
 
     <GridView
@@ -106,7 +40,7 @@
         android:text="焦点关注"
         android:gravity="center_vertical"
         android:paddingLeft="5dp"
-        android:background="@color/white"
+        android:background="@drawable/item_selector"
         android:drawablePadding="3dp"
         android:drawableLeft="@drawable/prison_introduction"/>
 
@@ -122,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/view_02"
-        android:background="@color/white">
+        android:background="@drawable/item_selector">
 
         <ImageView
             android:id="@+id/iv_home_news_icon"
@@ -143,8 +77,7 @@
             <TextView
                 android:id="@+id/tv_home_news_title"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:text="昭通市食药监局到昭通监狱开展警示教育"
                 android:maxLines="2"
                 android:gravity="center_vertical"
@@ -155,13 +88,12 @@
                 android:id="@+id/tv_home_news_content"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2"
+                android:layout_weight="1"
                 android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
-                android:maxLines="4"
+                android:maxLines="3"
+                android:ellipsize="end"
                 android:textColor="@color/tv_mid"
-                android:textSize="12sp"
-                />
-
+                android:textSize="12sp" />
         </LinearLayout>
 
         <ImageView

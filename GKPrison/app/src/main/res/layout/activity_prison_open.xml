@@ -7,69 +7,6 @@
         android:id="@+id/rl_carousel"
         android:layout_width="match_parent"
         android:layout_height="150dp">
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/vp_carousel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="25dp"
-            android:layout_alignParentBottom="true"
-            android:background="#0000">
-
-            <RadioGroup
-                android:id="@+id/rg_carousel"
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                >
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_01"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_margin="5dp"
-                    android:button="@null"
-                    android:checked="true"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_02"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
-                    android:layout_margin="5dp"
-                    android:button="@null"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_03"
-                    android:layout_width="10dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="10dp"
-                    android:button="@null"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-
-                <RadioButton
-                    android:id="@+id/rb_carousel_04"
-                    android:layout_width="10dp"
-                    android:layout_margin="5dp"
-                    android:layout_height="10dp"
-                    android:button="@null"
-                    android:enabled="false"
-                    android:background="@drawable/rb_selector"
-                    />
-            </RadioGroup>
-        </RelativeLayout>
     </RelativeLayout>
 
     <ListView
