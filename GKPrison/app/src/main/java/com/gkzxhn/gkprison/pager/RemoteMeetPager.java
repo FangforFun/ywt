@@ -16,7 +16,8 @@ public class RemoteMeetPager extends BasePager {
 
     private TextView tv_meeting_request_name;
     private TextView tv_meeting_request_id_num;
-    private EditText et_meeting_request_phone;
+    private TextView tv_meeting_request_relationship;
+    private TextView tv_meeting_request_phone;
     private EditText et_meeting_request_time;
     private Button bt_commit_request;
 
@@ -29,7 +30,8 @@ public class RemoteMeetPager extends BasePager {
         view = View.inflate(context, R.layout.pager_remote_meeting, null);
         tv_meeting_request_name = (TextView) view.findViewById(R.id.tv_meeting_request_name);
         tv_meeting_request_id_num = (TextView) view.findViewById(R.id.tv_meeting_request_id_num);
-        et_meeting_request_phone = (EditText) view.findViewById(R.id.et_meeting_request_phone);
+        tv_meeting_request_relationship = (TextView) view.findViewById(R.id.tv_meeting_request_relationship);
+        tv_meeting_request_phone = (TextView) view.findViewById(R.id.tv_meeting_request_phone);
         et_meeting_request_time = (EditText) view.findViewById(R.id.et_meeting_request_time);
         bt_commit_request = (Button) view.findViewById(R.id.bt_commit_request);
         return view;
@@ -40,9 +42,6 @@ public class RemoteMeetPager extends BasePager {
         Drawable drawable1 = context.getResources().getDrawable(R.drawable.down);
         drawable1.setBounds(0, 0, 30, 20);
         et_meeting_request_time.setCompoundDrawables(null, null, drawable1, null);
-        Drawable drawable2 = context.getResources().getDrawable(R.drawable.laws_item_01);
-        drawable2.setBounds(0, 0, 50, 50);
-        et_meeting_request_phone.setCompoundDrawables(null, null, drawable2, null);
         bt_commit_request.setOnClickListener(this);
     }
 
