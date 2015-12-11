@@ -27,6 +27,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected ImageView iv_messge;
     protected TextView tv_messge;
     protected ImageView iv_home_menu;
+    private View ly_title_bar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,7 +39,9 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
 //        }
         setContentView(R.layout.activity_base);
         setBehindContentView(R.layout.menu_frame);
+        getSlidingMenu().setSlidingEnabled(false);
         mContext = this;
+        ly_title_bar = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
@@ -104,6 +107,11 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected void setMenuVisibility(int visibility){
         iv_home_menu.setVisibility(visibility);
     }
+
+    protected void setActionBarGone(int visibility){
+        ly_title_bar.setVisibility(visibility);
+    }
+
 
     protected void setTextVisibility(int visibility){
         tv_messge.setVisibility(visibility);
