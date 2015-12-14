@@ -80,10 +80,11 @@ public class AllClassificationFragment extends BaseFragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-           ViewHolder viewHolder;
+         final   ViewHolder viewHolder;
             if (convertView == null){
                 convertView = View.inflate(getActivity(),R.layout.sales_item,null);
                 viewHolder = new ViewHolder();
+                viewHolder.imageView_shopping = (ImageView)convertView.findViewById(R.id.image_shopping);
                 viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView)convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_money);
@@ -97,6 +98,17 @@ public class AllClassificationFragment extends BaseFragment {
             viewHolder.tv_money.setText(money.get(position));
             viewHolder.start.setStar((position + 1) > 5 ? 3 : (position + 1));
             viewHolder.start.setmClickable(false);
+            viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (viewHolder.imageView_shopping.getDrawable() == null){
+                        viewHolder.imageView_shopping.setImageResource(R.drawable.shopping_check);
+                    }else {
+                        viewHolder.imageView_shopping.setImageResource(0);
+                    }
+                }
+            });
+
             return convertView;
         }
     }
@@ -104,6 +116,7 @@ public class AllClassificationFragment extends BaseFragment {
         ImageView imageView;
         TextView  tv_description;
         TextView  tv_money;
+        ImageView imageView_shopping;
         RatingBar start;
     }
 }

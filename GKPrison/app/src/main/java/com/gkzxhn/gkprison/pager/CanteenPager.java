@@ -61,8 +61,8 @@ public class CanteenPager extends BasePager{
 //            tabWidget.getChildAt(i).getLayoutParams().width = 65;
             //修改显示字体大小
             TextView tv = (TextView) tabWidget.getChildAt(i).findViewById(android.R.id.title);
-            tv.setTextSize(16);
-            tv.setTextColor(context.getResources().getColor(R.color.tv_bg));
+            tv.setTextSize(14);
+            tv.setTextColor(context.getResources().getColor(R.color.tv_mid));
         }
         tab_host.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
             @Override
