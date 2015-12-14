@@ -2,14 +2,28 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gkzxhn.gkprison" >
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name" >
+            android:name=".zxing.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="CaptureActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,18 +50,21 @@
             android:name=".activity.FamilyServiceActivity"
             android:label="@string/title_activity_family_service" >
         </activity>
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/app_name" />
         <activity android:name=".activity.PrisonOpenActivity" />
         <activity
-            android:name=".activity.UserInfoActivity"
-            android:label="@string/title_activity_user_info" >
+            android:name=".activity.RemittanceActivity"
+            android:label="@string/title_activity_remittance" >
         </activity>
         <activity
-            android:name=".activity.SettingActivity"
-            android:label="@string/title_activity_setting" >
+            android:name=".activity.ShoppingRecoderActivity"
+            android:label="@string/title_activity_shopping_recoder" >
         </activity>
         <activity
-            android:name=".activity.SystemMessageActivity"
-            android:label="@string/title_activity_system_message" >
+            android:name=".activity.SplashActivity"
+            android:label="@string/title_activity_splash" >
         </activity>
     </application>
 

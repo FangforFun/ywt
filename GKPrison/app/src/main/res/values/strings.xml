@@ -12,7 +12,4 @@
 <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_family_service">FamilyServiceActivity</string>
-    <string name="title_activity_user_info">UserInfoActivity</string>
-    <string name="title_activity_setting">SettingActivity</string>
-    <string name="title_activity_system_message">SystemMessageActivity</string>
 </resources>
