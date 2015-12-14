@@ -14,4 +14,5 @@
     <string name="title_activity_family_service">FamilyServiceActivity</string>
     <string name="title_activity_remittance">RemittanceActivity</string>
     <string name="title_activity_shopping_recoder">ShoppingRecoderActivity</string>
+    <string name="title_activity_splash">SplashActivity</string>
 </resources>
