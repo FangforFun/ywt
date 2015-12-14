@@ -1,17 +1,17 @@
 package com.gkzxhn.gkprison.fragment;
 
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.hedgehog.ratingbar.RatingBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class AllClassificationFragment extends Fragment {
+public class AllClassificationFragment extends BaseFragment {
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Integer> image = new ArrayList<Integer>(){
@@ -48,20 +48,18 @@ public class AllClassificationFragment extends Fragment {
         }
     };
 
-    public AllClassificationFragment() {
-        // Required empty public constructor
+    @Override
+    protected View initView() {
+        view = View.inflate(context,R.layout.fragment_all_classification,null);
+        lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
+        return view;
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_all_classification,null);
-        lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
+    protected void initData() {
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
-        return view;
-         }
+    }
 
     private class SalesAdapter extends BaseAdapter{
 
@@ -89,6 +87,7 @@ public class AllClassificationFragment extends Fragment {
                 viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView)convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_money);
+                viewHolder.start = (RatingBar) convertView.findViewById(R.id.start);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (ViewHolder)convertView.getTag();
@@ -96,6 +95,8 @@ public class AllClassificationFragment extends Fragment {
             viewHolder.imageView.setImageResource(image.get(position));
             viewHolder.tv_description.setText(description.get(position));
             viewHolder.tv_money.setText(money.get(position));
+            viewHolder.start.setStar((position + 1) > 5 ? 3 : (position + 1));
+            viewHolder.start.setmClickable(false);
             return convertView;
         }
     }
@@ -103,5 +104,6 @@ public class AllClassificationFragment extends Fragment {
         ImageView imageView;
         TextView  tv_description;
         TextView  tv_money;
+        RatingBar start;
     }
 }

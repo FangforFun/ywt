@@ -19,14 +19,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".zxing.CaptureActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="CaptureActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" >
+            android:name=".activity.MainActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -51,21 +47,25 @@
             android:label="@string/title_activity_family_service" >
         </activity>
         <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name" />
+            android:name=".zxing.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:label="CaptureActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity android:name=".activity.PrisonOpenActivity" />
         <activity
-            android:name=".activity.RemittanceActivity"
-            android:label="@string/title_activity_remittance" >
+            android:name=".activity.RemittanceActivity">
         </activity>
         <activity
-            android:name=".activity.ShoppingRecoderActivity"
-            android:label="@string/title_activity_shopping_recoder" >
+            android:name=".activity.ShoppingRecoderActivity" >
         </activity>
         <activity
-            android:name=".activity.SplashActivity"
-            android:label="@string/title_activity_splash" >
+            android:name=".activity.SplashActivity" >
         </activity>
+        <activity android:name=".activity.SettingActivity" />
+        <activity android:name=".activity.SystemMessageActivity" />
+        <activity android:name=".activity.UserInfoActivity"/>
     </application>
 
 </manifest>

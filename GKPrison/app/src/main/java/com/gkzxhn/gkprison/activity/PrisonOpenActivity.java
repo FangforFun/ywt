@@ -61,6 +61,7 @@ public class PrisonOpenActivity extends BaseActivity {
                 showToastMsgShort(list_news_title.get(position));
             }
         });
+        list_news_title.clear();
         list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
         list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
         list_news_title.add("我狱杨晓红干警被评为“最美警花3”");

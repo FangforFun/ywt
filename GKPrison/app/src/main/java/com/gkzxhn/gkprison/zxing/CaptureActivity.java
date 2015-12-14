@@ -23,11 +23,11 @@ import android.view.SurfaceView;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.zxing.camera.CameraManager;
 import com.gkzxhn.gkprison.zxing.decoding.CaptureActivityHandler;
 import com.gkzxhn.gkprison.zxing.decoding.InactivityTimer;
 import com.gkzxhn.gkprison.zxing.view.ViewfinderView;
-import com.gkzxhn.gkprison.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 

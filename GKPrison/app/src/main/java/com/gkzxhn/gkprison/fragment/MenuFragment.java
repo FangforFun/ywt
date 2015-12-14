@@ -12,7 +12,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.RemittanceActivity;
 import com.gkzxhn.gkprison.activity.SettingActivity;
+import com.gkzxhn.gkprison.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.activity.UserInfoActivity;
 
@@ -45,6 +47,14 @@ public class MenuFragment extends BaseFragment {
                     case 0:
                         intent = new Intent(context, UserInfoActivity.class);
                         startActivity(intent);
+                        break;
+                    case 2:
+                        intent = new Intent(context, RemittanceActivity.class);
+                        context.startActivity(intent);
+                        break;
+                    case 3:
+                        intent = new Intent(context, ShoppingRecoderActivity.class);
+                        context.startActivity(intent);
                         break;
                     case 4:
                         intent = new Intent(context, SystemMessageActivity.class);

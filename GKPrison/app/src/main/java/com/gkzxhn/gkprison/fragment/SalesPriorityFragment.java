@@ -1,9 +1,6 @@
 package com.gkzxhn.gkprison.fragment;
 
-
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -12,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.hedgehog.ratingbar.RatingBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SalesPriorityFragment extends Fragment {
+public class SalesPriorityFragment extends BaseFragment {
     private ListView lv_sale;
     private SalesAdapter adapter;
     private List<Integer> image = new ArrayList<Integer>(){
@@ -48,20 +46,18 @@ public class SalesPriorityFragment extends Fragment {
         }
     };
 
-    public SalesPriorityFragment() {
-        // Required empty public constructor
+    @Override
+    protected View initView() {
+        view = View.inflate(context, R.layout.fragment_sales_priority,null);
+        lv_sale = (ListView)view.findViewById(R.id.lv_sales);
+        return view;
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_sales_priority,null);
-        lv_sale = (ListView)view.findViewById(R.id.lv_sales);
+    protected void initData() {
         adapter = new SalesAdapter();
         lv_sale.setAdapter(adapter);
-        return view;
-      }
+    }
 
     private class SalesAdapter extends BaseAdapter {
 
@@ -89,6 +85,7 @@ public class SalesPriorityFragment extends Fragment {
                 viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView)convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_money);
+                viewHolder.start = (RatingBar) convertView.findViewById(R.id.start);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (ViewHolder)convertView.getTag();
@@ -96,6 +93,8 @@ public class SalesPriorityFragment extends Fragment {
             viewHolder.imageView.setImageResource(image.get(position));
             viewHolder.tv_description.setText(description.get(position));
             viewHolder.tv_money.setText(money.get(position));
+            viewHolder.start.setStar((position + 3) > 5 ? 3 : (position + 3));
+            viewHolder.start.setmClickable(false);
             return convertView;
         }
     }
@@ -103,5 +102,6 @@ public class SalesPriorityFragment extends Fragment {
         ImageView imageView;
         TextView  tv_description;
         TextView  tv_money;
+        RatingBar start;
     }
 }
