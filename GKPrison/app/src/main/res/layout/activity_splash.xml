@@ -7,4 +7,50 @@
         android:layout_height="match_parent"
         android:scaleType="fitXY"
         android:src="@drawable/splash"/>
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="V1.21"
+            android:layout_gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="11sp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="11sp"
+            android:layout_gravity="center"
+            android:text="国科政信（北京）股份有限公司"
+            />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textColor="@android:color/white"
+                android:text="copyright"/>
+            <ImageView
+                android:layout_marginTop="1dp"
+                android:layout_width="10dp"
+                android:layout_height="12dp"
+                android:src="@drawable/c"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="11sp"
+                android:text="2006-2015.All right reserver"/>
+        </LinearLayout>
+    </LinearLayout>
 </RelativeLayout>

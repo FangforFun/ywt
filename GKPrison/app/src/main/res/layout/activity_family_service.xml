@@ -117,6 +117,36 @@
             android:text="元"
             android:layout_toRightOf="@+id/tv_balance_money"
             android:layout_alignBaseline="@+id/tv_balance"/>
+
+        <TextView
+            android:id="@+id/tv_danwei"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FF3503"
+            android:textSize="14sp"
+            android:text="元"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignBaseline="@+id/tv_balance"/>
+        <TextView
+            android:id="@+id/tv_keyong_money"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_toLeftOf="@+id/tv_danwei"
+            android:layout_alignBaseline="@+id/tv_balance"
+            android:textColor="#FF3503"
+            android:text="400"/>
+        <TextView
+            android:id="@+id/tv_keyong"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_toLeftOf="@+id/tv_keyong_money"
+            android:layout_alignBaseline="@+id/tv_balance"
+            android:textColor="#333333"
+            android:text="本月可用额度:"/>
+
     </RelativeLayout>
     <ExpandableListView
         android:id="@+id/el_messge"

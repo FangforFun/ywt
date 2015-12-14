@@ -20,14 +20,16 @@ import android.view.KeyEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceHolder.Callback;
 import android.view.SurfaceView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.MainActivity;
 import com.gkzxhn.gkprison.zxing.camera.CameraManager;
 import com.gkzxhn.gkprison.zxing.decoding.CaptureActivityHandler;
 import com.gkzxhn.gkprison.zxing.decoding.InactivityTimer;
 import com.gkzxhn.gkprison.zxing.view.ViewfinderView;
+import com.gkzxhn.gkprison.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
@@ -101,6 +103,11 @@ public class CaptureActivity extends Activity implements Callback {
 		inactivityTimer = new InactivityTimer(this);
 	}
 
+	public void onClick(View view){
+		Intent intent = new Intent(this, MainActivity.class);
+		startActivity(intent);
+		this.finish();
+	}
 	@Override
 	protected void onResume() {
 		super.onResume();
