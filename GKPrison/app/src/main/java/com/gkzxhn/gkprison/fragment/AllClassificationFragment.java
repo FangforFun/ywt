@@ -82,10 +82,11 @@ public class AllClassificationFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-           ViewHolder viewHolder;
+           final ViewHolder viewHolder;
             if (convertView == null){
                 convertView = View.inflate(getActivity(),R.layout.sales_item,null);
                 viewHolder = new ViewHolder();
+                viewHolder.imageView_shopping = (ImageView)convertView.findViewById(R.id.image_shopping);
                 viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView)convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_money);
@@ -96,6 +97,16 @@ public class AllClassificationFragment extends Fragment {
             viewHolder.imageView.setImageResource(image.get(position));
             viewHolder.tv_description.setText(description.get(position));
             viewHolder.tv_money.setText(money.get(position));
+            viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (viewHolder.imageView_shopping.getDrawable() == null){
+                        viewHolder.imageView_shopping.setImageResource(R.drawable.shopping_check);
+                    }else {
+                        viewHolder.imageView_shopping.setImageResource(0);
+                    }
+                }
+            });
             return convertView;
         }
     }
@@ -103,5 +114,6 @@ public class AllClassificationFragment extends Fragment {
         ImageView imageView;
         TextView  tv_description;
         TextView  tv_money;
+        ImageView imageView_shopping;
     }
 }

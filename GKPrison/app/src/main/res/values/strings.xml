@@ -10,9 +10,19 @@
     <string name="title_activity_prison_warden">PrisonWardenActivity</string>
 
 <!-- TODO: Remove or change this placeholder text -->
+    <string name="agreement">《国科狱务公开APP软件使用协议》\n \  \ \ \ \  \国科狱务公开APP是由国科政信科技（北京）股份有限公司开发的一款监狱类软件，用于服刑人员家属、社会各界人士知悉服刑情况和监狱狱务情况。请您在使用本软件前仔细阅读如下条款。您的安装使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。\n
+一、	许可证的授予。本《协议》授予您下列权利：\n
+您可安装、复制、分发和传播本产品来使用，但您必须保证每一份复制、分发和传播都必须是完整和真实的。\n
+二、其它权利和限制说明。\n
+本软件针对家属和社会人员有不同的设置，家属可以获得服刑人员相关服刑信息，社会人事只能获得监狱允许范围内的相关信息。
+本软件需付费使用，个人使用授权版本只能由单个用户在一台或多台手机上亲自使用；
+您不得对本软件产品进行反向工程、反向编译和反向汇编，不得删除本软件及其他副本上一切关于版权的信息，不得制作和提供该软件的注册机及破解程序。除非适用法律明文允许上述活动，否则您必须遵守此协议限制。
+最终解释权归国科政信科技（北京）股份有限公司所有。
+</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_family_service">FamilyServiceActivity</string>
     <string name="title_activity_remittance">RemittanceActivity</string>
     <string name="title_activity_shopping_recoder">ShoppingRecoderActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
+    <string name="title_activity_agreement">AgreementActivity</string>
 </resources>

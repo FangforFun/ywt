@@ -92,7 +92,7 @@ public class FamilyServiceActivity extends BaseActivity{
     protected View initView() {
         View view = View.inflate(mContext,R.layout.activity_family_service,null);
         el_messge = (ExpandableListView)view.findViewById(R.id.el_messge);
-
+        el_messge.setGroupIndicator(null);
         return view;
     }
 
@@ -150,11 +150,17 @@ public class FamilyServiceActivity extends BaseActivity{
             if (convertView == null){
                 convertView = View.inflate(mContext,R.layout.familyservice_item,null);
                 viewHolder = new GroupViewHolder();
+                viewHolder.image_click = (ImageView)convertView.findViewById(R.id.image_click);
                 viewHolder.img_messge = (ImageView)convertView.findViewById(R.id.image_messge);
                 viewHolder.tv_messge = (TextView)convertView.findViewById(R.id.tv_messge);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (GroupViewHolder)convertView.getTag();
+            }
+            if (isExpanded){
+                viewHolder.image_click.setImageResource(R.drawable.clickup);
+            }else {
+                viewHolder.image_click.setImageResource(R.drawable.clickdown);
             }
 
             viewHolder.img_messge.setImageResource(image_messge.get(groupPosition));
@@ -184,8 +190,6 @@ public class FamilyServiceActivity extends BaseActivity{
                     lv_shopping.setAdapter(adapter);
                     ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
                 }
-
-
             return convertView;
         }
 
@@ -197,7 +201,7 @@ public class FamilyServiceActivity extends BaseActivity{
     private class GroupViewHolder{
         ImageView img_messge;
         TextView tv_messge;
-
+        ImageView image_click;
 
     }
 
