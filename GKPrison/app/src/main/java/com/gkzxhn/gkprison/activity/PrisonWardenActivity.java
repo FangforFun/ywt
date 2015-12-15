@@ -1,56 +1,123 @@
 package com.gkzxhn.gkprison.activity;
 
-import android.opengl.Visibility;
-import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.fragment.InterractiveMailboxFragment;
 import com.gkzxhn.gkprison.fragment.ReplyPublicityFragment;
+import com.gkzxhn.gkprison.view.RollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PrisonWardenActivity extends FragmentActivity{
+public class PrisonWardenActivity extends FragmentActivity implements View.OnClickListener{
+
+    private TextView tv_title;
     private ViewPager viewPager;
     private ImageView back;
     private ImageView message;
+    private RelativeLayout rl_carousel;
+    private RollViewPager vp_carousel;
+    private View layout_roll_view;
+    private LinearLayout dots_ll;
+    private TextView top_news_title;
+    private LinearLayout top_news_viewpager;
+    private final List<String> list_news_title = new ArrayList<>();
+    /**
+     * 轮播图导航点集合
+     */
+    private List<View> dotList = new ArrayList<>();
+    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-//        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-//            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-//        }
         setContentView(R.layout.activity_prison_warden);
         back = (ImageView)findViewById(R.id.iv_back);
+        rl_carousel = (RelativeLayout) findViewById(R.id.rl_carousel);
+        layout_roll_view = View.inflate(this, R.layout.layout_roll_view, null);
+        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
+        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
+        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
+        rl_carousel.addView(layout_roll_view);
+        tv_title = (TextView) findViewById(R.id.tv_title);
         back.setVisibility(View.VISIBLE);
+        back.setOnClickListener(this);
         message = (ImageView)findViewById(R.id.iv_messge);
         message.setVisibility(View.VISIBLE);
-       viewPager = (ViewPager)findViewById(R.id.viewpage);
+        viewPager = (ViewPager)findViewById(R.id.viewpage);
         if (viewPager != null){
             setupViewPager(viewPager);
         }
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs1);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
+        tv_title.setText("监狱长信箱");
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(this, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+//                Toast.makeText(this, list_news_title.get(position), Toast.LENGTH_SHORT).show();
+            }
+        });
+        list_news_title.clear();
+        list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
+        list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
+        list_news_title.add("我狱杨晓红干警被评为“最美警花3”");
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        vp_carousel.initImgUrl(list_news_title.size());
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
+    }
+
+    private void initDot() {
+        dotList.clear();
+        dots_ll.removeAllViews();
+        for (int i = 0; i < 3; i++) {
+            View view = new View(this);
+            if (i == 0) {
+                view.setBackgroundResource(R.drawable.rb_shape_blue);
+            } else {
+                view.setBackgroundResource(R.drawable.rb_shape_gray);
+            }
+            // 指定点的大小
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                    30, 30);
+            // 间距
+            layoutParams.setMargins(10, 0, 10, 0);
+            dots_ll.addView(view, layoutParams);
+
+            dotList.add(view);
+        }
     }
     private void setupViewPager(ViewPager viewPager){
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
         adapter.addFragment(new ReplyPublicityFragment(), "答复公示");
         adapter.addFragment(new InterractiveMailboxFragment(), "互动信箱");
         viewPager.setAdapter(adapter);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.iv_back:
+                finish();
+                break;
+        }
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter{

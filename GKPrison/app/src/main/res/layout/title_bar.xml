@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:textColor="@android:color/white"
         android:text="汇款"
-        android:textSize="14sp"
+        android:textSize="16sp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="10dp"

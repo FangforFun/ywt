@@ -10,40 +10,32 @@
         android:background="@color/bg"
         android:focusable="true"
         android:focusableInTouchMode="true"
-        android:padding="10dp">
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
 
         <TextView
-            android:id="@+id/tv_meeting_last_time"
+            android:id="@+id/tv_visit_notes"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="上次会见时间：2015年11月11日"
-            android:textSize="16sp"
-            android:textColor="@color/tv_gray"
-            android:background="@color/bg"/>
-
-        <TextView
-            android:id="@+id/tv_meeting_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="会见须知：\n1、根据本监狱规定，每位服刑人员每月只能接受两次及以内远程会见。\n2、根据监狱管理法，只有近亲属（父母、直系兄妹及其配偶等）才可申请远程会见，服刑人员在狱警监督下与亲属进行远程会见。\n3、根据安全要求，您的会见信息可能会被记录。\n4、每次远程会见时长不超过15分钟。\n5、重刑犯、表现不加的服刑人员不接受远程会见。\n6、本服务端每月只能提交3次远程申请，请勿无故提交，以免浪费机会。"
+            android:text="@string/tanjian_notice"
             android:textSize="14sp"
+            android:padding="10dp"
             android:textColor="@color/tv_gray"
-            android:background="@color/bg"
+            android:background="@color/white"
             android:layout_marginTop="5dp"
-            android:lineSpacingExtra="5dp"
-            android:layout_below="@id/tv_meeting_last_time"/>
+            android:lineSpacingExtra="5dp"/>
 
         <LinearLayout
-            android:id="@+id/ll_meeting_request_info"
+            android:id="@+id/ll_visit_request_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:paddingTop="10dp"
             android:layout_marginTop="10dp"
             android:background="@color/white"
-            android:layout_below="@id/tv_meeting_notes">
+            android:layout_below="@id/tv_visit_notes">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -60,10 +52,10 @@
                     android:textSize="16sp"/>
 
                 <TextView
-                    android:id="@+id/tv_meeting_request_name"
+                    android:id="@+id/tv_visit_request_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="刘思佳"
+                    android:text="叶惠美"
                     android:textColor="@color/tv_mid"
                     android:layout_marginLeft="3dp"
                     android:textSize="16sp"/>
@@ -84,7 +76,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
-                    android:id="@+id/tv_meeting_request_relationship"
+                    android:id="@+id/tv_visit_request_relationship"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="母子"
@@ -108,7 +100,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
-                    android:id="@+id/tv_meeting_request_id_num"
+                    android:id="@+id/tv_visit_request_id_num"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="430482199404074444"
@@ -132,7 +124,7 @@
                     android:textSize="16sp"/>
 
                 <TextView
-                    android:id="@+id/tv_meeting_request_phone"
+                    android:id="@+id/tv_visit_request_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="18888888888"
@@ -145,17 +137,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingRight="10dp"
-                android:layout_marginBottom="5dp">
+                android:layout_marginBottom="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/tv_gray"
-                    android:text="申请会见时间："
+                    android:text="申请探监时间："
                     android:textSize="16sp"/>
 
                 <EditText
-                    android:id="@+id/et_meeting_request_time"
+                    android:id="@+id/et_visit_request_time"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
                     android:background="@drawable/edit_bg_shape"
@@ -174,8 +166,10 @@
             android:layout_marginTop="20dp"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:text="提交申请"
-            android:layout_below="@id/ll_meeting_request_info"
+            android:layout_marginRight="20dp"
+            android:layout_marginLeft="20dp"
+            android:text="申请探监"
+            android:layout_below="@id/ll_visit_request_info"
             android:background="@drawable/bt_bg_shape"/>
     </RelativeLayout>
 </ScrollView>

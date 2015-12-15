@@ -44,10 +44,10 @@ public class HomePager extends BasePager{
     private LinearLayout top_news_viewpager;
     private GridView gv_home_options;
     private TextView tv_focus_attention; // 焦点关注
-    private LinearLayout ll_home_news;
-    private ImageView iv_home_news_icon;
-    private TextView tv_home_news_title;
-    private TextView tv_home_news_content;
+//    private LinearLayout ll_home_news;
+//    private ImageView iv_home_news_icon;
+//    private TextView tv_home_news_title;
+//    private TextView tv_home_news_content;
     private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.sms_press, R.drawable.family_service_press};
     private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.sms, R.drawable.family_service};
@@ -68,10 +68,10 @@ public class HomePager extends BasePager{
         rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
         gv_home_options = (GridView) view.findViewById(R.id.gv_home_options);
         tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
-        ll_home_news = (LinearLayout) view.findViewById(R.id.ll_home_news);
-        iv_home_news_icon = (ImageView) view.findViewById(R.id.iv_home_news_icon);
-        tv_home_news_title = (TextView) view.findViewById(R.id.tv_home_news_title);
-        tv_home_news_content = (TextView) view.findViewById(R.id.tv_home_news_content);
+//        ll_home_news = (LinearLayout) view.findViewById(R.id.ll_home_news);
+//        iv_home_news_icon = (ImageView) view.findViewById(R.id.iv_home_news_icon);
+//        tv_home_news_title = (TextView) view.findViewById(R.id.tv_home_news_title);
+//        tv_home_news_content = (TextView) view.findViewById(R.id.tv_home_news_content);
         layout_roll_view = View.inflate(context, R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
@@ -102,7 +102,7 @@ public class HomePager extends BasePager{
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
         gv_home_options.setAdapter(new MyOptionsAdapter());
-        ll_home_news.setOnClickListener(this);
+//        ll_home_news.setOnClickListener(this);
     }
 
     private void initDot() {
@@ -226,7 +226,7 @@ public class HomePager extends BasePager{
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.ll_home_news:
-                showToastMsgShort(tv_home_news_title.getText().toString().trim());
+//                showToastMsgShort(tv_home_news_title.getText().toString().trim());
                 break;
         }
         super.onClick(v);

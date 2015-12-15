@@ -2,11 +2,14 @@
 <resources>
     <color name="transparent">#00000000</color>
     <color name="theme">#6495ed</color>
+    <color name="black">#000000</color>
     <color name="half_transparent_theme">#886495ed</color>
     <color name="white">#ffffff</color>
     <color name="bg">#f0f0f0</color>
     <color name="tv_mid">#666666</color>
     <color name="tv_bg">#333333</color>
+    <color name="tv_red">#f10000</color>
+    <color name="tv_green">#1f9400</color>
     <color name="tv_gray">#999999</color>
     <color name="et_hint">#dadada</color>
     <color name="item_press">#ebebeb</color>

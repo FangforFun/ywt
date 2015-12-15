@@ -1,50 +1,85 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F1F1"
+    android:background="@color/bg"
     tools:context="com.gkzxhn.gkprison.activity.AgreementActivity">
-    <TextView
-        android:id="@+id/tv_agreemnt"
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:text="@string/agreement"
-        />
-    <LinearLayout
-        android:id="@+id/ll_check"
-        android:layout_below="@+id/tv_agreemnt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:orientation="horizontal">
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="我已阅读并同意"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="《国科狱务公开app软件协议》"
-            android:textColor="@android:color/holo_blue_light"/>
-    </LinearLayout>
+        android:layout_height="match_parent"
+        android:scrollbars="none">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg">
 
-    <Button
-        android:id="@+id/btn_next"
-        android:onClick="next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="下一步"
-        android:layout_below="@+id/ll_check"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:background="@android:color/holo_blue_dark"
-        android:textColor="@android:color/white"/>
+            <LinearLayout
+                android:id="@+id/ll_explain_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:background="@color/white"
+                android:padding="10dp">
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="《国科狱务公开APP软件使用协议》"
+                    android:layout_gravity="center_horizontal"
+                    android:textSize="18sp"
+                    android:textColor="@color/tv_mid"
+                    android:layout_marginBottom="5dp"/>
+
+                <TextView
+                    android:id="@+id/tv_agreemnt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/white"
+                    android:lineSpacingExtra="5dp"
+                    android:textSize="14sp"
+                    android:textColor="@color/tv_mid"
+                    android:text="@string/agreement" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/ll_check"
+                android:layout_below="@+id/ll_explain_content"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_centerHorizontal="true"
+                android:orientation="horizontal">
+                <CheckBox
+                    android:id="@+id/cb_agree_disagree"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="我已阅读并同意"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="《国科狱务公开app软件协议》"
+                    android:textColor="@android:color/holo_blue_light"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_next"
+                android:onClick="next"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="下一步"
+                android:layout_below="@+id/ll_check"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/bt_bg_shape"
+                android:textColor="@android:color/white"/>
+        </RelativeLayout>
+    </ScrollView>
 </RelativeLayout>

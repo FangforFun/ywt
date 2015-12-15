@@ -1,0 +1,134 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <TextView
+        android:text="注意：本系统只对服刑人员近亲属开放，其余人员请勿申请。"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:paddingLeft="3dp"
+        android:textColor="@color/tv_mid"
+        android:lineSpacingExtra="3dp"/>
+
+    <EditText
+        android:id="@+id/et_name"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="姓名"
+        android:textSize="14sp"
+        android:padding="10dp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <EditText
+        android:id="@+id/et_ic_card"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="身份证号"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <EditText
+        android:id="@+id/et_phone_num"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="手机号码"
+        android:textSize="14sp"
+        android:padding="10dp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <EditText
+        android:id="@+id/et_relationship_with_prisoner"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="与服刑人员关系"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <EditText
+        android:id="@+id/et_prisoner_name"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="服刑人员姓名"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <EditText
+        android:id="@+id/et_prisoner_ic_card"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:hint="服刑人员身份证号"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"/>
+
+    <com.weiwangcn.betterspinner.library.BetterSpinner
+        android:id="@+id/bs_prison_choose"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp"
+        android:padding="10dp"
+        android:textSize="14sp"
+        android:textColorHint="@color/tv_gray"
+        android:background="@drawable/et_shape_search"
+        android:hint="下拉选择" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="5dp">
+
+        <EditText
+            android:id="@+id/et_identifying_code"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="2"
+            android:hint="输入验证码"
+            android:textSize="14sp"
+            android:padding="10dp"
+            android:layout_marginRight="5dp"
+            android:textColorHint="@color/tv_gray"
+            android:background="@drawable/et_shape_search"/>
+
+        <Button
+            android:id="@+id/bt_send_identifying_code"
+            android:layout_width="0dp"
+            android:layout_height="45dp"
+            android:layout_weight="1"
+            android:text="发送验证码"
+            android:textSize="14sp"
+            android:textColor="@color/white"
+            android:background="@drawable/bt_bg_shape"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bt_apply"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="申    请"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/bt_bg_shape"/>
+
+</LinearLayout>

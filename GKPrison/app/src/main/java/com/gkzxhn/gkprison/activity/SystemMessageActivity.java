@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,7 +13,7 @@ import com.gkzxhn.gkprison.R;
 public class SystemMessageActivity extends BaseActivity {
 
     private ListView lv_system_msg;
-    private final String[] LEFT_TVS = {"您的探监申请已通过", "您的探监申请未通过", "您的探监申请已通过", "您的探监申请未通过", "系统更新", "监狱长信箱有新的回复"};
+    private final String[] LEFT_TVS = {"您的探监申请已通过", "您的探监申请未通过", "您的会见申请已通过", "您的会见申请未通过", "系统更新", "监狱长信箱有新的回复"};
 
     @Override
     protected View initView() {
@@ -52,7 +53,7 @@ public class SystemMessageActivity extends BaseActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             SystemMsgViewHolder holder;
             if(convertView == null){
                 convertView = View.inflate(mContext, R.layout.system_msg_item, null);
@@ -71,6 +72,44 @@ public class SystemMessageActivity extends BaseActivity {
                 holder.tv_system_msg_right.setText("已查看");
                 holder.tv_system_msg_right.setTextColor(getResources().getColor(R.color.tv_mid));
             }
+            convertView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent;
+                    switch (position){
+                        case 0:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "探监已通过");
+                            startActivity(intent);
+                            break;
+                        case 1:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "探监未通过");
+                            startActivity(intent);
+                            break;
+                        case 2:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "会见已通过");
+                            startActivity(intent);
+                            break;
+                        case 3:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "会见未通过");
+                            startActivity(intent);
+                            break;
+                        case 4:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "探监已通过");
+                            startActivity(intent);
+                            break;
+                        case 5:
+                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent.putExtra("type", "探监未通过");
+                            startActivity(intent);
+                            break;
+                    }
+                }
+            });
             return convertView;
         }
     }

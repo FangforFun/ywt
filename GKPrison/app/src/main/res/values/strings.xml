@@ -10,11 +10,11 @@
     <string name="title_activity_prison_warden">PrisonWardenActivity</string>
 
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="agreement">《国科狱务公开APP软件使用协议》\n \  \ \ \ \  \国科狱务公开APP是由国科政信科技（北京）股份有限公司开发的一款监狱类软件，用于服刑人员家属、社会各界人士知悉服刑情况和监狱狱务情况。请您在使用本软件前仔细阅读如下条款。您的安装使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。\n
+    <string name="agreement">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;国科狱务公开APP是由国科政信科技（北京）股份有限公司开发的一款监狱类软件，用于服刑人员家属、社会各界人士知悉服刑情况和监狱狱务情况。请您在使用本软件前仔细阅读如下条款。您的安装使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。\n
 一、	许可证的授予。本《协议》授予您下列权利：\n
-您可安装、复制、分发和传播本产品来使用，但您必须保证每一份复制、分发和传播都必须是完整和真实的。\n
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;您可安装、复制、分发和传播本产品来使用，但您必须保证每一份复制、分发和传播都必须是完整和真实的。\n
 二、其它权利和限制说明。\n
-本软件针对家属和社会人员有不同的设置，家属可以获得服刑人员相关服刑信息，社会人事只能获得监狱允许范围内的相关信息。
+&#160;&#160;&#160;&#160;&#160;&#160;&#160;本软件针对家属和社会人员有不同的设置，家属可以获得服刑人员相关服刑信息，社会人事只能获得监狱允许范围内的相关信息。
 本软件需付费使用，个人使用授权版本只能由单个用户在一台或多台手机上亲自使用；
 您不得对本软件产品进行反向工程、反向编译和反向汇编，不得删除本软件及其他副本上一切关于版权的信息，不得制作和提供该软件的注册机及破解程序。除非适用法律明文允许上述活动，否则您必须遵守此协议限制。
 最终解释权归国科政信科技（北京）股份有限公司所有。
@@ -25,4 +25,7 @@
     <string name="title_activity_shopping_recoder">ShoppingRecoderActivity</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_agreement">AgreementActivity</string>
+    <string name="title_activity_apply_barcode">ApplyBarcodeActivity</string>
+    <string name="tanjian_notice">探监须知： \n1、根据本监狱的规定，每位服刑囚犯每月只能接受两次及以内的探视服务。 \n2、只有近亲属（父母、直系兄妹及其配偶等）才可申请探监。 \n3、本监狱探监开放日位每月15号和25号，其余时间不接受探监。 \n4、每位服刑人员每次探监时长不超过1小时。 \n5、重刑犯、表现不佳的服刑人员不接受探监。 \n6、本服务端每月只能提交3次探监申请，请勿无故提交，以免浪费机会。</string>
+    <string name="title_activity_apply_result">ApplyResultActivity</string>
 </resources>

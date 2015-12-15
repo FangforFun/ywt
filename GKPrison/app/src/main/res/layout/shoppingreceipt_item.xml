@@ -3,13 +3,6 @@
     android:layout_width="match_parent"
     android:background="@android:color/white"
     android:layout_height="50dp">
-    <View
-        android:id="@+id/fengge_ding"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/black"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
     <LinearLayout
         android:id="@+id/ll_biaoge"
         android:layout_width="match_parent"
@@ -19,7 +12,6 @@
             android:id="@+id/fenge_qi"
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="10dp"
             android:background="@android:color/black"/>
         <TextView
             android:id="@+id/tv_receipt_time"
@@ -87,18 +79,6 @@
         <View
             android:layout_width="1dp"
             android:layout_height="50dp"
-            android:background="@android:color/black"
-            android:layout_marginRight="10dp"/>
-
+            android:background="@color/black"/>
     </LinearLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:background="@android:color/black"
-        />
-
-
 </RelativeLayout>

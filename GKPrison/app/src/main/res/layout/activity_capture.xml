@@ -29,7 +29,7 @@
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="二维码/条码扫描"
+            android:text="二维码扫描"
             android:textSize="20sp"
             android:textColor="#fff"/>
 
@@ -53,7 +53,6 @@
         android:layout_marginBottom="120dp"
         android:layout_centerHorizontal="true"
         android:onClick="onClick"
-
         android:textColor="@android:color/white"
         android:background="@drawable/btn_bg_shape"
         android:text="没有二维码"/>

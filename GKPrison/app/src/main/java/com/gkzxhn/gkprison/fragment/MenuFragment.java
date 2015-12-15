@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.fragment;
 
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.activity.ApplyBarcodeActivity;
 import com.gkzxhn.gkprison.activity.RemittanceActivity;
 import com.gkzxhn.gkprison.activity.SettingActivity;
 import com.gkzxhn.gkprison.activity.ShoppingRecoderActivity;
@@ -19,13 +19,13 @@ import com.gkzxhn.gkprison.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.activity.UserInfoActivity;
 
 /**
- * A simple {@link Fragment} subclass.
+ * 左侧侧滑菜单fragment
  */
 public class MenuFragment extends BaseFragment {
 
     private ListView lv_home_menu;
-    private final String[] menu_options_tv = {"个人信息", "我的银行卡", "汇款记录", "购物记录", "系统消息", "设置"};
-    private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.my_bc, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.system_msg, R.drawable.setting};
+    private final String[] menu_options_tv = {"申请二维码", "个人信息", "我的银行卡", "汇款记录", "购物记录", "系统消息", "设置"};
+    private final int[] menu_options_iv = {R.drawable.apply_barcode, R.drawable.user_info, R.drawable.my_bc, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.system_msg, R.drawable.setting};
 
     @Override
     protected View initView() {
@@ -45,22 +45,26 @@ public class MenuFragment extends BaseFragment {
                 Intent intent;
                 switch (position){
                     case 0:
+                        intent = new Intent(context, ApplyBarcodeActivity.class);
+                        startActivity(intent);
+                        break;
+                    case 1:
                         intent = new Intent(context, UserInfoActivity.class);
                         startActivity(intent);
                         break;
-                    case 2:
+                    case 3:
                         intent = new Intent(context, RemittanceActivity.class);
                         context.startActivity(intent);
                         break;
-                    case 3:
+                    case 4:
                         intent = new Intent(context, ShoppingRecoderActivity.class);
                         context.startActivity(intent);
                         break;
-                    case 4:
+                    case 5:
                         intent = new Intent(context, SystemMessageActivity.class);
                         startActivity(intent);
                         break;
-                    case 5:
+                    case 6:
                         intent = new Intent(context, SettingActivity.class);
                         startActivity(intent);
                         break;
