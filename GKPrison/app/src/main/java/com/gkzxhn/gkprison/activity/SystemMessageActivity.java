@@ -17,7 +17,7 @@ public class SystemMessageActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_system_message, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_system_message, null);
         lv_system_msg = (ListView) view.findViewById(R.id.lv_system_msg);
         return view;
     }
@@ -56,7 +56,7 @@ public class SystemMessageActivity extends BaseActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
             SystemMsgViewHolder holder;
             if(convertView == null){
-                convertView = View.inflate(mContext, R.layout.system_msg_item, null);
+                convertView = View.inflate(getApplicationContext(), R.layout.system_msg_item, null);
                 holder = new SystemMsgViewHolder();
                 holder.tv_system_msg_left = (TextView) convertView.findViewById(R.id.tv_system_msg_left);
                 holder.tv_system_msg_right = (TextView) convertView.findViewById(R.id.tv_system_msg_right);
@@ -78,32 +78,31 @@ public class SystemMessageActivity extends BaseActivity {
                     Intent intent;
                     switch (position){
                         case 0:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                             intent.putExtra("type", "探监已通过");
                             startActivity(intent);
                             break;
                         case 1:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                             intent.putExtra("type", "探监未通过");
                             startActivity(intent);
                             break;
                         case 2:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                             intent.putExtra("type", "会见已通过");
                             startActivity(intent);
                             break;
                         case 3:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                             intent.putExtra("type", "会见未通过");
                             startActivity(intent);
                             break;
                         case 4:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
-                            intent.putExtra("type", "探监已通过");
+                            intent = new Intent(SystemMessageActivity.this, VersionUpdateActivity.class);
                             startActivity(intent);
                             break;
                         case 5:
-                            intent = new Intent(mContext, ApplyResultActivity.class);
+                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                             intent.putExtra("type", "探监未通过");
                             startActivity(intent);
                             break;

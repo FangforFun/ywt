@@ -9,7 +9,7 @@
     <string name="title_activity_visiting_service">VisitingServiceActivity</string>
     <string name="title_activity_prison_warden">PrisonWardenActivity</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="agreement">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;国科狱务公开APP是由国科政信科技（北京）股份有限公司开发的一款监狱类软件，用于服刑人员家属、社会各界人士知悉服刑情况和监狱狱务情况。请您在使用本软件前仔细阅读如下条款。您的安装使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。\n
 一、	许可证的授予。本《协议》授予您下列权利：\n
 &#160;&#160;&#160;&#160;&#160;&#160;&#160;您可安装、复制、分发和传播本产品来使用，但您必须保证每一份复制、分发和传播都必须是完整和真实的。\n

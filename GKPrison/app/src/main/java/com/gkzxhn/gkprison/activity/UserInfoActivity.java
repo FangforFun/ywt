@@ -17,7 +17,7 @@ public class UserInfoActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_user_info, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_user_info, null);
         lv_user_info = (ListView) view.findViewById(R.id.lv_user_info);
         return view;
     }
@@ -50,7 +50,7 @@ public class UserInfoActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if(convertView == null){
-                convertView = View.inflate(mContext, R.layout.user_info_item, null);
+                convertView = View.inflate(getApplicationContext(), R.layout.user_info_item, null);
                 holder = new ViewHolder();
                 holder.tv_user_info_left = (TextView) convertView.findViewById(R.id.tv_user_info_left);
                 holder.tv_user_info_right = (TextView) convertView.findViewById(R.id.tv_user_info_right);

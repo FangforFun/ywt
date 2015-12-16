@@ -50,7 +50,7 @@ public class RemittanceActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext,R.layout.activity_remittance,null);
+        View view = View.inflate(getApplicationContext(),R.layout.activity_remittance,null);
         lv_remittance = (ListView)view.findViewById(R.id.lv_remittance);
         return view;
     }
@@ -83,7 +83,7 @@ public class RemittanceActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
            ViewHolder viewHolder;
             if (convertView == null){
-                convertView = View.inflate(mContext,R.layout.remittance_item,null);
+                convertView = View.inflate(getApplicationContext(),R.layout.remittance_item,null);
                 viewHolder = new ViewHolder();
                 viewHolder.tv_paytime = (TextView)convertView.findViewById(R.id.tv_paytime);
                 viewHolder.tv_payment = (TextView)convertView.findViewById(R.id.tv_transtype);

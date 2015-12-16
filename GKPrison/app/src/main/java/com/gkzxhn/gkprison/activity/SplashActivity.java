@@ -14,7 +14,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext,R.layout.activity_splash,null);
+        View view = View.inflate(getApplicationContext(),R.layout.activity_splash,null);
         return view;
     }
 

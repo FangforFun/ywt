@@ -23,7 +23,7 @@ public class LawsRegulationsActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_laws_regulations, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_laws_regulations, null);
         lv_laws_regulations = (ListView) view.findViewById(R.id.lv_laws_regulations);
         return view;
     }
@@ -62,7 +62,7 @@ public class LawsRegulationsActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if(convertView == null) {
-                convertView = View.inflate(mContext, R.layout.laws_regulations_item, null);
+                convertView = View.inflate(getApplicationContext(), R.layout.laws_regulations_item, null);
                 holder = new ViewHolder();
                 holder.tv_laws_regulations_item = (TextView) convertView.findViewById(R.id.tv_laws_regulations_item);
                 holder.iv_to_right = (ImageView) convertView.findViewById(R.id.iv_to_right);

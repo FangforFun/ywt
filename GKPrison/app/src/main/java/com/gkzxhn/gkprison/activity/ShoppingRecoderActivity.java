@@ -33,7 +33,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext,R.layout.activity_shopping_recoder,null);
+        View view = View.inflate(getApplicationContext(),R.layout.activity_shopping_recoder,null);
         lv_shoppingrecoder = (ListView)view.findViewById(R.id.lv_shopping_recode);
         return view;
     }
@@ -66,7 +66,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
           ViewHoler viewHoler;
             if (convertView == null){
-                convertView = View.inflate(mContext,R.layout.shoppingrecode_item,null);
+                convertView = View.inflate(getApplicationContext(),R.layout.shoppingrecode_item,null);
                 viewHoler = new ViewHoler();
                 viewHoler.time = (TextView)convertView.findViewById(R.id.tv_paytime);
                 viewHoler.tv_money = (TextView)convertView.findViewById(R.id.tvshopping_money);

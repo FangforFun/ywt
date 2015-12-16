@@ -20,7 +20,7 @@ public class ApplyResultActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_apply_result, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_apply_result, null);
         tv_request_state = (TextView) view.findViewById(R.id.tv_request_state);
         ll_request_not_pass_reason = (LinearLayout) view.findViewById(R.id.ll_request_not_pass_reason);
         ll_request_pass_notice = (LinearLayout) view.findViewById(R.id.ll_request_pass_notice);

@@ -39,10 +39,10 @@ public class PrisonOpenActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_prison_open, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
         rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
-        layout_roll_view = View.inflate(mContext, R.layout.layout_roll_view, null);
+        layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
         top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
@@ -55,7 +55,7 @@ public class PrisonOpenActivity extends BaseActivity {
         setTitle("狱务公开");
         setBackVisibility(View.VISIBLE);
         initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(mContext, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
+        vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
                 showToastMsgShort(list_news_title.get(position));
@@ -84,7 +84,7 @@ public class PrisonOpenActivity extends BaseActivity {
         dotList.clear();
         dots_ll.removeAllViews();
         for (int i = 0; i < 4; i++) {
-            View view = new View(mContext);
+            View view = new View(getApplicationContext());
             if (i == 0) {
                 view.setBackgroundResource(R.drawable.rb_shape_blue);
             } else {
@@ -127,7 +127,7 @@ public class PrisonOpenActivity extends BaseActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
             if(convertView == null){
-                convertView = View.inflate(mContext, R.layout.prison_open_item, null);
+                convertView = View.inflate(getApplicationContext(), R.layout.prison_open_item, null);
                 holder = new ViewHolder();
                 holder.iv_home_news_icon = (ImageView) convertView.findViewById(R.id.iv_home_news_icon);
                 holder.tv_home_news_title = (TextView) convertView.findViewById(R.id.tv_home_news_title);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gkzxhn.gkprison" >
+    package="com.gkzxhn.gkprison">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -17,8 +17,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        <activity android:name=".activity.SplashActivity" >
+        android:theme="@style/AppTheme">
+        <activity android:name=".activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,40 +27,32 @@
         </activity>
         <activity
             android:name=".activity.PrisonIntroductionActivity"
-            android:label="@string/title_activity_prison_introduction" >
-        </activity>
+            android:label="@string/title_activity_prison_introduction"></activity>
         <activity
             android:name=".activity.LawsRegulationsActivity"
-            android:label="@string/title_activity_laws_regulations" >
-        </activity>
+            android:label="@string/title_activity_laws_regulations"></activity>
         <activity
             android:name=".activity.VisitingServiceActivity"
-            android:label="@string/title_activity_visiting_service" >
-        </activity>
+            android:label="@string/title_activity_visiting_service"></activity>
         <activity
             android:name=".activity.PrisonWardenActivity"
-            android:label="@string/title_activity_prison_warden" >
-        </activity>
+            android:label="@string/title_activity_prison_warden"></activity>
         <activity
             android:name=".activity.FamilyServiceActivity"
-            android:label="@string/title_activity_family_service" >
-        </activity>
+            android:label="@string/title_activity_family_service"></activity>
         <activity
             android:name=".activity.MainActivity"
             android:label="@string/app_name" />
         <activity android:name=".activity.PrisonOpenActivity" />
         <activity
             android:name=".activity.RemittanceActivity"
-            android:label="@string/title_activity_remittance" >
-        </activity>
+            android:label="@string/title_activity_remittance"></activity>
         <activity
             android:name=".activity.ShoppingRecoderActivity"
-            android:label="@string/title_activity_shopping_recoder" >
-        </activity>
+            android:label="@string/title_activity_shopping_recoder"></activity>
         <activity
             android:name=".activity.AgreementActivity"
-            android:label="@string/title_activity_agreement" >
-        </activity>
+            android:label="@string/title_activity_agreement"></activity>
         <activity
             android:name=".zxing.CaptureActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -72,12 +64,11 @@
         <activity android:name=".activity.SystemMessageActivity" />
         <activity
             android:name=".activity.ApplyBarcodeActivity"
-            android:label="@string/title_activity_apply_barcode" >
-        </activity>
+            android:label="@string/title_activity_apply_barcode"></activity>
         <activity
             android:name=".activity.ApplyResultActivity"
-            android:label="@string/title_activity_apply_result" >
-        </activity>
+            android:label="@string/title_activity_apply_result"></activity>
+        <activity android:name=".activity.VersionUpdateActivity"></activity>
     </application>
 
 </manifest>

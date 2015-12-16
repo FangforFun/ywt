@@ -201,7 +201,6 @@ public class HomePager extends BasePager{
                                     intent = new Intent(context, FamilyServiceActivity.class);
                                     context.startActivity(intent);
                                     break;
-
                             }
                             break;
                         case MotionEvent.ACTION_CANCEL:

@@ -19,7 +19,7 @@ public class ApplyBarcodeActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_apply_barcode, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_apply_barcode, null);
         bs_prison_choose = (BetterSpinner) view.findViewById(R.id.bs_prison_choose);
         return view;
     }
@@ -28,7 +28,7 @@ public class ApplyBarcodeActivity extends BaseActivity {
     protected void initData() {
         setTitle("申请二维码");
         setBackVisibility(View.VISIBLE);
-        prisonAdapter = new ArrayAdapter<String>(mContext,
+        prisonAdapter = new ArrayAdapter<String>(getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, PRISONS);
         bs_prison_choose.setAdapter(prisonAdapter);
     }

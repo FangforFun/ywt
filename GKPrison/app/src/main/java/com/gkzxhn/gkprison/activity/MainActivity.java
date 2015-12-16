@@ -3,15 +3,12 @@ package com.gkzxhn.gkprison.activity;
 import android.graphics.drawable.Drawable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
@@ -42,7 +39,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_main, null);
+        View view = View.inflate(this, R.layout.activity_main, null);
         home_viewPager = (ViewPager) view.findViewById(R.id.layout_content);
         rg_bottom_guide = (RadioGroup) view.findViewById(R.id.rg_bottom_guide);
         rb_bottom_guide_home = (RadioButton) view.findViewById(R.id.rb_bottom_guide_home);
@@ -50,13 +47,13 @@ public class MainActivity extends BaseActivity {
         rb_bottom_guide_canteen = (RadioButton) view.findViewById(R.id.rb_bottom_guide_canteen);
 //        tv_title_bar_title = (TextView) view.findViewById(R.id.tv_title_bar_title);
         Drawable[] drawables = rb_bottom_guide_home.getCompoundDrawables();
-        drawables[1].setBounds(0, DensityUtil.dip2px(mContext, 5), 70, 85);
+        drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
         rb_bottom_guide_home.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         Drawable[] drawables2 = rb_bottom_guide_visit.getCompoundDrawables();
-        drawables2[1].setBounds(0, DensityUtil.dip2px(mContext, 5), 70, 85);
+        drawables2[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
         rb_bottom_guide_visit.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
         Drawable[] drawables3 = rb_bottom_guide_canteen.getCompoundDrawables();
-        drawables3[1].setBounds(0, DensityUtil.dip2px(mContext, 5), 70, 85);
+        drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
         rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
         return view;
     }
@@ -71,14 +68,13 @@ public class MainActivity extends BaseActivity {
         menu.setFadeDegree(0.35f);
         MenuFragment menuFragment = new MenuFragment();
         // 拿当前fragment去替换左侧侧拉栏目的帧布局内容
-        ((BaseActivity)mContext).getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager().beginTransaction()
                 .replace(R.id.menu, menuFragment, "MENU").commit();
-        iv_home_menu.setOnClickListener(this);
         pagerList = new ArrayList<>();
         pagerList.clear();
-        pagerList.add(new HomePager(mContext));
-        pagerList.add(new RemoteMeetPager(mContext));
-        pagerList.add(new CanteenPager(mContext));
+        pagerList.add(new HomePager(this));
+        pagerList.add(new RemoteMeetPager(this));
+        pagerList.add(new CanteenPager(this));
 
         home_viewPager.setAdapter(new MyPagerAdapter());
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -105,8 +101,6 @@ public class MainActivity extends BaseActivity {
                         setMenuVisibility(View.GONE);
                         menu.setSlidingEnabled(false);
                         setActionBarGone(View.GONE);
-                        break;
-                    default:
                         break;
                 }
             }
@@ -145,6 +139,7 @@ public class MainActivity extends BaseActivity {
 
             }
         });
+        rl_home_menu.setOnClickListener(this);
     }
 
     private class MyPagerAdapter extends PagerAdapter {
@@ -206,11 +201,13 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-        super.onClick(v);
         switch (v.getId()){
-            case R.id.iv_home_menu:
-                menu.toggle();
+            case R.id.rl_home_menu:
+                if(menu != null) {
+                    menu.toggle();
+                }
                 break;
         }
+        super.onClick(v);
     }
 }

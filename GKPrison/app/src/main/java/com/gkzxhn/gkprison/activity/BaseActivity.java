@@ -1,12 +1,8 @@
 package com.gkzxhn.gkprison.activity;
 
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,14 +16,16 @@ import com.jeremyfeinstein.slidingmenu.lib.app.SlidingFragmentActivity;
  */
 public abstract class BaseActivity extends SlidingFragmentActivity implements View.OnClickListener{
 
-    protected Context mContext;
+//    protected Context mContext;
     protected RelativeLayout rl_content;
     protected TextView tv_title;
     protected ImageView iv_back;
+    protected RelativeLayout rl_back;
     protected ImageView iv_messge;
     protected TextView tv_messge;
+    protected RelativeLayout rl_home_menu;
     protected ImageView iv_home_menu;
-    private View ly_title_bar;
+    protected View ly_title_bar;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,18 +38,20 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         setContentView(R.layout.activity_base);
         setBehindContentView(R.layout.menu_frame);
         getSlidingMenu().setSlidingEnabled(false);
-        mContext = this;
+//        mContext = getApplicationContext();
         ly_title_bar = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
+        rl_back = (RelativeLayout) findViewById(R.id.rl_back);
         iv_messge = (ImageView)findViewById(R.id.iv_messge);
         tv_messge = (TextView)findViewById(R.id.tv_messge);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
+        rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
         View view = initView();
         rl_content.addView(view);
         initData();
-        iv_back.setOnClickListener(this);
+        rl_back.setOnClickListener(this);
     }
 
     /**
@@ -78,14 +78,14 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
      * @param pMsg
      */
     protected void showToastMsgShort(String pMsg) {
-        Toast.makeText(mContext, pMsg, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, pMsg, Toast.LENGTH_SHORT).show();
     }
     /**
      * 弹出toase 显示时长long
      * @param pMsg
      */
     protected void showToastMsgLong(String pMsg) {
-        Toast.makeText(mContext, pMsg, Toast.LENGTH_LONG).show();
+        Toast.makeText(this, pMsg, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -93,7 +93,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
      * @param visibility
      */
     protected void setBackVisibility(int visibility){
-        iv_back.setVisibility(visibility);
+        rl_back.setVisibility(visibility);
     }
 
     protected void setImageVisibility(int visibility){
@@ -105,7 +105,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
      * @param visibility
      */
     protected void setMenuVisibility(int visibility){
-        iv_home_menu.setVisibility(visibility);
+        rl_home_menu.setVisibility(visibility);
     }
 
     protected void setActionBarGone(int visibility){
@@ -120,7 +120,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     public void onClick(View v) {
         //子类选择性重写
         switch (v.getId()){
-            case R.id.iv_back:
+            case R.id.rl_back:
                 finish();
                 break;
         }

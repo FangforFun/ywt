@@ -19,7 +19,7 @@ public class VisitingServiceActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext,R.layout.activity_visiting_service,null);
+        View view = View.inflate(getApplicationContext(),R.layout.activity_visiting_service,null);
         et_visit_request_time = (EditText) view.findViewById(R.id.et_visit_request_time);
         return view;
     }

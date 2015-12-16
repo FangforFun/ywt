@@ -13,7 +13,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(mContext, R.layout.activity_setting, null);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
         tb_msg_remind = (ToggleButton) view.findViewById(R.id.tb_msg_remind);
         tb_clock_remind = (ToggleButton) view.findViewById(R.id.tb_clock_remind);
         tb_pwd_set = (ToggleButton) view.findViewById(R.id.tb_pwd_set);
