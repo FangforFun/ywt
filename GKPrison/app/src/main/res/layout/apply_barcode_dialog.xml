@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    android:background="@color/shallow_black">
+
+    <TextView
+        android:id="@+id/tv_apply_success_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="申请提交成功，系统正在进行审核，审核结果将以系统消息形式发送到您的狱务通软件中，请您耐心等待。"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:padding="20dp"
+        android:lineSpacingExtra="10dp"/>
+
+    <Button
+        android:id="@+id/bt_ok"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/tv_apply_success_notice"
+        android:background="@drawable/bt_bg_shape"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:text="确定"
+        android:layout_marginBottom="20dp"
+        android:textColor="@color/white"
+        android:textSize="18sp"/>
+
+</RelativeLayout>

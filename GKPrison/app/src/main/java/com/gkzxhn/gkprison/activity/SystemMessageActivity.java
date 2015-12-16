@@ -102,8 +102,7 @@ public class SystemMessageActivity extends BaseActivity {
                             startActivity(intent);
                             break;
                         case 5:
-                            intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
-                            intent.putExtra("type", "探监未通过");
+                            intent = new Intent(SystemMessageActivity.this, WardenReplyActivity.class);
                             startActivity(intent);
                             break;
                     }

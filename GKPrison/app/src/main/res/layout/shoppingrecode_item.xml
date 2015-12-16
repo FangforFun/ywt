@@ -12,7 +12,7 @@
             android:layout_height="1dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:background="#999999"/>
+            android:background="@color/tv_gray"/>
         <TextView
             android:id="@+id/tv_paytime"
             android:layout_width="wrap_content"
@@ -20,14 +20,14 @@
             android:text="2015年11月18日"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
-            android:textColor="#333333"
+            android:textColor="@color/tv_bg"
             android:gravity="center"/>
         <View
             android:layout_width="0dp"
             android:layout_height="1dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:background="#999999"/>
+            android:background="@color/tv_gray"/>
 
     </LinearLayout>
     <RelativeLayout
