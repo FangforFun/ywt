@@ -46,17 +46,27 @@
             android:src="@drawable/back"
             android:layout_centerVertical="true"
             android:paddingLeft="10dp"/>
+
     </RelativeLayout>
-    <ImageView
-        android:id="@+id/iv_messge"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:src="@drawable/messge"
+
+    <RelativeLayout
+        android:id="@+id/rl_write_message"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:visibility="gone"
-        />
+        android:background="@drawable/img_selector"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/iv_write_message"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:src="@drawable/write_message"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"/>
+
+    </RelativeLayout>
+
     <TextView
         android:id="@+id/tv_messge"
         android:layout_width="wrap_content"

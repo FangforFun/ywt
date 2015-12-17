@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -26,8 +27,8 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
 
     private TextView tv_title;
     private ViewPager viewPager;
-    private ImageView back;
-    private ImageView message;
+    private RelativeLayout rl_back;
+    private RelativeLayout rl_write_message;
     private RelativeLayout rl_carousel;
     private RollViewPager vp_carousel;
     private View layout_roll_view;
@@ -46,7 +47,10 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prison_warden);
-        back = (ImageView)findViewById(R.id.iv_back);
+        rl_back = (RelativeLayout)findViewById(R.id.rl_back);
+        rl_write_message = (RelativeLayout) findViewById(R.id.rl_write_message);
+        rl_write_message.setVisibility(View.VISIBLE);
+        rl_write_message.setOnClickListener(this);
         rl_carousel = (RelativeLayout) findViewById(R.id.rl_carousel);
         layout_roll_view = View.inflate(this, R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
@@ -54,10 +58,8 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
         rl_carousel.addView(layout_roll_view);
         tv_title = (TextView) findViewById(R.id.tv_title);
-        back.setVisibility(View.VISIBLE);
-        back.setOnClickListener(this);
-        message = (ImageView)findViewById(R.id.iv_messge);
-        message.setVisibility(View.VISIBLE);
+        rl_back.setVisibility(View.VISIBLE);
+        rl_back.setOnClickListener(this);
         viewPager = (ViewPager)findViewById(R.id.viewpage);
         if (viewPager != null){
             setupViewPager(viewPager);
@@ -113,9 +115,14 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()){
-            case R.id.iv_back:
+            case R.id.rl_back:
                 finish();
+                break;
+            case R.id.rl_write_message:
+                intent = new Intent(this, WriteMessageActivity.class);
+                startActivity(intent);
                 break;
         }
     }

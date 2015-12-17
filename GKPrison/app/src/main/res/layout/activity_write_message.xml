@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <EditText
+        android:id="@+id/et_theme"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/et_shape_search"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="主题："
+        android:hint="输入主题"
+        android:textColor="@color/tv_mid"
+        android:textSize="16sp"/>
+
+    <EditText
+        android:id="@+id/et_content"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_below="@+id/et_theme"
+        android:background="@drawable/et_shape_search"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:padding="10dp"
+        android:text="就餐许多人不排队，经常引起争执，以至于最后没有饭吃，请予以处理。"
+        android:hint="输入内容"
+        android:gravity="top"
+        android:lineSpacingExtra="5dp"
+        android:textColor="@color/tv_mid"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/tv_notice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_content"
+        android:text="* 每月最多提交两次"
+        android:layout_marginLeft="10dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:textSize="16sp"
+        android:textColor="@color/tv_gray"/>
+
+    <Button
+        android:id="@+id/bt_commit_write_message"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/tv_notice"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/bt_bg_shape"
+        android:text="提交"
+        android:textSize="18sp"
+        android:textColor="@color/white"/>
+</RelativeLayout>

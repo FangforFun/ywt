@@ -104,7 +104,6 @@ public class FamilyServiceActivity extends BaseActivity{
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
 
-
     }
 
     private class MyAdapter extends BaseExpandableListAdapter{

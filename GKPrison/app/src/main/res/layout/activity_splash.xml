@@ -5,6 +5,15 @@
     android:background="@drawable/splash"
     tools:context="com.gkzxhn.gkprison.activity.SplashActivity">
 
+    <TextView
+        android:id="@+id/tv_splash_app_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="狱务通"
+        android:textColor="@color/white"
+        android:textSize="30sp"/>
+
     <LinearLayout
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"

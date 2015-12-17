@@ -21,7 +21,6 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected TextView tv_title;
     protected ImageView iv_back;
     protected RelativeLayout rl_back;
-    protected ImageView iv_messge;
     protected TextView tv_messge;
     protected RelativeLayout rl_home_menu;
     protected ImageView iv_home_menu;
@@ -44,7 +43,6 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         rl_back = (RelativeLayout) findViewById(R.id.rl_back);
-        iv_messge = (ImageView)findViewById(R.id.iv_messge);
         tv_messge = (TextView)findViewById(R.id.tv_messge);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
@@ -94,10 +92,6 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
      */
     protected void setBackVisibility(int visibility){
         rl_back.setVisibility(visibility);
-    }
-
-    protected void setImageVisibility(int visibility){
-        iv_messge.setVisibility(visibility);
     }
 
     /**
