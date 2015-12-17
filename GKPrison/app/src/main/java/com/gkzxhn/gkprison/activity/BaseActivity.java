@@ -21,7 +21,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected TextView tv_title;
     protected ImageView iv_back;
     protected RelativeLayout rl_back;
-    protected TextView tv_messge;
+    protected RelativeLayout rl_remittance;
     protected RelativeLayout rl_home_menu;
     protected ImageView iv_home_menu;
     protected View ly_title_bar;
@@ -43,7 +43,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         tv_title = (TextView) findViewById(R.id.tv_title);
         iv_back = (ImageView) findViewById(R.id.iv_back);
         rl_back = (RelativeLayout) findViewById(R.id.rl_back);
-        tv_messge = (TextView)findViewById(R.id.tv_messge);
+        rl_remittance = (RelativeLayout)findViewById(R.id.rl_remittance);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
         View view = initView();
@@ -106,9 +106,12 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         ly_title_bar.setVisibility(visibility);
     }
 
-
-    protected void setTextVisibility(int visibility){
-        tv_messge.setVisibility(visibility);
+    /**
+     * 设置汇款是否可见
+     * @param visibility
+     */
+    protected void setRemittanceVisibility(int visibility){
+        rl_remittance.setVisibility(visibility);
     }
     @Override
     public void onClick(View v) {

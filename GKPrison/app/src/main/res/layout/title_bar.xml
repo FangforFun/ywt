@@ -67,16 +67,22 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_messge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/white"
-        android:text="汇款"
-        android:textSize="16sp"
+    <RelativeLayout
+        android:id="@+id/rl_remittance"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginRight="10dp"
-        android:visibility="gone"/>
+        android:background="@drawable/img_selector"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/tv_remittance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="汇款"
+            android:textSize="16sp"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="10dp"/>
+    </RelativeLayout>
 </RelativeLayout>

@@ -39,7 +39,7 @@ public class RemoteMeetPager extends BasePager {
 
     @Override
     public void initData() {
-        Drawable drawable1 = context.getResources().getDrawable(R.drawable.down);
+        Drawable drawable1 = context.getResources().getDrawable(R.drawable.down_gray);
         drawable1.setBounds(0, 0, 30, 20);
         et_meeting_request_time.setCompoundDrawables(null, null, drawable1, null);
         bt_commit_request.setOnClickListener(this);

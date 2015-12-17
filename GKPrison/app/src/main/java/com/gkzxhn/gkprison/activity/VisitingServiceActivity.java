@@ -1,10 +1,6 @@
 package com.gkzxhn.gkprison.activity;
 
 import android.graphics.drawable.Drawable;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
@@ -28,7 +24,7 @@ public class VisitingServiceActivity extends BaseActivity {
     protected void initData() {
         setTitle("申请探监");
         setBackVisibility(View.VISIBLE);
-        Drawable drawable1 = getResources().getDrawable(R.drawable.down);
+        Drawable drawable1 = getResources().getDrawable(R.drawable.down_gray);
         drawable1.setBounds(0, 0, 30, 20);
         et_visit_request_time.setCompoundDrawables(null, null, drawable1, null);
     }

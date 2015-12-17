@@ -1,71 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.gkzxhn.gkprison.fragment.InterractiveMailboxFragment">
 
-<LinearLayout
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <EditText
-        android:id="@+id/et_advice"
+    <ExpandableListView
+        android:id="@+id/elv_my_mailbox_list"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:minLines="12"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:background="@drawable/edit_bg_shape"
-        android:hint="请您写下对本监狱的意见和建议"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:gravity="start"/>
-    <TextView
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请留下您的联系方式"
-        android:textColor="#333333"
-        android:textSize="16sp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"/>
-    <EditText
-        android:id="@+id/et_name"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_bg_shape"
-        android:hint="姓名"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
-    <EditText
-        android:id="@+id/et_card"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_bg_shape"
-        android:hint="身份证号码"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
-    <EditText
-        android:id="@+id/et_phonenum"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_bg_shape"
-        android:hint="手机号码"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@android:color/holo_blue_light"
-        android:text="提交"
-        android:textSize="16sp"
-        android:textColor="@android:color/white"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="10dp"
-        />
-</LinearLayout>
-
-</FrameLayout>
+        android:divider="@color/transparent"
+        android:dividerHeight="2dp"
+        android:childDivider="@color/transparent"
+        android:background="@color/bg"
+        android:groupIndicator="@null">
+    </ExpandableListView>
+</RelativeLayout>

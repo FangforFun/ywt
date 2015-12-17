@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.activity;
 
+import android.content.Intent;
 import android.media.Image;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -100,10 +101,22 @@ public class FamilyServiceActivity extends BaseActivity{
     protected void initData() {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
-        setTextVisibility(View.VISIBLE);
+        setRemittanceVisibility(View.VISIBLE);
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
+        rl_remittance.setOnClickListener(this);
+    }
 
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        Intent intent;
+        switch (v.getId()){
+            case R.id.rl_remittance:
+                intent = new Intent(this, RemittanceWaysActivity.class);
+                startActivity(intent);
+                break;
+        }
     }
 
     private class MyAdapter extends BaseExpandableListAdapter{
@@ -161,7 +174,6 @@ public class FamilyServiceActivity extends BaseActivity{
             }else {
                 viewHolder.image_click.setImageResource(R.drawable.clickdown);
             }
-
             viewHolder.img_messge.setImageResource(image_messge.get(groupPosition));
             viewHolder.tv_messge.setText(text_messge.get(groupPosition));
             return convertView;
@@ -355,6 +367,4 @@ public class FamilyServiceActivity extends BaseActivity{
             ImageView receipt;
         }
     }
-
-
 }

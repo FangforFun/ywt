@@ -17,6 +17,7 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activity.SplashActivity">
             <intent-filter>
@@ -40,12 +41,10 @@
         <activity
             android:name=".activity.FamilyServiceActivity"
             android:label="@string/title_activity_family_service" />
-        <activity
-            android:name=".activity.MainActivity"
-            android:label="@string/app_name" />
+        <activity android:name=".activity.MainActivity" />
         <activity android:name=".activity.PrisonOpenActivity" />
         <activity
-            android:name=".activity.RemittanceActivity"
+            android:name=".activity.RemittanceRecordActivity"
             android:label="@string/title_activity_remittance" />
         <activity
             android:name=".activity.ShoppingRecoderActivity"
@@ -70,7 +69,8 @@
             android:label="@string/title_activity_apply_result" />
         <activity android:name=".activity.VersionUpdateActivity" />
         <activity android:name=".activity.WardenReplyActivity" />
-        <activity android:name=".activity.WriteMessageActivity"></activity>
+        <activity android:name=".activity.WriteMessageActivity" />
+        <activity android:name=".activity.RemittanceWaysActivity"></activity>
     </application>
 
 </manifest>

@@ -1,10 +1,5 @@
 package com.gkzxhn.gkprison.activity;
 
-import android.app.Activity;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,7 +11,7 @@ import com.gkzxhn.gkprison.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RemittanceActivity extends BaseActivity {
+public class RemittanceRecordActivity extends BaseActivity {
     private ListView lv_remittance;
     private RemittanceAdapter adapter;
     private List<String> paytime = new ArrayList<String>(){

@@ -1,5 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.gkzxhn.gkprison.activity.PrisonWardenActivity">
     <include
@@ -23,7 +25,11 @@
             android:id="@+id/tabs1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            app:tabIndicatorColor="@color/theme"
+            app:tabIndicatorHeight="3dp"
+            app:tabBackground="@color/white"
+            app:tabSelectedTextColor="@color/theme"
+            app:tabTextColor="@color/tv_mid"/>
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpage"
             android:layout_width="match_parent"

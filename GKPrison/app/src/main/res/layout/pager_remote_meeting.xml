@@ -163,7 +163,7 @@
                     android:background="@drawable/edit_bg_shape"
                     android:hint="点击选择"
                     android:textColorHint="@color/et_hint"
-                    android:drawableRight="@drawable/down"
+                    android:drawableRight="@drawable/down_gray"
                     android:paddingRight="15dp"
                     android:paddingLeft="10dp"/>
             </LinearLayout>

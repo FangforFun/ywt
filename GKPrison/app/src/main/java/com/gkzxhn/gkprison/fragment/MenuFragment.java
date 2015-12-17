@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.activity.ApplyBarcodeActivity;
-import com.gkzxhn.gkprison.activity.RemittanceActivity;
+import com.gkzxhn.gkprison.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.activity.SettingActivity;
 import com.gkzxhn.gkprison.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.activity.SystemMessageActivity;
@@ -53,7 +53,7 @@ public class MenuFragment extends BaseFragment {
                         startActivity(intent);
                         break;
                     case 3:
-                        intent = new Intent(context, RemittanceActivity.class);
+                        intent = new Intent(context, RemittanceRecordActivity.class);
                         context.startActivity(intent);
                         break;
                     case 4:
