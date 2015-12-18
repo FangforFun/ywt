@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@color/bg"
     android:focusable="true"
     android:focusableInTouchMode="true">
 
@@ -42,70 +42,98 @@
            android:layout_gravity="center_vertical"
            android:layout_marginRight="10dp"/>
     </LinearLayout>
-
-    <RelativeLayout
-        android:layout_below="@+id/ll_serch"
+    <LinearLayout
+        android:id="@+id/ll_navigation"
         android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_below="@+id/ll_serch">
+        <RelativeLayout
+        android:id="@+id/rl_allclass"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:background="@color/bg">
-        <TabHost
-            android:id="@+id/tab_host"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-                
-                <TabWidget
-                    android:id="@android:id/tabs"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white">
-                </TabWidget>
-
-                <FrameLayout
-                    android:id="@android:id/tabcontent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-                    <FrameLayout
-                        android:id="@+id/tab1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <FrameLayout
-                            android:id="@+id/fl_content_01"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="3dp"
-                            android:background="@color/white"></FrameLayout>
-                    </FrameLayout>
-
-                    <FrameLayout
-                        android:id="@+id/tab2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <FrameLayout
-                            android:id="@+id/fl_content_02"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="3dp"
-                            android:background="@color/white"></FrameLayout>
-                    </FrameLayout>
-                    <FrameLayout
-                        android:id="@+id/tab3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-                        <FrameLayout
-                            android:id="@+id/fl_content_03"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:layout_marginTop="3dp"
-                            android:background="@color/white"></FrameLayout>
-                    </FrameLayout>
-                </FrameLayout>
-            </LinearLayout>
-        </TabHost>
+        android:layout_weight="1">
+        <TextView
+            android:id="@+id/tv_allclass"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全部分类"
+            android:textSize="16sp"
+            android:textColor="@color/tv_bg"
+            android:layout_centerInParent="true"/>
+            <Spinner
+                android:id="@+id/sp_allclass"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_below="@+id/tv_allclass"
+                android:layout_alignParentRight="true"
+                android:entries="@array/shopping"
+                android:background="@drawable/spinner"></Spinner>
     </RelativeLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:background="@color/bg"
+            android:layout_gravity="center_vertical"/>
+        <RelativeLayout
+            android:id="@+id/rl_sales"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_sales"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="销量优先"
+                android:textSize="16sp"
+                android:textColor="@color/tv_bg"
+                android:layout_centerInParent="true"/>
+            <Spinner
+                android:id="@+id/sp_sales"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_below="@+id/tv_sales"
+                android:layout_alignParentRight="true"
+                android:entries="@array/shopping"
+                android:background="@drawable/spinner"></Spinner>
+        </RelativeLayout>
+        <View
+            android:layout_width="1dp"
+            android:layout_height="30dp"
+            android:background="@color/bg"
+            android:layout_gravity="center_vertical"/>
+        <RelativeLayout
+            android:id="@+id/rl_zhineng"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_zhineng"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="智能排序"
+                android:textSize="16sp"
+                android:textColor="@color/tv_bg"
+                android:layout_centerInParent="true"/>
+            <Spinner
+                android:id="@+id/sp_zhineng"
+                android:layout_width="15dp"
+                android:layout_height="15dp"
+                android:layout_below="@+id/tv_zhineng"
+                android:layout_alignParentRight="true"
+                android:entries="@array/shopping"
+                android:background="@drawable/spinner"></Spinner>
+        </RelativeLayout>
+    </LinearLayout>
+    <FrameLayout
+        android:id="@+id/fl_commodity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="50dp"
+        android:layout_below="@+id/ll_navigation"></FrameLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -153,28 +181,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/tv_total"
-                android:text="59.8"
+                android:text="0.0"
                 android:textSize="16sp"
                 android:textColor="#FF3503"
                 android:layout_toRightOf="@+id/tv_total"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#FF3503"
-            android:textSize="16sp"
-            android:text="元"
-            android:layout_alignBaseline="@+id/tv_total"
-            android:layout_toRightOf="@+id/tv_total_money"/>
-        <TextView
-            android:id="@+id/tv_total_money_remarks"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(含配送费2元)"
-            android:textSize="12sp"
-            android:textColor="@color/tv_mid"
-            android:layout_below="@+id/tv_total"
-            android:layout_toRightOf="@+id/image_buycar"
-            android:layout_marginLeft="30dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#FF3503"
+                android:textSize="16sp"
+                android:text="元"
+                android:layout_alignBaseline="@+id/tv_total"
+                android:layout_toRightOf="@+id/tv_total_money"/>
+            <TextView
+                android:id="@+id/tv_total_money_remarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="(含配送费2元)"
+                android:textSize="12sp"
+                android:textColor="@color/tv_mid"
+                android:layout_below="@+id/tv_total"
+                android:layout_toRightOf="@+id/image_buycar"
+                android:layout_marginLeft="30dp"/>
 
         </RelativeLayout>
         <Button
@@ -187,4 +215,5 @@
             android:textSize="16sp"
             android:textColor="@android:color/white"/>
     </LinearLayout>
+
 </RelativeLayout>

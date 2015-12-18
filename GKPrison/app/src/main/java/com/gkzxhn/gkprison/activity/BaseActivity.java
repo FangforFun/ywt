@@ -25,6 +25,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected RelativeLayout rl_home_menu;
     protected ImageView iv_home_menu;
     protected View ly_title_bar;
+    protected TextView tv_remittance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         iv_back = (ImageView) findViewById(R.id.iv_back);
         rl_back = (RelativeLayout) findViewById(R.id.rl_back);
         rl_remittance = (RelativeLayout)findViewById(R.id.rl_remittance);
+        tv_remittance = (TextView)findViewById(R.id.tv_remittance);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
         View view = initView();
@@ -90,7 +92,7 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
      * 设置返回按钮是否可见
      * @param visibility
      */
-    protected void setBackVisibility(int visibility){
+    protected void setBackVisibility(int visibility) {
         rl_back.setVisibility(visibility);
     }
 
@@ -105,6 +107,11 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected void setActionBarGone(int visibility){
         ly_title_bar.setVisibility(visibility);
     }
+
+    protected void setTextContent(String s){
+        tv_remittance.setText(s);
+    }
+
 
     /**
      * 设置汇款是否可见

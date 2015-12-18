@@ -23,6 +23,8 @@ import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * 主activity
  */
@@ -56,6 +58,11 @@ public class MainActivity extends BaseActivity {
         drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
         rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
         return view;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

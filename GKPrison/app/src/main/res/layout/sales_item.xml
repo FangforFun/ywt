@@ -4,14 +4,13 @@
     android:orientation="horizontal"
     android:background="@drawable/item_selector"
     android:layout_width="match_parent"
-    android:layout_height="80dp"
+    android:layout_height="110dp"
     android:padding="5dp">
     <RelativeLayout
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="5dp" >
+        android:layout_width="96dp"
+        android:layout_height="96dp"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_vertical">
         <ImageView
             android:id="@+id/image_commodity"
             android:layout_width="match_parent"
@@ -32,9 +31,9 @@
     <LinearLayout
         android:layout_width="0dp"
         android:orientation="vertical"
-        android:layout_marginRight="10dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+
         android:layout_weight="2">
 
         <TextView
@@ -44,25 +43,83 @@
             android:lineSpacingExtra="3dp"
             android:maxLines="2"
             android:ellipsize="end"
-            android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"/>
-        <com.hedgehog.ratingbar.RatingBar
-            android:layout_marginTop="5dp"
-            android:id="@+id/start"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:enabled="false"
-            hedgehog:starCount="5"
-            hedgehog:clickable="false"
-            hedgehog:starEmpty="@mipmap/ic_star_empty"
-            hedgehog:starFill="@mipmap/ic_star_fill"
-            hedgehog:starImageSize="15dp"
-            android:layout_below="@+id/evaluation_nums"/>
-        <TextView
-            android:id="@+id/tv_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="¥ 29.8"
-            android:layout_gravity="right"/>
-    </LinearLayout>
 
+            android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+        <LinearLayout
+            android:id="@+id/ll_add_commodity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:layout_marginTop="26dp">
+            <RelativeLayout
+                android:id="@+id/rl_reduce"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="#F1F1F1">
+               <ImageView
+                   android:id="@+id/image_reduce"
+                   android:layout_width="20dp"
+                   android:layout_height="20dp"
+                   android:layout_centerInParent="true"
+                   android:src="@drawable/shoppiing_reduce"/>
+            </RelativeLayout>
+            <RelativeLayout
+                    android:layout_width="34dp"
+                    android:layout_height="34dp"
+                    android:background="#F1F1F1"
+                    android:layout_marginLeft="1dp">
+                <TextView
+                    android:id="@+id/tv_num"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:gravity="center"
+                    android:layout_centerInParent="true"
+                    android:textSize="20sp"
+                    android:text="0"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl_add"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:background="#F1F1F1"
+                android:layout_marginLeft="1dp">
+                <ImageView
+                  android:layout_width="20dp"
+                  android:layout_height="20dp"
+                  android:layout_centerInParent="true"
+                  android:src="@drawable/btn_add"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:layout_gravity="bottom"
+                android:gravity="bottom"
+                >
+                <TextView
+                    android:id="@+id/tv_rmb"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/tv_bg"
+                    android:text="¥"/>
+                <TextView
+                    android:id="@+id/tv_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:textColor="@color/tv_bg"
+                    android:text="29.8"
+                    android:layout_toRightOf="@+id/tv_rmb"
+                    android:layout_alignBaseline="@+id/tv_rmb" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
 </LinearLayout>

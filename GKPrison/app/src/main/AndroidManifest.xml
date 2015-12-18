@@ -49,5 +49,9 @@
         <activity android:name=".activity.WardenReplyActivity" />
         <activity android:name=".activity.WriteMessageActivity" />
         <activity android:name=".activity.RemittanceWaysActivity"/>
+        <activity android:name=".activity.PaymentActivity"/>
+        <activity android:name=".activity.BankPayActivity"/>
+        <activity android:name=".activity.ZhifubaoPayActivity"/>
+        <activity android:name=".activity.WeixinPayActivity" />
     </application>
 </manifest>

@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.gkzxhn.gkprison.activity.PaymentActivity">
+    <TextView
+        android:id="@+id/tv_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="共计:"
+        android:paddingLeft="10dp"
+        android:textColor="@color/tv_bg"
+        android:textSize="18sp"/>
+    <TextView
+        android:id="@+id/tv_count_money"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_count"
+        android:layout_alignBaseline="@+id/tv_count"
+        android:layout_marginLeft="2dp"
+        android:text="29.8"
+        android:textSize="18sp"
+        android:textColor="@color/tv_bg"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/tv_count_money"
+        android:text="元"
+        android:textColor="@color/tv_bg"
+        android:layout_marginLeft="2dp"
+        android:layout_alignBaseline="@+id/tv_count"
+        android:textSize="18sp"
+        />
+    <TextView
+        android:id="@+id/tv_choose_pay_way"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:text="选择支付方式"
+        android:layout_below="@+id/tv_count"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:textColor="#A000"
+        android:textSize="16sp"
+        />
+
+    <ListView
+        android:id="@+id/lv_pay_way"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/tv_choose_pay_way"
+        android:dividerHeight="2dp"
+        android:background="@color/white"
+        android:divider="@color/et_hint"></ListView>
+
+    <Button
+        android:id="@+id/bt_pay"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@id/lv_pay_way"
+        android:text="支付"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="30dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="#fff"
+        android:background="@color/theme"/>
+
+
+</RelativeLayout>

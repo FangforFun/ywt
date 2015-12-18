@@ -2,13 +2,13 @@ package com.gkzxhn.gkprison.activity;
 
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
 import com.gkzxhn.gkprison.R;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class SplashActivity extends BaseActivity {
 
@@ -29,5 +29,27 @@ public class SplashActivity extends BaseActivity {
             }
         }, 2000);
         setActionBarGone(View.GONE);
+        copyDB("chaoshi.db");
+    }
+
+    private void copyDB(String dbName) {
+        File file = new File(getFilesDir(), dbName);
+        if (file.exists() && file.length() > 0) {
+            System.out.println("数据库已存在");
+        } else {
+            try {
+                InputStream is = getAssets().open(dbName);
+                FileOutputStream fos = new FileOutputStream(file);
+                int len = 0;
+                byte[] b = new byte[1024];
+                while ((len = is.read(b)) != -1) {
+                    fos.write(b, 0, len);
+                }
+                is.close();
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

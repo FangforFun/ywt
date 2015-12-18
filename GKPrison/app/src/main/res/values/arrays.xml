@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shopping">
+        <item>洗涤日化</item>
+        <item>食品</item>
+        <item>服饰鞋帽</item>
+    </string-array>
+</resources>

@@ -9,7 +9,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.hedgehog.ratingbar.RatingBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +84,6 @@ public class SalesPriorityFragment extends BaseFragment {
                 viewHolder.imageView = (ImageView)convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView)convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_money);
-                viewHolder.start = (RatingBar) convertView.findViewById(R.id.start);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (ViewHolder)convertView.getTag();
@@ -93,8 +91,7 @@ public class SalesPriorityFragment extends BaseFragment {
             viewHolder.imageView.setImageResource(image.get(position));
             viewHolder.tv_description.setText(description.get(position));
             viewHolder.tv_money.setText(money.get(position));
-            viewHolder.start.setStar((position + 3) > 5 ? 3 : (position + 3));
-            viewHolder.start.setmClickable(false);
+
             return convertView;
         }
     }
@@ -102,6 +99,6 @@ public class SalesPriorityFragment extends BaseFragment {
         ImageView imageView;
         TextView  tv_description;
         TextView  tv_money;
-        RatingBar start;
+
     }
 }
