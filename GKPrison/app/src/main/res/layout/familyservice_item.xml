@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:text="刑期变动"
             android:textColor="@color/tv_bg"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"/>

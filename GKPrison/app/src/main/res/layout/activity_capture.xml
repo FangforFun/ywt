@@ -55,7 +55,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="130dp"
         android:textColor="@android:color/white"
-        android:background="@drawable/btn_bg_shape"
+        android:background="@drawable/transparent_bt_selector"
         android:text="从相册选取二维码"/>
 
     <Button
@@ -66,7 +66,7 @@
         android:textColor="@android:color/white"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="60dp"
-        android:background="@drawable/btn_bg_shape"
+        android:background="@drawable/transparent_bt_selector"
         android:text="没有二维码"/>
 
     <RelativeLayout

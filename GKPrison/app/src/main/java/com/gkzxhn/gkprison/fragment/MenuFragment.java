@@ -41,7 +41,7 @@ public class MenuFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 TextView menu_option_tv = (TextView) view.findViewById(R.id.tv_menu_option);
-                showToastMsgShort(menu_option_tv.getText().toString());
+//                showToastMsgShort(menu_option_tv.getText().toString());
                 Intent intent;
                 switch (position){
                     case 0:

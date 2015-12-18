@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.activity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -11,6 +12,9 @@ import com.gkzxhn.gkprison.R;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 购物记录
+ */
 public class ShoppingRecoderActivity extends BaseActivity {
     private ListView lv_shoppingrecoder;
     private ShoppingAdapter adapter;
@@ -64,19 +68,31 @@ public class ShoppingRecoderActivity extends BaseActivity {
             if (convertView == null){
                 convertView = View.inflate(getApplicationContext(),R.layout.shoppingrecode_item,null);
                 viewHoler = new ViewHoler();
-                viewHoler.time = (TextView)convertView.findViewById(R.id.tv_paytime);
-                viewHoler.tv_money = (TextView)convertView.findViewById(R.id.tvshopping_money);
+                viewHoler.tv_paytime = (TextView)convertView.findViewById(R.id.tv_paytime);
+                viewHoler.tvshopping_money = (TextView)convertView.findViewById(R.id.tvshopping_money);
+                viewHoler.tv_alipay_trading_num = (TextView) convertView.findViewById(R.id.tv_alipay_trading_num);
+                viewHoler.tv_transact_state = (TextView) convertView.findViewById(R.id.tv_transact_state);
+                viewHoler.bt_shopping_record_operate = (Button) convertView.findViewById(R.id.bt_shopping_record_operate);
                 convertView.setTag(viewHoler);
             }else {
                 viewHoler = (ViewHoler)convertView.getTag();
             }
-            viewHoler.time.setText(recodertime.get(position));
-            viewHoler.tv_money.setText(money_count.get(position));
+            viewHoler.tv_paytime.setText(recodertime.get(position));
+            viewHoler.tvshopping_money.setText(money_count.get(position));
+            viewHoler.bt_shopping_record_operate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showToastMsgShort("申请退款...");
+                }
+            });
             return convertView;
         }
         private class ViewHoler{
-            TextView tv_money;
-            TextView time;
+            TextView tv_alipay_trading_num;
+            TextView tvshopping_money;
+            TextView tv_paytime;
+            TextView tv_transact_state;
+            Button bt_shopping_record_operate;
         }
     }
 }

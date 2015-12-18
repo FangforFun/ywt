@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_below="@id/tv_apply_success_notice"
-        android:background="@drawable/bt_bg_shape"
+        android:background="@drawable/theme_bg_bt_selector"
         android:layout_marginLeft="35dp"
         android:layout_marginRight="35dp"
         android:text="确定"

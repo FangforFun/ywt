@@ -175,7 +175,7 @@ public class HomePager extends BasePager{
                             finalConvertView.setBackgroundColor(context.getResources().getColor(R.color.white));
                             holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.tv_bg));
                             holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
-                            showToastMsgShort("hehehe" + position);
+//                            showToastMsgShort("hehehe" + position);
                             switch (position) {
                                 case 0:
                                     intent = new Intent(context, PrisonIntroductionActivity.class);

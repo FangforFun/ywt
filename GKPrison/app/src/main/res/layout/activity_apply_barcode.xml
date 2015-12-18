@@ -114,7 +114,7 @@
             android:text="发送验证码"
             android:textSize="14sp"
             android:textColor="@color/white"
-            android:background="@drawable/bt_bg_shape"/>
+            android:background="@drawable/theme_bg_bt_selector"/>
     </LinearLayout>
 
     <LinearLayout
@@ -159,6 +159,6 @@
         android:textSize="18sp"
         android:textColor="@color/white"
         android:layout_marginTop="5dp"
-        android:background="@drawable/bt_bg_shape"/>
+        android:background="@drawable/theme_bg_bt_selector"/>
 
 </LinearLayout>

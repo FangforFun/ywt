@@ -186,9 +186,7 @@ public class CaptureActivity extends Activity implements Callback {
 						if (photo_path == null) {
 							photo_path = Utils.getPath(getApplicationContext(),
 									data.getData());
-//							Log.i("123path  Utils", photo_path);
 						}
-//						Log.i("123path", photo_path);
 					}
 					cursor.close();
 					rl_scanning.setVisibility(View.VISIBLE);
@@ -206,8 +204,6 @@ public class CaptureActivity extends Activity implements Callback {
 								Looper.loop();
 							} else {
 								Looper.prepare();
-//								Log.i("123result", result.toString());
-								// Log.i("123result", result.getText());
 								// 数据返回
 //								String recode = recode(result.toString());
 								scanning_handler.sendEmptyMessage(0);

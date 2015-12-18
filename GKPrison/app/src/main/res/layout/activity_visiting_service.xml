@@ -170,6 +170,6 @@
             android:layout_marginLeft="20dp"
             android:text="申请探监"
             android:layout_below="@id/ll_visit_request_info"
-            android:background="@drawable/bt_bg_shape"/>
+            android:background="@drawable/theme_bg_bt_selector"/>
     </RelativeLayout>
 </ScrollView>

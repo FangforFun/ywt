@@ -181,6 +181,6 @@
             android:textSize="18sp"
             android:text="申请会见"
             android:layout_below="@id/ll_meeting_request_info"
-            android:background="@drawable/bt_bg_shape"/>
+            android:background="@drawable/theme_bg_bt_selector"/>
     </RelativeLayout>
 </ScrollView>

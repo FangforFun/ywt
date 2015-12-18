@@ -57,7 +57,7 @@
         android:layout_below="@id/tv_notice"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:background="@drawable/bt_bg_shape"
+        android:background="@drawable/theme_bg_bt_selector"
         android:text="提交"
         android:textSize="18sp"
         android:textColor="@color/white"/>
