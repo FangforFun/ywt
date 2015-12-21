@@ -8,7 +8,7 @@
         android:id="@+id/tv_apply_success_notice"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="申请提交成功，系统正在进行审核，审核结果将以系统消息形式发送到您的狱务通软件中，请您耐心等待。"
+        android:text="注册提交成功，系统正在进行审核，审核结果将以系统消息形式发送到您的狱务通软件中，请您耐心等待。"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:padding="20dp"

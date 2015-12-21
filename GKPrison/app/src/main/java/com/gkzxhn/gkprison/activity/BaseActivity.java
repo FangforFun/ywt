@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,9 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
     protected ImageView iv_home_menu;
     protected View ly_title_bar;
     protected TextView tv_remittance;
+    protected RelativeLayout rl_regist;
+    protected Spinner spinner_user_type;
+    protected TextView tv_user_type;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,6 +52,9 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         tv_remittance = (TextView)findViewById(R.id.tv_remittance);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
+        rl_regist = (RelativeLayout)findViewById(R.id.rl_regist);
+        spinner_user_type = (Spinner) findViewById(R.id.spinner_user_type);
+        tv_user_type = (TextView) findViewById(R.id.tv_user_type);
         View view = initView();
         rl_content.addView(view);
         initData();
@@ -112,6 +119,9 @@ public abstract class BaseActivity extends SlidingFragmentActivity implements Vi
         tv_remittance.setText(s);
     }
 
+    protected void setRegistVisiblity(int visiblity){
+        rl_regist.setVisibility(visiblity);
+    }
 
     /**
      * 设置汇款是否可见

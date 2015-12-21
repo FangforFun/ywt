@@ -139,6 +139,11 @@ public class MainActivity extends BaseActivity {
                     menu.setSlidingEnabled(false);
                     setActionBarGone(View.GONE);
                 }
+//                if(i != 2){
+//                    if(EventBus.getDefault() != null){
+//                        EventBus.getDefault().unregister(this);
+//                    }
+//                }
             }
 
             @Override

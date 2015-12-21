@@ -1,118 +1,187 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:toggle="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <RelativeLayout
+    <LinearLayout
+        android:id="@+id/ll_setting_options"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/white">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/bg">
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/gray_msg"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/item_selector">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/gray_msg"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="短信提醒"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:layout_marginLeft="50dp"
+                android:textColor="@color/tv_bg"/>
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_msg_remind"
+                android:layout_width="54dp"
+                toggle:onColor="#c1eaf7"
+                toggle:offColor="#bcbcbc"
+                toggle:spotColor="#32b1df"
+                toggle:offBorderColor="#bcbcbc"
+                toggle:borderWidth="2dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true">
+            </com.zcw.togglebutton.ToggleButton>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/item_selector"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/gray_clock"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="闹钟提醒"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:layout_marginLeft="50dp"
+                android:textColor="@color/tv_bg"/>
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_clock_remind"
+                android:layout_width="54dp"
+                toggle:onColor="#c1eaf7"
+                toggle:offColor="#bcbcbc"
+                toggle:spotColor="#32b1df"
+                toggle:offBorderColor="#bcbcbc"
+                toggle:borderWidth="2dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true">
+            </com.zcw.togglebutton.ToggleButton>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/item_selector"
+            android:layout_marginTop="10dp" >
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/gray_pwd_setting"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="独立密码设置"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:layout_marginLeft="50dp"
+                android:textColor="@color/tv_bg"/>
+
+            <com.zcw.togglebutton.ToggleButton
+                android:id="@+id/tb_pwd_set"
+                android:layout_width="54dp"
+                toggle:onColor="#c1eaf7"
+                toggle:offColor="#bcbcbc"
+                toggle:spotColor="#32b1df"
+                toggle:offBorderColor="#bcbcbc"
+                toggle:borderWidth="2dp"
+                android:layout_height="25dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_alignParentRight="true">
+            </com.zcw.togglebutton.ToggleButton>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_version_update"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@drawable/item_selector"
+            android:layout_marginTop="10dp" >
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/gray_version_update"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:text="版本更新"
+                android:gravity="center_vertical"
+                android:textSize="16sp"
+                android:layout_marginLeft="50dp"
+                android:textColor="@color/tv_bg"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="V 3.0"
+                android:textColor="@color/tv_mid"
+                android:textSize="16sp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"/>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:paddingBottom="20dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:id="@+id/tv_agreement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="狱务通软件协议使用条款"
+            android:layout_gravity="center"
+            android:textColor="@color/theme"
+            android:textSize="12sp"/>
 
         <TextView
             android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:text="短信提醒"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            android:layout_marginLeft="50dp"
-            android:textColor="@color/tv_bg"/>
-
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/tb_msg_remind"
-            android:layout_width="54dp"
-            toggle:onColor="#c1eaf7"
-            toggle:offColor="#bcbcbc"
-            toggle:spotColor="#32b1df"
-            toggle:offBorderColor="#bcbcbc"
-            toggle:borderWidth="2dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true">
-        </com.zcw.togglebutton.ToggleButton>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/white"
-        android:layout_marginTop="10dp">
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/gray_clock"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:text="闹钟提醒"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            android:layout_marginLeft="50dp"
-            android:textColor="@color/tv_bg"/>
-
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/tb_clock_remind"
-            android:layout_width="54dp"
-            toggle:onColor="#c1eaf7"
-            toggle:offColor="#bcbcbc"
-            toggle:spotColor="#32b1df"
-            toggle:offBorderColor="#bcbcbc"
-            toggle:borderWidth="2dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true">
-        </com.zcw.togglebutton.ToggleButton>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/white"
-        android:layout_marginTop="10dp" >
-
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/gray_pwd_setting"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:text="独立密码设置"
-            android:gravity="center_vertical"
-            android:textSize="16sp"
-            android:layout_marginLeft="50dp"
-            android:textColor="@color/tv_bg"/>
-
-        <com.zcw.togglebutton.ToggleButton
-            android:id="@+id/tb_pwd_set"
-            android:layout_width="54dp"
-            toggle:onColor="#c1eaf7"
-            toggle:offColor="#bcbcbc"
-            toggle:spotColor="#32b1df"
-            toggle:offBorderColor="#bcbcbc"
-            toggle:borderWidth="2dp"
-            android:layout_height="25dp"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentRight="true">
-        </com.zcw.togglebutton.ToggleButton>
-    </RelativeLayout>
-
-</LinearLayout>
+            android:layout_height="wrap_content"
+            android:text="国科政信（北京）股份有限公司\ncopyright©2006-2015.All right reserver"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_marginTop="8dp"
+            android:lineSpacingExtra="5dp"
+            android:textColor="@color/tv_gray"
+            android:textSize="12sp"/>
+    </LinearLayout>
+</RelativeLayout>

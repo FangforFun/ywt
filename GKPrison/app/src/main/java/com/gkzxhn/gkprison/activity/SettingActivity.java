@@ -1,6 +1,9 @@
 package com.gkzxhn.gkprison.activity;
 
+import android.content.Intent;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.zcw.togglebutton.ToggleButton;
@@ -10,6 +13,8 @@ public class SettingActivity extends BaseActivity {
     private ToggleButton tb_msg_remind;
     private ToggleButton tb_clock_remind;
     private ToggleButton tb_pwd_set;
+    private RelativeLayout rl_version_update;
+    private TextView tv_agreement;
 
     @Override
     protected View initView() {
@@ -17,6 +22,8 @@ public class SettingActivity extends BaseActivity {
         tb_msg_remind = (ToggleButton) view.findViewById(R.id.tb_msg_remind);
         tb_clock_remind = (ToggleButton) view.findViewById(R.id.tb_clock_remind);
         tb_pwd_set = (ToggleButton) view.findViewById(R.id.tb_pwd_set);
+        rl_version_update = (RelativeLayout) view.findViewById(R.id.rl_version_update);
+        tv_agreement = (TextView) view.findViewById(R.id.tv_agreement);
         return view;
     }
 
@@ -54,5 +61,22 @@ public class SettingActivity extends BaseActivity {
                 }
             }
         });
+        rl_version_update.setOnClickListener(this);
+        tv_agreement.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        Intent intent;
+        switch (v.getId()){
+            case R.id.rl_version_update:
+                intent = new Intent(this, VersionUpdateActivity.class);
+                startActivity(intent);
+                break;
+            case R.id.tv_agreement:
+                showToastMsgShort("协议...");
+                break;
+        }
     }
 }

@@ -24,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".activity.LoadingActivity" />
         <activity android:name=".activity.PrisonIntroductionActivity" />
         <activity android:name=".activity.LawsRegulationsActivity" />
         <activity android:name=".activity.VisitingServiceActivity" />
@@ -33,17 +34,10 @@
         <activity android:name=".activity.PrisonOpenActivity" />
         <activity android:name=".activity.RemittanceRecordActivity" />
         <activity android:name=".activity.ShoppingRecoderActivity" />
-        <activity android:name=".activity.AgreementActivity" />
-        <activity
-            android:name=".zxing.CaptureActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="CaptureActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity android:name=".activity.SettingActivity" />
         <activity android:name=".activity.UserInfoActivity" />
         <activity android:name=".activity.SystemMessageActivity" />
-        <activity android:name=".activity.ApplyBarcodeActivity" />
+        <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.ApplyResultActivity"/>
         <activity android:name=".activity.VersionUpdateActivity" />
         <activity android:name=".activity.WardenReplyActivity" />

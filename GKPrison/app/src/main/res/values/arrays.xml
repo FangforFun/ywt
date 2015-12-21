@@ -5,4 +5,9 @@
         <item>食品</item>
         <item>服饰鞋帽</item>
     </string-array>
+
+    <string-array name="loading">
+        <item>个人登录</item>
+        <item>监狱登录</item>
+    </string-array>
 </resources>

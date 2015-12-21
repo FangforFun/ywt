@@ -23,11 +23,11 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, AgreementActivity.class);
+                Intent intent = new Intent(SplashActivity.this, LoadingActivity.class);
                 startActivity(intent);
                 SplashActivity.this.finish();
             }
-        }, 2000);
+        }, 1500);
         setActionBarGone(View.GONE);
         copyDB("chaoshi.db");
     }
