@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    tools:context="com.gkzxhn.gkprison.activity.FamilyServiceActivity">
+    tools:context=".userport.activity.FamilyServiceActivity">
     <RelativeLayout
         android:id="@+id/rl_messge"
         android:layout_width="match_parent"

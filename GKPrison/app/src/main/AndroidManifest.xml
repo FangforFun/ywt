@@ -4,8 +4,10 @@
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,35 +19,37 @@
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.SplashActivity">
+        <activity android:name=".userport.activity.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.LoadingActivity" />
-        <activity android:name=".activity.PrisonIntroductionActivity" />
-        <activity android:name=".activity.LawsRegulationsActivity" />
-        <activity android:name=".activity.VisitingServiceActivity" />
-        <activity android:name=".activity.PrisonWardenActivity" />
-        <activity android:name=".activity.FamilyServiceActivity" />
-        <activity android:name=".activity.MainActivity" />
-        <activity android:name=".activity.PrisonOpenActivity" />
-        <activity android:name=".activity.RemittanceRecordActivity" />
-        <activity android:name=".activity.ShoppingRecoderActivity" />
-        <activity android:name=".activity.SettingActivity" />
-        <activity android:name=".activity.UserInfoActivity" />
-        <activity android:name=".activity.SystemMessageActivity" />
-        <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.ApplyResultActivity"/>
-        <activity android:name=".activity.VersionUpdateActivity" />
-        <activity android:name=".activity.WardenReplyActivity" />
-        <activity android:name=".activity.WriteMessageActivity" />
-        <activity android:name=".activity.RemittanceWaysActivity"/>
-        <activity android:name=".activity.PaymentActivity"/>
-        <activity android:name=".activity.BankPayActivity"/>
-        <activity android:name=".activity.ZhifubaoPayActivity"/>
-        <activity android:name=".activity.WeixinPayActivity" />
+        <activity android:name=".userport.activity.LoadingActivity" />
+        <activity android:name=".userport.activity.PrisonIntroductionActivity" />
+        <activity android:name=".userport.activity.LawsRegulationsActivity" />
+        <activity android:name=".userport.activity.VisitingServiceActivity" />
+        <activity android:name=".userport.activity.PrisonWardenActivity" />
+        <activity android:name=".userport.activity.FamilyServiceActivity" />
+        <activity android:name=".userport.activity.MainActivity" />
+        <activity android:name=".userport.activity.PrisonOpenActivity" />
+        <activity android:name=".userport.activity.RemittanceRecordActivity" />
+        <activity android:name=".userport.activity.ShoppingRecoderActivity" />
+        <activity android:name=".userport.activity.SettingActivity" />
+        <activity android:name=".userport.activity.UserInfoActivity" />
+        <activity android:name=".userport.activity.SystemMessageActivity" />
+        <activity android:name=".userport.activity.RegisterActivity" />
+        <activity android:name=".userport.activity.ApplyResultActivity" />
+        <activity android:name=".userport.activity.VersionUpdateActivity" />
+        <activity android:name=".userport.activity.WardenReplyActivity" />
+        <activity android:name=".userport.activity.WriteMessageActivity" />
+        <activity android:name=".userport.activity.RemittanceWaysActivity" />
+        <activity android:name=".userport.activity.PaymentActivity" />
+        <activity android:name=".userport.activity.BankPayActivity" />
+        <activity android:name=".userport.activity.ZhifubaoPayActivity" />
+        <activity android:name=".userport.activity.WeixinPayActivity" />
+        <activity android:name=".prisonport.activity.DateMeetingListActivity"></activity>
     </application>
+
 </manifest>

@@ -1,1 +1,1 @@
-include ':app',':libraries:library',':libraries:ToggleButtonLib'
+include ':app',':libraries:ToggleButtonLib'

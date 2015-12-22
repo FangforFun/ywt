@@ -1,11 +1,14 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.gkzxhn.gkprison.fragment.PersonLoadingFragment">
+    tools:context=".userport.fragment.PersonLoadingFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
         <TextView
             android:id="@+id/tv_regist_notice"
             android:layout_width="wrap_content"
@@ -22,7 +25,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/edit_bg_shape"
+            android:background="@drawable/et_shape_search"
             android:layout_below="@+id/tv_regist_notice"
             android:hint="姓名"
             android:paddingLeft="10dp"
@@ -37,7 +40,7 @@
             android:layout_marginLeft="10dp"
             android:layout_below="@+id/et_regist_username"
             android:layout_marginTop="1dp"
-            android:background="@drawable/edit_bg_shape"
+            android:background="@drawable/et_shape_search"
             android:hint="身份证号码"
             android:paddingLeft="10dp"
             android:textSize="16sp"
@@ -59,7 +62,7 @@
                 android:paddingLeft="10dp"
                 android:textSize="16sp"
                 android:textColor="@color/tv_bg"
-                android:background="@drawable/edit_bg_shape"/>
+                android:background="@drawable/et_shape_search"/>
            <TextView
                android:layout_width="0dp"
                android:layout_height="match_parent"
@@ -93,12 +96,12 @@
             android:gravity="left"
             android:text="注册"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="10dp"
             style="?android:attr/borderlessButtonStyle"
             android:textSize="15sp"
             android:textColor="@color/theme"/>
         <Button
-            android:id="@+id/bt_fastlogin"
+            android:id="@+id/bt_fast_login"
             android:layout_below="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

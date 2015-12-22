@@ -154,7 +154,6 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"/>
         </RelativeLayout>
-
     </LinearLayout>
 
     <LinearLayout
@@ -179,7 +178,7 @@
             android:text="国科政信（北京）股份有限公司\ncopyright©2006-2015.All right reserver"
             android:layout_gravity="center"
             android:gravity="center"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="5dp"
             android:lineSpacingExtra="5dp"
             android:textColor="@color/tv_gray"
             android:textSize="12sp"/>

@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="10dp"
-    tools:context="com.gkzxhn.gkprison.activity.ShoppingRecoderActivity">
+    tools:context=".userport.activity.ShoppingRecoderActivity">
     <ListView
         android:id="@+id/lv_shopping_recode"
         android:layout_width="match_parent"

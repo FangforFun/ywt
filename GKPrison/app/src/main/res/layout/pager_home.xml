@@ -99,7 +99,8 @@
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:textColor="@color/tv_mid"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:paddingBottom="5dp"/>
             </LinearLayout>
 
             <ImageView
@@ -116,7 +117,7 @@
             android:id="@+id/view_03"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/tv_gray"
+            android:background="@color/et_hint"
             android:layout_below="@id/ll_home_news1"/>
 
         <LinearLayout
@@ -162,7 +163,8 @@
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:textColor="@color/tv_mid"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:paddingBottom="5dp"/>
             </LinearLayout>
 
             <ImageView
@@ -179,7 +181,7 @@
             android:id="@+id/view_04"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/tv_gray"
+            android:background="@color/et_hint"
             android:layout_below="@id/ll_home_news2"/>
 
         <LinearLayout
@@ -225,7 +227,8 @@
                     android:ellipsize="end"
                     android:maxLines="3"
                     android:textColor="@color/tv_mid"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:paddingBottom="5dp"/>
             </LinearLayout>
 
             <ImageView

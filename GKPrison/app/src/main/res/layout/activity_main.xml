@@ -1,48 +1,64 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<com.gkzxhn.gkprison.userport.view.CustomDrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg">
+    android:layout_height="match_parent">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/layout_content"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#BBBBBB"/>
+        <android.support.v4.view.ViewPager
+            android:id="@+id/layout_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
-    <RadioGroup
-        android:id="@+id/rg_bottom_guide"
-        android:layout_width="match_parent"
-        android:layout_gravity="bottom"
-        android:background="@color/bg"
-        android:layout_height="50dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        >
-        <RadioButton
-            android:id="@+id/rb_bottom_guide_home"
-            style="@style/main_tab_style"
-            android:drawableTop="@drawable/tab_home_bg_selector"
-            android:drawablePadding="3dp"
-            android:text="首页"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/et_hint"/>
 
-        <RadioButton
-            android:id="@+id/rb_bottom_guide_visit"
-            style="@style/main_tab_style"
-            android:drawableTop="@drawable/tab_remote_meeting_bg_selector"
-            android:drawablePadding="3dp"
-            android:text="远程会见"/>
+        <RadioGroup
+            android:id="@+id/rg_bottom_guide"
+            android:layout_width="match_parent"
+            android:layout_gravity="bottom"
+            android:background="@color/bg"
+            android:layout_height="50dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal" >
 
-        <RadioButton
-            android:id="@+id/rb_bottom_guide_canteen"
-            style="@style/main_tab_style"
-            android:drawableTop="@drawable/tab_canteen_bg_selector"
-            android:drawablePadding="3dp"
-            android:text="小卖部"/>
-    </RadioGroup>
-</LinearLayout>
+            <RadioButton
+                android:id="@+id/rb_bottom_guide_home"
+                style="@style/main_tab_style"
+                android:drawableTop="@drawable/tab_home_bg_selector"
+                android:drawablePadding="3dp"
+                android:text="首页"/>
+
+            <RadioButton
+                android:id="@+id/rb_bottom_guide_visit"
+                style="@style/main_tab_style"
+                android:drawableTop="@drawable/tab_remote_meeting_bg_selector"
+                android:drawablePadding="3dp"
+                android:text="远程会见"/>
+
+            <RadioButton
+                android:id="@+id/rb_bottom_guide_canteen"
+                style="@style/main_tab_style"
+                android:drawableTop="@drawable/tab_canteen_bg_selector"
+                android:drawablePadding="3dp"
+                android:text="小卖部"/>
+        </RadioGroup>
+    </LinearLayout>
+
+    <!-- 抽屉的布局   方向取决于 android:layout_gravity="left" -->
+    <FrameLayout
+        android:id="@+id/fl_drawer"
+        android:layout_width="160dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="left"
+        android:background="@color/bg" >
+    </FrameLayout>
+</com.gkzxhn.gkprison.userport.view.CustomDrawerLayout>

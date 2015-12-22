@@ -14,7 +14,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="com.gkzxhn.gkprison.fragment.ExternalFragment"
+        android:name="com.gkzxhn.gkprison.userport.fragment.ExternalFragment"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
