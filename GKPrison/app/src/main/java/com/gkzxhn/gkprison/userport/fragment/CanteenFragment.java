@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,13 +17,16 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
+import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.readystatesoftware.viewbadger.BadgeView;
 
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -30,7 +35,6 @@ import de.greenrobot.event.EventBus;
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
@@ -69,6 +73,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
         allclass = new AllClassificationFragment();
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
@@ -123,9 +128,13 @@ public class CanteenFragment extends BaseFragment {
         });
     }
 
-    public View getView(){
-        return view;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
+
+
 
     public void onEvent(ClickEvent event) {
         Handler handler = new Handler(){
@@ -142,7 +151,7 @@ public class CanteenFragment extends BaseFragment {
         // 从事件中获得参数值
         Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
-        String sql = "select distinct * from commodity";
+        String sql = "select distinct line_items.num,line_items.qty,Items.price from line_items,Items where line_items.num = Items.id ";
         Cursor cursor = db.rawQuery(sql,null);
         total = 0;
         if (cursor.getCount() == 0){
@@ -150,11 +159,12 @@ public class CanteenFragment extends BaseFragment {
         }else {
             while (cursor.moveToNext()){
                 Commodity commodity = new Commodity();
-                commodity.setId(cursor.getInt(cursor.getColumnIndex("commodity_id")));
+                commodity.setId(cursor.getInt(cursor.getColumnIndex("num")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-                commodity.setNum(cursor.getInt(cursor.getColumnIndex("commodity_num")));
+                commodity.setNum(cursor.getInt(cursor.getColumnIndex("qty")));
                 commodities.add(commodity);
             }
+
         }
         for (int i = 0;i < commodities.size();i++){
             String t = commodities.get(i).getPrice();
@@ -169,4 +179,5 @@ public class CanteenFragment extends BaseFragment {
         msg.what = 1;
         handler.sendMessage(msg);
     }
+
 }
