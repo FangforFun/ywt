@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.fragment;
+package com.gkzxhn.gkprison.login;
 
 
 import android.content.Intent;
@@ -8,6 +8,7 @@ import android.widget.Button;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 
 /**
@@ -30,7 +31,7 @@ public class PrisonLoadingFragment extends BaseFragment {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, MainActivity.class);
+                Intent intent = new Intent(context, DateMeetingListActivity.class);
                 startActivity(intent);
                 getActivity().finish();
             }

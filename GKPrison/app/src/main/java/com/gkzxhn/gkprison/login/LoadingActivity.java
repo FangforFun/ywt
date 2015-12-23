@@ -1,12 +1,10 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.login;
 
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.userport.fragment.PersonLoadingFragment;
-import com.gkzxhn.gkprison.userport.fragment.PrisonLoadingFragment;
 
 /**
  * 登录页面

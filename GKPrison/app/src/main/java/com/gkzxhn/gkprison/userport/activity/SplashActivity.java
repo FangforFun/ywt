@@ -6,6 +6,7 @@ import android.view.View;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.login.LoadingActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;

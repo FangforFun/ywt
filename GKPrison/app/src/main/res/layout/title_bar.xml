@@ -3,25 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rl_title"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="48dp"
     android:background="@color/theme">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="48dp"
         android:background="@color/theme"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="48dp" >
 
             <RelativeLayout
                 android:id="@+id/rl_home_menu"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/img_selector"
                 android:clickable="true"
                 android:visibility="gone">
@@ -47,8 +47,8 @@
 
             <RelativeLayout
                 android:id="@+id/rl_back"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
 
@@ -64,8 +64,8 @@
 
             <RelativeLayout
                 android:id="@+id/rl_write_message"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
@@ -82,8 +82,8 @@
 
             <RelativeLayout
                 android:id="@+id/rl_remittance"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
@@ -102,7 +102,7 @@
             <RelativeLayout
                 android:id="@+id/rl_regist"
                 android:layout_width="100dp"
-                android:layout_height="50dp"
+                android:layout_height="48dp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
                 android:visibility="gone"
@@ -128,5 +128,4 @@
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
-
 </RelativeLayout>

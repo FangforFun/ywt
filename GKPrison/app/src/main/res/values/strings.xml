@@ -30,4 +30,13 @@
     <string name="title_activity_apply_barcode">ApplyBarcodeActivity</string>
     <string name="tanjian_notice">探监须知： \n1、根据本监狱的规定，每位服刑囚犯每月只能接受两次及以内的探视服务。 \n2、只有近亲属（父母、直系兄妹及其配偶等）才可申请探监。 \n3、本监狱探监开放日位每月15号和25号，其余时间不接受探监。 \n4、每位服刑人员每次探监时长不超过1小时。 \n5、重刑犯、表现不佳的服刑人员不接受探监。 \n6、本服务端每月只能提交3次探监申请，请勿无故提交，以免浪费机会。</string>
     <string name="title_activity_apply_result">ApplyResultActivity</string>
+
+    <string name="sunday">日</string>
+    <string name="monday">一</string>
+    <string name="thesday">二</string>
+    <string name="wednesday">三</string>
+    <string name="thursday">四</string>
+    <string name="friday">五</string>
+    <string name="saturday">六</string>
+    <string name="meeting_notice"><![CDATA[注意：\n        请确保视频内都是您的亲人，不是请及时告知狱警。\n        请注意通话不涉及犯罪、国家机密等内容，否则您将失去并可能永久失去远程会见机会。\n        请注意时间长短，不要影响后面的狱友使用。\n        若您在通话过程中有任何问题，请及时联系狱警沟通解决。]]></string>
 </resources>

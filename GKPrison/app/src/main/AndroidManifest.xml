@@ -26,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".userport.activity.LoadingActivity" />
+        <activity android:name=".login.LoadingActivity" />
         <activity android:name=".userport.activity.PrisonIntroductionActivity" />
         <activity android:name=".userport.activity.LawsRegulationsActivity" />
         <activity android:name=".userport.activity.VisitingServiceActivity" />
@@ -49,7 +49,8 @@
         <activity android:name=".userport.activity.BankPayActivity" />
         <activity android:name=".userport.activity.ZhifubaoPayActivity" />
         <activity android:name=".userport.activity.WeixinPayActivity" />
-        <activity android:name=".prisonport.activity.DateMeetingListActivity"></activity>
+        <activity android:name=".prisonport.activity.DateMeetingListActivity" />
+        <activity android:name=".prisonport.activity.CallUserActivity"></activity>
     </application>
 
 </manifest>
