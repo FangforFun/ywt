@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 
@@ -46,6 +47,7 @@ public class CallUserActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_call:
                 showToastMsgShort("呼叫");
+                AVChatActivity.start(this, "gkzxhn02", 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话
                 break;
         }
     }

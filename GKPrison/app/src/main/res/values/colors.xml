@@ -20,4 +20,9 @@
     <color name="Indigo_colorPrimaryDark">#303f9f</color>
     <color name="Indigo_nav_color">#4675FF</color>
     <color name="canlendar_text_color">#323232</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="color_c2364b">#C2364B</color>
+    <color name="color_f5455e">#F5455E</color>
 </resources>
