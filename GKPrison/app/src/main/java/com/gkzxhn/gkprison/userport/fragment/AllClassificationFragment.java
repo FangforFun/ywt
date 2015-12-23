@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -39,6 +40,7 @@ public class AllClassificationFragment extends BaseFragment {
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
+
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -58,8 +60,6 @@ public class AllClassificationFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        String sql2 = "delete from cart where 1=1";
-        db.execSQL(sql2);
         long time = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time);
@@ -89,7 +89,7 @@ public class AllClassificationFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return image.size();
+            return commodities.size();
         }
 
         @Override
@@ -143,10 +143,10 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(num,cart_id,qty) values ("+ n +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ n +"," + cart_id +",1)";
                         db.execSQL(sql);
                     }else {
-                        String sql = "update line_items set qty = "+ j +" where num = " +n+"";
+                        String sql = "update line_items set qty = "+ j +" where Items_id = " +n+"";
                         db.execSQL(sql);
                     }
 
@@ -166,10 +166,10 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i - 1;
                     if (i == 1) {
-                        String sql = "delete from line_items where num = " + n + "";
+                        String sql = "delete from line_items where Items_id = " + n + "";
                         db.execSQL(sql);
                     } else if (i > 1) {
-                        String sql = "update line_items set qty = " + j + " where num = " + n + "";
+                        String sql = "update line_items set qty = " + j + " where Items_id = " + n + "";
                         db.execSQL(sql);
                     }
                     if (i > 0) {

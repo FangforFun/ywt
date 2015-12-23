@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".userport.fragment.PersonLoadingFragment">
+    tools:context=".login.PersonLoadingFragment">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -10,35 +10,34 @@
         android:focusableInTouchMode="true">
 
         <TextView
-            android:id="@+id/tv_regist_notice"
+            android:id="@+id/tv_login_notice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="请输入个人注册信息"
             android:textSize="14sp"
             android:textColor="@color/tv_mid"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp" />
         <EditText
-            android:id="@+id/et_regist_username"
+            android:id="@+id/et_login_username"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/et_shape_search"
-            android:layout_below="@+id/tv_regist_notice"
+            android:layout_below="@+id/tv_login_notice"
             android:hint="姓名"
             android:paddingLeft="10dp"
             android:textSize="16sp"
-            android:textColor="@color/tv_bg"
-            />
+            android:textColor="@color/tv_bg" />
         <EditText
-            android:id="@+id/et_regist_cardnum"
+            android:id="@+id/et_login_ic_card_num"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
-            android:layout_below="@+id/et_regist_username"
+            android:layout_below="@+id/et_login_username"
             android:layout_marginTop="1dp"
             android:background="@drawable/et_shape_search"
             android:hint="身份证号码"
@@ -49,7 +48,7 @@
             android:id="@+id/ll_checkcode"
             android:layout_width="match_parent"
             android:layout_height="44dp"
-            android:layout_below="@+id/et_regist_cardnum"
+            android:layout_below="@+id/et_login_ic_card_num"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="1dp"

@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
-    private String url ="http://10.93.1.10:3000/api/v1/items.json";
+    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
 
     private Handler handler = new Handler(){
         @Override
@@ -81,7 +81,7 @@ public class MainActivity extends BaseActivity {
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
                             for (int i = 0;i < commodityList.size();i++){
-                                String sql1 = "insert into Items (title,description,price,avatar_url,category_id) vaules ('"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+"";
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+")";
                                 db.execSQL(sql1);
                             }
                         }
