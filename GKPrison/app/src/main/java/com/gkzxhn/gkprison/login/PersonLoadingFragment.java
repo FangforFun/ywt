@@ -94,7 +94,9 @@ public class PersonLoadingFragment extends BaseFragment {
                                     editor.putString("username", username);
                                     editor.putString("password", ic_card_num);
                                     editor.commit();
-
+                                    Intent intent = new Intent(context, MainActivity.class);
+                                    startActivity(intent);
+                                    getActivity().finish();
                                 }
 
                                 @Override
@@ -128,9 +130,9 @@ public class PersonLoadingFragment extends BaseFragment {
                             post.setEntity(entity);
                             HttpResponse httpResponse = httpClient.execute(post);
                             if (httpResponse.getStatusLine().getStatusCode() == 200){
-                                Intent intent = new Intent(context, MainActivity.class);
-                                startActivity(intent);
-                                getActivity().finish();
+//                                Intent intent = new Intent(context, MainActivity.class);
+//                                startActivity(intent);
+//                                getActivity().finish();
                             }
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();

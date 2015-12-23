@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.apache.http.HttpEntity;
