@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -19,8 +20,11 @@ import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 
+
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -34,7 +38,9 @@ public class AllClassificationFragment extends BaseFragment {
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
+    private int cart_id = 0;
     private String tv_count = "0.0";
+
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -50,16 +56,29 @@ public class AllClassificationFragment extends BaseFragment {
         return view;
     }
 
+
+
     @Override
     protected void initData() {
-        String sql = "delete from commodity where 1=1";
+        long time = System.currentTimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(time);
+        String times = format.format(date);
+        String sql = "insert into Cart (time) values ('"+times+"')";
         db.execSQL(sql);
-        Cursor cursor = db.query("shop",null,null,null,null,null,null);
+        String sql1 = "select id from Cart where time = '"+times+"'";
+        Cursor cursor1 = db.rawQuery(sql1, null);
+        while (cursor1.moveToNext()){
+            cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
+        }
+        Cursor cursor = db.query("Items",null,null,null,null,null,null);
         while (cursor.moveToNext()){
             Commodity commodity = new Commodity();
             commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
             commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
             commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+            commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
+            commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
             commodities.add(commodity);
         }
         adapter = new SalesAdapter();
@@ -70,7 +89,7 @@ public class AllClassificationFragment extends BaseFragment {
 
         @Override
         public int getCount() {
-            return image.size();
+            return commodities.size();
         }
 
         @Override
@@ -124,10 +143,10 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into commodity(price,commodity_id,commodity_num) values ('"+p +"'," + n +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ n +"," + cart_id +",1)";
                         db.execSQL(sql);
                     }else {
-                        String sql = "update commodity set commodity_num = "+ j +" where commodity_id = " +n+"";
+                        String sql = "update line_items set qty = "+ j +" where Items_id = " +n+"";
                         db.execSQL(sql);
                     }
 
@@ -147,10 +166,10 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i - 1;
                     if (i == 1) {
-                        String sql = "delete from commodity where commodity_id = " + n + "";
+                        String sql = "delete from line_items where Items_id = " + n + "";
                         db.execSQL(sql);
                     } else if (i > 1) {
-                        String sql = "update commodity set commodity_num = " + j + " where commodity_id = " + n + "";
+                        String sql = "update line_items set qty = " + j + " where Items_id = " + n + "";
                         db.execSQL(sql);
                     }
                     if (i > 0) {
@@ -164,6 +183,7 @@ public class AllClassificationFragment extends BaseFragment {
                 }
             });
             viewHolder.imageView.setImageResource(image.get(position));
+
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
             viewHolder.imageView.setOnClickListener(new View.OnClickListener() {

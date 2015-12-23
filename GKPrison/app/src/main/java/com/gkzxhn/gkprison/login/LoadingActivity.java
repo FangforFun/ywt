@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.login;
 
+import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -10,7 +11,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
  * 登录页面
  */
 public class LoadingActivity extends BaseActivity {
-
+    private String token;
     private PersonLoadingFragment personLoadingFragment;
     private PrisonLoadingFragment prisonLoadingFragment;
 
@@ -24,7 +25,10 @@ public class LoadingActivity extends BaseActivity {
     protected void initData() {
         setTitle("登录");
         setRegistVisiblity(View.VISIBLE);
+        Bundle date = new Bundle();
+        date.putString("token",token);
         personLoadingFragment = new PersonLoadingFragment();
+        personLoadingFragment.setArguments(date);
         this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoadingFragment).commit();
         rl_regist.setOnClickListener(this);
         spinner_user_type.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {

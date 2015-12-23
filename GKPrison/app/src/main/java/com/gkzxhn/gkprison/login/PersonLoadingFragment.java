@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,12 +25,27 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  * 个人用户登录界面
  */
 public class PersonLoadingFragment extends BaseFragment {
-
+    private String url = "http://10.93.1.10:3000/api/v1/login";
     private Button bt_register;
     private Button btn_login;
     private EditText et_login_username;
@@ -37,6 +53,7 @@ public class PersonLoadingFragment extends BaseFragment {
     private String username;
     private String ic_card_num;
     private SharedPreferences sp;
+    private String token = "cb21c49928249f05ae8e4075c6018ff0";
 
     @Override
     protected View initView() {
@@ -77,9 +94,7 @@ public class PersonLoadingFragment extends BaseFragment {
                                     editor.putString("username", username);
                                     editor.putString("password", ic_card_num);
                                     editor.commit();
-                                    Intent intent = new Intent(context, MainActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+
                                 }
 
                                 @Override
@@ -96,6 +111,36 @@ public class PersonLoadingFragment extends BaseFragment {
                     NIMClient.getService(AuthService.class).login(info)
                             .setCallback(callback);
                 }
+                new Thread(){
+                    @Override
+                    public void run() {
+                        HttpClient httpClient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> values = new ArrayList<NameValuePair>();
+                        BasicNameValuePair value1 = new BasicNameValuePair("name",username);
+                        BasicNameValuePair value2 = new BasicNameValuePair("uuid",ic_card_num);
+                        BasicNameValuePair value3 = new BasicNameValuePair("token",token);
+                        values.add(value1);
+                        values.add(value2);
+                        values.add(value3);
+                        try {
+                            HttpEntity entity = new UrlEncodedFormEntity(values,"utf-8");
+                            post.setEntity(entity);
+                            HttpResponse httpResponse = httpClient.execute(post);
+                            if (httpResponse.getStatusLine().getStatusCode() == 200){
+                                Intent intent = new Intent(context, MainActivity.class);
+                                startActivity(intent);
+                                getActivity().finish();
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (ClientProtocolException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
             }
         });
     }

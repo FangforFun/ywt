@@ -5,7 +5,7 @@ package com.gkzxhn.gkprison.userport.bean;
  */
 public class Commodity {
 
-    private String commodityclass;
+    private int category_id;
     private String price;
     private int id;
     private int num;
@@ -21,12 +21,12 @@ public class Commodity {
         this.num = num;
     }
 
-    public String getCommodityclass() {
-        return commodityclass;
+    public int getCategory_id() {
+        return category_id;
     }
 
-    public void setCommodityclass(String commodityclass) {
-        this.commodityclass = commodityclass;
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
     }
 
     public String getPrice() {

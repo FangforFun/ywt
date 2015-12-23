@@ -1,11 +1,16 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.ActionBar;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -20,6 +25,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -28,6 +34,16 @@ import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +53,8 @@ import de.greenrobot.event.EventBus;
  * 主activity
  */
 public class MainActivity extends BaseActivity {
-
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private List<Commodity> commodityList = new ArrayList<Commodity>();
     private ViewPager home_viewPager;
     private RadioGroup rg_bottom_guide;
     private List<BasePager> pagerList;
@@ -48,6 +65,34 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
+    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
+
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String m = (String)msg.obj;
+                    if (m.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String commodity = bundle.getString("result");
+                        commodityList = analysiscommodity(commodity);
+                        if (commodityList.size() != 0){
+                            String sql = "delete from Items where 1=1";
+                            db.execSQL(sql);
+                            for (int i = 0;i < commodityList.size();i++){
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+")";
+                                db.execSQL(sql1);
+                            }
+                        }
+                    }else if (m.equals("error")){
+                        Toast.makeText(getApplicationContext(),"同步数据失败",Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+
+        }
+    };
 
     @Override
     protected View initView() {
@@ -71,14 +116,11 @@ public class MainActivity extends BaseActivity {
         rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
         return view;
     }
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
-    }
+
 
     @Override
     protected void initData() {
+        getCommodity();
         setSupportActionBar(tool_bar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close){
             @Override
@@ -235,4 +277,56 @@ public class MainActivity extends BaseActivity {
         }
         super.onClick(v);
     }
+
+    private void getCommodity(){
+        new Thread(){
+            @Override
+            public void run() {
+                Message msg = handler.obtainMessage();
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet httpGet = new HttpGet(url);
+                try {
+                    HttpResponse response = httpClient.execute(httpGet);
+                    if (response.getStatusLine().getStatusCode() == 200){
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                        Log.d("MainActivity",result);
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }else {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    private List<Commodity> analysiscommodity(String s){
+        List<Commodity> commodities = new ArrayList<Commodity>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0;i < jsonArray.length();i++){
+                Commodity commodity = new Commodity();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                commodity.setId(jsonObject.getInt("id"));
+                commodity.setTitle(jsonObject.getString("title"));
+                commodity.setDescription(jsonObject.getString("description"));
+                commodity.setAvatar_url(jsonObject.getString("avatar_url"));
+                commodity.setPrice(jsonObject.getString("price"));
+                commodity.setCategory_id(jsonObject.getInt("category_id"));
+                commodities.add(commodity);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return commodities;
+    }
+
 }

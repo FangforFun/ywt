@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -15,13 +17,30 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
+import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.google.gson.Gson;
+import com.readystatesoftware.viewbadger.BadgeView;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -30,7 +49,6 @@ import de.greenrobot.event.EventBus;
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
@@ -42,10 +60,14 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_sales;
     private TextView tv_zhineng;
     private Spinner sp_allclass;
+    private Gson gson;
+    private String url = "http://10.93.1.10:3000/api/v1/apply";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
-    private List<Commodity> commodities = new ArrayList<Commodity>();
+
+
+    private List<Shoppinglist> commodities = new ArrayList<Shoppinglist>();
     AllClassificationFragment allclass;
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
@@ -69,6 +91,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
         allclass = new AllClassificationFragment();
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
@@ -116,6 +139,35 @@ public class CanteenFragment extends BaseFragment {
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                gson = new Gson();
+                final String str = gson.toJson(commodities);
+                final String countmoney = tv_total_money.getText().toString();
+                new Thread(){
+                    @Override
+                    public void run() {
+                        HttpClient httpClient = new DefaultHttpClient();
+                        HttpPost post = new HttpPost(url);
+                        List<NameValuePair> values = new ArrayList<NameValuePair>();
+                        BasicNameValuePair value1 = new BasicNameValuePair("countmoney",countmoney);
+                        BasicNameValuePair value2 = new BasicNameValuePair("shoppinglist",str);
+                        values.add(value1);
+                        values.add(value2);
+                        try {
+                            HttpEntity entity = new UrlEncodedFormEntity(values,"utf-8");
+                            post.setEntity(entity);
+                            HttpResponse httpResponse = httpClient.execute(post);
+                            if (httpResponse.getStatusLine().getStatusCode() == 200){
+
+                            }
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (ClientProtocolException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 Intent intent = new Intent(context, PaymentActivity.class);
                 intent.putExtra("totalmoney",send);
                 context.startActivity(intent);
@@ -123,9 +175,13 @@ public class CanteenFragment extends BaseFragment {
         });
     }
 
-    public View getView(){
-        return view;
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
+
+
 
     public void onEvent(ClickEvent event) {
         Handler handler = new Handler(){
@@ -142,24 +198,25 @@ public class CanteenFragment extends BaseFragment {
         // 从事件中获得参数值
         Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
-        String sql = "select distinct * from commodity";
+        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = Cart.id";
         Cursor cursor = db.rawQuery(sql,null);
         total = 0;
         if (cursor.getCount() == 0){
             tv_total_money.setText("0.0");
         }else {
             while (cursor.moveToNext()){
-                Commodity commodity = new Commodity();
-                commodity.setId(cursor.getInt(cursor.getColumnIndex("commodity_id")));
-                commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-                commodity.setNum(cursor.getInt(cursor.getColumnIndex("commodity_num")));
-                commodities.add(commodity);
+                Shoppinglist shoppinglist = new Shoppinglist();
+                shoppinglist.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
+                shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+                shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                commodities.add(shoppinglist);
             }
+
         }
         for (int i = 0;i < commodities.size();i++){
             String t = commodities.get(i).getPrice();
             float p = Float.parseFloat(t);
-            int n = commodities.get(i).getNum();
+            int n = commodities.get(i).getQty();
             total += p * n ;
         }
         DecimalFormat fnum = new DecimalFormat("####0.0");
@@ -169,4 +226,5 @@ public class CanteenFragment extends BaseFragment {
         msg.what = 1;
         handler.sendMessage(msg);
     }
+
 }
