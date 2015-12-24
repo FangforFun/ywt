@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.avchat;
+package com.gkzxhn.gkprison.avchat.toggleview;
 
 import android.view.View;
 import android.view.ViewGroup;

@@ -5,7 +5,7 @@ import android.content.Context;
 import com.netease.nim.uikit.NimUIKit;
 
 /**
- * Created by jezhee on 2/20/15.
+ * Created by hzn on 2015/12/23
  */
 public class DemoCache {
 

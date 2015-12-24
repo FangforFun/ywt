@@ -46,7 +46,8 @@
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
-        <activity android:name=".userport.activity.SplashActivity">
+
+        <activity android:name=".welcome.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -77,8 +78,7 @@
         <activity android:name=".userport.activity.ZhifubaoPayActivity" />
         <activity android:name=".userport.activity.WeixinPayActivity" />
         <activity android:name=".prisonport.activity.DateMeetingListActivity" />
-        <activity android:name=".prisonport.activity.CallUserActivity"></activity>
-
+        <activity android:name=".prisonport.activity.CallUserActivity" />
         <activity android:name=".avchat.AVChatActivity" />
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
@@ -95,7 +95,7 @@
         <receiver
             android:name="com.netease.nimlib.service.NimReceiver"
             android:exported="false"
-            android:process=":core" >
+            android:process=":core">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -105,22 +105,27 @@
         <!-- 云信进程间通信 Receiver -->
         <receiver android:name="com.netease.nimlib.service.ResponseReceiver" />
 
-        <!-- 申明实时音视频来电通知的广播接收器，第三方APP集成时，
-                        action中的com.netease.nim.demo请替换为自己的包名 -->
+        <!--
+             申明实时音视频来电通知的广播接收器，第三方APP集成时，
+                        action中的com.netease.nim.demo请替换为自己的包名
+        -->
         <receiver
             android:name="com.netease.nimlib.receiver.AVChatBroadcastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION"/>
+                <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
         <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
         <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
             <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"/>
+                <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
+
+        <activity android:name=".welcome.WelcomeActivity"></activity>
     </application>
+
 </manifest>

@@ -18,6 +18,7 @@ import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.MD5Utils;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -51,6 +52,10 @@ public class PrisonLoadingFragment extends BaseFragment {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(!Utils.isNetworkAvailable()){
+                    showToastMsgShort("网络不可用，请检查网络设置");
+                    return;
+                }
                 username = et_username.getText().toString().trim();
                 password = et_password.getText().toString().trim();
                 if(TextUtils.isEmpty(username) || TextUtils.isEmpty(password)){

@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.avchat;
+package com.gkzxhn.gkprison.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;

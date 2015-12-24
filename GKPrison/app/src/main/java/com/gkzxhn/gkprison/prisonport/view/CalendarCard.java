@@ -84,10 +84,10 @@ public class CalendarCard extends View {
 
     private void initDate() {
         mShowDate = new CustomDate();
-        fillDate();//
+        fillDate(-1, -1);//
     }
 
-    private void fillDate() {
+    private void fillDate(int col, int row) {
         int monthDay = DateUtil.getCurrentMonthDay(); // 今天
         int lastMonthDays = DateUtil.getMonthDays(mShowDate.year,
                 mShowDate.month - 1); // 上个月的天数
@@ -111,7 +111,7 @@ public class CalendarCard extends View {
                     rows[j].cells[i] = new Cell(CustomDate.modifiDayForObject(
                             mShowDate, day), State.CURRENT_MONTH_DAY, i, j);
                     // 今天
-                    if (isCurrentMonth && day == monthDay ) {
+                    if (col == -1 && isCurrentMonth && day == monthDay) {
                         CustomDate date = CustomDate.modifiDayForObject(mShowDate, day);
                         rows[j].cells[i] = new Cell(date, State.TODAY, i, j);
                     }
@@ -121,7 +121,6 @@ public class CalendarCard extends View {
                                 CustomDate.modifiDayForObject(mShowDate, day),
                                 State.UNREACH_DAY, i, j);
                     }
-
                     // 过去一个月
                 } else if (position < firstDayWeek) {
                     rows[j].cells[i] = new Cell(new CustomDate(mShowDate.year,
@@ -134,6 +133,11 @@ public class CalendarCard extends View {
                             mShowDate.month + 1, position - firstDayWeek
                             - currentMonthDays + 1)),
                             State.NEXT_MONTH_DAY, i, j);
+                }
+                if(col == i && row == j && position >= firstDayWeek
+                        && position < firstDayWeek + currentMonthDays){
+                    CustomDate date = CustomDate.modifiDayForObject(mShowDate, day);
+                    rows[j].cells[i] = new Cell(date, State.TODAY, i, j);
                 }
             }
         }
@@ -199,14 +203,25 @@ public class CalendarCard extends View {
         if (rows[row] != null) {
             mClickCell = new Cell(rows[row].cells[col].date,
                     rows[row].cells[col].state, rows[row].cells[col].i,
+//                    State.TODAY, rows[row].cells[col].i,
                     rows[row].cells[col].j);
 
             CustomDate date = rows[row].cells[col].date;
             date.week = col;
             mCellClickListener.clickDate(date);
 
-            // 刷新界面
-            update();
+            int currentMonthDays = DateUtil.getMonthDays(mShowDate.year,
+                    mShowDate.month); // 当前月的天数
+            int firstDayWeek = DateUtil.getWeekDayFromDate(mShowDate.year,
+                    mShowDate.month);
+            int position = col + row * TOTAL_COL; // 单元格位置
+            // 这个月的
+            if (position >= firstDayWeek
+                    && position < firstDayWeek + currentMonthDays) {
+                update(col, row);// 刷新界面
+            }else {
+                update(-1, -1);
+            }
         }
     }
 
@@ -292,7 +307,7 @@ public class CalendarCard extends View {
         } else {
             mShowDate.month -= 1;
         }
-        update();
+        update(-1, -1);
     }
 
     // 从右往左划，下一个月
@@ -303,11 +318,11 @@ public class CalendarCard extends View {
         } else {
             mShowDate.month += 1;
         }
-        update();
+        update(-1, -1);
     }
 
-    public void update() {
-        fillDate();
+    public void update(int col, int row) {
+        fillDate(col, row);
         invalidate();
     }
 }

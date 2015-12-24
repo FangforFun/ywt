@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.app.ActionBar;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -9,13 +8,9 @@ import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,9 +20,9 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
-import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
 import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
@@ -47,14 +42,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.greenrobot.event.EventBus;
-
 /**
  * 主activity
  */
 public class MainActivity extends BaseActivity {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
-    private List<Commodity> commodityList = new ArrayList<Commodity>();
+    private List<Commodity> commodityList = new ArrayList<>();
     private ViewPager home_viewPager;
     private RadioGroup rg_bottom_guide;
     private List<BasePager> pagerList;

@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.welcome;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -25,7 +25,7 @@ public class SplashActivity extends BaseActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, LoadingActivity.class);
+                Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                 startActivity(intent);
                 SplashActivity.this.finish();
             }

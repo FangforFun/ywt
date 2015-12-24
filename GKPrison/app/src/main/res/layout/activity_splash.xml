@@ -2,23 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash2"
-    tools:context=".userport.activity.SplashActivity">
-
-    <TextView
-        android:id="@+id/tv_splash_app_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="狱务通"
-        android:textColor="@color/white"
-        android:textSize="30sp"/>
+    android:background="@drawable/splash"
+    tools:context=".welcome.SplashActivity">
 
     <LinearLayout
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_width="match_parent"
-        android:paddingBottom="40dp"
+        android:paddingBottom="20dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <TextView

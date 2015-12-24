@@ -42,7 +42,14 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     public void clickDate(CustomDate date) {
-        showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
+        if((date.getYear() + "年" + date.getMonth() + "月").equals(monthText.getText().toString())){
+            // 点击的是当月的
+            showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
+        }else if(date.getMonth() < Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))){
+            showToastMsgShort("左滑至下个月份");
+        }else if(date.getMonth() > Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))){
+            showToastMsgShort("右滑至上个月份");
+        }
     }
 
     @Override

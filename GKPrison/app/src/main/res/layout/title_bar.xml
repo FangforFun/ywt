@@ -117,14 +117,14 @@
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"/>
-                <Spinner
-                    android:id="@+id/spinner_user_type"
+
+                <ImageView
+                    android:id="@+id/iv_user_type"
                     android:layout_width="10dp"
                     android:layout_height="10dp"
-                    android:background="@drawable/loading_spinner"
-                    android:entries="@array/loading"
+                    android:src="@drawable/loading_spinner"
                     android:layout_toRightOf="@+id/tv_user_type"
-                    android:layout_centerVertical="true"></Spinner>
+                    android:layout_centerVertical="true"></ImageView>
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>

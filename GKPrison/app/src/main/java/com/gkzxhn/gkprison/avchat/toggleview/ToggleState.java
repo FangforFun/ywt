@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.avchat;
+package com.gkzxhn.gkprison.avchat.toggleview;
 
 /**
 * Created by hzlichengda on 14-3-31.

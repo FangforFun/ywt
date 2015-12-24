@@ -29,7 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected View ly_title_bar;
     protected TextView tv_remittance;
     protected RelativeLayout rl_regist;
-    protected Spinner spinner_user_type;
     protected TextView tv_user_type;
     protected Toolbar tool_bar;
 
@@ -47,7 +46,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
         rl_regist = (RelativeLayout)findViewById(R.id.rl_regist);
-        spinner_user_type = (Spinner) findViewById(R.id.spinner_user_type);
         tv_user_type = (TextView) findViewById(R.id.tv_user_type);
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
         View view = initView();

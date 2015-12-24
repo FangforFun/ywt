@@ -3,65 +3,56 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <FrameLayout
-        android:id="@+id/fl_video_view"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="600dp"
-        android:background="#6A6A6A"></FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/fl_video_view">
-
-        <TextView
-            android:id="@+id/tv_meeting_notice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/meeting_notice"
-            android:textSize="24sp"
-            android:textColor="@color/tv_mid"
-            android:lineSpacingExtra="10dp"
-            android:padding="10dp"/>
+        android:layout_height="wrap_content">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_alignParentBottom="true"
-            android:padding="10dp"
-            android:gravity="center_vertical">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_meeting_request_person"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/tv_bg"
-                android:text="会见申请人："
-                android:layout_centerVertical="true"
-                android:textSize="28sp"
-                android:layout_marginLeft="50dp"/>
+            <FrameLayout
+                android:id="@+id/fl_video_view"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:background="#6A6A6A"></FrameLayout>
 
-            <TextView
-                android:id="@+id/tv_meeting_request_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/tv_bg"
-                android:textSize="28sp"
-                android:text="叶美惠"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/tv_meeting_request_person"/>
-
-            <Button
-                android:id="@+id/bt_call"
-                android:layout_width="150dp"
+            <RelativeLayout
+                android:id="@+id/rl_meeting_notice"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/theme_bg_bt_selector"
-                android:text="呼叫"
-                android:textColor="@color/white"
-                android:textSize="30sp"/>
+                android:layout_below="@id/fl_video_view">
+
+                <TextView
+                    android:id="@+id/tv_meeting_notice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/meeting_notice"
+                    android:textSize="24sp"
+                    android:textColor="@color/tv_mid"
+                    android:lineSpacingExtra="10dp"
+                    android:padding="10dp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:padding="10dp"
+                android:layout_below="@id/rl_meeting_notice"
+                android:gravity="center_vertical">
+
+                <Button
+                    android:id="@+id/bt_call"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/theme_bg_bt_selector"
+                    android:text="呼叫"
+                    android:textColor="@color/white"
+                    android:textSize="30sp"/>
+            </RelativeLayout>
         </RelativeLayout>
-
-    </RelativeLayout>
-
+    </ScrollView>
 </RelativeLayout>

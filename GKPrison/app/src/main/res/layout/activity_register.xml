@@ -69,28 +69,18 @@
             android:background="@drawable/et_shape_search"/>
 
         <EditText
-            android:id="@+id/et_prisoner_name"
+            android:id="@+id/et_prisoner_num"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginTop="5dp"
             android:textColor="@color/tv_bg"
-            android:hint="服刑人员姓名"
+            android:hint="囚号"
             android:padding="10dp"
             android:textSize="14sp"
             android:textColorHint="@color/tv_gray"
             android:background="@drawable/et_shape_search"/>
 
-        <EditText
-            android:id="@+id/et_prisoner_id_card"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginTop="5dp"
-            android:textColor="@color/tv_bg"
-            android:hint="服刑人员身份证号"
-            android:padding="10dp"
-            android:textSize="14sp"
-            android:textColorHint="@color/tv_gray"
-            android:background="@drawable/et_shape_search"/>
+
         <EditText
             android:id="@+id/et_prison_choose"
             android:layout_width="match_parent"
