@@ -14,6 +14,8 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 
+import org.json.JSONObject;
+
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
     private Button bt_pay;

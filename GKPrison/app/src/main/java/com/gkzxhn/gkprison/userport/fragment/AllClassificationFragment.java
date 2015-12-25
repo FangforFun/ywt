@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.userport.fragment;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -60,26 +61,25 @@ public class AllClassificationFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        long time = System.currentTimeMillis();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(time);
-        String times = format.format(date);
-        String sql = "insert into Cart (time) values ('"+times+"')";
-        db.execSQL(sql);
+        Bundle bundle = getArguments();
+        String times = bundle.getString("times");
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor1 = db.rawQuery(sql1, null);
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
         Cursor cursor = db.query("Items",null,null,null,null,null,null);
-        while (cursor.moveToNext()){
-            Commodity commodity = new Commodity();
-            commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
-            commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-            commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
-            commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
-            commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
-            commodities.add(commodity);
+        while (cursor.moveToNext()) {
+           if (commodities.size() < cursor.getCount()) {
+                Commodity commodity = new Commodity();
+                commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+                commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
+                commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
+                commodities.add(commodity);
+
+            }
         }
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
