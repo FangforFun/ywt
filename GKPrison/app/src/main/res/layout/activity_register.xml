@@ -133,6 +133,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/add_photo"
+                android:scaleType="fitXY"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"/>
 
@@ -141,6 +142,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:src="@drawable/add_photo"
+                android:scaleType="fitXY"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="10dp"/>
 

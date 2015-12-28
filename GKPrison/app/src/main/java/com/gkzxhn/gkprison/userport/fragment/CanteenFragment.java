@@ -69,6 +69,7 @@ public class CanteenFragment extends BaseFragment {
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
+    private int cart_id = 0;
     private List<Shoppinglist> commodities = new ArrayList<Shoppinglist>();
     AllClassificationFragment allclass;
     SalesPriorityFragment sales;
@@ -103,6 +104,11 @@ public class CanteenFragment extends BaseFragment {
         String times = format.format(date);
         String sql = "insert into Cart (time) values ('"+times+"')";
         db.execSQL(sql);
+        String sql1 = "select id from Cart where time = '"+times+"'";
+        Cursor cursor = db.rawQuery(sql1, null);
+        while (cursor.moveToNext()){
+            cart_id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
         data = new Bundle();
         data.putString("times",times);
         allclass = new AllClassificationFragment();
@@ -223,7 +229,7 @@ public class CanteenFragment extends BaseFragment {
         // 从事件中获得参数值
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
-        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = Cart.id";
+        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql,null);
         total = 0;
         if (cursor.getCount() == 0){

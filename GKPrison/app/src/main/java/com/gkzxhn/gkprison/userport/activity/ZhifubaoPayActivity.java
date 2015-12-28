@@ -21,11 +21,23 @@ import java.util.Locale;
 import java.util.Random;
 
 public class ZhifubaoPayActivity extends BaseActivity {
-    public static final String PARTNER = "";
+    public static final String PARTNER = "2088121417397335";
     // 商户收款账号
-    public static final String SELLER = "";
+    public static final String SELLER = "130146668@qq.com";
     // 商户私钥，pkcs8格式
-    public static final String RSA_PRIVATE = "";
+    public static final String RSA_PRIVATE = "MIICXgIBAAKBgQDjqNjoaPlEaqg6DQHDX9LNJb++X06rJ0P2JmzxAFFAedxmh7AS\n" +
+            "wgvMoCxQvIhF8+Rl6TgcvBPuF76J/dT6mY5N3wvbJBwOXj2/i/EUhEy4xn/8SGCv\n" +
+            "7W9jlH86+glbtw8Mr9A9CoJ/Nr8q4uaNv1ObSH1QDBk0Nnnk+0GSW/AVtwIDAQAB\n" +
+            "AoGBAIB726cXD48wTq8shhE4tGT5aATODz0DFRUHzLYbQsALxnrLG3EKuNQMldYf\n" +
+            "AR3RrtZhUDzPXMQj/HIuopOoNCnny+hnJlHMn5wBt0w072iisuyG4whftefPT7g7\n" +
+            "zyZwfIn0LMlGBebkyPBddCmi4/vmiepnyAHFcwA6wKJ/nVlJAkEA/zV+c+n7NhXy\n" +
+            "jwjZMIO2usUZ1VhTcoPvF5nqz0jh1sZ7Fd8lVVwrComX1giPLUswQoBuV3H0mwIn\n" +
+            "HfidVWtEEwJBAORdfj4ZW+ocElSnaCtKgKS8h8DWr1ZhR88eI/3EcLb6HLjzgxDl\n" +
+            "3u8hJ8fLnFXY8iqDV9dlSL9LUplYkCNcdE0CQB9HDxhltMQMLI4bJ4MqoVqCjYf4\n" +
+            "K0H9qW/bDUwaQpNv/+XOU2UCxsOj2VgB9Io4jNGZq+xLqw7UVLb3oVC2tMECQQCY\n" +
+            "sRq0EuiuRE7NY5H3QD176MMsYV+jdjA5gIG4MBzde6aw08GTDuBdK+IZaT8C96gU\n" +
+            "XPXjA8n8fjSga+MUgcERAkEAlDUZKlKP5IJFjFH+JLMZqj5HJp+YWTQF4iPQGVTU\n" +
+            "qXBet1YSMAM+jmFKJZqgAouu0UValw3lDBSy3pL2tvH24Q==";
     // 支付宝公钥
     public static final String RSA_PUBLIC = "";
     private static final int SDK_PAY_FLAG = 1;
@@ -141,7 +153,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
         orderInfo += "&total_fee=" + "\"" + price + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm"
+        orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/alipay"
                 + "\"";
 
         // 服务接口名称， 固定值
