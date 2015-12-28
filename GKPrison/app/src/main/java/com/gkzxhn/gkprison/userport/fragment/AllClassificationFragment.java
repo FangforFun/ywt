@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.squareup.picasso.Picasso;
 
 
 import java.text.DecimalFormat;
@@ -41,7 +42,8 @@ public class AllClassificationFragment extends BaseFragment {
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
-
+    private int qty = 0;
+    private int Items_id = 0;
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -77,8 +79,16 @@ public class AllClassificationFragment extends BaseFragment {
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
                 commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
                 commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
+                String sql = "select line_items.qty from line_items where line_items.Items_id = "+commodity.getId()+" and line_items.cart_id = "+cart_id;
+                Cursor cursor2 = db.rawQuery(sql,null);
+                if (cursor2.getCount() != 0){
+                    while (cursor2.moveToNext()) {
+                        commodity.setQty(cursor2.getInt(cursor2.getColumnIndex("qty")));
+                    }
+                }else {
+                    commodity.setQty(0);
+                }
                 commodities.add(commodity);
-
             }
         }
         adapter = new SalesAdapter();
@@ -133,25 +143,35 @@ public class AllClassificationFragment extends BaseFragment {
                    }
                 }
             };
+
             viewHolder.rl_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
 
                     String t = viewHolder.tv_num.getText().toString();
-                    String p = commodities.get(position).getPrice();
-                    int n = commodities.get(position).getId();
+                    Items_id = commodities.get(position).getId();
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ n +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id +"," + cart_id +",1)";
                         db.execSQL(sql);
                     }else {
-                        String sql = "update line_items set qty = "+ j +" where Items_id = " +n+"";
+                        String sql = "update line_items set qty = "+ j +" where Items_id = " +Items_id+" and cart_id ="+cart_id;
                         db.execSQL(sql);
                     }
+                    String sql = "select qty from line_items where Items_id = "+Items_id+" and cart_id ="+cart_id;
+                    Cursor cursor = db.rawQuery(sql,null);
+                    if (cursor.getCount() == 0){
+                        qty = 0;
+                    }else {
+                    while (cursor.moveToNext()){
 
+                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
+
+                    }
+                    }
                 Message msg = handler.obtainMessage();
-                    msg.obj = j;
+                    msg.obj = qty;
                     msg.what = 1;
                     handler.sendMessage(msg);
                     EventBus.getDefault().post(new ClickEvent());
@@ -162,30 +182,42 @@ public class AllClassificationFragment extends BaseFragment {
                 public void onClick(View v) {
 
                     String t = viewHolder.tv_num.getText().toString();
-                    int n = commodities.get(position).getId();
+                    Items_id = commodities.get(position).getId();
                     int i = Integer.parseInt(t);
                     int j = i - 1;
                     if (i == 1) {
-                        String sql = "delete from line_items where Items_id = " + n + "";
+                        String sql = "delete from line_items where Items_id = " + Items_id + " and cart_id = "+cart_id;
                         db.execSQL(sql);
                     } else if (i > 1) {
-                        String sql = "update line_items set qty = " + j + " where Items_id = " + n + "";
+                        String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + "and cart_id ="+cart_id;
                         db.execSQL(sql);
                     }
-                    if (i > 0) {
-                        i -= 1;
+                    String sql = "select qty from line_items where Items_id = "+Items_id+" and cart_id = "+cart_id;
+                    Cursor cursor = db.rawQuery(sql,null);
+                    if (cursor.getCount() == 0){
+                        qty = 0;
+                    }else {
+                    while (cursor.moveToNext()){
+                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                    }
+                    }
+
+
                         Message msg = handler.obtainMessage();
-                        msg.obj = i;
+                        msg.obj = qty;
                         msg.what = 2;
                         handler.sendMessage(msg);
-                    }
+
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            viewHolder.imageView.setImageResource(image.get(position));
 
+            viewHolder.imageView.setImageResource(image.get(position));
+            viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
+           // Picasso.with(viewHolder.imageView.getContext()).load()
+            /**
             viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
                 String t = viewHolder.tv_money.getText().toString();
 
@@ -205,6 +237,7 @@ public class AllClassificationFragment extends BaseFragment {
                     }
                 }
             });
+            **/
             DecimalFormat fnum = new DecimalFormat("####0.0");
             tv_count = fnum.format(count);
 
@@ -221,7 +254,4 @@ public class AllClassificationFragment extends BaseFragment {
         RelativeLayout rl_add;
         TextView tv_num;
     }
-
-
-
 }

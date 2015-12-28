@@ -8,17 +8,18 @@ public class Commodity {
     private int category_id;
     private String price;
     private int id;
-    private int num;
+    private int qty;
     private String avatar_url;
     private String description;
     private String title;
 
-    public int getNum() {
-        return num;
+
+    public int getQty() {
+        return qty;
     }
 
-    public void setNum(int num) {
-        this.num = num;
+    public void setQty(int qty) {
+        this.qty = qty;
     }
 
     public int getCategory_id() {
