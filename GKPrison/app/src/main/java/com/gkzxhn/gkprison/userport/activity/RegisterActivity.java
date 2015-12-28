@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.google.gson.Gson;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
+
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -62,7 +62,6 @@ public class RegisterActivity extends BaseActivity {
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
     private TextView tv_software_protocol;
-    private Gson gson;
     private String name = "";
     private String apply = "";
     private JSONObject jsonObject = new JSONObject();

@@ -1,10 +1,14 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.media.Image;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.View;
@@ -65,12 +69,12 @@ public class CanteenFragment extends BaseFragment {
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
-
-
     private List<Shoppinglist> commodities = new ArrayList<Shoppinglist>();
     AllClassificationFragment allclass;
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
+    private Bundle data;
+
 
     @Override
     protected View initView() {
@@ -91,12 +95,27 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        long time = System.currentTimeMillis();
+       //fm  = ((BaseActivity) context).getSupportFragmentManager();
+
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        Date date = new Date(time);
+        String times = format.format(date);
+        String sql = "insert into Cart (time) values ('"+times+"')";
+        db.execSQL(sql);
+        data = new Bundle();
+        data.putString("times",times);
+        allclass = new AllClassificationFragment();
+        allclass.setArguments(data);
+        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+
+        // showFragment(1);
         View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
-        allclass = new AllClassificationFragment();
+
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
         sp_allclass.setBackgroundResource(R.drawable.spinner_down);
-        ((BaseActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity,allclass).commit();
+
         rl_allclass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +126,9 @@ public class CanteenFragment extends BaseFragment {
                 sp_sales.setBackgroundResource(R.drawable.spinner);
                 sp_zhineng.setBackgroundResource(R.drawable.spinner);
                 allclass = new AllClassificationFragment();
+                allclass.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+               //showFragment(1);
             }
         });
         rl_sales.setOnClickListener(new View.OnClickListener() {
@@ -120,7 +141,9 @@ public class CanteenFragment extends BaseFragment {
                 sp_allclass.setBackgroundResource(R.drawable.spinner);
                 sp_zhineng.setBackgroundResource(R.drawable.spinner);
                 sales = new SalesPriorityFragment();
+                sales.setArguments(data);
                 ((BaseActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity,sales).commit();
+                //showFragment(2);
             }
         });
         rl_zhineng.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +156,9 @@ public class CanteenFragment extends BaseFragment {
                 sp_sales.setBackgroundResource(R.drawable.spinner);
                 sp_allclass.setBackgroundResource(R.drawable.spinner);
                 zhineng = new IntellingentSortingFragment();
+                zhineng.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
+              //showFragment(3);
             }
         });
         settlement.setOnClickListener(new View.OnClickListener() {
@@ -227,4 +252,52 @@ public class CanteenFragment extends BaseFragment {
         handler.sendMessage(msg);
     }
 
+    //当fragment已经被实例化，将其隐藏
+    public  void hideFragment(FragmentTransaction ft){
+        if (allclass != null){
+            ft.hide(allclass);
+        }
+        if (sales != null){
+            ft.hide(sales);
+        }
+        if (zhineng != null){
+            ft.hide(zhineng);
+        }
+    }
+/**
+    public void showFragment(int index){
+        FragmentTransaction ft = fm.beginTransaction();
+        hideFragment(ft);
+        switch (index){
+            case 1:
+                if (allclass != null){
+                    ft.show(allclass);
+                }else {
+                    allclass = new AllClassificationFragment();
+                    allclass.setArguments(data);
+                    ft.add(R.id.fl_commodity,allclass);
+                }
+                break;
+            case 2:
+                if (sales != null){
+                    ft.show(sales);
+                }else {
+                    sales = new SalesPriorityFragment();
+                    sales.setArguments(data);
+                    ft.add(R.id.fl_commodity,sales);
+                }
+                break;
+            case 3:
+                if (zhineng != null){
+                    ft.show(zhineng);
+                }else {
+                    zhineng = new IntellingentSortingFragment();
+                    zhineng.setArguments(data);
+                    ft.add(R.id.fl_commodity,zhineng);
+                }
+                break;
+        }
+        ft.commit();
+    }
+**/
 }
