@@ -56,6 +56,7 @@ public class PersonLoadingFragment extends BaseFragment {
     private SharedPreferences sp;
     private String token = "cb21c49928249f05ae8e4075c6018ff0";
     private Button bt_scan_login;
+    private Button bt_fast_login;
 
     @Override
     protected View initView() {
@@ -65,6 +66,7 @@ public class PersonLoadingFragment extends BaseFragment {
         et_login_username = (EditText) view.findViewById(R.id.et_login_username);
         et_login_ic_card_num = (EditText) view.findViewById(R.id.et_login_ic_card_num);
         bt_scan_login = (Button) view.findViewById(R.id.bt_scan_login);
+        bt_fast_login = (Button) view.findViewById(R.id.bt_fast_login);
         return view;
     }
 
@@ -181,6 +183,14 @@ public class PersonLoadingFragment extends BaseFragment {
                         }
                     }
                 }.start();
+            }
+        });
+        bt_fast_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
             }
         });
     }
