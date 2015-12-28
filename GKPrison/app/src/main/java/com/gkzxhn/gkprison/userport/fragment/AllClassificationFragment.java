@@ -36,7 +36,7 @@ public class AllClassificationFragment extends BaseFragment {
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
     private int cart_id = 0;
-    private String tv_count = "0.0";
+    private String tv_count = "0.0"; 
     private int qty = 0;
     private int Items_id = 0;
     private List<Integer> image = new ArrayList<Integer>(){
