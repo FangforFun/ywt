@@ -221,7 +221,7 @@ public class CanteenFragment extends BaseFragment {
             }
         };
         // 从事件中获得参数值
-        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
         String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = Cart.id";
         Cursor cursor = db.rawQuery(sql,null);
