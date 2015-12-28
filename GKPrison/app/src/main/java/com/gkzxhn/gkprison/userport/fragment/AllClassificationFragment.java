@@ -36,7 +36,7 @@ public class AllClassificationFragment extends BaseFragment {
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
     private int cart_id = 0;
-    private String tv_count = "0.0"; 
+    private String tv_count = "0.0";
     private int qty = 0;
     private int Items_id = 0;
     private List<Integer> image = new ArrayList<Integer>(){
@@ -53,8 +53,6 @@ public class AllClassificationFragment extends BaseFragment {
         lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
         return view;
     }
-
-
 
     @Override
     protected void initData() {
@@ -159,11 +157,9 @@ public class AllClassificationFragment extends BaseFragment {
                     if (cursor.getCount() == 0){
                         qty = 0;
                     }else {
-                    while (cursor.moveToNext()){
-
+                        while (cursor.moveToNext()){
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
-
-                    }
+                        }
                     }
                 Message msg = handler.obtainMessage();
                     msg.obj = qty;
@@ -175,7 +171,6 @@ public class AllClassificationFragment extends BaseFragment {
             viewHolder.rl_reduce.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     String t = viewHolder.tv_num.getText().toString();
                     Items_id = commodities.get(position).getId();
                     int i = Integer.parseInt(t);
@@ -192,51 +187,23 @@ public class AllClassificationFragment extends BaseFragment {
                     if (cursor.getCount() == 0){
                         qty = 0;
                     }else {
-                    while (cursor.moveToNext()){
-                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                        while (cursor.moveToNext()){
+                                qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                        }
                     }
-                    }
-
-
-                        Message msg = handler.obtainMessage();
-                        msg.obj = qty;
-                        msg.what = 2;
-                        handler.sendMessage(msg);
-
+                    Message msg = handler.obtainMessage();
+                    msg.obj = qty;
+                    msg.what = 2;
+                    handler.sendMessage(msg);
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-
             viewHolder.imageView.setImageResource(image.get(position));
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
-           // Picasso.with(viewHolder.imageView.getContext()).load()
-            /**
-            viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-                String t = viewHolder.tv_money.getText().toString();
-
-                @Override
-                public void onClick(View v) {
-                    if (viewHolder.imageView_shopping.getDrawable() == null) {
-                        viewHolder.imageView_shopping.setImageResource(R.drawable.shopping_check);
-                        float f = Float.parseFloat(t);
-                        count += f;
-
-
-                    } else {
-                        viewHolder.imageView_shopping.setImageResource(0);
-                        float f = Float.parseFloat(t);
-                        count -= f;
-
-                    }
-                }
-            });
-            **/
             DecimalFormat fnum = new DecimalFormat("####0.0");
             tv_count = fnum.format(count);
-
-
             return convertView;
         }
     }
