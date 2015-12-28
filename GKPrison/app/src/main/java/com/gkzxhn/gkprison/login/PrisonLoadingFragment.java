@@ -63,7 +63,7 @@ public class PrisonLoadingFragment extends BaseFragment {
                     return;
                 }else {
                     LoginInfo info = new LoginInfo(username, tokenFromPassword(password)); // config...
-                    RequestCallback<LoginInfo> callback =
+                    final RequestCallback<LoginInfo> callback =
                             new RequestCallback<LoginInfo>() {
                                 @Override
                                 public void onSuccess(LoginInfo loginInfo) {
@@ -79,7 +79,35 @@ public class PrisonLoadingFragment extends BaseFragment {
 
                                 @Override
                                 public void onFailed(int i) {
-                                    Toast.makeText(context, "登录失败" + i + username + password, Toast.LENGTH_SHORT).show();
+                                    switch (i){
+                                        case 302:
+                                            Toast.makeText(context, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 503:
+                                            Toast.makeText(context, "服务器繁忙", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 415:
+                                            Toast.makeText(context, "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 408:
+                                            Toast.makeText(context, "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 403:
+                                            Toast.makeText(context, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 200:
+                                            Toast.makeText(context, "操作成功", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 422:
+                                            Toast.makeText(context, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case 500:
+                                            Toast.makeText(context, "服务器错误", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        default:
+                                            Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                                            break;
+                                    }
                                 }
 
                                 @Override

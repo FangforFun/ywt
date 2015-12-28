@@ -64,7 +64,7 @@ public class WelcomeActivity extends BaseActivity {
 //                vp_welcome.setCurrentItem(currentPosition + 1);
 //            }else {
                 Intent intent = new Intent(WelcomeActivity.this, LoadingActivity.class);
-                startActivity(intent);
+            startActivity(intent);
                 WelcomeActivity.this.finish();
 //            }
         }
