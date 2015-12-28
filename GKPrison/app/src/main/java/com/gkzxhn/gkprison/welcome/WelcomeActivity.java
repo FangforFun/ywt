@@ -37,18 +37,36 @@ public class WelcomeActivity extends BaseActivity {
         setActionBarGone(View.GONE);
         welcome_adapter = new MyAdapter();
         vp_welcome.setAdapter(welcome_adapter);
+        vp_welcome.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if(position == WELCOME_IMGS.length - 1){
+                    handler.postDelayed(moveToNextTask, 1000);
+                }
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
     private Runnable moveToNextTask = new Runnable() {
         @Override
         public void run() {
-            if(currentPosition < WELCOME_IMGS.length - 1){
-                vp_welcome.setCurrentItem(currentPosition + 1);
-            }else {
+//            if(currentPosition < WELCOME_IMGS.length - 1){
+//                vp_welcome.setCurrentItem(currentPosition + 1);
+//            }else {
                 Intent intent = new Intent(WelcomeActivity.this, LoadingActivity.class);
                 startActivity(intent);
                 WelcomeActivity.this.finish();
-            }
+//            }
         }
     };
 
@@ -70,26 +88,26 @@ public class WelcomeActivity extends BaseActivity {
             ImageView iv_welcome = (ImageView) view.findViewById(R.id.iv_welcome);
             iv_welcome.setImageResource(WELCOME_IMGS[position]);
             container.addView(view);
-            view.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    long downTime = 0;
-                    switch (event.getAction()){
-                        case MotionEvent.ACTION_DOWN:
-                            downTime = System.currentTimeMillis();
-                            break;
-                        case MotionEvent.ACTION_UP:
-                        case MotionEvent.ACTION_CANCEL:
-                            long upTime = System.currentTimeMillis();
-                                if (upTime - downTime > 0) {
-                                    currentPosition = position;
-                                    handler.postDelayed(moveToNextTask, 500);
-                                }
-                            break;
-                    }
-                    return true;
-                }
-            });
+//            view.setOnTouchListener(new View.OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//                    long downTime = 0;
+//                    switch (event.getAction()){
+//                        case MotionEvent.ACTION_DOWN:
+//                            downTime = System.currentTimeMillis();
+//                            break;
+//                        case MotionEvent.ACTION_UP:
+//                        case MotionEvent.ACTION_CANCEL:
+//                            long upTime = System.currentTimeMillis();
+//                                if (upTime - downTime > 0) {
+//                                    currentPosition = position;
+//                                    handler.postDelayed(moveToNextTask, 500);
+//                                }
+//                            break;
+//                    }
+//                    return true;
+//                }
+//            });
             return view;
         }
 

@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -20,13 +19,9 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
-import com.squareup.picasso.Picasso;
-
 
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
