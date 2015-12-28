@@ -1,6 +1,16 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
+import android.content.ContentResolver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -16,6 +26,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.utils.ImageTools;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 
@@ -29,6 +40,8 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -76,6 +89,11 @@ public class RegisterActivity extends BaseActivity {
     private String identifying_code = "";
     private AlertDialog dialog;
     private AlertDialog agreement_dialog;
+    private static final int TAKE_PHOTO = 0; //imageview1照相;
+    private static final int CHOOSE_PHOTO = 1;//imageview1选图片;
+    private static final int SCALE = 5;// 照片缩小比例
+    private String uploadFile;
+    private int imageclick = 0;
 
     @Override
     protected View initView() {
@@ -95,6 +113,8 @@ public class RegisterActivity extends BaseActivity {
         tv_software_protocol = (TextView) view.findViewById(R.id.tv_software_protocol);
         tv_read = (TextView) view.findViewById(R.id.tv_read);
         cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
+        iv_add_photo_01.setTag(1);
+        iv_add_photo_02.setTag(2);
         return view;
     }
 
@@ -109,16 +129,18 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked){
+                if (isChecked) {
                     bt_register.setEnabled(true);
                     bt_register.setBackground(getResources().getDrawable(R.drawable.theme_bg_bt_selector));
-                }else {
+                } else {
                     bt_register.setEnabled(false);
                     bt_register.setBackground(getResources().getDrawable(R.drawable.gray_bg_bt_selector));
                 }
             }
         });
         bt_register.setOnClickListener(this);
+        iv_add_photo_01.setOnClickListener(this);
+        iv_add_photo_02.setOnClickListener(this);
     }
 
     /**
@@ -134,13 +156,13 @@ public class RegisterActivity extends BaseActivity {
         identifying_code = et_identifying_code.getText().toString().trim();
         Map<String,Map> map1 = new HashMap<String, Map>();
         map.put("name",name);
-        map.put("uuid",ic_card);
-        map.put("phone",phone_num);
+        map.put("uuid", ic_card);
+        map.put("phone", phone_num);
         map.put("relationship",relationship_with_prisoner);
-        map.put("prisoner_number",prisoner_number);
-        map.put("jail_id",jail_id+"");
-        map.put("type_id",type_id+"");
-        map1.put("apply",map);
+        map.put("prisoner_number", prisoner_number);
+        map.put("jail_id", jail_id + "");
+        map.put("type_id", type_id + "");
+        map1.put("apply", map);
         apply = JSONValue.toJSONString(map1);
         new Thread(){
             @Override
@@ -212,6 +234,14 @@ public class RegisterActivity extends BaseActivity {
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
                 break;
+            case R.id.iv_add_photo_01:
+                showPhotoPicker(this);
+                imageclick = 1;
+                break;
+            case R.id.iv_add_photo_02:
+                showPhotoPicker(this);
+                imageclick = 2;
+                break;
             case R.id.tv_read:
                 if(cb_agree_disagree.isChecked()){
                     cb_agree_disagree.setChecked(false);
@@ -230,6 +260,110 @@ public class RegisterActivity extends BaseActivity {
             return false;
         }else {
             return super.onKeyDown(keyCode, event);
+        }
+    }
+
+    /**
+     * 显示相片操作(0 拍照 / 1 选择相片)
+     *
+     * @param context
+     */
+    private void showPhotoPicker(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("图片来源:");
+        builder.setNegativeButton("取消", null);
+        builder.setItems(new String[]{"拍照", "相册"},
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case TAKE_PHOTO:
+                                Intent openCameraIntent = new Intent(
+                                        MediaStore.ACTION_IMAGE_CAPTURE);
+                                Uri imageUri = Uri.fromFile(new File(Environment
+                                        .getExternalStorageDirectory(), "image.jpg"));
+                                // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                                openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                startActivityForResult(openCameraIntent, TAKE_PHOTO);
+                                break;
+
+                            case CHOOSE_PHOTO:
+                                Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                                openAlbumIntent.setType("image/*");
+                                startActivityForResult(openAlbumIntent, CHOOSE_PHOTO);
+                                break;
+                        }
+                    }
+                });
+        builder.create().show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case TAKE_PHOTO:
+                    // 将保存在本地的图片取出并缩小后显示在界面上
+                    Bitmap bitmap = BitmapFactory.decodeFile(Environment
+                            .getExternalStorageDirectory() + "/image.jpg");
+                    Bitmap newBitmap = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
+                            / SCALE, bitmap.getHeight() / SCALE);
+                    // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
+                    bitmap.recycle();
+
+                    // 将处理过的图片显示在界面上，并保存到本地
+                    if (imageclick == 1){
+                        iv_add_photo_01.setImageBitmap(newBitmap);
+                    }else if (imageclick == 2){
+                        iv_add_photo_02.setImageBitmap(newBitmap);
+                    }
+
+
+                    ImageTools.savePhotoToSDCard(newBitmap, Environment
+                            .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                            .getAbsolutePath()
+                            + "/Camera", String.valueOf(System.currentTimeMillis()));
+                    uploadFile = Environment
+                            .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                            .getAbsolutePath()
+                            + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
+                    break;
+
+                case CHOOSE_PHOTO:
+                    ContentResolver resolver = getContentResolver();
+                    // 照片的原始资源地址
+                    Uri originalUri = data.getData();
+                    try {
+                        // 使用ContentProvider通过URI获取原始图片
+                        Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,
+                                originalUri);
+                        if (photo != null) {
+                            // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
+                            Bitmap smallBitmap = ImageTools.zoomBitmap(photo, photo.getWidth()
+                                    / SCALE, photo.getHeight() / SCALE);
+                            // 释放原始图片占用的内存，防止out of memory异常发生
+                            photo.recycle();
+                            if (imageclick == 1) {
+                                iv_add_photo_01.setImageBitmap(smallBitmap);
+                            }else if (imageclick == 2){
+                                iv_add_photo_02.setImageBitmap(smallBitmap);
+                            }
+                            uploadFile = Environment
+                                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                    .getAbsolutePath()
+                                    + "/Camera/" + "emptyphoto.png";
+                        }
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        Toast.makeText(this, "读取文件,出错啦", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+
         }
     }
 }

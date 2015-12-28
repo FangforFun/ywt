@@ -40,10 +40,10 @@ public class IntellingentSortingFragment extends BaseFragment {
 
     private List<String> money = new ArrayList<String>(){
         {
-            add("¥ 29.8");
-            add("¥ 41.3");
-            add("¥ 38.9");
-            add("¥ 24.1");
+            add("29.8");
+            add("41.3");
+            add("38.9");
+            add("24.1");
         }
     };
 
