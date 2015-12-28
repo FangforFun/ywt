@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ public class MainActivity extends BaseActivity {
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
     private String url ="http://10.93.1.10:3000/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
+    private SharedPreferences sp;
 
     private Handler handler = new Handler(){
         @Override
@@ -113,6 +115,10 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("is_first", false);
+        editor.commit();
         getCommodity();
         setSupportActionBar(tool_bar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close){

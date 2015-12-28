@@ -7,6 +7,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,6 +55,8 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
+    private TextView tv_read;
+    private CheckBox cb_agree_disagree;
 
    private  Map<String,String> map = new LinkedHashMap<String,String>();
     private ImageView iv_add_photo_01;
@@ -90,6 +94,8 @@ public class RegisterActivity extends BaseActivity {
         iv_add_photo_01 = (ImageView) view.findViewById(R.id.iv_add_photo_01);
         iv_add_photo_02 = (ImageView) view.findViewById(R.id.iv_add_photo_02);
         tv_software_protocol = (TextView) view.findViewById(R.id.tv_software_protocol);
+        tv_read = (TextView) view.findViewById(R.id.tv_read);
+        cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
         return view;
     }
 
@@ -99,94 +105,69 @@ public class RegisterActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         prisonAdapter = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, PRISONS);
-//        bs_prison_choose.setAdapter(prisonAdapter);
-
-        bt_register.setOnClickListener(new View.OnClickListener() {
+        tv_software_protocol.setOnClickListener(this);
+        tv_read.setOnClickListener(this);
+        cb_agree_disagree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onClick(View v) {
-                name = et_name.getText().toString().trim();
-                ic_card = et_ic_card.getText().toString().trim();
-                phone_num = et_phone_num.getText().toString().trim();
-                relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
-                prisoner_number = et_prisoner_number.getText().toString().trim();
-                prison_name = et_prison_chooes.getText().toString().trim();
-                identifying_code = et_identifying_code.getText().toString().trim();
-               // final String str = "apply:{ name:'"+name+"',uuid:'"+ic_card+"',phone:'"+phone_num+"',relationship:'"+relationship_with_prisoner+"',prisoner:'"+prisoner_name+"',prisoner_uuid:'"+prisoner_iccardnum+"',prison:'"+prison_name+"',jail_id:"+jail_id+",type_id:"+type_id+"}";
-                /**
-                Register register = new Register();
-                register.setName(name);
-                register.setUuid(ic_card);
-                register.setPhone(phone_num);
-                register.setRelationship(relationship_with_prisoner);
-                register.setPrisoner(prisoner_name);
-                register.setPrisoner_uuid(prisoner_iccardnum);
-                register.setPrison(prison_name);
-                register.setJail_id(jail_id);
-                register.setType_id(type_id);
-                **/
-                Map<String,Map> map1 = new HashMap<String, Map>();
-                map.put("name",name);
-                map.put("uuid",ic_card);
-                map.put("phone",phone_num);
-                map.put("relationship",relationship_with_prisoner);
-                map.put("prisoner_number",prisoner_number);
-                map.put("jail_id",jail_id+"");
-                map.put("type_id",type_id+"");
-                map1.put("apply",map);
-
-                apply = JSONValue.toJSONString(map1);
-
-             //   gson = new Gson();
-           //    String str = gson.toJson(register);
-           //     final  String apply = "{\"apply\":"+str+"}";
-                new Thread(){
-                    @Override
-                    public void run() {
-                        HttpClient httpClient = new DefaultHttpClient();
-                        HttpPost   post = new HttpPost(url);
-                        /**
-                        BasicNameValuePair value1 = new BasicNameValuePair("name",name);
-                        BasicNameValuePair value2 = new BasicNameValuePair("uuid",ic_card);
-                        BasicNameValuePair value3 = new BasicNameValuePair("phone",phone_num);
-                        BasicNameValuePair value4 = new BasicNameValuePair("relationship",relationship_with_prisoner);
-                        BasicNameValuePair value5 = new BasicNameValuePair("prisoner",prisoner_name);
-                        BasicNameValuePair value6 = new BasicNameValuePair("prisoner_uuid",prisoner_iccardnum);
-                        BasicNameValuePair value7 = new BasicNameValuePair("prison",prison_name);
-                        BasicNameValuePair value8 = new BasicNameValuePair("jail_id",jail_id+"");
-                        BasicNameValuePair value9 = new BasicNameValuePair("type_id",type_id+"");
-                        register.add(value1);
-                        register.add(value2);
-                        register.add(value3);
-                        register.add(value4);
-                        register.add(value5);
-                        register.add(value6);
-                        register.add(value7);
-                        register.add(value8);
-                        register.add(value9);
-                         **/
-                        try {
-                            String str = jsonObject.toString();
-                            Log.d("MainActivity",apply);
-                           StringEntity entity = new StringEntity(apply);
-                            post.setEntity(entity);
-                            HttpResponse httpResponse = httpClient.execute(post);
-                            if (httpResponse.getStatusLine().getStatusCode() == 200){
-                                String result = EntityUtils.toString(httpResponse.getEntity(),"utf-8");
-                                Log.d("MainActivity",result);
-                            }
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-                Toast.makeText(getApplicationContext(),"请等待审核通过，系统将会发短信给您",Toast.LENGTH_SHORT).show();
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(isChecked){
+                    bt_register.setEnabled(true);
+                    bt_register.setBackground(getResources().getDrawable(R.drawable.theme_bg_bt_selector));
+                }else {
+                    bt_register.setEnabled(false);
+                    bt_register.setBackground(getResources().getDrawable(R.drawable.gray_bg_bt_selector));
+                }
             }
         });
-        tv_software_protocol.setOnClickListener(this);
+        bt_register.setOnClickListener(this);
+    }
+
+    /**
+     * 发送注册请求至服务端
+     */
+    private void sendRegisterToServer() {
+        name = et_name.getText().toString().trim();
+        ic_card = et_ic_card.getText().toString().trim();
+        phone_num = et_phone_num.getText().toString().trim();
+        relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
+        prisoner_number = et_prisoner_number.getText().toString().trim();
+        prison_name = et_prison_chooes.getText().toString().trim();
+        identifying_code = et_identifying_code.getText().toString().trim();
+        Map<String,Map> map1 = new HashMap<String, Map>();
+        map.put("name",name);
+        map.put("uuid",ic_card);
+        map.put("phone",phone_num);
+        map.put("relationship",relationship_with_prisoner);
+        map.put("prisoner_number",prisoner_number);
+        map.put("jail_id",jail_id+"");
+        map.put("type_id",type_id+"");
+        map1.put("apply",map);
+        apply = JSONValue.toJSONString(map1);
+        new Thread(){
+            @Override
+            public void run() {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url);
+                try {
+                    String str = jsonObject.toString();
+//                    Log.d("MainActivity", apply);
+                   StringEntity entity = new StringEntity(apply);
+                    post.setEntity(entity);
+                    HttpResponse httpResponse = httpClient.execute(post);
+                    if (httpResponse.getStatusLine().getStatusCode() == 200){
+                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                        Log.d("MainActivity",result);
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+//        Toast.makeText(getApplicationContext(), "请等待审核通过，系统将会发短信给您", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -201,15 +182,16 @@ public class RegisterActivity extends BaseActivity {
                    showToastMsgShort("身份证号为空");
                    return;
                 }else if(TextUtils.isEmpty(phone_num)){
-                     showToastMsgShort("手机号为空");
-                      return;
-                  }else if(TextUtils.isEmpty(relationship_with_prisoner)){
-                      showToastMsgShort("与服刑人员关系为空");
-                      return;
-                  }else if(TextUtils.isEmpty(identifying_code)){
-                      showToastMsgShort("验证码为空");
-                      return;
-                  }else {
+                   showToastMsgShort("手机号为空");
+                    return;
+                }else if(TextUtils.isEmpty(relationship_with_prisoner)){
+                    showToastMsgShort("与服刑人员关系为空");
+                    return;
+                }else if(TextUtils.isEmpty(identifying_code)){
+                    showToastMsgShort("验证码为空");
+                    return;
+                }else {
+                    sendRegisterToServer();
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
                     builder.setCancelable(false);
                     View view = View.inflate(this, R.layout.register_commit_success_dialog, null);
@@ -230,6 +212,13 @@ public class RegisterActivity extends BaseActivity {
                 agreement_dialog = agreement_builder.create();
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
+                break;
+            case R.id.tv_read:
+                if(cb_agree_disagree.isChecked()){
+                    cb_agree_disagree.setChecked(false);
+                }else {
+                    cb_agree_disagree.setChecked(true);
+                }
                 break;
         }
     }

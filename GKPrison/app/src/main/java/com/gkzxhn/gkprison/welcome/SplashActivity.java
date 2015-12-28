@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.welcome;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.view.View;
 
@@ -14,6 +15,8 @@ import java.io.InputStream;
 
 public class SplashActivity extends BaseActivity {
 
+    private SharedPreferences sp;
+
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_splash,null);
@@ -22,11 +25,19 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, WelcomeActivity.class);
-                startActivity(intent);
+                boolean isFirst = sp.getBoolean("is_first", true);
+                Intent intent;
+                if(isFirst){
+                    intent = new Intent(SplashActivity.this, WelcomeActivity.class);
+                    startActivity(intent);
+                }else {
+                    intent = new Intent(SplashActivity.this, LoadingActivity.class);
+                    startActivity(intent);
+                }
                 SplashActivity.this.finish();
             }
         }, 1500);
