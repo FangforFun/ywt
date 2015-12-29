@@ -179,10 +179,10 @@ public class AllClassificationFragment extends BaseFragment {
                         String sql = "delete from line_items where Items_id = " + Items_id + " and cart_id = "+cart_id;
                         db.execSQL(sql);
                     } else if (i > 1) {
-                        String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + "and cart_id ="+cart_id;
+                        String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + "  and cart_id ="+cart_id;
                         db.execSQL(sql);
                     }
-                    String sql = "select qty from line_items where Items_id = "+Items_id+" and cart_id = "+cart_id;
+                    String sql = "select qty from line_items where Items_id = "+Items_id+"  and cart_id = "+cart_id;
                     Cursor cursor = db.rawQuery(sql,null);
                     if (cursor.getCount() == 0){
                         qty = 0;

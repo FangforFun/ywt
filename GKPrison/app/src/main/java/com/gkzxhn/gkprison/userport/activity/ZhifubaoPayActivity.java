@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -25,19 +26,20 @@ public class ZhifubaoPayActivity extends BaseActivity {
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";
     // 商户私钥，pkcs8格式
-    public static final String RSA_PRIVATE = "MIICXgIBAAKBgQDjqNjoaPlEaqg6DQHDX9LNJb++X06rJ0P2JmzxAFFAedxmh7AS\n" +
-            "wgvMoCxQvIhF8+Rl6TgcvBPuF76J/dT6mY5N3wvbJBwOXj2/i/EUhEy4xn/8SGCv\n" +
-            "7W9jlH86+glbtw8Mr9A9CoJ/Nr8q4uaNv1ObSH1QDBk0Nnnk+0GSW/AVtwIDAQAB\n" +
-            "AoGBAIB726cXD48wTq8shhE4tGT5aATODz0DFRUHzLYbQsALxnrLG3EKuNQMldYf\n" +
-            "AR3RrtZhUDzPXMQj/HIuopOoNCnny+hnJlHMn5wBt0w072iisuyG4whftefPT7g7\n" +
-            "zyZwfIn0LMlGBebkyPBddCmi4/vmiepnyAHFcwA6wKJ/nVlJAkEA/zV+c+n7NhXy\n" +
-            "jwjZMIO2usUZ1VhTcoPvF5nqz0jh1sZ7Fd8lVVwrComX1giPLUswQoBuV3H0mwIn\n" +
-            "HfidVWtEEwJBAORdfj4ZW+ocElSnaCtKgKS8h8DWr1ZhR88eI/3EcLb6HLjzgxDl\n" +
-            "3u8hJ8fLnFXY8iqDV9dlSL9LUplYkCNcdE0CQB9HDxhltMQMLI4bJ4MqoVqCjYf4\n" +
-            "K0H9qW/bDUwaQpNv/+XOU2UCxsOj2VgB9Io4jNGZq+xLqw7UVLb3oVC2tMECQQCY\n" +
-            "sRq0EuiuRE7NY5H3QD176MMsYV+jdjA5gIG4MBzde6aw08GTDuBdK+IZaT8C96gU\n" +
-            "XPXjA8n8fjSga+MUgcERAkEAlDUZKlKP5IJFjFH+JLMZqj5HJp+YWTQF4iPQGVTU\n" +
-            "qXBet1YSMAM+jmFKJZqgAouu0UValw3lDBSy3pL2tvH24Q==";
+    public static final String RSA_PRIVATE = "MIICeAIBADANBgkqhkiG9w0BAQEFAASCAmIwggJeAgEAAoGBAL62E/1KH+LunsXU" +
+            "9shOfFXhg6S7qd9e8b1TieCtVuZpK/maw69rv8oxoqTCXD/oUuuwszY7JIXVX8o0" +
+            "vcnK30rxTM10i5YIk16VTvqvf5D3VKxYfDJlldkiaxlO79L5A8lg224jjAbjWkqm" +
+            "kvIhaoAxXq1ythdBY1KujN9OJnjVAgMBAAECgYEAnihF35KvavVVOt9oYamlN1u0" +
+            "XtM7B4GnnMlA2NEn9iFWVMPicQI8paQQK+77rgwvaEK7/MeDfHH95KVkl4rlLcMG" +
+            "FoUUAgvrRFdS2Xv6RSaci3fvkai7MeHKQQ8j/+1dABjJcQF/OfMPHpCPrK4kxQ5Q" +
+            "sCF132mjUpiwtpzV+ikCQQD1GO6Wx/fSV2+Ihaa9coPR57kI6xpDr48r9utUHVIw" +
+            "w0sTblsGWwgs+to7SG10m6kOqb+vsCTayoFY1cQEA9vzAkEAxzHRrn1uOXzF+V/w" +
+            "FcsQvZrC9oK4ed0Lanc36WiJf8a31X8w7N0PxXzQVHbatm3GrrII2q/0ASntxmfW" +
+            "RxbyFwJBAOzHrk9KVhcF00Ev5Pqmc8TIORDtl80GAKm3fHchcHKdaJ0YAqXsMcTK" +
+            "fyPAf8WkT7lTslR3NdOMyVLaCOjcFZMCQHRUsgJXmoHUTsJetxXjK/mvYmEY4qe4" +
+            "4ivhSDP2KycGZOI4j9glGkrZo8lQSFb2MWxg6S7eR4BOfmC6z7dgvS0CQQDLrn0S" +
+            "+lotPkFBMBCh38KVEEI9Pb71SkRL05kHR4+sesm4a4bh72mrMKbcCXYxJRPXwt7k" +
+            "yQd7PvRoFL2mwp8f";
     // 支付宝公钥
     public static final String RSA_PUBLIC = "";
     private static final int SDK_PAY_FLAG = 1;
@@ -83,10 +85,12 @@ public class ZhifubaoPayActivity extends BaseActivity {
             return;
         }
         // 订单
+
         String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
+        Log.d("MainActivity","jdksaj:"+sign);
         try {
             // 仅需对sign 做URL编码
             sign = URLEncoder.encode(sign, "UTF-8");
@@ -150,10 +154,10 @@ public class ZhifubaoPayActivity extends BaseActivity {
         orderInfo += "&body=" + "\"" + body + "\"";
 
         // 商品金额
-        orderInfo += "&total_fee=" + "\"" + price + "\"";
+        orderInfo += "&total_fee=" + "\"" + 0.01 + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/alipay"
+        orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/payment"
                 + "\"";
 
         // 服务接口名称， 固定值
@@ -180,8 +184,9 @@ public class ZhifubaoPayActivity extends BaseActivity {
 
         // 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
         // orderInfo += "&paymethod=\"expressGateway\"";
-
+        Log.d("MainActivity","aaa:"+orderInfo);
         return orderInfo;
+
     }
     /**
      * get the out_trade_no for an order. 生成商户订单号，该值在商户端应保持唯一（可自定义格式规范）
@@ -205,6 +210,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
      *            待签名订单信息
      */
     public String sign(String content) {
+      //  Log.d("MainActivity","bbb:"+ SignUtils.sign("445", RSA_PRIVATE));
         return SignUtils.sign(content, RSA_PRIVATE);
     }
 

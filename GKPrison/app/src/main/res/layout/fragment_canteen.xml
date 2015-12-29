@@ -138,42 +138,42 @@
         android:layout_height="50dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true">
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="0dp"
+            android:orientation="horizontal"
             android:layout_height="match_parent"
             android:background="@android:color/white"
             android:layout_weight="1">
             <ImageView
                 android:id="@+id/image_buycar"
-                android:layout_width="25dp"
+                android:layout_width="35dp"
                 android:layout_height="25dp"
                 android:src="@drawable/buycar"
                 android:layout_marginLeft="20dp"
-                android:layout_marginTop="7dp"/>
+                android:layout_gravity="center_vertical"
+                />
+            <!--
             <ImageView
                 android:layout_width="10dp"
                 android:layout_height="10dp"
                 android:layout_marginLeft="40dp"
                 android:layout_marginTop="5dp"
                 android:src="@drawable/num"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="购物车"
-                android:textSize="12sp"
-                android:textColor="@color/tv_mid"
-                android:layout_below="@+id/image_buycar"
-                android:layout_marginLeft="15dp"
-                />
+                -->
+            <RelativeLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+               >
+
             <TextView
                 android:id="@+id/tv_total"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="合计:"
                 android:textSize="16sp"
-                android:layout_toRightOf="@+id/image_buycar"
-                android:layout_marginLeft="30dp"
-                android:layout_marginTop="7dp"/>
+               android:layout_marginLeft="20dp"/>
             <TextView
                 android:id="@+id/tv_total_money"
                 android:layout_width="wrap_content"
@@ -199,10 +199,9 @@
                 android:textSize="12sp"
                 android:textColor="@color/tv_mid"
                 android:layout_below="@+id/tv_total"
-                android:layout_toRightOf="@+id/image_buycar"
-                android:layout_marginLeft="30dp"/>
-
-        </RelativeLayout>
+                android:layout_marginLeft="20dp"/>
+            </RelativeLayout>
+        </LinearLayout>
         <Button
             android:id="@+id/bt_shopping_cart_commit"
             android:layout_width="0dp"
