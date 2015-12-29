@@ -2,6 +2,8 @@ package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.content.Intent;
 import android.support.v4.view.ViewPager;
+import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -12,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
@@ -39,6 +42,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private LinearLayout ll_calendar;
     private ImageButton preImgBtn, nextImgBtn;
     private TextView monthText;
+    private long mExitTime;//add by hzn 退出按键时间间隔
 
     @Override
     public void clickDate(CustomDate date) {
@@ -215,5 +219,24 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         TextView tv_meeting_name;
         TextView tv_meeting_prison_area;
         ImageView iv_delete;
+    }
+
+    /**
+     * 按兩次返回退出程序   add by hzn
+     * @param keyCode
+     * @param event
+     * @return
+     */
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

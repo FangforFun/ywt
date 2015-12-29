@@ -27,8 +27,11 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.ImageTools;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
+
+import junit.framework.Test;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -44,9 +47,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * created by hzn 2015/12/15
@@ -68,13 +74,13 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
-    private TextView tv_read;
-    private CheckBox cb_agree_disagree;
+    private TextView tv_read;// 我已阅读协议
+    private CheckBox cb_agree_disagree;// 我已阅读复选框
 
-   private  Map<String,String> map = new LinkedHashMap<String,String>();
+    private  Map<String,String> map = new LinkedHashMap<>();
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
-    private TextView tv_software_protocol;
+    private TextView tv_software_protocol;// 蓝色软件协议
     private String name = "";
     private String apply = "";
     private JSONObject jsonObject = new JSONObject();
@@ -82,11 +88,10 @@ public class RegisterActivity extends BaseActivity {
     private int type_id = 3;
     private String ic_card = "";
     private String phone_num = "";
-    private String prisoner_iccardnum = "";
     private String relationship_with_prisoner = "";
-    private String prisoner_number = "";
-    private String prison_name = "";
-    private String identifying_code = "";
+    private String prisoner_number = "";// 囚号输入框内容
+    private String prison_chooes = "";// 监狱选择输入框内容
+    private String identifying_code = "";// 验证码输入框的内容
     private AlertDialog dialog;
     private AlertDialog agreement_dialog;
     private static final int TAKE_PHOTO = 0; //imageview1照相;
@@ -152,7 +157,7 @@ public class RegisterActivity extends BaseActivity {
         phone_num = et_phone_num.getText().toString().trim();
         relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
         prisoner_number = et_prisoner_number.getText().toString().trim();
-        prison_name = et_prison_chooes.getText().toString().trim();
+        prison_chooes = et_prison_chooes.getText().toString().trim();
         identifying_code = et_identifying_code.getText().toString().trim();
         Map<String,Map> map1 = new HashMap<String, Map>();
         map.put("name",name);
@@ -196,32 +201,83 @@ public class RegisterActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_register:
+                // 判断姓名是否都是汉字组成
                 if(TextUtils.isEmpty(name)){
                     showToastMsgShort("姓名为空");
                     return;
-                }else if(TextUtils.isEmpty(ic_card)){
-                   showToastMsgShort("身份证号为空");
-                   return;
-                }else if(TextUtils.isEmpty(phone_num)){
-                   showToastMsgShort("手机号为空");
+                }else {
+                    Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
+                    Matcher m = p.matcher(name);
+                    if(!m.matches()) { // 不全是汉字
+                        showToastMsgShort("姓名不合法");
+                        return;
+                    }
+                }
+                // 判断身份证号是否合法
+                if(TextUtils.isEmpty(ic_card)){
+                    showToastMsgShort("身份证号为空");
                     return;
-                }else if(TextUtils.isEmpty(relationship_with_prisoner)){
+                }else{
+                    try {
+                        if(!Utils.IDCardValidate(ic_card).equals("")){
+                            showToastMsgShort("身份证号不合法");
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                // 判断手机号码是否合法
+                if(TextUtils.isEmpty(phone_num)){
+                    showToastMsgShort("手机号为空");
+                    return;
+                }
+                // 判断输入的与服刑人员关系是否都是汉字
+                if(TextUtils.isEmpty(relationship_with_prisoner)){
                     showToastMsgShort("与服刑人员关系为空");
                     return;
-                }else if(TextUtils.isEmpty(identifying_code)){
+                }else {
+                    Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
+                    Matcher m = p.matcher(name);
+                    if(!m.matches()) { // 不全是汉字
+                        showToastMsgShort("请输入正确的与服刑人员的关系");
+                        return;
+                    }
+                }
+                //判断囚号
+                if(TextUtils.isEmpty(prisoner_number)){
+                    showToastMsgShort("服刑人员囚号为空");
+                    return;
+                }else {
+                    // ToDo
+                }
+                //判断监狱选择
+                if(TextUtils.isEmpty(prison_chooes)){
+                    showToastMsgShort("");
+                    return;
+                }else {
+                    // ToDo
+                }
+                // 判断验证码是否正确
+                if(TextUtils.isEmpty(identifying_code)){
                     showToastMsgShort("验证码为空");
                     return;
                 }else {
-                    sendRegisterToServer();
-                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    builder.setCancelable(false);
-                    View view = View.inflate(this, R.layout.register_commit_success_dialog, null);
-                    Button bt_ok = (Button) view.findViewById(R.id.bt_ok);
-                    bt_ok.setOnClickListener(this);
-                    dialog = builder.create();
-                    builder.setView(view);
-                    builder.show();
-                  }
+                    // ToDo
+                }
+                // 判断是否上传身份证正反面照
+//                if(){
+//
+//                }
+                sendRegisterToServer();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setCancelable(false);
+                View view = View.inflate(this, R.layout.register_commit_success_dialog, null);
+                Button bt_ok = (Button) view.findViewById(R.id.bt_ok);
+                bt_ok.setOnClickListener(this);
+                dialog = builder.create();
+                builder.setView(view);
+                builder.show();
                 break;
             case R.id.bt_ok:
                 dialog.dismiss();
@@ -320,8 +376,6 @@ public class RegisterActivity extends BaseActivity {
                     }else if (imageclick == 2){
                         iv_add_photo_02.setImageBitmap(newBitmap);
                     }
-
-
                     ImageTools.savePhotoToSDCard(newBitmap, Environment
                             .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                             .getAbsolutePath()
@@ -331,7 +385,6 @@ public class RegisterActivity extends BaseActivity {
                             .getAbsolutePath()
                             + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
                     break;
-
                 case CHOOSE_PHOTO:
                     ContentResolver resolver = getContentResolver();
                     // 照片的原始资源地址
@@ -363,7 +416,6 @@ public class RegisterActivity extends BaseActivity {
                     }
                     break;
             }
-
         }
     }
 }
