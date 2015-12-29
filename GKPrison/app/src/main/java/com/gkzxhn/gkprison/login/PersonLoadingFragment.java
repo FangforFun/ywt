@@ -7,6 +7,9 @@ import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -14,6 +17,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
@@ -48,7 +52,7 @@ import java.util.List;
 public class PersonLoadingFragment extends BaseFragment {
     private String url = "http://10.93.1.10:3000/api/v1/login";
     private Button bt_register;
-    private Button btn_login;
+    private ActionProcessButton btn_login;
     private EditText et_login_username;
     private EditText et_login_ic_card_num;
     private String username;
@@ -57,12 +61,43 @@ public class PersonLoadingFragment extends BaseFragment {
     private String token = "cb21c49928249f05ae8e4075c6018ff0";
     private Button bt_scan_login;
     private Button bt_fast_login;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:// 云信登录成功
+                case 2:// token发送成功
+                    btn_login.setProgress(0);
+                    btn_login.setText("登录成功");
+                    btn_login.setEnabled(true);
+                    btn_login.setClickable(true);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("username", username);
+                    editor.putString("password", ic_card_num);
+                    editor.commit();
+                    Intent intent = new Intent(context, MainActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    break;
+                case 1:// 云信id登录失败
+//                case 3:// token发送失败
+//                case 4:// 不支持的编码异常
+//                case 5:// 客户端协议异常
+//                case 6:// IO异常
+                    btn_login.setProgress(0);
+                    btn_login.setText("登录失败");
+                    btn_login.setEnabled(true);
+                    btn_login.setClickable(true);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_person_loading, null);
         bt_register = (Button) view.findViewById(R.id.bt_register);
-        btn_login = (Button) view.findViewById(R.id.btn_login);
+        btn_login = (ActionProcessButton) view.findViewById(R.id.btn_login);
         et_login_username = (EditText) view.findViewById(R.id.et_login_username);
         et_login_ic_card_num = (EditText) view.findViewById(R.id.et_login_ic_card_num);
         bt_scan_login = (Button) view.findViewById(R.id.bt_scan_login);
@@ -96,19 +131,19 @@ public class PersonLoadingFragment extends BaseFragment {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }else {
+                    btn_login.setEnabled(false);
+                    btn_login.setClickable(false);
+                    btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
+                    btn_login.setProgress(1);
+                    btn_login.setText("正在登录...");
                     LoginInfo info = new LoginInfo(username, tokenFromPassword(ic_card_num)); // config...
                     final RequestCallback<LoginInfo> callback =
                             new RequestCallback<LoginInfo>() {
                                 @Override
                                 public void onSuccess(LoginInfo loginInfo) {
                                     Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
-                                    SharedPreferences.Editor editor = sp.edit();
-                                    editor.putString("username", username);
-                                    editor.putString("password", ic_card_num);
-                                    editor.commit();
-                                    Intent intent = new Intent(context, MainActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+                                    handler.sendEmptyMessage(0);
+                                    Looper.loop();
                                 }
 
                                 @Override
@@ -142,11 +177,15 @@ public class PersonLoadingFragment extends BaseFragment {
                                             Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
                                             break;
                                     }
+                                    handler.sendEmptyMessage(1);
+                                    Looper.loop();
                                 }
 
                                 @Override
                                 public void onException(Throwable throwable) {
                                     Toast.makeText(context, "登录失败2", Toast.LENGTH_SHORT).show();
+                                    handler.sendEmptyMessage(1);
+                                    Looper.loop();
                                 }
                                 // 可以在此保存LoginInfo到本地，下次启动APP做自动登录用
                             };
@@ -165,21 +204,30 @@ public class PersonLoadingFragment extends BaseFragment {
                         values.add(value1);
                         values.add(value2);
                         values.add(value3);
+                        Looper.prepare();
                         try {
                             HttpEntity entity = new UrlEncodedFormEntity(values,"utf-8");
                             post.setEntity(entity);
                             HttpResponse httpResponse = httpClient.execute(post);
                             if (httpResponse.getStatusLine().getStatusCode() == 200){
-//                                Intent intent = new Intent(context, MainActivity.class);
-//                                startActivity(intent);
-//                                getActivity().finish();
+                                handler.sendEmptyMessage(2);
+                            }else {
+                                handler.sendEmptyMessage(3);
                             }
                         } catch (UnsupportedEncodingException e) {
                             e.printStackTrace();
+                            showToastMsgShort("不支持的编码异常");
+                            handler.sendEmptyMessage(4);
                         } catch (ClientProtocolException e) {
                             e.printStackTrace();
+                            showToastMsgShort("客户端协议异常");
+                            handler.sendEmptyMessage(5);
                         } catch (IOException e) {
                             e.printStackTrace();
+                            showToastMsgShort("IO异常");
+                            handler.sendEmptyMessage(6);
+                        } finally {
+                            Looper.loop();
                         }
                     }
                 }.start();

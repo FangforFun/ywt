@@ -152,13 +152,6 @@ public class RegisterActivity extends BaseActivity {
      * 发送注册请求至服务端
      */
     private void sendRegisterToServer() {
-        name = et_name.getText().toString().trim();
-        ic_card = et_ic_card.getText().toString().trim();
-        phone_num = et_phone_num.getText().toString().trim();
-        relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
-        prisoner_number = et_prisoner_number.getText().toString().trim();
-        prison_chooes = et_prison_chooes.getText().toString().trim();
-        identifying_code = et_identifying_code.getText().toString().trim();
         Map<String,Map> map1 = new HashMap<String, Map>();
         map.put("name",name);
         map.put("uuid", ic_card);
@@ -201,9 +194,19 @@ public class RegisterActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_register:
+                name = et_name.getText().toString().trim();
+                ic_card = et_ic_card.getText().toString().trim().toLowerCase();
+                phone_num = et_phone_num.getText().toString().trim();
+                relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
+                prisoner_number = et_prisoner_number.getText().toString().trim();
+                prison_chooes = et_prison_chooes.getText().toString().trim();
+                identifying_code = et_identifying_code.getText().toString().trim();
                 // 判断姓名是否都是汉字组成
                 if(TextUtils.isEmpty(name)){
                     showToastMsgShort("姓名为空");
+                    return;
+                }else if(name.length() <= 1 || name.length() >= 6){
+                    showToastMsgShort("姓名长度不合法");
                     return;
                 }else {
                     Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
@@ -231,6 +234,11 @@ public class RegisterActivity extends BaseActivity {
                 if(TextUtils.isEmpty(phone_num)){
                     showToastMsgShort("手机号为空");
                     return;
+                }else {
+                    if(!Utils.isMobileNO(phone_num)){
+                        showToastMsgShort("请输入正确的手机号码");
+                        return;
+                    }
                 }
                 // 判断输入的与服刑人员关系是否都是汉字
                 if(TextUtils.isEmpty(relationship_with_prisoner)){

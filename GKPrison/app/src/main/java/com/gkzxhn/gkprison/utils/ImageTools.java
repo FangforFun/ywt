@@ -10,7 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * ÏàÆ¬´¦Àí¹¤¾ßÀà(Tools for handler picture)
+ * ç›¸ç‰‡å¤„ç†å·¥å…·ç±»(Tools for handler picture)
  *
  * @author Song
  */

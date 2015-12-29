@@ -19,6 +19,8 @@ public class CallUserActivity extends BaseActivity {
 
     private Button bt_call;
     private FrameLayout fl_video_view;
+    private String meeting_name;
+    private String accid;
 
     @Override
     protected View initView() {
@@ -34,8 +36,9 @@ public class CallUserActivity extends BaseActivity {
     protected void initData() {
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
+        meeting_name = getIntent().getStringExtra("申请人");
+        accid = getIntent().getStringExtra("accid");
         bt_call.setOnClickListener(this);
-        String name = getIntent().getStringExtra("申请人");
     }
 
     @Override
@@ -44,7 +47,7 @@ public class CallUserActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_call:
                 showToastMsgShort("呼叫");
-                AVChatActivity.start(this, "gkzxhn02", 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话
+                AVChatActivity.start(this, accid, 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话
                 break;
         }
     }
