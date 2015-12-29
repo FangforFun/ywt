@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,7 +16,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
@@ -30,17 +35,41 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
  */
 public class PrisonLoadingFragment extends BaseFragment {
 
-    private Button btn_login;
+    private ActionProcessButton btn_login;
     private EditText et_username;
     private EditText et_password;
     private String username;
     private String password;
     private SharedPreferences sp;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:// 云信登录成功
+                    btn_login.setProgress(0);
+                    btn_login.setText("登录成功");
+                    btn_login.setEnabled(true);
+                    btn_login.setClickable(true);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("username", username);
+                    editor.putString("password", password);
+                    editor.commit();
+                    DemoCache.setAccount(username);
+                    Intent intent = new Intent(context, DateMeetingListActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                    break;
+                case 1:// 云信id登录失败
+
+                    break;
+            }
+        }
+    };
 
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_prison_loading, null);
-        btn_login = (Button) view.findViewById(R.id.btn_login);
+        btn_login = (ActionProcessButton) view.findViewById(R.id.btn_login);
         et_username = (EditText) view.findViewById(R.id.et_username);
         et_password = (EditText) view.findViewById(R.id.et_password);
         return view;
@@ -62,19 +91,19 @@ public class PrisonLoadingFragment extends BaseFragment {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }else {
+                    btn_login.setEnabled(false);
+                    btn_login.setClickable(false);
+                    btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
+                    btn_login.setProgress(1);
+                    btn_login.setText("正在登录...");
                     LoginInfo info = new LoginInfo(username, tokenFromPassword(password)); // config...
                     final RequestCallback<LoginInfo> callback =
                             new RequestCallback<LoginInfo>() {
                                 @Override
                                 public void onSuccess(LoginInfo loginInfo) {
                                     Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
-                                    SharedPreferences.Editor editor = sp.edit();
-                                    editor.putString("username", username);
-                                    editor.putString("password", password);
-                                    editor.commit();
-                                    Intent intent = new Intent(context, DateMeetingListActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+                                    handler.sendEmptyMessage(0);
+                                    Looper.loop();
                                 }
 
                                 @Override
@@ -108,11 +137,15 @@ public class PrisonLoadingFragment extends BaseFragment {
                                             Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
                                             break;
                                     }
+                                    handler.sendEmptyMessage(1);
+                                    Looper.loop();
                                 }
 
                                 @Override
                                 public void onException(Throwable throwable) {
                                     Toast.makeText(context, "登录失败2", Toast.LENGTH_SHORT).show();
+                                    handler.sendEmptyMessage(1);
+                                    Looper.loop();
                                 }
                                 // 可以在此保存LoginInfo到本地，下次启动APP做自动登录用
                             };

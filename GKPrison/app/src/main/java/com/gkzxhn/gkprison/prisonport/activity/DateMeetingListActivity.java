@@ -31,6 +31,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private final String[] MEETING_NAMES = {"张三", "李四", "王五", "赵六"};
     private final String[] MEETING_TIMES = {"9:00-9:20", "9:30-9:50", "10:00-10:20", "10:30-10:50"};
     private final String[] MEETING_AREAS = {"第一监区", "第二监区", "第三监区", "第四监区"};
+    private final String[] MEETING_IDS = {"gkzxhn02", "gkzxhn03", "gkzxhn04", "gkzxhn05"};
 
     private ViewPager mViewPager;
     private int mCurrentIndex = 498;
@@ -100,6 +101,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 TextView tv_name = (TextView) view.findViewById(R.id.tv_meeting_name);
                 Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
                 intent.putExtra("申请人", tv_name.getText().toString());
+                intent.putExtra("accid", MEETING_IDS[position]);
                 startActivity(intent);
             }
         });

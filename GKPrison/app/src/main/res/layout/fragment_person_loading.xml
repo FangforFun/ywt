@@ -1,5 +1,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent"
     tools:context=".login.PersonLoadingFragment">
 
@@ -74,19 +75,25 @@
                android:gravity="center"/>
         </LinearLayout>
 
-        <Button
+        <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
-            android:background="@drawable/theme_bg_bt_selector"
-            android:text="登录"
-            android:onClick="loading"
-            android:textSize="20sp"
-            android:layout_marginTop="20dp"
+            android:background="@drawable/bt_bg_shape"
+            android:text="登    录"
             android:textColor="@color/white"
-            android:layout_below="@+id/ll_checkcode"/>
+            android:layout_below="@id/ll_checkcode"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:textSize="18sp"
+            custom:pb_colorComplete="@color/theme"
+            custom:pb_colorNormal="@color/theme"
+            custom:pb_colorPressed="@color/theme"
+            custom:pb_colorProgress="@color/theme"
+            custom:pb_textComplete="登录成功"
+            custom:pb_textProgress="正在登录..."/>
 
         <Button
             android:id="@+id/bt_register"

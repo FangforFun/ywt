@@ -505,7 +505,6 @@ public class AVChatUI implements AVChatUIListener {
 
             }
         }); // 音频切换到视频请求的回应. true为同意，false为拒绝
-
     }
 
     /**
@@ -514,8 +513,8 @@ public class AVChatUI implements AVChatUIListener {
      * @param largeAccount 对方的帐号
      */
     public void initSurfaceView(String largeAccount) {
-        avChatSurface.initLargeSurfaceView("gkzxhn02");
-        avChatSurface.initSmallSurfaceView("gkzxhn01");
+        avChatSurface.initLargeSurfaceView(largeAccount);
+        avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
     }
 
     /**

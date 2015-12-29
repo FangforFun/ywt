@@ -23,11 +23,9 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
-import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.google.gson.Gson;
-import com.readystatesoftware.viewbadger.BadgeView;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
