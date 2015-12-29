@@ -47,6 +47,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
     private static final int SDK_CHECK_FLAG = 2;
 
     private String orderkey = "";
+    private int countmoney;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -62,7 +63,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+     countmoney = getIntent().getIntExtra("price",0);
     }
     /**
      * call alipay sdk pay. 调用SDK支付
