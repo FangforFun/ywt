@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
-    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
+    private String url ="http://www.fushuile.com/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
     private SharedPreferences sp;
 
     private Handler handler = new Handler(){

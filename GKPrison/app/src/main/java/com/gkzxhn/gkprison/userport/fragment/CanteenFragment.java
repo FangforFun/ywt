@@ -11,6 +11,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,7 +28,8 @@ import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.google.gson.Gson;
-import com.readystatesoftware.viewbadger.BadgeView;
+import com.jauker.widget.BadgeView;
+
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -75,7 +77,11 @@ public class CanteenFragment extends BaseFragment {
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
     private Bundle data;
-
+    private View image_buycar;
+    private int count = 0;
+    private BadgeView badgeView;
+    private List<Integer> lcount = new ArrayList<Integer>();
+    private int allcount;
 
     @Override
     protected View initView() {
@@ -91,6 +97,14 @@ public class CanteenFragment extends BaseFragment {
         sp_sales = (Spinner)view.findViewById(R.id.sp_sales);
         sp_zhineng = (Spinner)view.findViewById(R.id.sp_zhineng);
         tv_total_money = (TextView)view.findViewById(R.id.tv_total_money);
+        image_buycar = view.findViewById(R.id.image_buycar);
+        badgeView = new BadgeView(context);
+        badgeView.setTargetView(image_buycar);
+        badgeView.setTextSize(6);
+        badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
+        badgeView.setBadgeGravity(Gravity.TOP | Gravity.RIGHT);
+
+
         return view;
     }
 
@@ -226,15 +240,30 @@ public class CanteenFragment extends BaseFragment {
                 }
             }
         };
+        Handler handler1 = new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                switch (msg.what){
+                    case 1:
+                        int i = (Integer)msg.obj;
+                        badgeView.setText(i+"");
+                        break;
+                }
+            }
+        };
         // 从事件中获得参数值
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
+        lcount.clear();
+        allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql,null);
         total = 0;
         if (cursor.getCount() == 0){
             tv_total_money.setText("0.0");
+            badgeView.setVisibility(View.GONE);
         }else {
+            badgeView.setVisibility(View.VISIBLE);
             while (cursor.moveToNext()){
                 Shoppinglist shoppinglist = new Shoppinglist();
                 shoppinglist.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
@@ -249,7 +278,17 @@ public class CanteenFragment extends BaseFragment {
             float p = Float.parseFloat(t);
             int n = commodities.get(i).getQty();
             total += p * n ;
+            count = n;
+            lcount.add(count);
         }
+        for (int i = 0;i < lcount.size();i++){
+            allcount += lcount.get(i);
+        }
+
+        Message msg1 = handler1.obtainMessage();
+        msg1.obj = allcount;
+        msg1.what = 1;
+        handler1.sendMessage(msg1);
         DecimalFormat fnum = new DecimalFormat("####0.0");
         send = fnum.format(total);
         Message msg = handler.obtainMessage();
@@ -257,53 +296,4 @@ public class CanteenFragment extends BaseFragment {
         msg.what = 1;
         handler.sendMessage(msg);
     }
-
-    //当fragment已经被实例化，将其隐藏
-    public  void hideFragment(FragmentTransaction ft){
-        if (allclass != null){
-            ft.hide(allclass);
-        }
-        if (sales != null){
-            ft.hide(sales);
-        }
-        if (zhineng != null){
-            ft.hide(zhineng);
-        }
-    }
-/**
-    public void showFragment(int index){
-        FragmentTransaction ft = fm.beginTransaction();
-        hideFragment(ft);
-        switch (index){
-            case 1:
-                if (allclass != null){
-                    ft.show(allclass);
-                }else {
-                    allclass = new AllClassificationFragment();
-                    allclass.setArguments(data);
-                    ft.add(R.id.fl_commodity,allclass);
-                }
-                break;
-            case 2:
-                if (sales != null){
-                    ft.show(sales);
-                }else {
-                    sales = new SalesPriorityFragment();
-                    sales.setArguments(data);
-                    ft.add(R.id.fl_commodity,sales);
-                }
-                break;
-            case 3:
-                if (zhineng != null){
-                    ft.show(zhineng);
-                }else {
-                    zhineng = new IntellingentSortingFragment();
-                    zhineng.setArguments(data);
-                    ft.add(R.id.fl_commodity,zhineng);
-                }
-                break;
-        }
-        ft.commit();
-    }
-**/
 }
