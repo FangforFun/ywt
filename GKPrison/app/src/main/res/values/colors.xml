@@ -25,4 +25,16 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_c2364b">#C2364B</color>
     <color name="color_f5455e">#F5455E</color>
+
+    <integer-array name="my_colors">
+        <item>@color/gplus_color_1</item>
+        <item>@color/gplus_color_2</item>
+        <item>@color/gplus_color_3</item>
+        <item>@color/gplus_color_4</item>
+    </integer-array>
+
+    <color name="gplus_color_1">#3e802f</color>
+    <color name="gplus_color_2">#f4b400</color>
+    <color name="gplus_color_3">#427fed</color>
+    <color name="gplus_color_4">#b23424</color>
 </resources>

@@ -80,11 +80,12 @@
         <activity android:name=".prisonport.activity.DateMeetingListActivity" />
         <activity android:name=".prisonport.activity.CallUserActivity" />
         <activity android:name=".avchat.AVChatActivity" />
-        <activity android:name=".scan.CaptureActivity"
+        <activity
+            android:name=".scan.CaptureActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="CaptureActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden"/>
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -113,21 +114,19 @@
         <!-- 安卓保活配置 -->
         <service
             android:name="com.netease.cosine.core.CosineService"
-            android:process=":cosine">
-        </service>
+            android:process=":cosine"></service>
 
         <receiver
             android:name="com.netease.cosine.target.CosineReceiver"
             android:exported="true"
-            android:process=":cosine">
-        </receiver>
+            android:process=":cosine"></receiver>
 
         <meta-data
             android:name="com.netease.cosine.target"
-            android:value=""/>
+            android:value="" />
         <meta-data
             android:name="com.netease.cosine.target.receiver"
-            android:value="com.netease.nimlib.service.NimReceiver"/>
+            android:value="com.netease.nimlib.service.NimReceiver" />
         <!--
              申明实时音视频来电通知的广播接收器，第三方APP集成时，
                         action中的com.netease.nim.demo请替换为自己的包名
@@ -148,6 +147,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".welcome.WelcomeActivity"></activity>
+        <activity android:name=".welcome.WelcomeActivity" />
+        <activity android:name=".userport.activity.NewsDetailActivity"></activity>
     </application>
+
 </manifest>

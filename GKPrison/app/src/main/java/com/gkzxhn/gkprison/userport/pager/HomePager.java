@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.userport.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
+import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonIntroductionActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonOpenActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
@@ -40,7 +41,9 @@ public class HomePager extends BasePager {
     private LinearLayout top_news_viewpager;
     private GridView gv_home_options;
     private TextView tv_focus_attention; // 焦点关注
-//    private LinearLayout ll_home_news;
+    private LinearLayout ll_home_news1;
+    private LinearLayout ll_home_news2;
+    private LinearLayout ll_home_news3;
 //    private ImageView iv_home_news_icon;
 //    private TextView tv_home_news_title;
 //    private TextView tv_home_news_content;
@@ -64,7 +67,9 @@ public class HomePager extends BasePager {
         rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
         gv_home_options = (GridView) view.findViewById(R.id.gv_home_options);
         tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
-//        ll_home_news = (LinearLayout) view.findViewById(R.id.ll_home_news);
+        ll_home_news1 = (LinearLayout) view.findViewById(R.id.ll_home_news1);
+        ll_home_news2 = (LinearLayout) view.findViewById(R.id.ll_home_news2);
+        ll_home_news3 = (LinearLayout) view.findViewById(R.id.ll_home_news3);
 //        iv_home_news_icon = (ImageView) view.findViewById(R.id.iv_home_news_icon);
 //        tv_home_news_title = (TextView) view.findViewById(R.id.tv_home_news_title);
 //        tv_home_news_content = (TextView) view.findViewById(R.id.tv_home_news_content);
@@ -98,7 +103,9 @@ public class HomePager extends BasePager {
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
         gv_home_options.setAdapter(new MyOptionsAdapter());
-//        ll_home_news.setOnClickListener(this);
+        ll_home_news1.setOnClickListener(this);
+        ll_home_news2.setOnClickListener(this);
+        ll_home_news3.setOnClickListener(this);
     }
 
     private void initDot() {
@@ -219,9 +226,13 @@ public class HomePager extends BasePager {
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()){
-            case R.id.ll_home_news:
-//                showToastMsgShort(tv_home_news_title.getText().toString().trim());
+            case R.id.ll_home_news1:
+            case R.id.ll_home_news2:
+            case R.id.ll_home_news3:
+                intent = new Intent(context, NewsDetailActivity.class);
+                context.startActivity(intent);
                 break;
         }
         super.onClick(v);
