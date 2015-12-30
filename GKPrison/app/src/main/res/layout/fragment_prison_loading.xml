@@ -62,9 +62,9 @@
             android:textSize="20sp"
             custom:pb_colorComplete="@color/theme"
             custom:pb_colorNormal="@color/theme"
-            custom:pb_colorPressed="@color/half_transparent_theme"
+            custom:pb_colorPressed="@color/theme"
             custom:pb_colorProgress="@color/theme"
-            custom:pb_textComplete="Success"
-            custom:pb_textProgress="Loading"/>
+            custom:pb_textComplete="登录成功"
+            custom:pb_textProgress="正在登录..."/>
     </LinearLayout>
 </FrameLayout>

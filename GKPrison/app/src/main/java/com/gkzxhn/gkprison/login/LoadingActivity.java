@@ -58,7 +58,7 @@ public class LoadingActivity extends BaseActivity {
                 tv_person_login.setOnClickListener(this);
                 TextView tv_prison_login = (TextView) view.findViewById(R.id.tv_prison_login);
                 tv_prison_login.setOnClickListener(this);
-                popupWindow = new PopupWindow(view, DensityUtil.dip2px(this, 100), DensityUtil.dip2px(this, 80));
+                popupWindow = new PopupWindow(view, DensityUtil.dip2px(this, getResources().getDimension(R.dimen.login_choose_width)), DensityUtil.dip2px(this, getResources().getDimension(R.dimen.title_bar_height)*2/3));
                 // 要想popup window播放动画，要添加背景
                 popupWindow.setBackgroundDrawable(new ColorDrawable(
                         Color.TRANSPARENT));
@@ -66,7 +66,7 @@ public class LoadingActivity extends BaseActivity {
                 int[] location = new int[2];
                 view.getLocationOnScreen(location);
                 popupWindow.showAtLocation(ly_title_bar, Gravity.NO_GRAVITY,
-                        DensityUtil.getScreenWidthHeight(this)[0] - 20, DensityUtil.dip2px(this, 48) + Utils.getStatusHeight(this));
+                        DensityUtil.getScreenWidthHeight(this)[0] - DensityUtil.dip2px(this, getResources().getDimension(R.dimen.title_bar_height)/2), DensityUtil.dip2px(this, getResources().getDimension(R.dimen.title_bar_height)/2) + Utils.getStatusHeight(this));
 
                 AlphaAnimation aa = new AlphaAnimation(0.2f, 1.0f);
                 aa.setDuration(500);

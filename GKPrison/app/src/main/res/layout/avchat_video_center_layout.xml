@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
-              android:background="@drawable/avchat_call_bg"
+              android:background="@drawable/avchat_call_bg2"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
 
@@ -25,8 +24,7 @@
             android:text=""
             android:gravity="center"
             android:singleLine="true"
-            android:ellipsize="end"
-            />
+            android:ellipsize="end" />
 
     <TextView
             android:layout_marginBottom="5dp"
@@ -39,23 +37,33 @@
             android:text="请求视频聊天..."
             android:gravity="center"
             android:singleLine="true"
-            android:ellipsize="end"
-            />
+            android:ellipsize="end" />
 
-    <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:paddingBottom="50dp"
-            >
+    <TextView
+        android:id="@+id/tv_meeting_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:text="您的会见时间只有20分钟\n20分钟后会见将自动结束"
+        android:textColor="@color/tv_red"
+        android:gravity="center"
+        android:background="#88ffffff"
+        />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingBottom="20dp">
         <include
-                android:id="@+id/avchat_video_refuse_receive"
-                layout="@layout/avchat_refuse_receive_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:visibility="gone"
-                />
-
+            android:id="@+id/avchat_video_refuse_receive"
+            layout="@layout/avchat_refuse_receive_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone" />
     </RelativeLayout>
 </LinearLayout>

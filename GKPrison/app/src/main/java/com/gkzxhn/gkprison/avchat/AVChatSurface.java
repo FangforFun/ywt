@@ -29,6 +29,16 @@ public class AVChatSurface {
     private View surfaceRoot;
     private Handler uiHandler;
 
+    public boolean getIsComing() {
+        return isComing;
+    }
+
+    public void setIsComing(boolean isComing) {
+        this.isComing = isComing;
+    }
+
+    private boolean isComing = false;
+
     // constant
     private static final int PEER_CLOSE_CAMERA = 0;
     private static final int LOCAL_CLOSE_CAMERA = 1;
@@ -42,6 +52,7 @@ public class AVChatSurface {
     private FrameLayout smallSizePreviewFrameLayout;
     private LinearLayout smallSizePreviewLayout;
     private ImageView smallSizePreviewCoverImg;//stands for peer or local close camera
+    private ImageView iv_meeting_ic_card; // 对方身份证正面照
     private View largeSizePreviewCoverLayout;//stands for peer or local close camera
 
     // state
@@ -76,6 +87,7 @@ public class AVChatSurface {
             smallSizePreviewFrameLayout = (FrameLayout) surfaceRoot.findViewById(R.id.small_size_preview_layout);
             smallSizePreviewLayout = (LinearLayout) surfaceRoot.findViewById(R.id.small_size_preview);
             smallSizePreviewCoverImg = (ImageView) surfaceRoot.findViewById(R.id.smallSizePreviewCoverImg);
+            iv_meeting_ic_card = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_ic_card);
             smallSizePreviewFrameLayout.setOnTouchListener(touchListener);
 
             largeSizePreviewLayout = (LinearLayout) surfaceRoot.findViewById(R.id.large_size_preview);
@@ -152,7 +164,6 @@ public class AVChatSurface {
 
                     break;
             }
-
             return true;
         }
     };
@@ -168,6 +179,12 @@ public class AVChatSurface {
                 showNotificationLayout(AUDIO_TO_VIDEO_WAIT);
                 break;
             case INCOMING_AUDIO_TO_VIDEO:
+                break;
+            case INCOMING_VIDEO_CALLING:// 来电
+                iv_meeting_ic_card.setVisibility(View.GONE);
+                break;
+            case OUTGOING_VIDEO_CALLING:// 去电
+                iv_meeting_ic_card.setVisibility(View.VISIBLE);
                 break;
             default:
                 break;
@@ -210,8 +227,6 @@ public class AVChatSurface {
             addIntoSmallSizePreviewLayout();
         }
     }
-
-
 
     /**
      * 添加surfaceview到largeSizePreviewLayout
@@ -270,7 +285,7 @@ public class AVChatSurface {
     }
 
     /**
-     * 对方打开了摄像头
+     * 本地打开了摄像头
      */
     public void localVideoOn() {
         isLocalVideoOff = false;

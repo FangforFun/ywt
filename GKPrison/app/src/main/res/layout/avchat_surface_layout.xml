@@ -23,8 +23,8 @@
 
     <FrameLayout
         android:id="@+id/small_size_preview_layout"
-        android:layout_width="64dp"
-        android:layout_height="98dp"
+        android:layout_width="@dimen/av_small_size_width"
+        android:layout_height="@dimen/av_small_size_height"
         android:layout_gravity="right|top"
         android:layout_marginRight="16dp"
         android:layout_marginTop="18dp">
@@ -46,4 +46,14 @@
             android:visibility="gone" />
     </FrameLayout>
 
+    <ImageView
+        android:id="@+id/iv_meeting_ic_card"
+        android:layout_width="@dimen/av_small_size_width"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_card"
+        android:layout_gravity="right|top"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="214dp"
+        android:scaleType="fitXY"
+        android:visibility="gone"/>
 </FrameLayout>

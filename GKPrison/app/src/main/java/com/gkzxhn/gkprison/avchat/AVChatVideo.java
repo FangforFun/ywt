@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.avchat;
 
 import android.content.Context;
 import android.graphics.Rect;
+import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.ImageView;
@@ -20,7 +21,7 @@ import com.netease.nimlib.sdk.avchat.AVChatManager;
  * 视频管理器， 视频界面初始化和相关管理
  * Created by hzxuwen on 2015/5/5.
  */
-public class AVChatVideo implements View.OnClickListener, ToggleListener {
+public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticlockwise.OnTimeCompleteListener {
 
     // data
     private Context context;
@@ -29,7 +30,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener {
     //顶部控制按钮
     private View topRoot;
     private View switchAudio;
-    private Chronometer time;
+    private Anticlockwise time;
     private TextView netUnstableTV;
     //中间控制按钮
     private View middleRoot;
@@ -69,7 +70,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener {
         topRoot = root.findViewById(R.id.avchat_video_top_control);
         switchAudio = topRoot.findViewById(R.id.avchat_video_switch_audio);
         switchAudio.setOnClickListener(this);
-        time = (Chronometer) topRoot.findViewById(R.id.avchat_video_time);
+        time = (Anticlockwise) topRoot.findViewById(R.id.avchat_video_time);
         netUnstableTV = (TextView) topRoot.findViewById(R.id.avchat_video_netunstable);
 
         middleRoot = root.findViewById(R.id.avchat_video_middle_control);
@@ -193,10 +194,15 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener {
         }
     }
 
+    /**
+     * 设置通话时间  屏幕上方正中间
+     * @param visible
+     */
     private void setTime(boolean visible){
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
-            time.setBase(manager.getTimeBase());
+            time.setOnTimeCompleteListener(this);
+            time.initTime(1200);
             time.start();
         }
     }
@@ -245,7 +251,6 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener {
             default:
                 break;
         }
-
     }
 
     /**
@@ -289,5 +294,17 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener {
             refuseTV.setEnabled(false);
             hangUpImg.setEnabled(false);
         }
+    }
+
+    @Override
+    public void onTimeComplete() {
+        Toast.makeText(context, "会话结束", Toast.LENGTH_SHORT).show();
+        listener.onHangUp();// 时间到自动挂断
+    }
+
+    @Override
+    public void onTimeChanged(long s) {
+        if(s <= 180) //剩余会话时间小于3分钟时间颜色报红
+            time.setTextColor(context.getResources().getColor(R.color.tv_red));
     }
 }
