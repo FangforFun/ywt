@@ -21,6 +21,8 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
@@ -83,6 +85,7 @@ public class SalesPriorityFragment extends BaseFragment {
         while (cursor.moveToNext()) {
             if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();
+                commodity.setSales_heat(cursor.getInt(cursor.getColumnIndex("sales_heat")));
                 commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
@@ -100,7 +103,17 @@ public class SalesPriorityFragment extends BaseFragment {
                 commodities.add(commodity);
             }
         }
-
+        Collections.sort(commodities, new Comparator<Commodity>() {
+            @Override
+            public int compare(Commodity lhs, Commodity rhs) {
+                int heat1 = lhs.getSales_heat();
+                int heat2 = rhs.getSales_heat();
+                if (heat1 > heat2){
+                    return 1;
+                }
+                return -1;
+            }
+        });
         adapter = new SalesAdapter();
         lv_sale.setAdapter(adapter);
     }
@@ -236,4 +249,6 @@ public class SalesPriorityFragment extends BaseFragment {
         RelativeLayout rl_add;
         TextView tv_num;
     }
+
+
 }
