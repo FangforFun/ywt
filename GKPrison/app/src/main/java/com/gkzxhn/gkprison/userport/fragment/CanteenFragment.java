@@ -11,6 +11,7 @@ import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -25,6 +26,8 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.userport.bean.Items;
+import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.google.gson.Gson;
@@ -38,8 +41,11 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -47,7 +53,12 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
 
 import de.greenrobot.event.EventBus;
 
@@ -67,7 +78,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/apply";
+    private String url = "http://10.93.1.10:3000/api/v1/order";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -82,6 +93,10 @@ public class CanteenFragment extends BaseFragment {
     private BadgeView badgeView;
     private List<Integer> lcount = new ArrayList<Integer>();
     private int allcount;
+    private String TradeNo;
+    private String token = "cb21c49928249f05ae8e4075c6018ff0";
+    private String apply = "";
+    private  List<Items> itemses = new ArrayList<Items>();
 
     @Override
     protected View initView() {
@@ -110,6 +125,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        TradeNo = getOutTradeNo();
         long time = System.currentTimeMillis();
        //fm  = ((BaseActivity) context).getSupportFragmentManager();
 
@@ -148,7 +164,7 @@ public class CanteenFragment extends BaseFragment {
                 allclass = new AllClassificationFragment();
                 allclass.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-               //showFragment(1);
+                //showFragment(1);
             }
         });
         rl_sales.setOnClickListener(new View.OnClickListener() {
@@ -162,7 +178,7 @@ public class CanteenFragment extends BaseFragment {
                 sp_zhineng.setBackgroundResource(R.drawable.spinner);
                 sales = new SalesPriorityFragment();
                 sales.setArguments(data);
-                ((BaseActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity,sales).commit();
+                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                 //showFragment(2);
             }
         });
@@ -178,43 +194,16 @@ public class CanteenFragment extends BaseFragment {
                 zhineng = new IntellingentSortingFragment();
                 zhineng.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
-              //showFragment(3);
+                //showFragment(3);
             }
         });
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                gson = new Gson();
-                final String str = gson.toJson(commodities);
-                final String countmoney = tv_total_money.getText().toString();
-                new Thread(){
-                    @Override
-                    public void run() {
-                        HttpClient httpClient = new DefaultHttpClient();
-                        HttpPost post = new HttpPost(url);
-                        List<NameValuePair> values = new ArrayList<NameValuePair>();
-                        BasicNameValuePair value1 = new BasicNameValuePair("countmoney",countmoney);
-                        BasicNameValuePair value2 = new BasicNameValuePair("shoppinglist",str);
-                        values.add(value1);
-                        values.add(value2);
-                        try {
-                            HttpEntity entity = new UrlEncodedFormEntity(values,"utf-8");
-                            post.setEntity(entity);
-                            HttpResponse httpResponse = httpClient.execute(post);
-                            if (httpResponse.getStatusLine().getStatusCode() == 200){
 
-                            }
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
+               sendOrderToServer();
                 Intent intent = new Intent(context, PaymentActivity.class);
-                intent.putExtra("totalmoney",send);
+                intent.putExtra("totalmoney", send);
                 context.startActivity(intent);
             }
         });
@@ -255,6 +244,7 @@ public class CanteenFragment extends BaseFragment {
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
         lcount.clear();
+        itemses.clear();
         allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql,null);
@@ -277,6 +267,10 @@ public class CanteenFragment extends BaseFragment {
             String t = commodities.get(i).getPrice();
             float p = Float.parseFloat(t);
             int n = commodities.get(i).getQty();
+            Items items = new Items();
+            items.setItems_id(commodities.get(i).getId());
+            items.setQuantity(n);
+            itemses.add(items);
             total += p * n ;
             count = n;
             lcount.add(count);
@@ -295,5 +289,49 @@ public class CanteenFragment extends BaseFragment {
         msg.obj = send;
         msg.what = 1;
         handler.sendMessage(msg);
+    }
+
+    private void sendOrderToServer() {
+        Order order = new Order();
+        order.setToken(token);
+        order.setJail_id(1);
+        order.setOut_trade_no(TradeNo);
+        order.setItems(itemses);
+        gson = new Gson();
+        apply = gson.toJson(order);
+        final String str = "order:"+apply;
+        Log.d("MainActivity", str);
+        new Thread(){
+            @Override
+            public void run() {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url);
+                try {
+                    StringEntity entity = new StringEntity(str);
+                    post.setEntity(entity);
+                    HttpResponse response = httpClient.execute(post);
+                    if (response.getStatusLine().getStatusCode() == 200){
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    public String getOutTradeNo() {
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
+                Locale.getDefault());
+        Date date = new Date();
+        String key = format.format(date);
+        Random r = new Random();
+        key = key + r.nextInt();
+        key = key.substring(0, 15);
+        return key;
     }
 }

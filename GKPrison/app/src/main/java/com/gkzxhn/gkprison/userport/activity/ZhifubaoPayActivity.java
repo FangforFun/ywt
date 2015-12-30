@@ -47,6 +47,8 @@ public class ZhifubaoPayActivity extends BaseActivity {
     private static final int SDK_CHECK_FLAG = 2;
 
     private String orderkey = "";
+    private int countmoney = 0;
+    private String getOutTradeNo = "";
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -62,7 +64,8 @@ public class ZhifubaoPayActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-
+     countmoney = getIntent().getIntExtra("price",0);
+     getOutTradeNo = getIntent().getStringExtra("outorderno");
     }
     /**
      * call alipay sdk pay. 调用SDK支付
@@ -86,7 +89,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
         }
         // 订单
 
-        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+        String orderInfo = getOrderInfo(1,"测试的商品", "该测试商品的详细描述", "0.01");
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
@@ -136,7 +139,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
      * create the order info. 创建订单信息
      *
      */
-    public String getOrderInfo(String subject, String body, String price) {
+    public String getOrderInfo(int jail_id,String subject, String body, String price) {
 
         // 签约合作者身份ID
         String orderInfo = "partner=" + "\"" + PARTNER + "\"";
@@ -145,7 +148,8 @@ public class ZhifubaoPayActivity extends BaseActivity {
         orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
         // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+        orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo + "\"";
+        orderInfo += "&jail_id=" + "\""+jail_id +"\"";
 
         // 商品名称
         orderInfo += "&subject=" + "\"" + subject + "\"";
@@ -154,7 +158,8 @@ public class ZhifubaoPayActivity extends BaseActivity {
         orderInfo += "&body=" + "\"" + body + "\"";
 
         // 商品金额
-        orderInfo += "&total_fee=" + "\"" + 0.01 + "\"";
+        orderInfo += "&total_fee=" + "\"" + price + "\"";
+
 
         // 服务器异步通知页面路径
         orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/payment"
