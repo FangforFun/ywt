@@ -121,6 +121,7 @@ public class AVChatUI implements AVChatUIListener {
                 Log.d(TAG, "success");
                 avChatData = data;
                 DialogMaker.dismissProgressDialog();
+                Toast.makeText(context, "开始进行视频通话，请抓紧时间", Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -128,7 +129,7 @@ public class AVChatUI implements AVChatUIListener {
                 Log.d(TAG, "failed code->" + code);
                 DialogMaker.dismissProgressDialog();
                 Toast.makeText(context, R.string.avchat_call_failed, Toast.LENGTH_SHORT).show();
-                closeSessions(-1);
+                closeSessions(code);
             }
 
             @Override
@@ -214,26 +215,32 @@ public class AVChatUI implements AVChatUIListener {
             case AVChatExitCode.CONFIG_ERROR: // 服务器返回数据错误
                 Toast.makeText(context, R.string.avchat_net_error_then_quit, Toast.LENGTH_SHORT).show();
                 break;
-            case AVChatExitCode.PEER_HANGUP:
+            case AVChatExitCode.PEER_HANGUP://挂断
             case AVChatExitCode.HANGUP:
                 if (isCallEstablish.get()) {
                     Toast.makeText(context, R.string.avchat_call_finish, Toast.LENGTH_SHORT).show();
                 }
                 break;
-            case AVChatExitCode.PEER_BUSY:
+            case AVChatExitCode.PEER_BUSY:// 用户正忙
                 Toast.makeText(context, R.string.avchat_peer_busy, Toast.LENGTH_SHORT).show();
                 break;
-            case AVChatExitCode.PROTOCOL_INCOMPATIBLE_PEER_LOWER:
+            case AVChatExitCode.PROTOCOL_INCOMPATIBLE_PEER_LOWER:// 对方版本过低
                 Toast.makeText(context, R.string.avchat_peer_protocol_low_version, Toast.LENGTH_SHORT).show();
                 break;
-            case AVChatExitCode.PROTOCOL_INCOMPATIBLE_SELF_LOWER:
+            case AVChatExitCode.PROTOCOL_INCOMPATIBLE_SELF_LOWER:// 本机版本过低
                 Toast.makeText(context, R.string.avchat_local_protocol_low_version, Toast.LENGTH_SHORT).show();
                 break;
-            case AVChatExitCode.INVALIDE_CHANNELID:
+            case AVChatExitCode.INVALIDE_CHANNELID:// 对方已挂断
                 Toast.makeText(context, R.string.avchat_invalid_channel_id, Toast.LENGTH_SHORT).show();
                 break;
-            case AVChatExitCode.LOCAL_CALL_BUSY:
+            case AVChatExitCode.LOCAL_CALL_BUSY:// 正在进行本地通话
                 Toast.makeText(context, R.string.avchat_local_call_busy, Toast.LENGTH_SHORT).show();
+                break;
+            case AVChatExitCode.REJECT:// 对方拒绝
+                Toast.makeText(context, R.string.avchat_peer_reject, Toast.LENGTH_SHORT).show();
+                break;
+            case AVChatExitCode.PEER_NO_RESPONSE:// 无回应
+                Toast.makeText(context, R.string.avchat_no_response, Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

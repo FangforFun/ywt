@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.login.view.NiceSpinner;
 
 /**
  * activity基类
@@ -29,7 +30,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected View ly_title_bar;
     protected TextView tv_remittance;
     protected RelativeLayout rl_regist;
-    protected TextView tv_user_type;
+//    protected TextView tv_user_type;
+    protected NiceSpinner ns_login_type;
     protected Toolbar tool_bar;
 
     @Override
@@ -46,7 +48,8 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
         rl_regist = (RelativeLayout)findViewById(R.id.rl_regist);
-        tv_user_type = (TextView) findViewById(R.id.tv_user_type);
+//        tv_user_type = (TextView) findViewById(R.id.tv_user_type);
+        ns_login_type = (NiceSpinner) findViewById(R.id.ns_login_type);
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
         View view = initView();
         rl_content.addView(view);
