@@ -3,13 +3,31 @@ package com.gkzxhn.gkprison.userport.bean;
 import java.util.List;
 
 /**
+ * 订单全部信息
  * Created by admin on 2015/12/29.
  */
 public class Order {
     private int jail_id;
     private List<Items> items;
-    private String token;
     private String out_trade_no;
+    private String created_at;
+    private float amount;
+
+    public float getAmount() {
+        return amount;
+    }
+
+    public void setAmount(float amount) {
+        this.amount = amount;
+    }
+
+    public String getCreated_at() {
+        return created_at;
+    }
+
+    public void setCreated_at(String created_at) {
+        this.created_at = created_at;
+    }
 
     public List<Items> getItems() {
         return items;
@@ -27,13 +45,6 @@ public class Order {
         this.jail_id = jail_id;
     }
 
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
-    }
 
     public String getOut_trade_no() {
         return out_trade_no;

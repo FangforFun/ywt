@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
+import android.renderscript.RenderScript;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -14,6 +15,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -21,10 +23,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Items;
 import com.gkzxhn.gkprison.userport.bean.Order;
@@ -32,6 +36,19 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+import com.squareup.okhttp.FormEncodingBuilder;
+import com.squareup.okhttp.Headers;
+import com.squareup.okhttp.MediaType;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 
 import org.apache.http.HttpEntity;
@@ -45,15 +62,20 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -61,6 +83,7 @@ import java.util.Map;
 import java.util.Random;
 
 import de.greenrobot.event.EventBus;
+import io.netty.handler.codec.http.HttpContent;
 
 /**
  * Created by zhengneng on 2015/12/21.
@@ -78,7 +101,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/order";
+    private String url = "http://10.93.1.10:3000/api/v1/orders?access_token=cb21c49928249f05ae8e4075c6018ff0";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -97,6 +120,8 @@ public class CanteenFragment extends BaseFragment {
     private String token = "cb21c49928249f05ae8e4075c6018ff0";
     private String apply = "";
     private  List<Items> itemses = new ArrayList<Items>();
+    private String times;
+
 
     @Override
     protected View initView() {
@@ -131,7 +156,7 @@ public class CanteenFragment extends BaseFragment {
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time);
-        String times = format.format(date);
+        times = format.format(date);
         String sql = "insert into Cart (time) values ('"+times+"')";
         db.execSQL(sql);
         String sql1 = "select id from Cart where time = '"+times+"'";
@@ -141,9 +166,9 @@ public class CanteenFragment extends BaseFragment {
         }
         data = new Bundle();
         data.putString("times",times);
-        allclass = new AllClassificationFragment();
-        allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+     //   allclass = new AllClassificationFragment();
+       // allclass.setArguments(data);
+        //((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
 
         // showFragment(1);
         View image_buycar = view.findViewById(R.id.image_buycar);
@@ -151,6 +176,46 @@ public class CanteenFragment extends BaseFragment {
 
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
         sp_allclass.setBackgroundResource(R.drawable.spinner_down);
+        sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                // Toast.makeText(context," position=" +  position +  " id="  + id,Toast.LENGTH_SHORT).show();
+                switch (position) {
+                    case 0:
+                        allclass = new AllClassificationFragment();
+                        data.putInt("leibie", 0);
+                        allclass.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        break;
+                    case 1:
+                        allclass = new AllClassificationFragment();
+                        data.putInt("leibie", 1);
+                        allclass.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        break;
+                    case 2:
+                        allclass = new AllClassificationFragment();
+                        data.putInt("leibie", 2);
+                        allclass.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        break;
+                    case 3:
+                        allclass = new AllClassificationFragment();
+                        data.putInt("leibie", 3
+                        );
+                        allclass.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        break;
+                }
+            }
+
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                Toast.makeText(context, "unselected", Toast.LENGTH_SHORT).show();
+            }
+        });
+
 
         rl_allclass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,6 +245,17 @@ public class CanteenFragment extends BaseFragment {
                 sales.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                 //showFragment(2);
+                sp_sales.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(context, " position=" + position + " id=" + id, Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> parent) {
+
+                    }
+                });
             }
         });
         rl_zhineng.setOnClickListener(new View.OnClickListener() {
@@ -194,17 +270,18 @@ public class CanteenFragment extends BaseFragment {
                 zhineng = new IntellingentSortingFragment();
                 zhineng.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
-                //showFragment(3);
             }
         });
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                 sendOrderToServer();
 
-               sendOrderToServer();
+
                 Intent intent = new Intent(context, PaymentActivity.class);
                 intent.putExtra("totalmoney", send);
                 context.startActivity(intent);
+
             }
         });
     }
@@ -247,7 +324,7 @@ public class CanteenFragment extends BaseFragment {
         itemses.clear();
         allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
-        Cursor cursor = db.rawQuery(sql,null);
+        Cursor cursor = db.rawQuery(sql, null);
         total = 0;
         if (cursor.getCount() == 0){
             tv_total_money.setText("0.0");
@@ -268,7 +345,7 @@ public class CanteenFragment extends BaseFragment {
             float p = Float.parseFloat(t);
             int n = commodities.get(i).getQty();
             Items items = new Items();
-            items.setItems_id(commodities.get(i).getId());
+            items.setItem_id(commodities.get(i).getId());
             items.setQuantity(n);
             itemses.add(items);
             total += p * n ;
@@ -283,7 +360,7 @@ public class CanteenFragment extends BaseFragment {
         msg1.obj = allcount;
         msg1.what = 1;
         handler1.sendMessage(msg1);
-        DecimalFormat fnum = new DecimalFormat("####0.0");
+        DecimalFormat fnum = new DecimalFormat("####0.00");
         send = fnum.format(total);
         Message msg = handler.obtainMessage();
         msg.obj = send;
@@ -292,37 +369,50 @@ public class CanteenFragment extends BaseFragment {
     }
 
     private void sendOrderToServer() {
-        Order order = new Order();
-        order.setToken(token);
-        order.setJail_id(1);
-        order.setOut_trade_no(TradeNo);
+        final Order order = new Order();
         order.setItems(itemses);
+        order.setJail_id(1);
+        order.setCreated_at(times);
+        Float f = Float.parseFloat(send);
+        order.setAmount(f);
         gson = new Gson();
+        order.setOut_trade_no(TradeNo);
         apply = gson.toJson(order);
-        final String str = "order:"+apply;
-        Log.d("MainActivity", str);
-        new Thread(){
+        final AA aa = new AA();
+        aa.setOrder(order);
+        final String str = gson.toJson(aa);
+       new Thread(){
             @Override
-            public void run() {
+          public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
                 try {
-                    StringEntity entity = new StringEntity(str);
-                    post.setEntity(entity);
+                  Log.d("TTT", str);
+                   StringEntity entity = new StringEntity(str);
+                    entity.setContentType("application/json");
+                    entity.setContentEncoding("UTF-8");
+                   post.setEntity(entity);
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                        Log.d("TTT", result);
                     }
-                } catch (UnsupportedEncodingException e) {
+                }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 } catch (ClientProtocolException e) {
                     e.printStackTrace();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
             }
+
         }.start();
+
+
     }
+
 
     public String getOutTradeNo() {
         SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
@@ -334,4 +424,6 @@ public class CanteenFragment extends BaseFragment {
         key = key.substring(0, 15);
         return key;
     }
+
+
 }
