@@ -60,7 +60,10 @@ public class PrisonLoadingFragment extends BaseFragment {
                     getActivity().finish();
                     break;
                 case 1:// 云信id登录失败
-
+                    btn_login.setProgress(0);
+                    btn_login.setText("登录失败");
+                    btn_login.setEnabled(true);
+                    btn_login.setClickable(true);
                     break;
             }
         }

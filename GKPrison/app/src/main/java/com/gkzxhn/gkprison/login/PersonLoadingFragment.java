@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.scan.CaptureActivity;
@@ -75,6 +76,7 @@ public class PersonLoadingFragment extends BaseFragment {
                     editor.putString("username", username);
                     editor.putString("password", ic_card_num);
                     editor.commit();
+                    DemoCache.setAccount(username);
                     Intent intent = new Intent(context, MainActivity.class);
                     startActivity(intent);
                     getActivity().finish();

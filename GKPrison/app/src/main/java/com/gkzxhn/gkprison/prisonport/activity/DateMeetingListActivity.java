@@ -77,12 +77,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         ll_calendar = (LinearLayout) view.findViewById(R.id.ll_calendar);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0]);
         ll_calendar.setLayoutParams(params);
+
         return view;
     }
 
     @Override
     protected void initData() {
-        setTitle("远程会见");
+        setTitle("会见列表");
         preImgBtn.setOnClickListener(this);
         nextImgBtn.setOnClickListener(this);
         CalendarCard[] views = new CalendarCard[3];
@@ -97,7 +98,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                showToastMsgShort("heheheh");
                 TextView tv_name = (TextView) view.findViewById(R.id.tv_meeting_name);
                 Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
                 intent.putExtra("申请人", tv_name.getText().toString());

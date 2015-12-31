@@ -11,7 +11,7 @@
         android:layout_weight="1"
         android:text="个人用户"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="@dimen/small_title_size"
         android:gravity="center"
         android:background="#9dbfeb"/>
 
@@ -27,7 +27,7 @@
         android:layout_weight="1"
         android:text="监狱用户"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="@dimen/small_title_size"
         android:gravity="center"
         android:background="#9dbfeb"/>
 </LinearLayout>

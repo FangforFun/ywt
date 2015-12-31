@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <WebView
+        android:id="@+id/wv_news_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></WebView>
+
+    <FrameLayout
+        android:id="@+id/fl_loading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg">
+
+        <!--<fr.castorflex.android.circularprogressbar.CircularProgressBar-->
+            <!--android:id="@+id/cpb_loading_html"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:indeterminate="true"-->
+            <!--app:cpb_color="#FFee44"-->
+            <!--app:cpb_colors="@array/my_colors"-->
+            <!--app:cpb_rotation_speed="1.0"-->
+            <!--app:cpb_sweep_speed="1.0"-->
+            <!--app:cpb_stroke_width="4dp"-->
+            <!--app:cpb_min_sweep_angle="10"-->
+            <!--app:cpb_max_sweep_angle="30" />-->
+
+        <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true"
+            app:spb_sections_count="4"
+            app:spb_color="@color/theme"
+            app:spb_speed="2.0"
+            app:spb_stroke_width="4dp"
+            app:spb_stroke_separator_length="4dp"
+            app:spb_reversed="false"
+            app:spb_mirror_mode="false"
+            app:spb_progressiveStart_activated="true"
+            app:spb_progressiveStart_speed="1.5"
+            app:spb_progressiveStop_speed="3.4"
+            />
+    </FrameLayout>
+</RelativeLayout>

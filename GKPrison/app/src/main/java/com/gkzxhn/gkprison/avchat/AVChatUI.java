@@ -146,6 +146,11 @@ public class AVChatUI implements AVChatUIListener {
      */
     public void onCallStateChange(CallStateEnum stateEnum) {
         callingState = stateEnum;
+//        if(stateEnum == CallStateEnum.INCOMING_VIDEO_CALLING){// 来电
+//            avChatSurface.setIsComing(true);
+//        }else if(stateEnum == CallStateEnum.OUTGOING_VIDEO_CALLING){// 去电
+//            avChatSurface.setIsComing(false);
+//        }
         avChatSurface.onCallStateChange(stateEnum);
         avChatAudio.onCallStateChange(stateEnum);
         avChatVideo.onCallStateChange(stateEnum);

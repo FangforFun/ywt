@@ -3,25 +3,25 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rl_title"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="@dimen/title_bar_height"
     android:background="@color/theme">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/title_bar_height"
         android:background="@color/theme"
         android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="48dp" >
+            android:layout_height="@dimen/title_bar_height" >
 
             <RelativeLayout
                 android:id="@+id/rl_home_menu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
                 android:background="@drawable/img_selector"
                 android:clickable="true"
                 android:visibility="gone">
@@ -40,40 +40,40 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="德山监狱信息公开平台"
+                android:text="狱务通"
                 android:layout_centerVertical="true"
                 android:textColor="@color/white"
-                android:textSize="20sp"/>
+                android:textSize="@dimen/title_size"/>
 
             <RelativeLayout
                 android:id="@+id/rl_back"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_back"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="@dimen/iv_back_height_width"
+                    android:layout_height="@dimen/iv_back_height_width"
                     android:src="@drawable/back"
-                    android:layout_centerVertical="true"
+                    android:layout_centerInParent="true"
                     android:paddingLeft="10dp"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_write_message"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
 
                 <ImageView
                     android:id="@+id/iv_write_message"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="@dimen/iv_back_height_width"
+                    android:layout_height="@dimen/iv_back_height_width"
                     android:src="@drawable/write_message"
                     android:layout_centerInParent="true"
                     android:layout_centerVertical="true"/>
@@ -82,8 +82,8 @@
 
             <RelativeLayout
                 android:id="@+id/rl_remittance"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
                 android:visibility="gone">
@@ -94,37 +94,38 @@
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
                     android:text="汇款"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/small_title_size"
                     android:layout_centerInParent="true"
                     android:layout_marginRight="10dp"/>
             </RelativeLayout>
 
             <RelativeLayout
                 android:id="@+id/rl_regist"
-                android:layout_width="100dp"
-                android:layout_height="48dp"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/title_bar_height"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/img_selector"
-                android:visibility="gone"
-                >
+                android:paddingRight="10dp"
+                android:visibility="gone">
                 <TextView
                     android:id="@+id/tv_user_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
                     android:text="个人用户"
-                    android:textSize="16sp"
+                    android:textSize="@dimen/small_title_size"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="5dp"
                     android:layout_marginRight="10dp"/>
 
                 <ImageView
                     android:id="@+id/iv_user_type"
-                    android:layout_width="10dp"
-                    android:layout_height="10dp"
+                    android:layout_width="@dimen/login_choose_size"
+                    android:layout_height="@dimen/login_choose_size"
                     android:src="@drawable/loading_spinner"
                     android:layout_toRightOf="@+id/tv_user_type"
-                    android:layout_centerVertical="true"></ImageView>
+                    android:layout_centerVertical="true"
+                    ></ImageView>
             </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>

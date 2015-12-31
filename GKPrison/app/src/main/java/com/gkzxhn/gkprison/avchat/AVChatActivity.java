@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
@@ -110,6 +112,8 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         setContentView(root);
         mIsInComingCall = getIntent().getBooleanExtra(KEY_IN_CALLING, false);
         avChatUI = new AVChatUI(this, root, this);
+        Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         if (!avChatUI.initiation()) {
             this.finish();
             return;
@@ -383,7 +387,6 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         Log.d(TAG, "onCallEstablished");
         if (avChatUI.getTimeBase() == 0)
             avChatUI.setTimeBase(SystemClock.elapsedRealtime());
-
         if (state == AVChatType.AUDIO.getValue()) {
             avChatUI.onCallStateChange(CallStateEnum.AUDIO);
         } else {

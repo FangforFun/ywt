@@ -35,7 +35,7 @@
         <!--</FrameLayout>-->
         </RelativeLayout>
 
-        <Chronometer
+        <com.gkzxhn.gkprison.avchat.Anticlockwise
             android:id="@+id/avchat_video_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:layout_centerHorizontal="true"
             android:layout_centerInParent="true"
             android:textColor="@color/white"
-            android:textSize="13sp"
+            android:textSize="@dimen/anticlockwise_size"
             android:visibility="visible" />
     </RelativeLayout>
 
@@ -66,5 +66,4 @@
         android:textColor="@color/white"
         android:textSize="13sp"
         android:visibility="gone" />
-
 </RelativeLayout>
