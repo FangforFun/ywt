@@ -26,8 +26,12 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.Register;
+import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
+import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.ImageTools;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.google.gson.Gson;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 
@@ -43,13 +47,16 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -69,15 +76,13 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_phone_num;// 手机号
     private EditText et_relationship_with_prisoner;// 与服刑人员关系
     private EditText et_prisoner_number;// 服刑人员囚号
-
+    private Gson gson;
     private EditText et_prison_chooes;//监狱选择
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
     private TextView tv_read;// 我已阅读协议
     private CheckBox cb_agree_disagree;// 我已阅读复选框
-
-    private  Map<String,String> map = new LinkedHashMap<>();
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
     private TextView tv_software_protocol;// 蓝色软件协议
@@ -97,8 +102,13 @@ public class RegisterActivity extends BaseActivity {
     private static final int TAKE_PHOTO = 0; //imageview1照相;
     private static final int CHOOSE_PHOTO = 1;//imageview1选图片;
     private static final int SCALE = 5;// 照片缩小比例
-    private String uploadFile;
+    private String uploadFile1 = "";
+    private String uploadFile2 = "";
     private int imageclick = 0;
+    private Bitmap newBitmap1;
+    private Bitmap newBitmap2;
+    private List<Uuid_images_attributes> uuid_images = new ArrayList<Uuid_images_attributes>();
+
 
     @Override
     protected View initView() {
@@ -152,16 +162,35 @@ public class RegisterActivity extends BaseActivity {
      * 发送注册请求至服务端
      */
     private void sendRegisterToServer() {
-        Map<String,Map> map1 = new HashMap<String, Map>();
-        map.put("name",name);
-        map.put("uuid", ic_card);
-        map.put("phone", phone_num);
-        map.put("relationship",relationship_with_prisoner);
-        map.put("prisoner_number", prisoner_number);
-        map.put("jail_id", jail_id + "");
-        map.put("type_id", type_id + "");
-        map1.put("apply", map);
-        apply = JSONValue.toJSONString(map1);
+        ByteArrayOutputStream bao1 = new ByteArrayOutputStream();
+        newBitmap1.compress(Bitmap.CompressFormat.PNG, 100, bao1);
+        byte[] ba1 = bao1.toByteArray();
+        String tu1 = Base64.encode(ba1);
+        ByteArrayOutputStream bao2 = new ByteArrayOutputStream();
+        newBitmap2.compress(Bitmap.CompressFormat.PNG, 100, bao2);
+        byte[] ba2 = bao2.toByteArray();
+        String tu2 = Base64.encode(ba2);
+       String[] tu = {tu1,tu2};
+        for (int i = 0;i< tu.length;i++){
+            Uuid_images_attributes uuid_images_attributes = new Uuid_images_attributes();
+            uuid_images_attributes.setImage_data(tu[i]);
+            uuid_images.add(uuid_images_attributes);
+        }
+        Register register = new Register();
+        register.setName(name);
+        register.setUuid(ic_card);
+        register.setPhone(phone_num);
+        register.setRelationship(relationship_with_prisoner);
+        register.setPrisoner_number(prisoner_number);
+        register.setPrison(prison_chooes);
+        register.setCode(identifying_code);
+        register.setJail_id(1 + "");
+        register.setType_id(3 + "");
+        register.setUuid_images_attributes(uuid_images);
+        gson = new Gson();
+        String str = gson.toJson(register);
+        apply = "{\"apply\":"+str+"}";
+
         new Thread(){
             @Override
             public void run() {
@@ -171,11 +200,13 @@ public class RegisterActivity extends BaseActivity {
                     String str = jsonObject.toString();
 //                    Log.d("MainActivity", apply);
                    StringEntity entity = new StringEntity(apply);
+                    entity.setContentType("application/json");
+                    entity.setContentEncoding("UTF-8");
                     post.setEntity(entity);
                     HttpResponse httpResponse = httpClient.execute(post);
                     if (httpResponse.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                        Log.d("MainActivity",result);
+                        Log.d("MainActivity",result);
                     }
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -202,6 +233,7 @@ public class RegisterActivity extends BaseActivity {
                 prison_chooes = et_prison_chooes.getText().toString().trim();
                 identifying_code = et_identifying_code.getText().toString().trim();
                 // 判断姓名是否都是汉字组成
+                /**
                 if(TextUtils.isEmpty(name)){
                     showToastMsgShort("姓名为空");
                     return;
@@ -277,6 +309,7 @@ public class RegisterActivity extends BaseActivity {
 //                if(){
 //
 //                }
+                 **/
                 sendRegisterToServer();
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setCancelable(false);
@@ -370,29 +403,47 @@ public class RegisterActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case TAKE_PHOTO:
-                    // 将保存在本地的图片取出并缩小后显示在界面上
-                    Bitmap bitmap = BitmapFactory.decodeFile(Environment
-                            .getExternalStorageDirectory() + "/image.jpg");
-                    Bitmap newBitmap = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
-                            / SCALE, bitmap.getHeight() / SCALE);
-                    // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
-                    bitmap.recycle();
+
 
                     // 将处理过的图片显示在界面上，并保存到本地
                     if (imageclick == 1){
-                        iv_add_photo_01.setImageBitmap(newBitmap);
+                        // 将保存在本地的图片取出并缩小后显示在界面上
+                        Bitmap bitmap = BitmapFactory.decodeFile(Environment
+                                .getExternalStorageDirectory() + "/image.jpg");
+                        newBitmap1 = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
+                                / SCALE, bitmap.getHeight() / SCALE);
+                        // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
+                        bitmap.recycle();
+                        iv_add_photo_01.setImageBitmap(newBitmap1);
+                        ImageTools.savePhotoToSDCard(newBitmap1, Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera", String.valueOf(System.currentTimeMillis()));
+                        uploadFile1 = Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
+                        Log.d("MainActivity",uploadFile1);
                     }else if (imageclick == 2){
-                        iv_add_photo_02.setImageBitmap(newBitmap);
+                        // 将保存在本地的图片取出并缩小后显示在界面上
+                        Bitmap bitmap = BitmapFactory.decodeFile(Environment
+                                .getExternalStorageDirectory() + "/image.jpg");
+                        newBitmap2 = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
+                                / SCALE, bitmap.getHeight() / SCALE);
+                        // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
+                        bitmap.recycle();
+                        iv_add_photo_02.setImageBitmap(newBitmap2);
+                        ImageTools.savePhotoToSDCard(newBitmap2, Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera", String.valueOf(System.currentTimeMillis()));
+                        uploadFile2 = Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
+                            Log.d("MainActivity",uploadFile2);
                     }
-                    ImageTools.savePhotoToSDCard(newBitmap, Environment
-                            .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                            .getAbsolutePath()
-                            + "/Camera", String.valueOf(System.currentTimeMillis()));
-                    uploadFile = Environment
-                            .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                            .getAbsolutePath()
-                            + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
-                    break;
+                     break;
                 case CHOOSE_PHOTO:
                     ContentResolver resolver = getContentResolver();
                     // 照片的原始资源地址
@@ -409,13 +460,18 @@ public class RegisterActivity extends BaseActivity {
                             photo.recycle();
                             if (imageclick == 1) {
                                 iv_add_photo_01.setImageBitmap(smallBitmap);
+                                uploadFile1 = Environment
+                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                        .getAbsolutePath()
+                                        + "/Camera/" + "emptyphoto.png";
                             }else if (imageclick == 2){
                                 iv_add_photo_02.setImageBitmap(smallBitmap);
+                                uploadFile2 = Environment
+                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                        .getAbsolutePath()
+                                        + "/Camera/" + "emptyphoto.png";
                             }
-                            uploadFile = Environment
-                                    .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                                    .getAbsolutePath()
-                                    + "/Camera/" + "emptyphoto.png";
+
                         }
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();
@@ -426,5 +482,8 @@ public class RegisterActivity extends BaseActivity {
             }
         }
     }
+
+
+
 
 }
