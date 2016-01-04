@@ -53,8 +53,9 @@ public class PrisonLoadingFragment extends BaseFragment {
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("username", username);
                     editor.putString("password", password);
+                    editor.putBoolean("isCommonUser", false);
                     editor.commit();
-                    DemoCache.setAccount(username);
+                    DemoCache.setAccount(username);// 设置云信id缓存
                     Intent intent = new Intent(context, DateMeetingListActivity.class);
                     startActivity(intent);
                     getActivity().finish();

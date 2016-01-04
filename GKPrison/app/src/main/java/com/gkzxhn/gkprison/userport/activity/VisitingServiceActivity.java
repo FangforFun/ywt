@@ -1,23 +1,27 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.graphics.drawable.Drawable;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 /**
  * 探监服务--探监申请
  */
 public class VisitingServiceActivity extends BaseActivity {
 
-    private EditText et_visit_request_time;
+    private BetterSpinner bs_visit_request_time;
+    private static final String[] REQUEST_TIME = new String[] {
+            "1月5日", "1月6日", "1月7日", "1月8日", "1月9日"
+    };
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_visiting_service,null);
-        et_visit_request_time = (EditText) view.findViewById(R.id.et_visit_request_time);
+        bs_visit_request_time = (BetterSpinner) view.findViewById(R.id.bs_visit_request_time);
         return view;
     }
 
@@ -25,8 +29,8 @@ public class VisitingServiceActivity extends BaseActivity {
     protected void initData() {
         setTitle("申请探监");
         setBackVisibility(View.VISIBLE);
-        Drawable drawable1 = getResources().getDrawable(R.drawable.down_gray);
-        drawable1.setBounds(0, 0, 30, 20);
-        et_visit_request_time.setCompoundDrawables(null, null, drawable1, null);
+        adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
+        bs_visit_request_time.setAdapter(adapter);
     }
 }

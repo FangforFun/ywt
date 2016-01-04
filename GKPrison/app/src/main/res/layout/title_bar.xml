@@ -57,8 +57,7 @@
                     android:layout_width="@dimen/iv_back_height_width"
                     android:layout_height="@dimen/iv_back_height_width"
                     android:src="@drawable/back"
-                    android:layout_centerInParent="true"
-                    android:paddingLeft="10dp"/>
+                    android:layout_centerInParent="true"/>
 
             </RelativeLayout>
 

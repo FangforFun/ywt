@@ -3,11 +3,14 @@ package com.gkzxhn.gkprison.welcome;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.view.View;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.login.LoadingActivity;
+import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.userport.activity.MainActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,8 +38,18 @@ public class SplashActivity extends BaseActivity {
                     intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                     startActivity(intent);
                 }else {
-                    intent = new Intent(SplashActivity.this, LoadingActivity.class);
-                    startActivity(intent);
+                    if(TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))){
+                        intent = new Intent(SplashActivity.this, LoadingActivity.class);
+                        startActivity(intent);
+                    }else {
+                        if(sp.getBoolean("isCommonUser", true)) {
+                            intent = new Intent(SplashActivity.this, MainActivity.class);
+                            startActivity(intent);
+                        }else {
+                            intent = new Intent(SplashActivity.this, DateMeetingListActivity.class);
+                            startActivity(intent);
+                        }
+                    }
                 }
                 SplashActivity.this.finish();
             }

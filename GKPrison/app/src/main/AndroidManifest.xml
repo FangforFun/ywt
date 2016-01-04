@@ -81,7 +81,7 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".userport.activity.SystemMessageActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".userport.activity.RegisterActivity"
+        <activity android:name=".login.RegisterActivity"
             android:screenOrientation="portrait"/>
         <activity android:name=".userport.activity.ApplyResultActivity"
             android:screenOrientation="portrait"/>
