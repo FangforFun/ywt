@@ -146,17 +146,6 @@
                     android:text="申请探监时间："
                     android:textSize="16sp"/>
 
-                <!--<EditText-->
-                    <!--android:id="@+id/et_visit_request_time"-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="35dp"-->
-                    <!--android:background="@drawable/et_shape_search"-->
-                    <!--android:hint="点击选择"-->
-                    <!--android:textColor="@color/tv_mid"-->
-                    <!--android:textColorHint="@color/et_hint"-->
-                    <!--android:drawableRight="@drawable/down_gray"-->
-                    <!--android:paddingRight="15dp"-->
-                    <!--android:paddingLeft="10dp"/>-->
                 <com.weiwangcn.betterspinner.library.BetterSpinner
                     android:id="@+id/bs_visit_request_time"
                     android:layout_width="match_parent"
@@ -164,9 +153,7 @@
                     android:hint="点击选择"
                     android:textColor="@color/tv_mid"
                     android:textSize="16sp"
-                    android:dropDownSelector="@drawable/item_selector"
-
-                    />
+                    android:dropDownSelector="@drawable/item_selector" />
         </LinearLayout>
     </LinearLayout>
 
@@ -182,5 +169,6 @@
         android:text="申请探监"
         android:layout_below="@id/ll_visit_request_info"
         android:background="@drawable/theme_bg_bt_selector"/>
-</RelativeLayout>
+
+    </RelativeLayout>
 </ScrollView>

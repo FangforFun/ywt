@@ -91,6 +91,8 @@ public class HomePager extends BasePager {
             @Override
             public void viewClick(int position) {
                 showToastMsgShort(list_news_title.get(position));
+                Intent intent = new Intent(context, NewsDetailActivity.class);
+                context.startActivity(intent);
             }
         });
         list_news_title.clear();

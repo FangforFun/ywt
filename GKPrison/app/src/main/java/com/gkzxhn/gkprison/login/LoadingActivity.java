@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.login;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ public class LoadingActivity extends BaseActivity {
     private String token;
     private PersonLoadingFragment personLoadingFragment;
     private PrisonLoadingFragment prisonLoadingFragment;
+    private SharedPreferences sp;
 
     @Override
     protected View initView() {
@@ -45,7 +47,7 @@ public class LoadingActivity extends BaseActivity {
         ns_login_type.addOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                switch (position){
+                switch (position) {
                     case 0:
                         ns_login_type.setText("个人用户");
                         LoadingActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoadingFragment).commit();
@@ -59,9 +61,13 @@ public class LoadingActivity extends BaseActivity {
             }
         });
         Bundle date = new Bundle();
-        date.putString("token",token);
+        date.putString("token", token);
         personLoadingFragment = new PersonLoadingFragment();
         personLoadingFragment.setArguments(date);
         this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoadingFragment).commit();
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("is_first", false);
+        editor.commit();
     }
 }

@@ -17,6 +17,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -169,14 +170,17 @@ public class RegisterActivity extends BaseActivity {
                         e.printStackTrace();
                     }
                     rl_register.setVisibility(View.VISIBLE);
+                    bt_register.setEnabled(true);
                     break;
                 case 4:// 发送注册信息至服务器请求失败
                     showToastMsgShort("注册请求失败，请稍后再试");
-                    rl_register.setVisibility(View.VISIBLE);
+                    rl_register.setVisibility(View.GONE);
+                    bt_register.setEnabled(true);
                     break;
                 case 5:// 发送注册信息至服务器请求异常
                     showToastMsgShort("注册请求异常，请稍后再试");
-                    rl_register.setVisibility(View.VISIBLE);
+                    rl_register.setVisibility(View.GONE);
+                    bt_register.setEnabled(true);
                     break;
             }
         }
@@ -236,6 +240,7 @@ public class RegisterActivity extends BaseActivity {
      */
     private void sendRegisterToServer() {
         rl_register.setVisibility(View.VISIBLE);
+        bt_register.setEnabled(false);
         new Thread(){
             @Override
             public void run() {
@@ -396,6 +401,27 @@ public class RegisterActivity extends BaseActivity {
                 agreement_dialog = agreement_builder.create();
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
+                agreement_dialog.setCancelable(true);
+                agreement_view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        long downTime = 0;
+                        switch (event.getAction()){
+                            case MotionEvent.ACTION_DOWN:
+                                downTime = System.currentTimeMillis();
+                                Log.i("按下了...", downTime + "");
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                long upTime = System.currentTimeMillis();
+                                if(upTime - downTime < 500){
+                                    agreement_dialog.dismiss();
+                                }
+                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
+                                break;
+                        }
+                        return false;
+                    }
+                });
                 break;
             case R.id.iv_add_photo_01:
                 showPhotoPicker(this);
@@ -449,8 +475,11 @@ public class RegisterActivity extends BaseActivity {
                                         handler.sendMessage(msg);
                                     }else {
                                         handler.sendEmptyMessage(1);
+                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                        Log.d("发送失败", result);
                                     }
                                 } catch (Exception e){
+                                    Log.i("发送验证码出异常啦：", e.getMessage());
                                     handler.sendEmptyMessage(2);
                                 } finally {
                                     Looper.loop();
@@ -595,19 +624,24 @@ public class RegisterActivity extends BaseActivity {
                         Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,
                                 originalUri);
                         if (photo != null) {
-                            // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
-                            Bitmap smallBitmap = ImageTools.zoomBitmap(photo, photo.getWidth()
-                                    / SCALE, photo.getHeight() / SCALE);
-                            // 释放原始图片占用的内存，防止out of memory异常发生
-                            photo.recycle();
+
                             if (imageclick == 1) {
-                                iv_add_photo_01.setImageBitmap(smallBitmap);
+                                // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
+                                newBitmap1 = ImageTools.zoomBitmap(photo, photo.getWidth()
+                                        / SCALE, photo.getHeight() / SCALE);
+                                // 释放原始图片占用的内存，防止out of memory异常发生
+                                photo.recycle();
+                                iv_add_photo_01.setImageBitmap(newBitmap1);
                                 uploadFile1 = Environment
                                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                                         .getAbsolutePath()
                                         + "/Camera/" + "emptyphoto.png";
                             }else if (imageclick == 2){
-                                iv_add_photo_02.setImageBitmap(smallBitmap);
+                                newBitmap2 = ImageTools.zoomBitmap(photo, photo.getWidth()
+                                        / SCALE, photo.getHeight() / SCALE);
+                                // 释放原始图片占用的内存，防止out of memory异常发生
+                                photo.recycle();
+                                iv_add_photo_02.setImageBitmap(newBitmap2);
                                 uploadFile2 = Environment
                                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                                         .getAbsolutePath()

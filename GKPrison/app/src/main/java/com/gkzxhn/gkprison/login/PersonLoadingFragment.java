@@ -23,8 +23,10 @@ import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.scan.CaptureActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -63,6 +65,8 @@ public class PersonLoadingFragment extends BaseFragment {
     private boolean isOK = false;// 服务器登录返回的是0才变成true
     private int countdown = 60;
     private int login_code = 0;// 云信id登录成功加1   短信验证码成功加1  当code==2时判断登录成功
+    private Gson gson;
+    private UserInfo userInfo;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -72,30 +76,27 @@ public class PersonLoadingFragment extends BaseFragment {
                     login_code++;
                     if(msg.what == 2){
                         String result = (String) msg.obj;
-                        try {
-                            JSONObject jsonObject = new JSONObject(result);
-                            int error = jsonObject.getInt("error");
-                            if(error == 201){
-                                showToastMsgShort("用户身份验证失败");
-                                login_code = 0;
-                                btn_login.setProgress(0);
-                                btn_login.setText("登录失败");
-                                btn_login.setEnabled(true);
-                                btn_login.setClickable(true);
-                                return;
-                            }else if(error == 404){
-                                showToastMsgShort("验证码错误");
-                                login_code = 0;
-                                btn_login.setProgress(0);
-                                btn_login.setText("登录失败");
-                                btn_login.setEnabled(true);
-                                btn_login.setClickable(true);
-                                return;
-                            }else if(error == 0){
-                                isOK = true;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                        gson = new Gson();
+                        userInfo = gson.fromJson(result, UserInfo.class);
+                        int error = userInfo.getError();
+                        if(error == 201){
+                            showToastMsgShort("用户身份验证失败");
+                            login_code = 0;
+                            btn_login.setProgress(0);
+                            btn_login.setText("登录失败");
+                            btn_login.setEnabled(true);
+                            btn_login.setClickable(true);
+                            return;
+                        }else if(error == 404){
+                            showToastMsgShort("验证码错误");
+                            login_code = 0;
+                            btn_login.setProgress(0);
+                            btn_login.setText("登录失败");
+                            btn_login.setEnabled(true);
+                            btn_login.setClickable(true);
+                            return;
+                        }else if(error == 0){
+                            isOK = true;
                         }
                     }
                     if(login_code == 2 && isOK) {
@@ -107,6 +108,11 @@ public class PersonLoadingFragment extends BaseFragment {
                         editor.putString("username", username);
                         editor.putString("password", ic_card_num);
                         editor.putBoolean("isCommonUser", true);
+                        if(userInfo != null){
+                            editor.putString("name", userInfo.getUser().getName());
+                            editor.putString("relationship", userInfo.getUser().getRelationship());
+                            editor.putString("token", userInfo.getToken());
+                        }
                         editor.commit();
                         DemoCache.setAccount(username);
                         Intent intent = new Intent(context, MainActivity.class);
@@ -134,9 +140,15 @@ public class PersonLoadingFragment extends BaseFragment {
                         int error = jsonObject.getInt("error");
                         if(error == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
+                            tv_send_identifying_code.setEnabled(true);
+                            tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
+                            tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
+                            tv_send_identifying_code.setText("发送验证码");
+                            handler.removeCallbacks(identifying_Code_Task);
                         }else if(error == 0){
                             showToastMsgShort("已发送");
                         }
+                        Log.i("登录验证码", error + "");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -213,21 +225,21 @@ public class PersonLoadingFragment extends BaseFragment {
                             new RequestCallback<LoginInfo>() {
                                 @Override
                                 public void onSuccess(LoginInfo loginInfo) {
-//                                    handler.sendEmptyMessage(0);
-//                                    Looper.loop();
-                                    btn_login.setProgress(0);
-                                    btn_login.setText("登录成功");
-                                    btn_login.setEnabled(true);
-                                    btn_login.setClickable(true);
-                                    SharedPreferences.Editor editor = sp.edit();
-                                    editor.putString("username", username);
-                                    editor.putString("password", ic_card_num);
-                                    editor.putBoolean("isCommonUser", true);
-                                    editor.commit();
-                                    DemoCache.setAccount(username);
-                                    Intent intent = new Intent(context, MainActivity.class);
-                                    startActivity(intent);
-                                    getActivity().finish();
+                                    handler.sendEmptyMessage(0);
+                                    Looper.loop();
+//                                    btn_login.setProgress(0);
+//                                    btn_login.setText("登录成功");
+//                                    btn_login.setEnabled(true);
+//                                    btn_login.setClickable(true);
+//                                    SharedPreferences.Editor editor = sp.edit();
+//                                    editor.putString("username", username);
+//                                    editor.putString("password", ic_card_num);
+//                                    editor.putBoolean("isCommonUser", true);
+//                                    editor.commit();
+//                                    DemoCache.setAccount(username);
+//                                    Intent intent = new Intent(context, MainActivity.class);
+//                                    startActivity(intent);
+//                                    getActivity().finish();
                                 }
 
                                 @Override
@@ -276,7 +288,7 @@ public class PersonLoadingFragment extends BaseFragment {
                             };
                     NIMClient.getService(AuthService.class).login(info)
                             .setCallback(callback);
-                    /*
+//                    /*
                     new Thread(){
                         @Override
                         public void run() {
@@ -309,7 +321,7 @@ public class PersonLoadingFragment extends BaseFragment {
                             }
                         }
                     }.start();
-                    */
+//                    */
                 }
             }
         });
@@ -360,6 +372,8 @@ public class PersonLoadingFragment extends BaseFragment {
                                         handler.sendMessage(msg);
                                     }else {
                                         handler.sendEmptyMessage(8);
+                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                        Log.d("发送失败", result);
                                     }
                                 } catch (Exception e){
                                     handler.sendEmptyMessage(9);

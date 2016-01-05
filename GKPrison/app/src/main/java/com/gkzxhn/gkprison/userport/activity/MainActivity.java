@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
-    private String url ="http://www.fushuile.com/api/v1/items?access_token=cb21c49928249f05ae8e4075c6018ff0";
+    private String url ="http://www.fushuile.com/api/v1/items?access_token=";
     private SharedPreferences sp;
 
     private Handler handler = new Handler(){
@@ -116,9 +116,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("is_first", false);
-        editor.commit();
         getCommodity();
         setSupportActionBar(tool_bar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close){
@@ -283,7 +280,8 @@ public class MainActivity extends BaseActivity {
             public void run() {
                 Message msg = handler.obtainMessage();
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpGet httpGet = new HttpGet(url);
+                String token = sp.getString("token", "");
+                HttpGet httpGet = new HttpGet(url + token);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);
                     if (response.getStatusLine().getStatusCode() == 200){
