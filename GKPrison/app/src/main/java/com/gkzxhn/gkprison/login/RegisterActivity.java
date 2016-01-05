@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.login;
 
 import android.app.AlertDialog;
 import android.content.ContentResolver;
@@ -453,19 +453,24 @@ public class RegisterActivity extends BaseActivity {
                         Bitmap photo = MediaStore.Images.Media.getBitmap(resolver,
                                 originalUri);
                         if (photo != null) {
-                            // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
-                            Bitmap smallBitmap = ImageTools.zoomBitmap(photo, photo.getWidth()
-                                    / SCALE, photo.getHeight() / SCALE);
-                            // 释放原始图片占用的内存，防止out of memory异常发生
-                            photo.recycle();
+
                             if (imageclick == 1) {
-                                iv_add_photo_01.setImageBitmap(smallBitmap);
+                                // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
+                                newBitmap1 = ImageTools.zoomBitmap(photo, photo.getWidth()
+                                        / SCALE, photo.getHeight() / SCALE);
+                                // 释放原始图片占用的内存，防止out of memory异常发生
+                                photo.recycle();
+                                iv_add_photo_01.setImageBitmap(newBitmap1);
                                 uploadFile1 = Environment
                                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                                         .getAbsolutePath()
                                         + "/Camera/" + "emptyphoto.png";
                             }else if (imageclick == 2){
-                                iv_add_photo_02.setImageBitmap(smallBitmap);
+                                newBitmap2 = ImageTools.zoomBitmap(photo, photo.getWidth()
+                                        / SCALE, photo.getHeight() / SCALE);
+                                // 释放原始图片占用的内存，防止out of memory异常发生
+                                photo.recycle();
+                                iv_add_photo_02.setImageBitmap(newBitmap2);
                                 uploadFile2 = Environment
                                         .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                                         .getAbsolutePath()

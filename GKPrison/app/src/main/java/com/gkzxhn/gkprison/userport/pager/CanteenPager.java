@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.pager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -31,7 +32,6 @@ import java.util.List;
  * Created by hzn on 2015/12/3.
  */
 public class CanteenPager extends BasePager {
-
 
     public CanteenPager(Context context) {
         super(context);
