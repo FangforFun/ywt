@@ -1,6 +1,10 @@
 package com.gkzxhn.gkprison.application;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -11,6 +15,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -34,15 +39,19 @@ import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.Preferences;
 
 /**
  * Created by zhengneng on 2015/12/23.
  */
 public class MyApplication extends Application {
 
+    private SharedPreferences sp;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
         NIMClient.init(this, loginInfo(), options());
         if (inMainProcess()) {
@@ -226,6 +235,39 @@ public class MyApplication extends Application {
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     private LoginInfo loginInfo() {
+        return getLoginInfo();
+    }
+
+    private LoginInfo getLoginInfo() {
+        // 从本地读取上次登录成功时保存的用户登录信息
+        String account = sp.getString("username", "");
+        String token = tokenFromPassword(sp.getString("password", ""));
+
+        if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
+            DemoCache.setAccount(account.toLowerCase());
+            return new LoginInfo(account, token);
+        } else {
+            return null;
+        }
+    }
+
+    private String tokenFromPassword(String password) {
+        String appKey = readAppKey(getApplicationContext());
+        boolean isDemo = "45c6af3c98409b18a84451215d0bdd6e".equals(appKey)
+                || "fe416640c8e8a72734219e1847ad2547".equals(appKey);
+
+        return isDemo ? MD5Utils.ecoder(password) : password;
+    }
+
+    private static String readAppKey(Context context) {
+        try {
+            ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
+            if (appInfo != null) {
+                return appInfo.metaData.getString("com.netease.nim.appKey");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

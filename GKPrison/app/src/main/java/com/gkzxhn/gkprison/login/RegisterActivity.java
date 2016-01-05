@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -26,6 +27,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,7 +85,7 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
-    private String url = "http://10.93.1.10:3000/api/v1/apply";
+    private String url = "http://www.fushuile.com/api/v1/apply";
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号
@@ -99,7 +101,7 @@ public class RegisterActivity extends BaseActivity {
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
     private TextView tv_software_protocol;// 蓝色软件协议
-    private RelativeLayout rl_register;// 注册进度布局
+    private LinearLayout rl_register;// 注册进度布局
     private String name = "";
     private String apply = "";
     private int jail_id = 1;
@@ -123,6 +125,7 @@ public class RegisterActivity extends BaseActivity {
     private List<Uuid_images_attributes> uuid_images = new ArrayList<>();
     private int countdown = 60;
     private boolean isRunning = false;
+    private SharedPreferences sp;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -163,6 +166,10 @@ public class RegisterActivity extends BaseActivity {
                             dialog = builder.create();
                             builder.setView(view);
                             builder.show();
+                            // 把囚号保存在本地
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putString("prisoner_number", prisoner_number);
+                            editor.commit();
                         }else if(error == 404){
                             showToastMsgShort("验证码错误");
                         }
@@ -207,12 +214,13 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
         iv_add_photo_01.setTag(1);
         iv_add_photo_02.setTag(2);
-        rl_register = (RelativeLayout) view.findViewById(R.id.rl_register);
+        rl_register = (LinearLayout) view.findViewById(R.id.rl_register);
         return view;
     }
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("注册");
         setBackVisibility(View.VISIBLE);
         tv_software_protocol.setOnClickListener(this);
@@ -398,11 +406,12 @@ public class RegisterActivity extends BaseActivity {
             case R.id.tv_software_protocol:
                 AlertDialog.Builder agreement_builder = new AlertDialog.Builder(this);
                 View agreement_view = View.inflate(this, R.layout.software_agreement_dialog, null);
+                LinearLayout ll_explain_content = (LinearLayout) agreement_view.findViewById(R.id.ll_explain_content);
                 agreement_dialog = agreement_builder.create();
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
                 agreement_dialog.setCancelable(true);
-                agreement_view.setOnTouchListener(new View.OnTouchListener() {
+                ll_explain_content.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         long downTime = 0;
@@ -458,7 +467,7 @@ public class RegisterActivity extends BaseActivity {
                             @Override
                             public void run() {
                                 HttpClient httpClient = new DefaultHttpClient();
-                                HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
                                 Looper.prepare();
                                 try {
                                     Log.i("已发送", phone_str);

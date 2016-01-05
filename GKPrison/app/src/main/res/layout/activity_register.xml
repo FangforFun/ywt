@@ -219,11 +219,11 @@
             </RelativeLayout>
         </LinearLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/rl_register"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_vertical|center_horizontal"
+            android:gravity="center"
             android:background="@color/half_transparent"
             android:layout_centerInParent="true"
             android:visibility="gone">
@@ -242,6 +242,6 @@
                 android:textColor="@color/white"
                 android:layout_toRightOf="@id/pb_register"
                 android:layout_alignBaseline="@id/pb_register"/>
-        </RelativeLayout>
+        </LinearLayout>
     </RelativeLayout>
 </ScrollView>

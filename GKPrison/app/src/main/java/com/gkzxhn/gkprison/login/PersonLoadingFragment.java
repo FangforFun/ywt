@@ -47,7 +47,7 @@ import org.json.JSONObject;
  * 个人用户登录界面
  */
 public class PersonLoadingFragment extends BaseFragment {
-    private String url = "http://10.93.1.10:3000/api/v1/login";
+    private String url = "http://www.fushuile.com/api/v1/login";
     private Button bt_register;
     private ActionProcessButton btn_login;
     private EditText et_login_username;
@@ -86,6 +86,7 @@ public class PersonLoadingFragment extends BaseFragment {
                             btn_login.setText("登录失败");
                             btn_login.setEnabled(true);
                             btn_login.setClickable(true);
+                            handler.removeCallbacks(identifying_Code_Task);
                             return;
                         }else if(error == 404){
                             showToastMsgShort("验证码错误");
@@ -94,6 +95,7 @@ public class PersonLoadingFragment extends BaseFragment {
                             btn_login.setText("登录失败");
                             btn_login.setEnabled(true);
                             btn_login.setClickable(true);
+                            handler.removeCallbacks(identifying_Code_Task);
                             return;
                         }else if(error == 0){
                             isOK = true;
@@ -284,7 +286,6 @@ public class PersonLoadingFragment extends BaseFragment {
                                     handler.sendEmptyMessage(1);
                                     Looper.loop();
                                 }
-                                // 可以在此保存LoginInfo到本地，下次启动APP做自动登录用
                             };
                     NIMClient.getService(AuthService.class).login(info)
                             .setCallback(callback);
@@ -355,7 +356,7 @@ public class PersonLoadingFragment extends BaseFragment {
                             @Override
                             public void run() {
                                 HttpClient httpClient = new DefaultHttpClient();
-                                HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
                                 Looper.prepare();
                                 try {
                                     Log.i("已发送", phone_str);

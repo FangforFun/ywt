@@ -185,6 +185,12 @@ public class AVChatSurface {
                 break;
             case OUTGOING_VIDEO_CALLING:// 去电
                 iv_meeting_ic_card.setVisibility(View.VISIBLE);
+                iv_meeting_ic_card.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ToDo
+                    }
+                });
                 break;
             default:
                 break;

@@ -3,7 +3,9 @@ package com.gkzxhn.gkprison.userport.pager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -36,15 +38,32 @@ public class RemoteMeetPager extends BasePager {
     private BetterSpinner bs_meeting_request_time;
     private Button bt_commit_request;
     private SharedPreferences sp;
-    private static final String MEETING_REQUEST_URL = "http://10.93.1.10:3000/api/v1/apply?access_token=";
+    private static final String MEETING_REQUEST_URL = "http://www.fushuile.com/api/v1/apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
-            "1月5日", "1月6日", "1月7日", "1月8日", "1月9日"
+            "2016-01-05", "2016-01-06", "2016-01-07", "2016-01-08", "2016-01-09"
     };
     private ArrayAdapter<String> adapter;
 
     public RemoteMeetPager(Context context) {
         super(context);
     }
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0: // 发送会见申请成功
+                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
+                    break;
+                case 1: // 发送会见申请失败
+                    showToastMsgLong("提交失败，请稍后再试");
+                    break;
+                case 2:// 发送会见申请异常
+                    showToastMsgLong("提交异常，请稍后再试");
+                    break;
+            }
+        }
+    };
+    private Message msg = handler.obtainMessage();
 
     @Override
     public View initView() {
@@ -79,7 +98,6 @@ public class RemoteMeetPager extends BasePager {
         switch (v.getId()){
             case R.id.bt_commit_request:
                 if(sp.getBoolean("isCommonUser", false)) {
-                    showToastMsgShort("提交申请");
                     if(!TextUtils.isEmpty(bs_meeting_request_time.getText().toString())) {
                         sendRequestToServer();
                     }else {
@@ -100,9 +118,11 @@ public class RemoteMeetPager extends BasePager {
         new Thread(){
             @Override
             public void run() {
-                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"time\":\"" + bs_meeting_request_time.getText().toString() + "\",\"type_id\":\"1\"}}";
+                String prisoner_number = sp.getString("prisoner_number", "4000002");
+                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"1\"}}";
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+                Looper.prepare();
                 try {
                     StringEntity entity = new StringEntity(body, HTTP.UTF_8);
                     entity.setContentType("application/json");
@@ -111,15 +131,22 @@ public class RemoteMeetPager extends BasePager {
                     HttpResponse httpResponse = httpClient.execute(post);
                     if (httpResponse.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                        msg.obj = result;
+                        msg.what = 0;
+                        handler.sendMessage(msg);
                         Log.d("发送成功", result);
                     }else {
                         String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                        msg.obj = result;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
                         Log.d("发送失败", result);
                     }
                 } catch (Exception e){
                     Log.d("发送异常", e.getMessage());
+                    handler.sendEmptyMessage(2);
                 } finally {
-
+                    Looper.loop();
                 }
             }
         }.start();
