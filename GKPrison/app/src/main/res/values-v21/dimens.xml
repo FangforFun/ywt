@@ -7,5 +7,7 @@
     <dimen name="title_size">20sp</dimen>
     <dimen name="iv_back_height_width">22dp</dimen>
     <dimen name="login_choose_size">10dp</dimen>
-    <dimen name="login_choose_width">50dp</dimen>
+    <dimen name="login_choose_width">32dp</dimen>
+    <dimen name="three_grid_unit">24dp</dimen>
+    <dimen name="one_and_a_half_grid_unit">12dp</dimen>
 </resources>

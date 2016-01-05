@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -60,6 +61,8 @@ public class PrisonOpenActivity extends BaseActivity {
             @Override
             public void viewClick(int position) {
                 showToastMsgShort(list_news_title.get(position));
+                Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                startActivity(intent);
             }
         });
         list_news_title.clear();
@@ -77,6 +80,8 @@ public class PrisonOpenActivity extends BaseActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 showToastMsgShort("position++" + NEWS_TITLES[position]);
+                Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                startActivity(intent);
             }
         });
     }

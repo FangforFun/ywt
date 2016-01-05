@@ -156,16 +156,14 @@
                     android:text="申请会见时间："
                     android:textSize="16sp"/>
 
-                <EditText
-                    android:id="@+id/et_meeting_request_time"
+                <com.weiwangcn.betterspinner.library.BetterSpinner
+                    android:id="@+id/bs_meeting_request_time"
                     android:layout_width="match_parent"
                     android:layout_height="35dp"
-                    android:background="@drawable/edit_bg_shape"
                     android:hint="点击选择"
-                    android:textColorHint="@color/et_hint"
-                    android:drawableRight="@drawable/down_gray"
-                    android:paddingRight="15dp"
-                    android:paddingLeft="10dp"/>
+                    android:textColor="@color/tv_mid"
+                    android:textSize="16sp"
+                    android:dropDownSelector="@drawable/item_selector" />
             </LinearLayout>
         </LinearLayout>
 

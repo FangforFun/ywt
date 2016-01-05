@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Intent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -53,6 +54,8 @@ public class PrisonIntroductionActivity extends BaseActivity {
             @Override
             public void viewClick(int position) {
                 showToastMsgShort(list_news_title.get(position));
+                Intent intent = new Intent(PrisonIntroductionActivity.this, NewsDetailActivity.class);
+                startActivity(intent);
             }
         });
         list_news_title.clear();

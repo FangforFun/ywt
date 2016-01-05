@@ -238,9 +238,9 @@ public class Utils {
     /**
      * 功能：判断字符串是否为数字
      * @param str
-     * @return
+     * @return  true为全数字  false为含其它字符
      */
-    private static boolean isNumeric(String str) {
+    public static boolean isNumeric(String str) {
         Pattern pattern = Pattern.compile("[0-9]*");
         Matcher isNum = pattern.matcher(str);
         if (isNum.matches()) {
@@ -254,7 +254,7 @@ public class Utils {
      * 功能：设置地区编码
      * @return Hashtable 对象
      */
-    private static Hashtable GetAreaCode() {
+    public static Hashtable GetAreaCode() {
         Hashtable hashtable = new Hashtable();
         hashtable.put("11", "北京");
         hashtable.put("12", "天津");

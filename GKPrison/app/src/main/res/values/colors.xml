@@ -25,6 +25,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="color_c2364b">#C2364B</color>
     <color name="color_f5455e">#F5455E</color>
+    <color name="light_gray">#fff5f5f5</color>
 
     <integer-array name="my_colors">
         <item>@color/gplus_color_1</item>

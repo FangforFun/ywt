@@ -10,17 +10,23 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +38,12 @@ import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.ImageTools;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 
@@ -43,7 +55,9 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -58,6 +72,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,8 +84,6 @@ public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
     private String url = "http://10.93.1.10:3000/api/v1/apply";
-    private BetterSpinner bs_prison_choose;// 监狱选择
-    private ArrayAdapter prisonAdapter;// 下拉适配器
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号
@@ -86,9 +99,9 @@ public class RegisterActivity extends BaseActivity {
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
     private TextView tv_software_protocol;// 蓝色软件协议
+    private RelativeLayout rl_register;// 注册进度布局
     private String name = "";
     private String apply = "";
-    private JSONObject jsonObject = new JSONObject();
     private int jail_id = 1;
     private int type_id = 3;
     private String ic_card = "";
@@ -107,8 +120,72 @@ public class RegisterActivity extends BaseActivity {
     private int imageclick = 0;
     private Bitmap newBitmap1;
     private Bitmap newBitmap2;
-    private List<Uuid_images_attributes> uuid_images = new ArrayList<Uuid_images_attributes>();
-
+    private List<Uuid_images_attributes> uuid_images = new ArrayList<>();
+    private int countdown = 60;
+    private boolean isRunning = false;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0: // 发送验证码请求成功
+//                    showToastMsgShort("发送验证码成功，请注意查看短信");
+                    String result = (String) msg.obj;
+                    try {
+                        JSONObject jsonObject = new JSONObject(result);
+                        int error = jsonObject.getInt("error");
+                        if(error == 400){
+                            showToastMsgShort("验证码请求失败，请稍后再试");
+                        }else if(error == 0){
+                            showToastMsgShort("已发送");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 1: // 发送验证码请求失败
+                    showToastMsgShort("验证码请求失败，请稍后再试");
+                    break;
+                case 2: // 发送验证码请求异常
+                    showToastMsgShort("验证码请求异常，请稍后再试");
+                    break;
+                case 3: // 发送注册信息至服务器请求成功
+                    String register_result = (String) msg.obj;
+                    try {
+                        JSONObject jsonObject = new JSONObject(register_result);
+                        int error = jsonObject.getInt("error");
+                        Log.i("呵呵呵呵", error + "");
+                        if(error == 0){
+                            AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                            builder.setCancelable(false);
+                            View view = View.inflate(RegisterActivity.this, R.layout.register_commit_success_dialog, null);
+                            Button bt_ok = (Button) view.findViewById(R.id.bt_ok);
+                            bt_ok.setOnClickListener(RegisterActivity.this);
+                            dialog = builder.create();
+                            builder.setView(view);
+                            builder.show();
+                        }else if(error == 404){
+                            showToastMsgShort("验证码错误");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    rl_register.setVisibility(View.VISIBLE);
+                    bt_register.setEnabled(true);
+                    break;
+                case 4:// 发送注册信息至服务器请求失败
+                    showToastMsgShort("注册请求失败，请稍后再试");
+                    rl_register.setVisibility(View.GONE);
+                    bt_register.setEnabled(true);
+                    break;
+                case 5:// 发送注册信息至服务器请求异常
+                    showToastMsgShort("注册请求异常，请稍后再试");
+                    rl_register.setVisibility(View.GONE);
+                    bt_register.setEnabled(true);
+                    break;
+            }
+        }
+    };
+    private Message msg = handler.obtainMessage();
 
     @Override
     protected View initView() {
@@ -130,6 +207,7 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
         iv_add_photo_01.setTag(1);
         iv_add_photo_02.setTag(2);
+        rl_register = (RelativeLayout) view.findViewById(R.id.rl_register);
         return view;
     }
 
@@ -137,8 +215,6 @@ public class RegisterActivity extends BaseActivity {
     protected void initData() {
         setTitle("注册");
         setBackVisibility(View.VISIBLE);
-        prisonAdapter = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line, PRISONS);
         tv_software_protocol.setOnClickListener(this);
         tv_read.setOnClickListener(this);
         cb_agree_disagree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -156,68 +232,70 @@ public class RegisterActivity extends BaseActivity {
         bt_register.setOnClickListener(this);
         iv_add_photo_01.setOnClickListener(this);
         iv_add_photo_02.setOnClickListener(this);
+        bt_send_identifying_code.setOnClickListener(this);
     }
 
     /**
      * 发送注册请求至服务端
      */
     private void sendRegisterToServer() {
-        ByteArrayOutputStream bao1 = new ByteArrayOutputStream();
-        newBitmap1.compress(Bitmap.CompressFormat.PNG, 100, bao1);
-        byte[] ba1 = bao1.toByteArray();
-        String tu1 = Base64.encode(ba1);
-        ByteArrayOutputStream bao2 = new ByteArrayOutputStream();
-        newBitmap2.compress(Bitmap.CompressFormat.PNG, 100, bao2);
-        byte[] ba2 = bao2.toByteArray();
-        String tu2 = Base64.encode(ba2);
-       String[] tu = {tu1,tu2};
-        for (int i = 0;i< tu.length;i++){
-            Uuid_images_attributes uuid_images_attributes = new Uuid_images_attributes();
-            uuid_images_attributes.setImage_data(tu[i]);
-            uuid_images.add(uuid_images_attributes);
-        }
-        Register register = new Register();
-        register.setName(name);
-        register.setUuid(ic_card);
-        register.setPhone(phone_num);
-        register.setRelationship(relationship_with_prisoner);
-        register.setPrisoner_number(prisoner_number);
-        register.setPrison(prison_chooes);
-        register.setCode(identifying_code);
-        register.setJail_id(1 + "");
-        register.setType_id(3 + "");
-        register.setUuid_images_attributes(uuid_images);
-        gson = new Gson();
-        String str = gson.toJson(register);
-        apply = "{\"apply\":"+str+"}";
-
+        rl_register.setVisibility(View.VISIBLE);
+        bt_register.setEnabled(false);
         new Thread(){
             @Override
             public void run() {
+                ByteArrayOutputStream bao1 = new ByteArrayOutputStream();
+                newBitmap1.compress(Bitmap.CompressFormat.PNG, 100, bao1);
+                byte[] ba1 = bao1.toByteArray();
+                String tu1 = Base64.encode(ba1);
+                ByteArrayOutputStream bao2 = new ByteArrayOutputStream();
+                newBitmap2.compress(Bitmap.CompressFormat.PNG, 100, bao2);
+                byte[] ba2 = bao2.toByteArray();
+                String tu2 = Base64.encode(ba2);
+                String[] tu = {tu1,tu2};
+                for (int i = 0;i< tu.length;i++){
+                    Uuid_images_attributes uuid_images_attributes = new Uuid_images_attributes();
+                    uuid_images_attributes.setImage_data(tu[i]);
+                    uuid_images.add(uuid_images_attributes);
+                }
+                Register register = new Register();
+                register.setName(name);
+                register.setUuid(ic_card);
+                register.setPhone(phone_num);
+                register.setRelationship(relationship_with_prisoner);
+                register.setPrisoner_number(prisoner_number);
+                register.setPrison(prison_chooes);
+                register.setCode(identifying_code);
+                register.setJail_id(1 + "");
+                register.setType_id(3 + "");
+                register.setUuid_images_attributes(uuid_images);
+                gson = new Gson();
+                String str = gson.toJson(register);
+                apply = "{\"apply\":"+str+"}";
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
+                Looper.prepare();
                 try {
-                    String str = jsonObject.toString();
-//                    Log.d("MainActivity", apply);
-                   StringEntity entity = new StringEntity(apply);
+                    StringEntity entity = new StringEntity(apply, HTTP.UTF_8);
                     entity.setContentType("application/json");
-                    entity.setContentEncoding("UTF-8");
                     post.setEntity(entity);
                     HttpResponse httpResponse = httpClient.execute(post);
                     if (httpResponse.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
                         Log.d("MainActivity",result);
+                        msg.obj = result;
+                        msg.what = 3;
+                        handler.sendMessage(msg);
+                    }else {
+                        handler.sendEmptyMessage(4);
                     }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } catch (Exception e){
+                    handler.sendEmptyMessage(5);
+                } finally {
+                    Looper.loop();
                 }
             }
         }.start();
-//        Toast.makeText(getApplicationContext(), "请等待审核通过，系统将会发短信给您", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -233,17 +311,16 @@ public class RegisterActivity extends BaseActivity {
                 prison_chooes = et_prison_chooes.getText().toString().trim();
                 identifying_code = et_identifying_code.getText().toString().trim();
                 // 判断姓名是否都是汉字组成
-                /**
                 if(TextUtils.isEmpty(name)){
                     showToastMsgShort("姓名为空");
                     return;
-                }else if(name.length() <= 1 || name.length() >= 6){
+                }else if(name.length() <= 1 || name.length() >= 30){
                     showToastMsgShort("姓名长度不合法");
                     return;
                 }else {
                     Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
                     Matcher m = p.matcher(name);
-                    if(!m.matches()) { // 不全是汉字
+                    if(m.matches()) { // 不全是汉字
                         showToastMsgShort("姓名不合法");
                         return;
                     }
@@ -279,7 +356,7 @@ public class RegisterActivity extends BaseActivity {
                 }else {
                     Pattern p=Pattern.compile("[\u4e00-\u9fa5]");
                     Matcher m = p.matcher(name);
-                    if(!m.matches()) { // 不全是汉字
+                    if(m.matches()) { // 不全是汉字
                         showToastMsgShort("请输入正确的与服刑人员的关系");
                         return;
                     }
@@ -289,7 +366,11 @@ public class RegisterActivity extends BaseActivity {
                     showToastMsgShort("服刑人员囚号为空");
                     return;
                 }else {
-                    // ToDo
+                    // 囚号  数字组成的字符串
+                    if(!Utils.isNumeric(prisoner_number)){
+                        showToastMsgShort("请输入正确的囚号");
+                        return;
+                    }
                 }
                 //判断监狱选择
                 if(TextUtils.isEmpty(prison_chooes)){
@@ -302,23 +383,13 @@ public class RegisterActivity extends BaseActivity {
                 if(TextUtils.isEmpty(identifying_code)){
                     showToastMsgShort("验证码为空");
                     return;
-                }else {
-                    // ToDo
                 }
                 // 判断是否上传身份证正反面照
-//                if(){
-//
-//                }
-                 **/
-                sendRegisterToServer();
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setCancelable(false);
-                View view = View.inflate(this, R.layout.register_commit_success_dialog, null);
-                Button bt_ok = (Button) view.findViewById(R.id.bt_ok);
-                bt_ok.setOnClickListener(this);
-                dialog = builder.create();
-                builder.setView(view);
-                builder.show();
+                if(newBitmap1 == null || newBitmap2 == null){
+                    showToastMsgShort("请上传身份证正反面照");
+                    return;
+                }
+                sendRegisterToServer(); // 发送注册信息至服务器
                 break;
             case R.id.bt_ok:
                 dialog.dismiss();
@@ -330,6 +401,27 @@ public class RegisterActivity extends BaseActivity {
                 agreement_dialog = agreement_builder.create();
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
+                agreement_dialog.setCancelable(true);
+                agreement_view.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        long downTime = 0;
+                        switch (event.getAction()){
+                            case MotionEvent.ACTION_DOWN:
+                                downTime = System.currentTimeMillis();
+                                Log.i("按下了...", downTime + "");
+                                break;
+                            case MotionEvent.ACTION_UP:
+                                long upTime = System.currentTimeMillis();
+                                if(upTime - downTime < 500){
+                                    agreement_dialog.dismiss();
+                                }
+                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
+                                break;
+                        }
+                        return false;
+                    }
+                });
                 break;
             case R.id.iv_add_photo_01:
                 showPhotoPicker(this);
@@ -346,8 +438,90 @@ public class RegisterActivity extends BaseActivity {
                     cb_agree_disagree.setChecked(true);
                 }
                 break;
+            case R.id.bt_send_identifying_code:
+                phone_num = et_phone_num.getText().toString().trim();
+                // 判断手机号码是否合法
+                if(TextUtils.isEmpty(phone_num)){
+                    showToastMsgShort("手机号为空");
+                    return;
+                }else {
+                    if(!Utils.isMobileNO(phone_num)){
+                        showToastMsgShort("请输入正确的手机号码");
+                        return;
+                    }else {
+                        final String phone_str = "{" +
+                                "    \"apply\":{" +
+                                "        \"phone\":" + "\"" + phone_num + "\"" +
+                                "    }" +
+                                "}";
+                        new Thread(){
+                            @Override
+                            public void run() {
+                                HttpClient httpClient = new DefaultHttpClient();
+                                HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                Looper.prepare();
+                                try {
+                                    Log.i("已发送", phone_str);
+                                    StringEntity entity = new StringEntity(phone_str);
+                                    entity.setContentType("application/json");
+                                    entity.setContentEncoding("UTF-8");
+                                    post.setEntity(entity);
+                                    HttpResponse response = httpClient.execute(post);
+                                    if (response.getStatusLine().getStatusCode() == 200){
+                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                        Log.d("发送成功", result);
+                                        msg.obj = result;
+                                        msg.what = 0;
+                                        handler.sendMessage(msg);
+                                    }else {
+                                        handler.sendEmptyMessage(1);
+                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                        Log.d("发送失败", result);
+                                    }
+                                } catch (Exception e){
+                                    Log.i("发送验证码出异常啦：", e.getMessage());
+                                    handler.sendEmptyMessage(2);
+                                } finally {
+                                    Looper.loop();
+                                }
+                            }
+                        }.start();
+                    }
+                }
+                bt_send_identifying_code.setEnabled(false);
+                bt_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.tv_gray));
+                bt_send_identifying_code.setText(countdown + "秒后可重发");
+                handler.postDelayed(identifying_Code_Task, 1000);
+                break;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(handler != null && isRunning){
+            handler.removeCallbacks(identifying_Code_Task);
+            handler = null;
+        }
+    }
+
+    private Runnable identifying_Code_Task = new Runnable() {
+        @Override
+        public void run() {
+            isRunning = true;
+            countdown--;
+            bt_send_identifying_code.setText(countdown + "秒后可重发");
+            if(countdown == 0){
+                bt_send_identifying_code.setEnabled(true);
+                bt_send_identifying_code.setBackground(getResources().getDrawable(R.drawable.theme_bg_bt_selector));
+                bt_send_identifying_code.setText("发送验证码");
+                countdown = 60;
+                isRunning = false;
+            }else {
+                handler.postDelayed(identifying_Code_Task, 1000);
+            }
+        }
+    };
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -399,12 +573,9 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case TAKE_PHOTO:
-
-
                     // 将处理过的图片显示在界面上，并保存到本地
                     if (imageclick == 1){
                         // 将保存在本地的图片取出并缩小后显示在界面上
@@ -487,8 +658,4 @@ public class RegisterActivity extends BaseActivity {
             }
         }
     }
-
-
-
-
 }
