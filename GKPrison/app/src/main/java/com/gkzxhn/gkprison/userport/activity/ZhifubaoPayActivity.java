@@ -1,9 +1,12 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import com.alipay.sdk.app.PayTask;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -21,7 +25,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class ZhifubaoPayActivity extends BaseActivity {
+public class ZhifubaoPayActivity extends FragmentActivity {
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";
@@ -52,10 +56,55 @@ public class ZhifubaoPayActivity extends BaseActivity {
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case SDK_PAY_FLAG: {
+                    PayResult payResult = new PayResult((String) msg.obj);
 
+                    // 支付宝返回此次支付结果及加签，建议对支付宝签名信息拿签约时支付宝提供的公钥做验签
+                    String resultInfo = payResult.getResult();
+
+                    String resultStatus = payResult.getResultStatus();
+
+                    // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
+                    if (TextUtils.equals(resultStatus, "9000")) {
+                        Toast.makeText(ZhifubaoPayActivity.this, "支付成功",
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        // 判断resultStatus 为非“9000”则代表可能支付失败
+                        // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
+                        if (TextUtils.equals(resultStatus, "8000")) {
+                            Toast.makeText(ZhifubaoPayActivity.this, "支付结果确认中",
+                                    Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
+                            Toast.makeText(ZhifubaoPayActivity.this, "支付失败",
+                                    Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                    break;
+                }
+                case SDK_CHECK_FLAG: {
+                    Toast.makeText(ZhifubaoPayActivity.this, "检查结果为：" + msg.obj,
+                            Toast.LENGTH_SHORT).show();
+                    break;
+                }
+                default:
+                    break;
+            }
         }
     };
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_zhifubao_pay);
+        countmoney = getIntent().getIntExtra("price",0);
+        getOutTradeNo = getIntent().getStringExtra("outorderno");
+    }
+
+/**
     @Override
     protected View initView() {
         View view = View.inflate(this,R.layout.activity_zhifubao_pay,null);
@@ -67,6 +116,7 @@ public class ZhifubaoPayActivity extends BaseActivity {
      countmoney = getIntent().getIntExtra("price",0);
      getOutTradeNo = getIntent().getStringExtra("outorderno");
     }
+    **/
     /**
      * call alipay sdk pay. 调用SDK支付
      *
@@ -124,6 +174,30 @@ public class ZhifubaoPayActivity extends BaseActivity {
         Thread payThread = new Thread(payRunnable);
         payThread.start();
     }
+/**
+    public void check(View v) {
+        Runnable checkRunnable = new Runnable() {
+
+            @Override
+            public void run() {
+                // 构造PayTask 对象
+                PayTask payTask = new PayTask(ZhifubaoPayActivity.this);
+                // 调用查询接口，获取查询结果
+                boolean isExist = payTask.checkAccountIfExist();
+
+                Message msg = new Message();
+                msg.what = SDK_CHECK_FLAG;
+                msg.obj = isExist;
+                handler.sendMessage(msg);
+            }
+        };
+
+        Thread checkThread = new Thread(checkRunnable);
+        checkThread.start();
+
+    }
+ **/
+
     /**
      * get the sdk version. 获取SDK版本号
      *

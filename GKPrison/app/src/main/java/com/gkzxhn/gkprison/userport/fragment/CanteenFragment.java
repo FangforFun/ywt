@@ -15,6 +15,7 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -122,6 +123,10 @@ public class CanteenFragment extends BaseFragment {
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
 
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        return super.onCreateAnimation(transit, enter, nextAnim);
+    }
 
     @Override
     protected View initView() {
@@ -173,7 +178,10 @@ public class CanteenFragment extends BaseFragment {
         // showFragment(1);
         View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
-
+        sp_allclass.setEnabled(true);
+        sp_allclass.setFocusable(true);
+        sp_sales.setEnabled(false);
+        sp_sales.setFocusable(false);
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
         sp_allclass.setBackgroundResource(R.drawable.spinner_down);
         sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -229,7 +237,10 @@ public class CanteenFragment extends BaseFragment {
                 allclass = new AllClassificationFragment();
                 allclass.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-                //showFragment(1);
+                sp_sales.setEnabled(false);
+                sp_sales.setFocusable(false);
+                sp_allclass.setEnabled(true);
+                sp_allclass.setFocusable(true);
             }
         });
         rl_sales.setOnClickListener(new View.OnClickListener() {
@@ -245,6 +256,10 @@ public class CanteenFragment extends BaseFragment {
                 sales.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                 //showFragment(2);
+                sp_allclass.setEnabled(false);
+                sp_allclass.setFocusable(false);
+                sp_sales.setEnabled(true);
+                sp_sales.setFocusable(true);
                 sp_sales.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -277,10 +292,13 @@ public class CanteenFragment extends BaseFragment {
             public void onClick(View v) {
                  sendOrderToServer();
 
-
+                if (total != 0){
                 Intent intent = new Intent(context, PaymentActivity.class);
                 intent.putExtra("totalmoney", send);
                 context.startActivity(intent);
+                }else {
+                    Toast.makeText(context,"请选择商品",Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -424,6 +442,4 @@ public class CanteenFragment extends BaseFragment {
         key = key.substring(0, 15);
         return key;
     }
-
-
 }
