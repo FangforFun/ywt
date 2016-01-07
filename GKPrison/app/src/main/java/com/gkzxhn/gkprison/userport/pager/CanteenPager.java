@@ -47,6 +47,6 @@ public class CanteenPager extends BasePager {
     public void initData() {
         CanteenFragment canteenFragment = new CanteenFragment();
         ((BaseActivity)context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_canteen,canteenFragment).commit();
-    }
+         }
 
 }
