@@ -10,6 +10,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
@@ -235,6 +236,9 @@ public class MyApplication extends Application {
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     private LoginInfo loginInfo() {
+        if(getLoginInfo() != null) {
+            Log.i("自动登录。。。", getLoginInfo().getAccount() + "---" + getLoginInfo().getToken());
+        }
         return getLoginInfo();
     }
 
@@ -242,6 +246,7 @@ public class MyApplication extends Application {
         // 从本地读取上次登录成功时保存的用户登录信息
         String account = sp.getString("username", "");
         String token = tokenFromPassword(sp.getString("password", ""));
+        Log.i("application", account + "---" + token + "---" + sp.getString("password", ""));
 
         if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
             DemoCache.setAccount(account.toLowerCase());

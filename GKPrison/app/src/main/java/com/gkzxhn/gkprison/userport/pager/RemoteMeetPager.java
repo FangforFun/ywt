@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.apache.http.HttpResponse;
@@ -38,7 +39,7 @@ public class RemoteMeetPager extends BasePager {
     private BetterSpinner bs_meeting_request_time;
     private Button bt_commit_request;
     private SharedPreferences sp;
-    private static final String MEETING_REQUEST_URL = "http://www.fushuile.com/api/v1/apply?access_token=";
+    private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "/api/v1/apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
             "2016-01-05", "2016-01-06", "2016-01-07", "2016-01-08", "2016-01-09"
     };

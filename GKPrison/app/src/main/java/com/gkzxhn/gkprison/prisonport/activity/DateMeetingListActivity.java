@@ -1,8 +1,14 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
-import android.view.Gravity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,16 +18,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 
 /**
  * created by hzn 2015.12.22
@@ -31,7 +43,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private final String[] MEETING_NAMES = {"张三", "李四", "王五", "赵六"};
     private final String[] MEETING_TIMES = {"9:00-9:20", "9:30-9:50", "10:00-10:20", "10:30-10:50"};
     private final String[] MEETING_AREAS = {"第一监区", "第二监区", "第三监区", "第四监区"};
-    private final String[] MEETING_IDS = {"18774810958", "18670341296", "13647491573", "gkzxhn05"};
+    private final String[] MEETING_IDS = {"18774810958", "18670341296", "13647491573", "18670732143"};
 
     private ViewPager mViewPager;
     private int mCurrentIndex = 498;
@@ -44,6 +56,16 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ImageButton preImgBtn, nextImgBtn;
     private TextView monthText;
     private long mExitTime;//add by hzn 退出按键时间间隔
+    private LinearLayout ll_loading;// 刷新
+    private ProgressBar pb_loading;
+    private TextView tv_loading;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+
+        }
+    };
+    private Message msg;
 
     @Override
     public void clickDate(CustomDate date) {
@@ -73,10 +95,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         preImgBtn = (ImageButton) view.findViewById(R.id.btnPreMonth);
         nextImgBtn = (ImageButton) view.findViewById(R.id.btnNextMonth);
         monthText = (TextView) view.findViewById(R.id.tvCurrentMonth);
-        lv_meeting_list = (ListView) view.findViewById(R.id.lv_meeting_list);
         ll_calendar = (LinearLayout) view.findViewById(R.id.ll_calendar);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0]);
         ll_calendar.setLayoutParams(params);
+        lv_meeting_list = (ListView) view.findViewById(R.id.lv_meeting_list);
+        ll_loading = (LinearLayout) view.findViewById(R.id.ll_loading);
+        pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
+        tv_loading = (TextView) view.findViewById(R.id.tv_loading);
 
         return view;
     }
@@ -92,9 +117,11 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         }
         adapter = new CalendarViewAdapter<>(views);
         setViewPager();
-        meetingListAdapter = new MeetingListAdapter();
-        lv_meeting_list.setAdapter(meetingListAdapter);
-        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
+        requestData();// 请求数据
+//        meetingListAdapter = new MeetingListAdapter();
+//        lv_meeting_list.setAdapter(meetingListAdapter);
+//        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
+//        lv_meeting_list.setVisibility(View.VISIBLE);
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -105,6 +132,43 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 startActivity(intent);
             }
         });
+    }
+
+    /**
+     * 请求会见列表数据
+     */
+    private void requestData() {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread(){
+            @Override
+            public void run() {
+                SystemClock.sleep(2000);
+                HttpUtils httpUtils = new HttpUtils();
+                msg = handler.obtainMessage();
+                httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.PRISON_PORT_MEETING_LIST_URL, new RequestCallBack<Object>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<Object> responseInfo) {
+                        Log.i("请求成功", responseInfo.result.toString());
+                        msg.obj = responseInfo.result.toString();
+                        msg.what = 0;
+                        handler.sendMessage(msg);
+                        ll_loading.setVisibility(View.GONE);
+                        meetingListAdapter = new MeetingListAdapter();
+                        lv_meeting_list.setAdapter(meetingListAdapter);
+                        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
+                        lv_meeting_list.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onFailure(HttpException e, String s) {
+                        Log.i("请求失败", s + "---" + e.getMessage());
+                        showToastMsgShort("请求数据失败");
+                        tv_loading.setText("点击再次请求");
+                        pb_loading.setVisibility(View.GONE);
+                    }
+                });
+            }
+        }.start();
     }
 
     private void setViewPager() {
@@ -210,6 +274,24 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 @Override
                 public void onClick(View v) {
                     showToastMsgShort("删除" + holder.tv_meeting_name.getText().toString() + position);
+                    AlertDialog.Builder builder = new AlertDialog.Builder(DateMeetingListActivity.this);
+                    builder.setTitle("提示");
+                    builder.setMessage("确定取消" + holder.tv_meeting_name.getText().toString() + "的会见？");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showToastMsgShort("已取消" + holder.tv_meeting_name.getText().toString() + "的会见");
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showToastMsgShort("取消");
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.show();
                 }
             });
             return convertView;

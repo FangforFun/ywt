@@ -29,6 +29,8 @@ import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.StatusCode;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -59,8 +61,10 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
-    private String url ="http://www.fushuile.com/api/v1/items?access_token=";
     private SharedPreferences sp;
+    private boolean isRegisteredUser;
+    private MyPagerAdapter adapter;
+    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
 
     private Handler handler = new Handler(){
         @Override
@@ -76,7 +80,7 @@ public class MainActivity extends BaseActivity {
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
                             for (int i = 0;i < commodityList.size();i++){
-                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+")";
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+ commodityList.get(i).getPrice()+"','"+ commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+","+commodityList.get(i).getRanking()+")";
                                 db.execSQL(sql1);
                             }
                         }
@@ -115,8 +119,14 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        StatusCode statusCode = NIMClient.getStatus();
+        showToastMsgShort(statusCode.toString());
+        Log.i("自动登录...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        getCommodity();
+        isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        if(isRegisteredUser) {
+            getCommodity();
+        }
         setSupportActionBar(tool_bar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close){
             @Override
@@ -139,11 +149,16 @@ public class MainActivity extends BaseActivity {
                 .replace(R.id.fl_drawer, menuFragment, "MENU").commit();
         pagerList = new ArrayList<>();
         pagerList.clear();
-        pagerList.add(new HomePager(this));
-        pagerList.add(new RemoteMeetPager(this));
-        pagerList.add(new CanteenPager(this));
+        if(isRegisteredUser) {
+            pagerList.add(new HomePager(this));
+            pagerList.add(new RemoteMeetPager(this));
+            pagerList.add(new CanteenPager(this));
+        }else {
+            pagerList.add(new HomePager(this));
+        }
 
-        home_viewPager.setAdapter(new MyPagerAdapter());
+        adapter = new MyPagerAdapter();
+        home_viewPager.setAdapter(adapter);
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -155,16 +170,24 @@ public class MainActivity extends BaseActivity {
                         setActionBarGone(View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_visit: // 远程会见
-                        home_viewPager.setCurrentItem(1);
-                        setTitle("远程会见");
-                        setMenuVisibility(View.GONE);
-                        setActionBarGone(View.VISIBLE);
+                        if (isRegisteredUser) {
+                            home_viewPager.setCurrentItem(1);
+                            setTitle("远程会见");
+                            setMenuVisibility(View.GONE);
+                            setActionBarGone(View.VISIBLE);
+                        } else {
+                            showToastMsgShort("注册后可用");
+                        }
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
-                        home_viewPager.setCurrentItem(2);
-                        setTitle("小卖部");
-                        setMenuVisibility(View.GONE);
-                        setActionBarGone(View.GONE);
+                        if (isRegisteredUser) {
+                            home_viewPager.setCurrentItem(2);
+                            setTitle("小卖部");
+                            setMenuVisibility(View.GONE);
+                            setActionBarGone(View.GONE);
+                        } else {
+                            showToastMsgShort("注册后可用");
+                        }
                         break;
                 }
             }
@@ -281,12 +304,11 @@ public class MainActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 HttpClient httpClient = new DefaultHttpClient();
                 String token = sp.getString("token", "");
-                HttpGet httpGet = new HttpGet(url + token);
+                HttpGet httpGet = new HttpGet(url);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.d("MainActivity",result);
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
                         bundle.putString("result",result);
@@ -304,6 +326,7 @@ public class MainActivity extends BaseActivity {
             }
         }.start();
     }
+
 
     private List<Commodity> analysiscommodity(String s){
         List<Commodity> commodities = new ArrayList<Commodity>();

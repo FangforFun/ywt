@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -85,7 +87,8 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
-    private String url = "http://www.fushuile.com/api/v1/apply";
+//    private String url = "http://www.fushuile.com/api/v1/apply";
+    private String url = "http://10.93.1.10:3000/api/v1/apply";
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号
@@ -192,7 +195,6 @@ public class RegisterActivity extends BaseActivity {
             }
         }
     };
-    private Message msg = handler.obtainMessage();
 
     @Override
     protected View initView() {
@@ -244,6 +246,26 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
+     * 判断是否有网
+     * @return
+     */
+    public boolean isNetworkAvailable(){
+        Context context = getApplicationContext();
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo info = connectivityManager.getActiveNetworkInfo();
+            if (info != null && info.isConnected()) {
+                // 当前网络是连接的
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
+                    // 当前所连接的网络可用
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * 发送注册请求至服务端
      */
     private void sendRegisterToServer() {
@@ -283,6 +305,7 @@ public class RegisterActivity extends BaseActivity {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
                 Looper.prepare();
+                Message msg = handler.obtainMessage();
                 try {
                     StringEntity entity = new StringEntity(apply, HTTP.UTF_8);
                     entity.setContentType("application/json");
@@ -290,15 +313,18 @@ public class RegisterActivity extends BaseActivity {
                     HttpResponse httpResponse = httpClient.execute(post);
                     if (httpResponse.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        Log.d("MainActivity",result);
+                        Log.d("注册请求成功",result);
                         msg.obj = result;
                         msg.what = 3;
                         handler.sendMessage(msg);
                     }else {
                         handler.sendEmptyMessage(4);
+                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                        Log.d("注册请求失败", result);
                     }
                 } catch (Exception e){
                     handler.sendEmptyMessage(5);
+                    Log.i("注册请求异常", e.getMessage());
                 } finally {
                     Looper.loop();
                 }
@@ -397,7 +423,11 @@ public class RegisterActivity extends BaseActivity {
                     showToastMsgShort("请上传身份证正反面照");
                     return;
                 }
-                sendRegisterToServer(); // 发送注册信息至服务器
+                if(isNetworkAvailable()) {
+                    sendRegisterToServer(); // 发送注册信息至服务器
+                }else {
+                    showToastMsgShort("没有网络");
+                }
                 break;
             case R.id.bt_ok:
                 dialog.dismiss();
@@ -458,43 +488,50 @@ public class RegisterActivity extends BaseActivity {
                         showToastMsgShort("请输入正确的手机号码");
                         return;
                     }else {
-                        final String phone_str = "{" +
-                                "    \"apply\":{" +
-                                "        \"phone\":" + "\"" + phone_num + "\"" +
-                                "    }" +
-                                "}";
-                        new Thread(){
-                            @Override
-                            public void run() {
-                                HttpClient httpClient = new DefaultHttpClient();
-                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
-                                Looper.prepare();
-                                try {
-                                    Log.i("已发送", phone_str);
-                                    StringEntity entity = new StringEntity(phone_str);
-                                    entity.setContentType("application/json");
-                                    entity.setContentEncoding("UTF-8");
-                                    post.setEntity(entity);
-                                    HttpResponse response = httpClient.execute(post);
-                                    if (response.getStatusLine().getStatusCode() == 200){
-                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                                        Log.d("发送成功", result);
-                                        msg.obj = result;
-                                        msg.what = 0;
-                                        handler.sendMessage(msg);
-                                    }else {
-                                        handler.sendEmptyMessage(1);
-                                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                                        Log.d("发送失败", result);
+                        if(isNetworkAvailable()) {
+                            final String phone_str = "{" +
+                                    "    \"apply\":{" +
+                                    "        \"phone\":" + "\"" + phone_num + "\"" +
+                                    "    }" +
+                                    "}";
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    HttpClient httpClient = new DefaultHttpClient();
+//                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
+                                    HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                    Looper.prepare();
+                                    Message msg = handler.obtainMessage();
+                                    try {
+                                        Log.i("已发送", phone_str);
+                                        StringEntity entity = new StringEntity(phone_str);
+                                        entity.setContentType("application/json");
+                                        entity.setContentEncoding("UTF-8");
+                                        post.setEntity(entity);
+                                        HttpResponse response = httpClient.execute(post);
+                                        if (response.getStatusLine().getStatusCode() == 200) {
+                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                            Log.d("发送成功", result);
+                                            msg.obj = result;
+                                            msg.what = 0;
+                                            handler.sendMessage(msg);
+                                        } else {
+                                            handler.sendEmptyMessage(1);
+                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                            Log.d("发送失败", result);
+                                        }
+                                    } catch (Exception e) {
+                                        Log.i("发送验证码出异常啦：", e.getMessage());
+                                        handler.sendEmptyMessage(2);
+                                    } finally {
+                                        Looper.loop();
                                     }
-                                } catch (Exception e){
-                                    Log.i("发送验证码出异常啦：", e.getMessage());
-                                    handler.sendEmptyMessage(2);
-                                } finally {
-                                    Looper.loop();
                                 }
-                            }
-                        }.start();
+                            }.start();
+                        }else {
+                            showToastMsgShort("没有网络");
+                            return;
+                        }
                     }
                 }
                 bt_send_identifying_code.setEnabled(false);

@@ -121,14 +121,14 @@ public class AVChatUI implements AVChatUIListener {
                 Log.d(TAG, "success");
                 avChatData = data;
                 DialogMaker.dismissProgressDialog();
-                Toast.makeText(context, "开始进行视频通话，请抓紧时间", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(context, "开始进行视频通话，请抓紧时间", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailed(int code) {
-                Log.d(TAG, "failed code->" + code);
+                Log.d(TAG, "failed code->" + code);// 408请求超时
                 DialogMaker.dismissProgressDialog();
-                Toast.makeText(context, R.string.avchat_call_failed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.avchat_call_failed + code, Toast.LENGTH_SHORT).show();
                 closeSessions(code);
             }
 
@@ -147,11 +147,6 @@ public class AVChatUI implements AVChatUIListener {
      */
     public void onCallStateChange(CallStateEnum stateEnum) {
         callingState = stateEnum;
-//        if(stateEnum == CallStateEnum.INCOMING_VIDEO_CALLING){// 来电
-//            avChatSurface.setIsComing(true);
-//        }else if(stateEnum == CallStateEnum.OUTGOING_VIDEO_CALLING){// 去电
-//            avChatSurface.setIsComing(false);
-//        }
         avChatSurface.onCallStateChange(stateEnum);
         avChatAudio.onCallStateChange(stateEnum);
         avChatVideo.onCallStateChange(stateEnum);

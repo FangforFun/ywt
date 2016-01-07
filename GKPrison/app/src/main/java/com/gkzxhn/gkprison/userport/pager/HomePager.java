@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.userport.pager;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -52,6 +53,7 @@ public class HomePager extends BasePager {
     private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.sms, R.drawable.family_service};
     private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "探监服务", "监狱长信箱", "家属服务"};
     private final List<String> list_news_title = new ArrayList<>();
+    private SharedPreferences sp;
     /**
      * 轮播图导航点集合
      */
@@ -83,6 +85,7 @@ public class HomePager extends BasePager {
 
     @Override
     public void initData() {
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
         tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -181,6 +184,7 @@ public class HomePager extends BasePager {
                             holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.tv_bg));
                             holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
 //                            showToastMsgShort("hehehe" + position);
+                            boolean isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
                             switch (position) {
                                 case 0:
                                     intent = new Intent(context, PrisonIntroductionActivity.class);
@@ -195,16 +199,28 @@ public class HomePager extends BasePager {
                                     context.startActivity(intent);
                                     break;
                                 case 3:
-                                    intent = new Intent(context, VisitingServiceActivity.class);
-                                    context.startActivity(intent);
+                                    if (isRegisteredUser) {
+                                        intent = new Intent(context, VisitingServiceActivity.class);
+                                        context.startActivity(intent);
+                                    } else {
+                                        showToastMsgShort("注册后可用");
+                                    }
                                     break;
                                 case 4:
-                                    intent = new Intent(context, PrisonWardenActivity.class);
-                                    context.startActivity(intent);
+                                    if (isRegisteredUser) {
+                                        intent = new Intent(context, PrisonWardenActivity.class);
+                                        context.startActivity(intent);
+                                    }else {
+                                        showToastMsgShort("注册后使用");
+                                    }
                                     break;
                                 case 5:
-                                    intent = new Intent(context, FamilyServiceActivity.class);
-                                    context.startActivity(intent);
+                                    if(isRegisteredUser){
+                                        intent = new Intent(context, FamilyServiceActivity.class);
+                                        context.startActivity(intent);
+                                    }else {
+                                        showToastMsgShort("注册后使用");
+                                    }
                                     break;
                             }
                             break;

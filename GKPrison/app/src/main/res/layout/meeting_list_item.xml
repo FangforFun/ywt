@@ -6,15 +6,15 @@
 
     <TextView
         android:id="@+id/tv_meeting_time"
-        android:layout_width="120dp"
-        android:layout_height="40dp"
+        android:layout_width="160dp"
+        android:layout_height="50dp"
         android:text="9:00-9:20"
         android:background="@drawable/tv_circle_corner_bg"
         android:gravity="center"
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"
         android:textColor="@color/white"
-        android:textSize="20sp"/>
+        android:textSize="26sp"/>
 
     <TextView
         android:id="@+id/tv_meeting_name"
@@ -24,7 +24,7 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="30dp"
         android:textColor="@color/tv_mid"
-        android:textSize="20sp"
+        android:textSize="26sp"
         android:layout_toRightOf="@id/tv_meeting_time"/>
 
     <TextView
@@ -35,7 +35,7 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="30dp"
         android:textColor="@color/tv_mid"
-        android:textSize="20sp"
+        android:textSize="26sp"
         android:layout_toRightOf="@id/tv_meeting_name"/>
 
     <ImageView

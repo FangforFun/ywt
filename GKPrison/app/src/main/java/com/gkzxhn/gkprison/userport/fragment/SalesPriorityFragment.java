@@ -85,7 +85,7 @@ public class SalesPriorityFragment extends BaseFragment {
         while (cursor.moveToNext()) {
             if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();
-                commodity.setSales_heat(cursor.getInt(cursor.getColumnIndex("sales_heat")));
+                commodity.setRanking(cursor.getInt(cursor.getColumnIndex("sales_heat")));
                 commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
@@ -106,8 +106,8 @@ public class SalesPriorityFragment extends BaseFragment {
         Collections.sort(commodities, new Comparator<Commodity>() {
             @Override
             public int compare(Commodity lhs, Commodity rhs) {
-                int heat1 = lhs.getSales_heat();
-                int heat2 = rhs.getSales_heat();
+                int heat1 = lhs.getRanking();
+                int heat2 = rhs.getRanking();
                 if (heat1 > heat2){
                     return 1;
                 }

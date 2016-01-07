@@ -60,6 +60,7 @@
                 android:textColor="@color/tv_bg"
                 android:textCursorDrawable="@null"
                 android:textSize="14sp"
+                android:inputType="number"
                 android:padding="10dp"
                 android:textColorHint="@color/tv_gray"
                 android:background="@drawable/et_shape_search"/>
@@ -86,6 +87,7 @@
                 android:textColor="@color/tv_bg"
                 android:hint="囚号"
                 android:padding="10dp"
+                android:inputType="number"
                 android:textSize="14sp"
                 android:textColorHint="@color/tv_gray"
                 android:background="@drawable/et_shape_search"/>
@@ -118,6 +120,7 @@
                     android:textSize="14sp"
                     android:padding="10dp"
                     android:textCursorDrawable="@null"
+                    android:inputType="number"
                     android:textColor="@color/tv_bg"
                     android:layout_marginRight="5dp"
                     android:textColorHint="@color/tv_gray"

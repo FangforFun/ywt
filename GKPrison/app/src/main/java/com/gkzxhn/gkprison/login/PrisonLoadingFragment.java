@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -147,7 +148,8 @@ public class PrisonLoadingFragment extends BaseFragment {
 
                                 @Override
                                 public void onException(Throwable throwable) {
-                                    Toast.makeText(context, "登录失败2", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, "登录异常", Toast.LENGTH_SHORT).show();
+                                    Log.i("云信id登录异常", throwable.getMessage());
                                     handler.sendEmptyMessage(1);
                                     Looper.loop();
                                 }
