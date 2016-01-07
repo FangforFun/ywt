@@ -124,6 +124,8 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
                 startActivity(intent);
                 break;
         }
+
+        
     }
 
     class MyPagerAdapter extends FragmentPagerAdapter{

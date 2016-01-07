@@ -9,17 +9,17 @@ public class Commodity {
     private String price;
     private int id;
     private int qty;
-    private int sales_heat;
+    private int ranking;
     private String avatar_url;
     private String description;
     private String title;
 
-    public int getSales_heat() {
-        return sales_heat;
+    public int getRanking() {
+        return ranking;
     }
 
-    public void setSales_heat(int sales_heat) {
-        this.sales_heat = sales_heat;
+    public void setRanking(int ranking) {
+        this.ranking = ranking;
     }
 
     public int getQty() {

@@ -59,7 +59,7 @@ public class MainActivity extends BaseActivity {
     private CustomDrawerLayout drawerLayout;
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
-    private String url ="http://www.fushuile.com/api/v1/items?access_token=";
+    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
     private SharedPreferences sp;
 
     private Handler handler = new Handler(){
@@ -76,7 +76,7 @@ public class MainActivity extends BaseActivity {
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
                             for (int i = 0;i < commodityList.size();i++){
-                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+")";
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+commodityList.get(i).getPrice()+"','"+commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+","+commodityList.get(i).getRanking()+")";
                                 db.execSQL(sql1);
                             }
                         }
@@ -281,12 +281,11 @@ public class MainActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 HttpClient httpClient = new DefaultHttpClient();
                 String token = sp.getString("token", "");
-                HttpGet httpGet = new HttpGet(url + token);
+                HttpGet httpGet = new HttpGet(url);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.d("MainActivity",result);
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
                         bundle.putString("result",result);
@@ -313,6 +312,7 @@ public class MainActivity extends BaseActivity {
                 Commodity commodity = new Commodity();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 commodity.setId(jsonObject.getInt("id"));
+                commodity.setRanking(jsonObject.getInt("ranking"));
                 commodity.setTitle(jsonObject.getString("title"));
                 commodity.setDescription(jsonObject.getString("description"));
                 commodity.setAvatar_url(jsonObject.getString("avatar_url"));

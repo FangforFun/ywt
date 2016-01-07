@@ -81,4 +81,5 @@
     <string name="avchat_call_failed">发起通话失败</string>
     <string name="avchat_in_switch">请耐心等待！</string>
     <string name="avchat_device_no_ready">音视频设备未准备好</string>
+    <string name="title_activity_laws_detail">LawsDetailActivity</string>
 </resources>

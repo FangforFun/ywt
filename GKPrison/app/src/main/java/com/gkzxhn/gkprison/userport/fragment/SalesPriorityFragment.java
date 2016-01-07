@@ -19,6 +19,7 @@ import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +86,7 @@ public class SalesPriorityFragment extends BaseFragment {
         while (cursor.moveToNext()) {
             if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();
-                commodity.setSales_heat(cursor.getInt(cursor.getColumnIndex("sales_heat")));
+                commodity.setRanking(cursor.getInt(cursor.getColumnIndex("sales_heat")));
                 commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
@@ -106,8 +107,8 @@ public class SalesPriorityFragment extends BaseFragment {
         Collections.sort(commodities, new Comparator<Commodity>() {
             @Override
             public int compare(Commodity lhs, Commodity rhs) {
-                int heat1 = lhs.getSales_heat();
-                int heat2 = rhs.getSales_heat();
+                int heat1 = lhs.getRanking();
+                int heat2 = rhs.getRanking();
                 if (heat1 > heat2){
                     return 1;
                 }
@@ -232,11 +233,11 @@ public class SalesPriorityFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            viewHolder.imageView.setImageResource(image.get(position));
+            String t ="http://10.93.1.115:3000"+commodities.get(position).getAvatar_url();
+            Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty()+"");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
-
             return convertView;
         }
     }
