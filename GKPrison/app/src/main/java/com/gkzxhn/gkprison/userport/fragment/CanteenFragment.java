@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
+import android.app.ProgressDialog;
 import android.renderscript.RenderScript;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
@@ -122,6 +123,7 @@ public class CanteenFragment extends BaseFragment {
     private String apply = "";
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
+    private ProgressDialog dialog;
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -130,6 +132,13 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected View initView() {
+        dialog = new ProgressDialog(context);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setCancelable(false);// 设置是否可以通过点击Back键取消
+        dialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
+        dialog.setTitle("提示");
+        dialog.setMessage("正在同步数据...");
+        dialog.show();
         view = View.inflate(context, R.layout.fragment_canteen, null);
         settlement = (Button)view.findViewById(R.id.bt_shopping_cart_commit);
         rl_allclass = (RelativeLayout)view.findViewById(R.id.rl_allclass);
@@ -155,6 +164,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+
         TradeNo = getOutTradeNo();
         long time = System.currentTimeMillis();
        //fm  = ((BaseActivity) context).getSupportFragmentManager();
@@ -194,6 +204,7 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 0);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        dialog.cancel();
                         break;
                     case 1:
                         allclass = new AllClassificationFragment();
@@ -290,18 +301,19 @@ public class CanteenFragment extends BaseFragment {
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 sendOrderToServer();
+                sendOrderToServer();
 
-                if (total != 0){
-                Intent intent = new Intent(context, PaymentActivity.class);
-                intent.putExtra("totalmoney", send);
-                context.startActivity(intent);
-                }else {
-                    Toast.makeText(context,"请选择商品",Toast.LENGTH_SHORT).show();
+                if (total != 0) {
+                    Intent intent = new Intent(context, PaymentActivity.class);
+                    intent.putExtra("totalmoney", send);
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
                 }
 
             }
         });
+
     }
 
     @Override

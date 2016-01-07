@@ -79,7 +79,6 @@ public class PrisonOpenActivity extends BaseActivity {
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showToastMsgShort("position++" + NEWS_TITLES[position]);
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
                 startActivity(intent);
             }

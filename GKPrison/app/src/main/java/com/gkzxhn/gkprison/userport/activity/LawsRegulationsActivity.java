@@ -1,6 +1,12 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -8,9 +14,24 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.Laws;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 法律法规页面
@@ -18,8 +39,29 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 public class LawsRegulationsActivity extends BaseActivity {
 
     private ListView lv_laws_regulations;
-    private final int[] ITEM_IVS = {R.drawable.laws_item_01, R.drawable.laws_item_02, R.drawable.laws_item_03, R.drawable.laws_item_04, R.drawable.laws_item_05};
+    private List<Laws> lawses = new ArrayList<Laws>();
     private final String[] ITEM_TVS = {"关于进一步深化狱务公开的意见", "中华人民共和国赔偿法", "中华人民共和国劳动法", "中华人民共和国职业病防治法", "中华人民共和国刑事诉讼法"};
+    private SharedPreferences sp;
+    private String token = "";
+    private String url = "";
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String messge = (String)msg.obj;
+                    if (messge.equals("sucess")){
+                        Bundle bundle = msg.getData();
+                        String laws = bundle.getString("result");
+                        lawses = analysisLaws(laws);
+                        lv_laws_regulations.setAdapter(new MyAdapter());
+                    }else if (messge.equals("error")){
+                        Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
 
     @Override
     protected View initView() {
@@ -32,20 +74,79 @@ public class LawsRegulationsActivity extends BaseActivity {
     protected void initData() {
         setTitle("法律法规");
         setBackVisibility(View.VISIBLE);
-        lv_laws_regulations.setAdapter(new MyAdapter());
+//        token = sp.getString("token","00");
+        url = "http://10.93.1.10:3000/api/v1/laws?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
+        getLaws();
+
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                showToastMsgShort("哈哈哈" + position);
+               int i = lawses.get(position).getId();
+                Intent intent = new Intent(LawsRegulationsActivity.this,LawsDetailActivity.class);
+                intent.putExtra("id",i);
+                startActivity(intent);
             }
         });
+
+    }
+
+    private void getLaws(){
+        new Thread(){
+            @Override
+            public void run() {
+                Message msg = handler.obtainMessage();
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpGet Get = new HttpGet(url);
+                try {
+                    HttpResponse Response = httpClient.execute(Get);
+                    if (Response.getStatusLine().getStatusCode() == 200){
+                        String result = EntityUtils.toString(Response.getEntity(), "utf-8");
+
+                        msg.obj = "sucess";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }else {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    private List<Laws> analysisLaws(String s){
+        List<Laws> lawsList = new ArrayList<Laws>();
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            JSONArray  jsonArray1 = jsonObject.getJSONArray("laws");
+            for (int i = 0;i < jsonArray1.length();i++){
+                Laws laws = new Laws();
+                JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
+                laws.setId(jsonObject1.getInt("id"));
+                laws.setTitle(jsonObject1.getString("title"));
+                laws.setContents(jsonObject1.getString("contents"));
+                laws.setJail_id(jsonObject1.getInt("jail_id"));
+                laws.setCreated_at(jsonObject1.getString("created_at"));
+                laws.setUpdated_at(jsonObject1.getString("updated_at"));
+                lawsList.add(laws);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return lawsList;
     }
 
     private class MyAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {
-            return ITEM_IVS.length;
+            return lawses.size();
         }
 
         @Override
@@ -65,27 +166,16 @@ public class LawsRegulationsActivity extends BaseActivity {
                 convertView = View.inflate(getApplicationContext(), R.layout.laws_regulations_item, null);
                 holder = new ViewHolder();
                 holder.tv_laws_regulations_item = (TextView) convertView.findViewById(R.id.tv_laws_regulations_item);
-                holder.iv_to_right = (ImageView) convertView.findViewById(R.id.iv_to_right);
                 convertView.setTag(holder);
             }else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            if(position == 2){
-                Drawable drawable = getResources().getDrawable(ITEM_IVS[position]);
-                drawable.setBounds(0, 0, 60, 80);
-                holder.tv_laws_regulations_item.setCompoundDrawables(drawable, null, null, null);
-            }else {
-                Drawable drawable = getResources().getDrawable(ITEM_IVS[position]);
-                drawable.setBounds(0, 0, 60, 70);
-                holder.tv_laws_regulations_item.setCompoundDrawables(drawable, null, null, null);
-            }
-            holder.tv_laws_regulations_item.setText(ITEM_TVS[position]);
+            holder.tv_laws_regulations_item.setText(lawses.get(position).getTitle());
             return convertView;
         }
     }
 
     private static class ViewHolder {
         TextView tv_laws_regulations_item;
-        ImageView iv_to_right;
     }
 }

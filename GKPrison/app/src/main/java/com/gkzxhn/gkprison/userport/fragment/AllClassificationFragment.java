@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class AllClassificationFragment extends BaseFragment {
     private String tv_count = "0.0";
     private int qty = 0;
     private int Items_id = 0;
+
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -49,8 +52,10 @@ public class AllClassificationFragment extends BaseFragment {
     };
     @Override
     protected View initView() {
+
         view = View.inflate(context,R.layout.fragment_all_classification,null);
         lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
+
         return view;
     }
 
@@ -86,6 +91,7 @@ public class AllClassificationFragment extends BaseFragment {
         }
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
+
     }
 
     private class SalesAdapter extends BaseAdapter{
@@ -176,19 +182,19 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i - 1;
                     if (i == 1) {
-                        String sql = "delete from line_items where Items_id = " + Items_id + " and cart_id = "+cart_id;
+                        String sql = "delete from line_items where Items_id = " + Items_id + " and cart_id = " + cart_id;
                         db.execSQL(sql);
                     } else if (i > 1) {
-                        String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + "  and cart_id ="+cart_id;
+                        String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + "  and cart_id =" + cart_id;
                         db.execSQL(sql);
                     }
-                    String sql = "select qty from line_items where Items_id = "+Items_id+"  and cart_id = "+cart_id;
-                    Cursor cursor = db.rawQuery(sql,null);
-                    if (cursor.getCount() == 0){
+                    String sql = "select qty from line_items where Items_id = " + Items_id + "  and cart_id = " + cart_id;
+                    Cursor cursor = db.rawQuery(sql, null);
+                    if (cursor.getCount() == 0) {
                         qty = 0;
-                    }else {
-                        while (cursor.moveToNext()){
-                                qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                    } else {
+                        while (cursor.moveToNext()) {
+                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
                     Message msg = handler.obtainMessage();
@@ -198,7 +204,8 @@ public class AllClassificationFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            viewHolder.imageView.setImageResource(image.get(position));
+            String t ="http://10.93.1.115:3000"+commodities.get(position).getAvatar_url();
+            Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());

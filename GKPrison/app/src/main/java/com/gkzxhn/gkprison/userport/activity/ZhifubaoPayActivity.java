@@ -185,7 +185,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
                 // 调用查询接口，获取查询结果
                 boolean isExist = payTask.checkAccountIfExist();
 
-                Message msg = new Message();
+                Letter msg = new Letter();
                 msg.what = SDK_CHECK_FLAG;
                 msg.obj = isExist;
                 handler.sendMessage(msg);

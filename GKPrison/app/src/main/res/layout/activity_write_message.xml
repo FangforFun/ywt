@@ -16,7 +16,7 @@
         android:layout_marginLeft="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:text="主题："
+        android:text="主题:"
         android:hint="输入主题"
         android:textColor="@color/tv_mid"
         android:textSize="16sp"/>
