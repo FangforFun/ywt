@@ -46,7 +46,6 @@
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
-<!--
         <activity android:name=".welcome.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -55,19 +54,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
--->
-
         <activity
             android:name=".userport.activity.MainActivity"
             android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
-
         <activity
             android:name=".login.LoadingActivity"
             android:screenOrientation="portrait" />

@@ -23,6 +23,7 @@ import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.scan.CaptureActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
@@ -64,7 +65,6 @@ public class PersonLoadingFragment extends BaseFragment {
     private String ic_card_num;
     private String identifying_code;// 验证码
     private SharedPreferences sp;
-    private String token = "cb21c49928249f05ae8e4075c6018ff0";
     private Button bt_scan_login;
     private Button bt_fast_login;
     private TextView tv_send_identifying_code;
@@ -114,7 +114,9 @@ public class PersonLoadingFragment extends BaseFragment {
                         return;
                     }else if(error == 0){
                         successCode++;
-                        info = new LoginInfo(username, userInfo.getToken()); // config...
+//                        info = new LoginInfo(username, userInfo.getToken()); // config...
+                        info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
+                        Log.i("hehehe", userInfo.getToken());
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
                     }
@@ -261,61 +263,56 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
                         btn_login.setProgress(1);
                         btn_login.setText("正在登录...");
-                        callback =
-                                new RequestCallback<LoginInfo>() {
-                                    @Override
-                                    public void onSuccess(LoginInfo loginInfo) {
-                                        handler.sendEmptyMessage(0);
-                                        Looper.loop();
-                                    }
+                        callback = new RequestCallback<LoginInfo>() {
+                            @Override
+                            public void onSuccess(LoginInfo loginInfo) {
+                                handler.sendEmptyMessage(0);
+                                Looper.loop();
+                            }
 
-                                    @Override
-                                    public void onFailed(int i) {
-                                        switch (i) {
-                                            case 302:
-//                                            Toast.makeText(context, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-                                                Toast.makeText(context, "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 503:
-                                                Toast.makeText(context, "服务器繁忙", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 415:
-                                                Toast.makeText(context, "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 408:
-                                                Toast.makeText(context, "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 403:
-                                                Toast.makeText(context, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 200:
-                                                Toast.makeText(context, "操作成功", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 422:
-                                                Toast.makeText(context, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            case 500:
-                                                Toast.makeText(context, "服务器错误", Toast.LENGTH_SHORT).show();
-                                                break;
-                                            default:
-                                                Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
-                                                break;
-                                        }
-                                        handler.sendEmptyMessage(1);
-                                        Looper.loop();
-                                    }
+                            @Override
+                            public void onFailed(int i) {
+                                switch (i) {
+                                    case 302:
+                                        Toast.makeText(context, "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 503:
+                                        Toast.makeText(context, "服务器繁忙", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 415:
+                                        Toast.makeText(context, "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 408:
+                                        Toast.makeText(context, "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 403:
+                                        Toast.makeText(context, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 200:
+                                        Toast.makeText(context, "操作成功", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 422:
+                                        Toast.makeText(context, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    case 500:
+                                        Toast.makeText(context, "服务器错误", Toast.LENGTH_SHORT).show();
+                                        break;
+                                    default:
+                                        Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                                        break;
+                                }
+                                handler.sendEmptyMessage(1);
+                                Looper.loop();
+                            }
 
-                                    @Override
-                                    public void onException(Throwable throwable) {
-                                        Toast.makeText(context, "登录异常", Toast.LENGTH_SHORT).show();
-                                        Log.i("云信id登录异常", throwable.getMessage());
-                                        handler.sendEmptyMessage(1);
-                                        Looper.loop();
-                                    }
-                                };
-//                        NIMClient.getService(AuthService.class).login(info)
-//                                .setCallback(callback);
-//                    /*
+                            @Override
+                            public void onException(Throwable throwable) {
+                                Toast.makeText(context, "登录异常", Toast.LENGTH_SHORT).show();
+                                Log.i("云信id登录异常", throwable.getMessage());
+                                handler.sendEmptyMessage(1);
+                                Looper.loop();
+                            }
+                        };
                         new Thread() {
                             @Override
                             public void run() {
@@ -349,7 +346,6 @@ public class PersonLoadingFragment extends BaseFragment {
                                 }
                             }
                         }.start();
-//                    */
                     }else {
                         showToastMsgLong("没有网络");
                     }
@@ -372,15 +368,15 @@ public class PersonLoadingFragment extends BaseFragment {
             public void onClick(View v) {
                 username = et_login_username.getText().toString().trim();
                 // 判断手机号码是否合法
-                if(TextUtils.isEmpty(username)){
+                if (TextUtils.isEmpty(username)) {
                     showToastMsgShort("手机号为空");
                     return;
-                }else {
-                    if(!Utils.isMobileNO(username)){
+                } else {
+                    if (!Utils.isMobileNO(username)) {
                         showToastMsgShort("请输入正确的用户名");
                         return;
-                    }else {
-                        if(isNetworkAvailable()) {
+                    } else {
+                        if (isNetworkAvailable()) {
                             final String phone_str = "{" +
                                     "    \"apply\":{" +
                                     "        \"phone\":" + "\"" + username + "\"" +
@@ -390,8 +386,7 @@ public class PersonLoadingFragment extends BaseFragment {
                                 @Override
                                 public void run() {
                                     HttpClient httpClient = new DefaultHttpClient();
-//                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
-                                    HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
                                     Looper.prepare();
                                     Message msg = handler.obtainMessage();
                                     try {
@@ -420,7 +415,7 @@ public class PersonLoadingFragment extends BaseFragment {
                                     }
                                 }
                             }.start();
-                        }else {
+                        } else {
                             showToastMsgLong("没有网络");
                             return;
                         }
@@ -444,11 +439,9 @@ public class PersonLoadingFragment extends BaseFragment {
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-            if (info != null && info.isConnected())
-            {
+            if (info != null && info.isConnected()) {
                 // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED)
-                {
+                if (info.getState() == NetworkInfo.State.CONNECTED) {
                     // 当前所连接的网络可用
                     return true;
                 }
@@ -484,24 +477,4 @@ public class PersonLoadingFragment extends BaseFragment {
             }
         }
     };
-
-    private String tokenFromPassword(String password) {
-        String appKey = readAppKey(context);
-        boolean isDemo = "45c6af3c98409b18a84451215d0bdd6e".equals(appKey)
-                || "fe416640c8e8a72734219e1847ad2547".equals(appKey);
-
-        return isDemo ? MD5Utils.ecoder(password) : password;
-    }
-
-    private static String readAppKey(Context context) {
-        try {
-            ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            if (appInfo != null) {
-                return appInfo.metaData.getString("com.netease.nim.appKey");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }

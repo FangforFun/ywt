@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BasePager;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -29,6 +30,11 @@ import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 
@@ -64,7 +70,7 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sp;
     private boolean isRegisteredUser;
     private MyPagerAdapter adapter;
-    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
+    private String url ="http://10.93.1.10:3000/api/v1/items?jail_id=1&access_token=";
 
     private Handler handler = new Handler(){
         @Override
@@ -124,6 +130,7 @@ public class MainActivity extends BaseActivity {
         Log.i("自动登录...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        getUserInfo();
         if(isRegisteredUser) {
             getCommodity();
         }
@@ -226,6 +233,29 @@ public class MainActivity extends BaseActivity {
         rl_home_menu.setOnClickListener(this);
     }
 
+    /**
+     * 获取用户信息
+     */
+    private void getUserInfo() {
+        new Thread(){
+            @Override
+            public void run() {
+                HttpUtils httpUtils = new HttpUtils();
+                httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<Object> responseInfo) {
+                        Log.i("请求成功", responseInfo.result.toString());
+                    }
+
+                    @Override
+                    public void onFailure(HttpException e, String s) {
+                        Log.i("请求失败", s + "---" + e.getMessage());
+                    }
+                });
+            }
+        }.start();
+    }
+
     private class MyPagerAdapter extends PagerAdapter {
 
         @Override
@@ -304,7 +334,7 @@ public class MainActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 HttpClient httpClient = new DefaultHttpClient();
                 String token = sp.getString("token", "");
-                HttpGet httpGet = new HttpGet(url);
+                HttpGet httpGet = new HttpGet(url + token);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);
                     if (response.getStatusLine().getStatusCode() == 200){

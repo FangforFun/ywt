@@ -35,7 +35,7 @@
                 android:layout_toRightOf="@id/team_head_image"
                 android:text="Team Name"
                 android:textColor="@color/color_black_333333"
-                android:textSize="@dimen/text_size_17" />
+                android:textSize="@dimen/tv_apply_meeting_call" />
 
 
             <TextView

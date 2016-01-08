@@ -36,6 +36,34 @@ public class Utils {
     }
 
     /**
+     * 格式化日期显示格式yyyy-MM-dd
+     *
+     * @param sdate
+     *            原始日期格式
+     * @return yyyy-MM-dd格式化后的日期显示
+     */
+    public static String dateFormat(String sdate) {
+        return dateFormat(sdate, "yyyy-MM-dd");
+    }
+
+    /**
+     * 格式化日期显示格式
+     *
+     * @param sdate
+     *            原始日期格式
+     * @param format
+     *            格式化后日期格式
+     * @return 格式化后的日期显示
+     */
+    public static String dateFormat(String sdate, String format) {
+        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        java.sql.Date date = java.sql.Date.valueOf(sdate);
+        String dateString = formatter.format(date);
+        return dateString;
+    }
+
+
+    /**
      * Get the value of the data column for this Uri. This is useful for
      * MediaStore Uris, and other file-based ContentProviders.
      *
