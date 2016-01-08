@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,14 +28,27 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
+import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Utils;
+import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.squareup.okhttp.Call;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * created by hzn 2015.12.22
@@ -59,19 +74,66 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private LinearLayout ll_loading;// 刷新
     private ProgressBar pb_loading;
     private TextView tv_loading;
+    private CalendarCard[] views;
+    private List<MeetingInfo> meetingInfoList;
+    private ScrollView scrollView;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-
+            switch (msg.what){
+                case 0:
+                    String result = (String) msg.obj;
+                    if(!TextUtils.isEmpty(result)){
+                        parseResult(result);
+                        showToastMsgShort("刷新成功");
+                        ll_loading.setVisibility(View.GONE);
+                        if(meetingListAdapter == null) {
+                            meetingListAdapter = new MeetingListAdapter();
+                            lv_meeting_list.setAdapter(meetingListAdapter);
+                        }else {
+                            meetingListAdapter.notifyDataSetChanged();
+                        }
+                        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
+                        lv_meeting_list.setVisibility(View.VISIBLE);
+                    }
+                    break;
+            }
         }
     };
+
+    /**
+     * 解析结果
+     */
+    private void parseResult(String result) {
+        meetingInfoList = new ArrayList<>();
+        meetingInfoList.clear();
+        try {
+            JSONArray jsonArray = new JSONArray(result);
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                MeetingInfo meetingInfo = new MeetingInfo();
+                meetingInfo.setName(jsonObject.getString("name"));
+                meetingInfo.setPhone(jsonObject.getString("phone"));
+                meetingInfo.setPrisoner_number(jsonObject.getString("prisoner_number"));
+                meetingInfo.setRelationship(jsonObject.getString("relationship"));
+                meetingInfo.setUuid(jsonObject.getString("uuid"));
+//                meetingInfo.setPrison_area(jsonObject.getString("prison_area"));
+//                meetingInfo.setReply_date(jsonObject.getString("reply_date"));
+                meetingInfoList.add(meetingInfo);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private Message msg;
 
     @Override
     public void clickDate(CustomDate date) {
         if((date.getYear() + "年" + date.getMonth() + "月").equals(monthText.getText().toString())){
             // 点击的是当月的
-            showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
+//            showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
+            requestData(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
         }else if(date.getMonth() < Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))){
             showToastMsgShort("左滑至下个月份");
         }else if(date.getMonth() > Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))){
@@ -102,7 +164,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         ll_loading = (LinearLayout) view.findViewById(R.id.ll_loading);
         pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
         tv_loading = (TextView) view.findViewById(R.id.tv_loading);
-
+        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         return view;
     }
 
@@ -111,24 +173,23 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         setTitle("会见列表");
         preImgBtn.setOnClickListener(this);
         nextImgBtn.setOnClickListener(this);
-        CalendarCard[] views = new CalendarCard[3];
+        views = new CalendarCard[3];
         for (int i = 0; i < 3; i++) {
             views[i] = new CalendarCard(this, this);
         }
         adapter = new CalendarViewAdapter<>(views);
         setViewPager();
-        requestData();// 请求数据
-//        meetingListAdapter = new MeetingListAdapter();
-//        lv_meeting_list.setAdapter(meetingListAdapter);
-//        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
-//        lv_meeting_list.setVisibility(View.VISIBLE);
+        long currentDate = System.currentTimeMillis();
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date(currentDate);
+        String formatDate = format.format(date);
+        requestData(formatDate);// 请求数据
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView tv_name = (TextView) view.findViewById(R.id.tv_meeting_name);
                 Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
-                intent.putExtra("申请人", tv_name.getText().toString());
-                intent.putExtra("accid", MEETING_IDS[position]);
+                intent.putExtra("申请人", meetingInfoList.get(position).getName());
+                intent.putExtra("accid", meetingInfoList.get(position).getPhone());
                 startActivity(intent);
             }
         });
@@ -137,34 +198,34 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     /**
      * 请求会见列表数据
      */
-    private void requestData() {
+    private void requestData(final String date) {
         ll_loading.setVisibility(View.VISIBLE);
+        tv_loading.setText("正在刷新...");
+        pb_loading.setVisibility(View.VISIBLE);
         new Thread(){
             @Override
             public void run() {
                 SystemClock.sleep(2000);
                 HttpUtils httpUtils = new HttpUtils();
                 msg = handler.obtainMessage();
-                httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.PRISON_PORT_MEETING_LIST_URL, new RequestCallBack<Object>() {
+                httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD +
+//                        "---hahah" +
+                        Constants.PRISON_PORT_MEETING_LIST_URL + date, new RequestCallBack<Object>() {
                     @Override
                     public void onSuccess(ResponseInfo<Object> responseInfo) {
                         Log.i("请求成功", responseInfo.result.toString());
                         msg.obj = responseInfo.result.toString();
                         msg.what = 0;
                         handler.sendMessage(msg);
-                        ll_loading.setVisibility(View.GONE);
-                        meetingListAdapter = new MeetingListAdapter();
-                        lv_meeting_list.setAdapter(meetingListAdapter);
-                        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
-                        lv_meeting_list.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onFailure(HttpException e, String s) {
                         Log.i("请求失败", s + "---" + e.getMessage());
-                        showToastMsgShort("请求数据失败");
-                        tv_loading.setText("点击再次请求");
+                        showToastMsgShort("刷新数据失败");
+                        tv_loading.setText("点击刷新");
                         pb_loading.setVisibility(View.GONE);
+                        ll_loading.setOnClickListener(DateMeetingListActivity.this);
                     }
                 });
             }
@@ -204,6 +265,11 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             case R.id.btnNextMonth:
                 mViewPager.setCurrentItem(mViewPager.getCurrentItem() + 1);
                 break;
+            case R.id.ll_loading:
+                if(views != null) {
+                    requestData(CalendarCard.mShowDate.getYear() + "-" + CalendarCard.mShowDate.getMonth() + "-" + CalendarCard.mShowDate.getDay());
+                }
+                break;
             default:
                 break;
         }
@@ -240,7 +306,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
         @Override
         public int getCount() {
-            return MEETING_NAMES.length;
+            return meetingInfoList.size();
         }
 
         @Override
@@ -267,7 +333,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             }else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.tv_meeting_name.setText(MEETING_NAMES[position]);
+            holder.tv_meeting_name.setText(meetingInfoList.get(position).getName());
             holder.tv_meeting_time.setText(MEETING_TIMES[position]);
             holder.tv_meeting_prison_area.setText(MEETING_AREAS[position]);
             holder.iv_delete.setOnClickListener(new View.OnClickListener() {

@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
-            android:textSize="17sp"
+            android:textSize="@dimen/tv_apply_meeting_call"
             android:text="请求视频聊天..."
             android:gravity="center"
             android:singleLine="true"
@@ -50,8 +50,8 @@
         android:text="您的会见时间只有20分钟\n20分钟后会见将自动结束"
         android:textColor="@color/tv_red"
         android:gravity="center"
-        android:background="#88ffffff"
-        />
+        android:textSize="@dimen/tv_apply_meeting_call_notice"
+        android:background="#88ffffff" />
 
     <RelativeLayout
         android:layout_width="match_parent"

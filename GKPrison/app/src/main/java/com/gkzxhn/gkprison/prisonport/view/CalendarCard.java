@@ -27,7 +27,7 @@ public class CalendarCard extends View {
     private int mViewHeight; // 视图的高度
     private int mCellSpace; // 单元格间距
     private Row rows[] = new Row[TOTAL_ROW]; // 行数组，每个元素代表一行
-    private static CustomDate mShowDate; // 自定义的日期，包括year,month,day
+    public static CustomDate mShowDate; // 自定义的日期，包括year,month,day
     private OnCellClickListener mCellClickListener; // 单元格点击回调事件
     private int touchSlop; //
     private boolean callBackCellSpace;

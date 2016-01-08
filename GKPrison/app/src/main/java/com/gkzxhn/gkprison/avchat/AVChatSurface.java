@@ -1,7 +1,10 @@
 package com.gkzxhn.gkprison.avchat;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -17,6 +20,8 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
+
+import java.io.InputStream;
 
 /**
  * 视频绘制管理
@@ -189,6 +194,17 @@ public class AVChatSurface {
                     @Override
                     public void onClick(View v) {
                         // ToDo
+                        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                        ImageView imgView = getView();
+                        dialog.setView(imgView);
+                        dialog.show();
+                        // 点击图片消失
+                        imgView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
                     }
                 });
                 break;
@@ -196,6 +212,18 @@ public class AVChatSurface {
                 break;
         }
         setSurfaceRoot(CallStateEnum.isVideoMode(state));
+    }
+
+    private ImageView getView() {
+        ImageView imgView = new ImageView(context);
+        imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT));
+
+//        InputStream is = context.getResources().openRawResource(R.drawable.ic_card);
+//        Drawable drawable = BitmapDrawable.createFromStream(is, null);
+        imgView.setImageResource(R.drawable.ic_card);
+
+        return imgView;
     }
 
     /**

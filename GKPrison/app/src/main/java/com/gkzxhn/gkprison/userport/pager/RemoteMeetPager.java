@@ -39,7 +39,7 @@ public class RemoteMeetPager extends BasePager {
     private BetterSpinner bs_meeting_request_time;
     private Button bt_commit_request;
     private SharedPreferences sp;
-    private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "/api/v1/apply?access_token=";
+    private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
             "2016-01-05", "2016-01-06", "2016-01-07", "2016-01-08", "2016-01-09"
     };

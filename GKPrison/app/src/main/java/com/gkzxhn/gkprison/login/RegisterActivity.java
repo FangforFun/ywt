@@ -175,6 +175,8 @@ public class RegisterActivity extends BaseActivity {
                             editor.commit();
                         }else if(error == 404){
                             showToastMsgShort("验证码错误");
+                            rl_register.setVisibility(View.GONE);
+                            bt_register.setEnabled(true);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
