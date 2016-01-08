@@ -1,25 +1,36 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 
+import java.lang.reflect.Field;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Random;
 
 public class FamilyServiceActivity extends BaseActivity {
     private ExpandableListView el_messge;
     private MyAdapter adapter;
+    private String TradeNo;
     private List<String> sentence_time = new ArrayList<String>(){
         {
             add("2014年2月11日");
@@ -100,16 +111,62 @@ public class FamilyServiceActivity extends BaseActivity {
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
+        TradeNo = getOutTradeNo();
     }
 
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        Intent intent;
+        //Intent intent;
         switch (v.getId()){
             case R.id.rl_remittance:
-                intent = new Intent(this, RemittanceWaysActivity.class);
-                startActivity(intent);
+               // intent = new Intent(this, RemittanceWaysActivity.class);
+                //startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
+                builder.setTitle("请输入汇款金额");
+                View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
+                final EditText et_money = (EditText)view.findViewById(R.id.et_money);
+                builder.setView(view);
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String money = et_money.getText().toString();
+                        if (TextUtils.isEmpty(money)) {
+                            Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
+                            try {
+                                Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+                                field.setAccessible(true);
+                                field.set(dialog, false);
+                                dialog.dismiss();
+                            } catch (NoSuchFieldException e) {
+                                e.printStackTrace();
+                            } catch (IllegalAccessException e) {
+                                e.printStackTrace();
+                            }
+                            return;
+                        } else {
+                            Intent intent = new Intent(FamilyServiceActivity.this, RemittanceWaysActivity.class);
+                            intent.putExtra("money", money);
+                            startActivity(intent);
+                        }
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+                            field.setAccessible(true);
+                            field.set(dialog, true);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.setCancelable(false);
+                dialog.show();
                 break;
         }
     }
@@ -361,5 +418,15 @@ public class FamilyServiceActivity extends BaseActivity {
             TextView qianshou;
             ImageView receipt;
         }
+    }
+    public String getOutTradeNo() {
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
+                Locale.getDefault());
+        Date date = new Date();
+        String key = format.format(date);
+        Random r = new Random();
+        key = key + r.nextInt();
+        key = key.substring(0, 15);
+        return key;
     }
 }

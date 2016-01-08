@@ -42,6 +42,7 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
 
+
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -63,12 +64,25 @@ public class AllClassificationFragment extends BaseFragment {
     protected void initData() {
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
+        int category_id = bundle.getInt("leibie", 0);
         String sql1 = "select id from Cart where time = '"+times+"'";
+        Cursor cursor = null;
         Cursor cursor1 = db.rawQuery(sql1, null);
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
-        Cursor cursor = db.query("Items",null,null,null,null,null,null);
+       if (category_id == 0){
+        cursor = db.query("Items",null,null,null,null,null,null);
+       }else if (category_id == 1){
+           String sql = "select * from Items where category_id = 1";
+           cursor = db.rawQuery(sql,null);
+       }else if (category_id == 2){
+           String sql = "select * from Items where category_id = 2";
+           cursor = db.rawQuery(sql,null);
+       }else if (category_id == 3){
+           String sql = "select * from Items where category_id = 3";
+           cursor = db.rawQuery(sql,null);
+       }
         while (cursor.moveToNext()) {
            if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();

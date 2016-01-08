@@ -46,114 +46,114 @@
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
+        <!--
+               <activity android:name=".welcome.SplashActivity"
+                   android:screenOrientation="portrait">
+                   <intent-filter>
+                       <action android:name="android.intent.action.MAIN" />
+
+                       <category android:name="android.intent.category.LAUNCHER" />
+                   </intent-filter>
+               </activity>
+
+               -->
+
+                               <activity
+                                   android:name=".userport.activity.MainActivity"
+                                   android:screenOrientation="portrait" >
+                                   <intent-filter>
+                                       <action android:name="android.intent.action.MAIN" />
+
+                                       <category android:name="android.intent.category.LAUNCHER" />
+                                   </intent-filter>
+                               </activity>
+
+                        <activity
+                            android:name=".login.LoadingActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.PrisonIntroductionActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.LawsRegulationsActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.VisitingServiceActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.PrisonWardenActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.FamilyServiceActivity"
+                            android:screenOrientation="portrait" />
 <!--
-        <activity android:name=".welcome.SplashActivity"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
+                        <activity android:name=".userport.activity.MainActivity"
+                            android:screenOrientation="portrait"/>
 -->
-
-        <activity
-            android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity
-            android:name=".login.LoadingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.PrisonIntroductionActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.LawsRegulationsActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.VisitingServiceActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.PrisonWardenActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.FamilyServiceActivity"
-            android:screenOrientation="portrait" />
-<!--
-        <activity android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait"/>
--->
-        <activity
-            android:name=".userport.activity.PrisonOpenActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.RemittanceRecordActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.ShoppingRecoderActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.SettingActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.UserInfoActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.SystemMessageActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".login.RegisterActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.ApplyResultActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.VersionUpdateActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.WardenReplyActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.WriteMessageActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.RemittanceWaysActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.PaymentActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.BankPayActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.ZhifubaoPayActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".userport.activity.WeixinPayActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".prisonport.activity.DateMeetingListActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".prisonport.activity.CallUserActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".avchat.AVChatActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".scan.CaptureActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="CaptureActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
+                        <activity
+                            android:name=".userport.activity.PrisonOpenActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.RemittanceRecordActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.ShoppingRecoderActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.SettingActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.UserInfoActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.SystemMessageActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".login.RegisterActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.ApplyResultActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.VersionUpdateActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.WardenReplyActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.WriteMessageActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.RemittanceWaysActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.PaymentActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.BankPayActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.ZhifubaoPayActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".userport.activity.WeixinPayActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".prisonport.activity.DateMeetingListActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".prisonport.activity.CallUserActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".avchat.AVChatActivity"
+                            android:screenOrientation="portrait" />
+                        <activity
+                            android:name=".scan.CaptureActivity"
+                            android:configChanges="orientation|keyboardHidden"
+                            android:label="CaptureActivity"
+                            android:screenOrientation="portrait"
+                            android:windowSoftInputMode="stateAlwaysHidden" />
+                        <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
             android:process=":core" />

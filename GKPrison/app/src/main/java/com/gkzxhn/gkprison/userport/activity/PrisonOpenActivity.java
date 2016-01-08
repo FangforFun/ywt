@@ -15,6 +15,10 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +61,7 @@ public class PrisonOpenActivity extends BaseActivity {
         setTitle("狱务公开");
         setBackVisibility(View.VISIBLE);
         initDot();// 初始化轮播图底部小圆圈
+        getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
@@ -83,6 +88,14 @@ public class PrisonOpenActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    private void getNews(){
+        new Thread(){
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet  get = new HttpGet();
+
+        }.start();
     }
 
     private void initDot() {

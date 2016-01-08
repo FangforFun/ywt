@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.renderscript.RenderScript;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.Fragment;
@@ -103,7 +104,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/orders?access_token=cb21c49928249f05ae8e4075c6018ff0";
+    private String url = "http://www.fushuile.com/api/v1/orders?access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -115,11 +116,12 @@ public class CanteenFragment extends BaseFragment {
     private Bundle data;
     private View image_buycar;
     private int count = 0;
+
     private BadgeView badgeView;
     private List<Integer> lcount = new ArrayList<Integer>();
     private int allcount;
     private String TradeNo;
-    private String token = "cb21c49928249f05ae8e4075c6018ff0";
+    private SharedPreferences sp;
     private String apply = "";
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
@@ -275,6 +277,32 @@ public class CanteenFragment extends BaseFragment {
                     @Override
                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                         Toast.makeText(context, " position=" + position + " id=" + id, Toast.LENGTH_SHORT).show();
+                        switch (position) {
+                            case 0:
+                                sales = new SalesPriorityFragment();
+                                data.putInt("leibie", 0);
+                                sales.setArguments(data);
+                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                break;
+                            case 1:
+                                sales = new SalesPriorityFragment();
+                                data.putInt("leibie", 1);
+                                sales.setArguments(data);
+                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                break;
+                            case 2:
+                                sales = new SalesPriorityFragment();
+                                data.putInt("leibie", 2);
+                                sales.setArguments(data);
+                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                break;
+                            case 3:
+                                sales = new SalesPriorityFragment();
+                                data.putInt("leibie", 3);
+                                sales.setArguments(data);
+                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                break;
+                        }
                     }
 
                     @Override
@@ -408,6 +436,7 @@ public class CanteenFragment extends BaseFragment {
         gson = new Gson();
         order.setOut_trade_no(TradeNo);
         apply = gson.toJson(order);
+        final String token = sp.getString("token","");
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
@@ -415,7 +444,7 @@ public class CanteenFragment extends BaseFragment {
             @Override
           public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url);
+                HttpPost post = new HttpPost(url+token);
                 try {
                   Log.d("TTT", str);
                    StringEntity entity = new StringEntity(str);

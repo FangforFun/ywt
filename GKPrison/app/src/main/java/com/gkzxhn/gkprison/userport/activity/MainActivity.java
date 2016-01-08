@@ -62,10 +62,10 @@ public class MainActivity extends BaseActivity {
     private ActionBarDrawerToggle toggle;
     private FrameLayout fl_drawer;
     private SharedPreferences sp;
-    private boolean isRegisteredUser;
+    private boolean isRegisteredUser = true;
     private MyPagerAdapter adapter;
-    private String url ="http://10.93.1.10:3000/api/v1/items?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
-
+    private String url = "http://10.93.1.10:3000/api/v1/items?access_token=62c968bb79851180542bd9f52b961ad4&jail_id=1";
+   // private String url ="http://www.fushuile.com/api/v1/items?access_token=62c968bb79851180542bd9f52b961ad4&jail_id=1";
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -123,7 +123,7 @@ public class MainActivity extends BaseActivity {
         showToastMsgShort(statusCode.toString());
         Log.i("自动登录...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        //isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
         if(isRegisteredUser) {
             getCommodity();
         }
@@ -153,7 +153,7 @@ public class MainActivity extends BaseActivity {
             pagerList.add(new HomePager(this));
             pagerList.add(new RemoteMeetPager(this));
             pagerList.add(new CanteenPager(this));
-        }else {
+           }else {
             pagerList.add(new HomePager(this));
         }
 
@@ -170,7 +170,7 @@ public class MainActivity extends BaseActivity {
                         setActionBarGone(View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_visit: // 远程会见
-                        if (isRegisteredUser) {
+                       if (isRegisteredUser) {
                             home_viewPager.setCurrentItem(1);
                             setTitle("远程会见");
                             setMenuVisibility(View.GONE);
@@ -180,13 +180,13 @@ public class MainActivity extends BaseActivity {
                         }
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
-                        if (isRegisteredUser) {
+                       if (isRegisteredUser) {
                             home_viewPager.setCurrentItem(2);
                             setTitle("小卖部");
                             setMenuVisibility(View.GONE);
                             setActionBarGone(View.GONE);
                         } else {
-                            showToastMsgShort("注册后可用");
+                           showToastMsgShort("注册后可用");
                         }
                         break;
                 }
@@ -304,6 +304,8 @@ public class MainActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 HttpClient httpClient = new DefaultHttpClient();
                 String token = sp.getString("token", "");
+                int jail_id = sp.getInt("jail_id",0);
+             //   HttpGet httpGet = new HttpGet(url+token+"&jail_id="+jail_id);
                 HttpGet httpGet = new HttpGet(url);
                 try {
                     HttpResponse response = httpClient.execute(httpGet);

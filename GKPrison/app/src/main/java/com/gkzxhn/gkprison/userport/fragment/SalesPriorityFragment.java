@@ -77,16 +77,30 @@ public class SalesPriorityFragment extends BaseFragment {
     protected void initData() {
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
+        int category_id = bundle.getInt("leibie", 0);
         String sql1 = "select id from Cart where time = '"+times+"'";
+        Cursor cursor = null;
         Cursor cursor1 = db.rawQuery(sql1, null);
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
-        Cursor cursor = db.query("Items",null,null,null,null,null,null);
+        if (category_id == 0){
+            cursor = db.query("Items",null,null,null,null,null,null);
+        }else if (category_id == 1){
+            String sql = "select * from Items where category_id = 1";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 2){
+            String sql = "select * from Items where category_id = 2";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 3){
+            String sql = "select * from Items where category_id = 3";
+            cursor = db.rawQuery(sql,null);
+        }
+
         while (cursor.moveToNext()) {
             if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();
-                commodity.setRanking(cursor.getInt(cursor.getColumnIndex("sales_heat")));
+                commodity.setRanking(cursor.getInt(cursor.getColumnIndex("ranking")));
                 commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
@@ -109,7 +123,7 @@ public class SalesPriorityFragment extends BaseFragment {
             public int compare(Commodity lhs, Commodity rhs) {
                 int heat1 = lhs.getRanking();
                 int heat2 = rhs.getRanking();
-                if (heat1 > heat2){
+                if (heat1 < heat2){
                     return 1;
                 }
                 return -1;
