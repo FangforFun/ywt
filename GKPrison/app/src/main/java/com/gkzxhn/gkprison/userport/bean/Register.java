@@ -13,8 +13,8 @@ public class Register {
     private String relationship;
     private String prisoner_number;
     private String prison;
-    private String jail_id;
-    private String type_id;
+    private int jail_id;
+    private int type_id;
     private String code;
     private List<Uuid_images_attributes> uuid_images_attributes;
 
@@ -34,11 +34,11 @@ public class Register {
         this.prison = prison;
     }
 
-    public String getJail_id() {
+    public int getJail_id() {
         return jail_id;
     }
 
-    public void setJail_id(String jail_id) {
+    public void setJail_id(int jail_id) {
         this.jail_id = jail_id;
     }
 
@@ -74,11 +74,11 @@ public class Register {
         this.relationship = relationship;
     }
 
-    public String getType_id() {
+    public int getType_id() {
         return type_id;
     }
 
-    public void setType_id(String type_id) {
+    public void setType_id(int type_id) {
         this.type_id = type_id;
     }
 

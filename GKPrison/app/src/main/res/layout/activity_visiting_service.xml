@@ -144,12 +144,13 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/tv_gray"
                     android:text="申请探监时间："
+                    android:layout_gravity="center_vertical"
                     android:textSize="16sp"/>
 
                 <com.weiwangcn.betterspinner.library.BetterSpinner
                     android:id="@+id/bs_visit_request_time"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="45dp"
                     android:hint="点击选择"
                     android:textColor="@color/tv_mid"
                     android:textSize="16sp"

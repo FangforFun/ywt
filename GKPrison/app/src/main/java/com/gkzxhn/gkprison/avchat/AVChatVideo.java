@@ -199,6 +199,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
      * @param visible
      */
     private void setTime(boolean visible){
+        Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);

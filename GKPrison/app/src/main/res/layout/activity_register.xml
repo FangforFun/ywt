@@ -93,8 +93,8 @@
                 android:background="@drawable/et_shape_search"/>
 
 
-            <EditText
-                android:id="@+id/et_prison_choose"
+            <AutoCompleteTextView
+                android:id="@+id/actv_prison_choose"
                 android:layout_width="match_parent"
                 android:layout_height="44dp"
                 android:layout_marginTop="5dp"
@@ -104,6 +104,7 @@
                 android:textColorHint="@color/tv_gray"
                 android:textColor="@color/tv_bg"
                 android:background="@drawable/et_shape_search"
+                android:completionThreshold="1"
                 android:hint="监狱选择"/>
 
             <LinearLayout

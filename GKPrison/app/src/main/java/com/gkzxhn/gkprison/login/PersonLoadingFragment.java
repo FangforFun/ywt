@@ -55,7 +55,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class PersonLoadingFragment extends BaseFragment {
 //    private String url = "http://www.fushuile.com/api/v1/login";
-    private String url = "http://10.93.1.10:3000/api/v1/login";
+    private String url = Constants.URL_HEAD + "login";
     private Button bt_register;
     private ActionProcessButton btn_login;
     private EditText et_login_username;
@@ -98,8 +98,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setText("登录失败");
                         btn_login.setEnabled(true);
                         btn_login.setClickable(true);
-                        handler.removeCallbacks(identifying_Code_Task);
-                        countdown = 60;
+//                        removeCodeTask();
                         successCode = 0;
                         return;
                     }else if(error == 404){
@@ -108,15 +107,14 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setText("登录失败");
                         btn_login.setEnabled(true);
                         btn_login.setClickable(true);
-                        handler.removeCallbacks(identifying_Code_Task);
-                        countdown = 60;
+//                        removeCodeTask();
                         successCode = 0;
                         return;
                     }else if(error == 0){
                         successCode++;
 //                        info = new LoginInfo(username, userInfo.getToken()); // config...
                         info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
-                        Log.i("hehehe", userInfo.getToken());
+//                        Log.i("hehehe", userInfo.getToken());
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
                     }
@@ -127,14 +125,8 @@ public class PersonLoadingFragment extends BaseFragment {
                     btn_login.setText("登录失败");
                     btn_login.setEnabled(true);
                     btn_login.setClickable(true);
-                    handler.removeCallbacks(identifying_Code_Task);
                     // 发送验证码设为可用
-                    tv_send_identifying_code.setEnabled(true);
-                    tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-                    tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-                    tv_send_identifying_code.setText("发送验证码");
-                    countdown = 60;
-                    isRunning = false;
+//                    removeCodeTask();
                     break;
                 case 3:// 发送登录信息至服务器失败
                 case 4:// 发送登录信息至服务器异常
@@ -145,7 +137,7 @@ public class PersonLoadingFragment extends BaseFragment {
                     if(msg.what == 4){
                         showToastMsgShort("登录异常,请稍后再试");
                     }else if(msg.what == 3){
-                       showToastMsgShort("登录失败，请检查网络");
+                       showToastMsgShort("登录失败，请稍后再试");
                     }
                     break;
                 case 7:// 验证码已发送
@@ -155,12 +147,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         int error_code = jsonObject.getInt("error");
                         if(error_code == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
-                            tv_send_identifying_code.setEnabled(true);
-                            tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-                            tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-                            tv_send_identifying_code.setText("发送验证码");
-                            handler.removeCallbacks(identifying_Code_Task);
-                            countdown = 60;
+//                            removeCodeTask();
                         }else if(error_code == 0){
                             showToastMsgShort("已发送");
                         }
@@ -171,21 +158,11 @@ public class PersonLoadingFragment extends BaseFragment {
                     break;
                 case 8:// 验证码发送失败
                     showToastMsgShort("验证码请求失败，请稍后再试");
-                    tv_send_identifying_code.setEnabled(true);
-                    tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-                    tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-                    tv_send_identifying_code.setText("发送验证码");
-                    handler.removeCallbacks(identifying_Code_Task);
-                    countdown = 60;
+                    removeCodeTask();
                     break;
                 case 9:// 验证码发送异常
                     showToastMsgShort("验证码请求异常，请稍后再试");
-                    tv_send_identifying_code.setEnabled(true);
-                    tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-                    tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-                    tv_send_identifying_code.setText("发送验证码");
-                    handler.removeCallbacks(identifying_Code_Task);
-                    countdown = 60;
+                    removeCodeTask();
                     break;
             }
         }
@@ -207,6 +184,7 @@ public class PersonLoadingFragment extends BaseFragment {
             editor.putString("name", userInfo.getUser().getName());
             editor.putString("relationship", userInfo.getUser().getRelationship());
             editor.putString("token", userInfo.getToken());
+            editor.putInt("family_id", userInfo.getUser().getId());
         }
         editor.putBoolean("isRegisteredUser", true);
         editor.commit();
@@ -454,11 +432,14 @@ public class PersonLoadingFragment extends BaseFragment {
     public void onDestroy() {
         super.onDestroy();
         if(handler != null && isRunning){
-            handler.removeCallbacks(identifying_Code_Task);
-            handler = null;
+            removeCodeTask();
+//            handler = null;
         }
     }
 
+    /**
+     * 验证码发送倒计时任务
+     */
     private Runnable identifying_Code_Task = new Runnable() {
         @Override
         public void run() {
@@ -466,15 +447,23 @@ public class PersonLoadingFragment extends BaseFragment {
             countdown--;
             tv_send_identifying_code.setText(countdown + "秒后可重发");
             if(countdown == 0){
-                tv_send_identifying_code.setEnabled(true);
-                tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-                tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-                tv_send_identifying_code.setText("发送验证码");
-                countdown = 60;
-                isRunning = false;
+                removeCodeTask();
             }else {
                 handler.postDelayed(identifying_Code_Task, 1000);
             }
         }
     };
+
+    /**
+     * 移除倒计时任务
+     */
+    private void removeCodeTask() {
+        handler.removeCallbacks(identifying_Code_Task);
+        tv_send_identifying_code.setEnabled(true);
+        tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
+        tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
+        tv_send_identifying_code.setText("发送验证码");
+        countdown = 60;
+        isRunning = false;
+    }
 }
