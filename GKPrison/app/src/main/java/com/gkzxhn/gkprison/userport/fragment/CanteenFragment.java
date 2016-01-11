@@ -110,7 +110,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/orders?jail_id=1&access_token=";
+    private String url = "http://www.fushuile.com/api/v1/orders?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -132,6 +132,7 @@ public class CanteenFragment extends BaseFragment {
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
     private ProgressDialog dialog;
+
 
 
     @Override
@@ -177,12 +178,10 @@ public class CanteenFragment extends BaseFragment {
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         long time = System.currentTimeMillis();
-       //fm  = ((BaseActivity) context).getSupportFragmentManager();
-
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time);
         times = format.format(date);
-        String sql = "insert into Cart (time) values ('"+times+"')";
+        String sql = "insert into Cart (time,out_trade_no,finish) values ('"+times+"','"+TradeNo+"',0)";
         db.execSQL(sql);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = db.rawQuery(sql1, null);
@@ -221,12 +220,14 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 1);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        dialog.cancel();
                         break;
                     case 2:
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 2);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        dialog.cancel();
                         break;
                     case 3:
                         allclass = new AllClassificationFragment();
@@ -234,6 +235,7 @@ public class CanteenFragment extends BaseFragment {
                         );
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        dialog.cancel();
                         break;
                 }
             }
@@ -291,24 +293,28 @@ public class CanteenFragment extends BaseFragment {
                                 data.putInt("leibie", 0);
                                 sales.setArguments(data);
                                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                dialog.cancel();
                                 break;
                             case 1:
                                 sales = new SalesPriorityFragment();
                                 data.putInt("leibie", 1);
                                 sales.setArguments(data);
                                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                dialog.cancel();
                                 break;
                             case 2:
                                 sales = new SalesPriorityFragment();
                                 data.putInt("leibie", 2);
                                 sales.setArguments(data);
                                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                dialog.cancel();
                                 break;
                             case 3:
                                 sales = new SalesPriorityFragment();
                                 data.putInt("leibie", 3);
                                 sales.setArguments(data);
                                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                                dialog.cancel();
                                 break;
                         }
                     }
@@ -337,12 +343,13 @@ public class CanteenFragment extends BaseFragment {
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendOrderToServer();
 
                 if (total != 0) {
+                    sendOrderToServer();
                     Intent intent = new Intent(context, PaymentActivity.class);
                     intent.putExtra("totalmoney", send);
-                    intent.putExtra("TradeNo",TradeNo);
+                    intent.putExtra("TradeNo", TradeNo);
+                    intent.putExtra("times", times);
                     context.startActivity(intent);
                 } else {
                     Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
@@ -350,6 +357,7 @@ public class CanteenFragment extends BaseFragment {
 
             }
         });
+
 
     }
 

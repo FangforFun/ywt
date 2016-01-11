@@ -6,6 +6,23 @@ package com.gkzxhn.gkprison.userport.bean;
 public class Cart {
     private int id;
     private String time;
+    private String out_trade_no;
+    private int finish;
+    public int isFinish() {
+        return finish;
+    }
+
+    public void setFinish(int finish) {
+        this.finish = finish;
+    }
+
+    public String getOut_trade_no() {
+        return out_trade_no;
+    }
+
+    public void setOut_trade_no(String out_trade_no) {
+        this.out_trade_no = out_trade_no;
+    }
 
     public int getId() {
         return id;

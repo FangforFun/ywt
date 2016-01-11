@@ -45,6 +45,7 @@ public class PaymentActivity extends BaseActivity {
     private boolean[] ischeckeds = {true, false, false};
     private MyAdapter adapter;
     private String TradeNo;
+    private String times;
     private String apply = "";
     private String url = "http://10.93.1.10:3000/api/v1/orders";
     private String token = "cb21c49928249f05ae8e4075c6018ff0";
@@ -65,6 +66,7 @@ public class PaymentActivity extends BaseActivity {
         setTextContent("完成");
         TradeNo = getIntent().getStringExtra("TradeNo");
         countmoney = getIntent().getStringExtra("totalmoney");
+        times = getIntent().getStringExtra("times");
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
@@ -94,6 +96,7 @@ public class PaymentActivity extends BaseActivity {
                      Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
                      intent.putExtra("price",countmoney);
                      intent.putExtra("outorderno",TradeNo);
+                     intent.putExtra("times",times);
                      PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[2] == true){
 
