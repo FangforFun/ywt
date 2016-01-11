@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
-import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -41,7 +40,6 @@ public class AllClassificationFragment extends BaseFragment {
     private String tv_count = "0.0";
     private int qty = 0;
     private int Items_id = 0;
-
 
     private List<Integer> image = new ArrayList<Integer>(){
         {

@@ -250,11 +250,20 @@ public class MyApplication extends Application {
 //        Log.i("application", account + "---" + token + "---" + sp.getString("password", ""));
         String token = sp.getString("token", "");
         Log.i("自动登录...", token);
-        if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(token)) {
-            DemoCache.setAccount(token.toLowerCase());
-            return new LoginInfo(token, token);
-        } else {
-            return null;
+        if(sp.getBoolean("isCommonUser", true)) {
+            if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(token)) {
+                DemoCache.setAccount(token.toLowerCase());
+                return new LoginInfo(token, token);
+            } else {
+                return null;
+            }
+        }else {
+            if (!TextUtils.isEmpty(sp.getString("token", "")) && !TextUtils.isEmpty(sp.getString("password", ""))) {
+                DemoCache.setAccount(sp.getString("token", "").toLowerCase());
+                return new LoginInfo(sp.getString("token", ""), sp.getString("password", ""));
+            } else {
+                return null;
+            }
         }
     }
 }
