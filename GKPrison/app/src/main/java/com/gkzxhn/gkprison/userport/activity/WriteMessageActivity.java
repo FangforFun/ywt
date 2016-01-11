@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -30,7 +31,9 @@ public class WriteMessageActivity extends BaseActivity {
     private String theme;
     private String contents;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/mail_boxes?access_token=d56e241a101d011c399211e9e24b0acd";
+    private String url = "http://10.93.1.10:3000/api/v1/mail_boxes?jail_id=1&access_token=fdf63bd8761f918540b68626d3120623";
+    private SharedPreferences sp;
+    private int family_id = 0;
 
     @Override
     protected View initView() {
@@ -46,6 +49,8 @@ public class WriteMessageActivity extends BaseActivity {
         setTitle("写信");
         setBackVisibility(View.VISIBLE);
         bt_commit_write_message.setOnClickListener(this);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        family_id = sp.getInt("family_id",1);
     }
 
     @Override
@@ -67,6 +72,7 @@ public class WriteMessageActivity extends BaseActivity {
         letter.setTheme(theme);
         letter.setContents(contents);
         letter.setJail_id(1);
+        letter.setFamily_id(family_id);
         gson = new Gson();
         String message = gson.toJson(letter);
         final String sendmessage = "{\"message\":"+message+"}";
