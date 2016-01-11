@@ -196,6 +196,10 @@ public class RegisterActivity extends BaseActivity {
                             showToastMsgShort("注册失败");
                             rl_register.setVisibility(View.GONE);
                             bt_register.setEnabled(true);
+                        }else if(error == 501){
+                            showToastMsgShort("已注册用户");
+                            rl_register.setVisibility(View.GONE);
+                            bt_register.setEnabled(true);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();

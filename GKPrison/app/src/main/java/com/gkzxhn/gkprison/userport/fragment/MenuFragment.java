@@ -23,6 +23,8 @@ import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.auth.AuthService;
 
 /**
  * 左侧侧滑菜单fragment
@@ -124,6 +126,7 @@ public class MenuFragment extends BaseFragment {
                 editor.clear();
                 editor.commit();
                 startActivity(intent);
+                NIMClient.getService(AuthService.class).logout();
             }
         });
     }
