@@ -90,6 +90,15 @@
             android:onClick="pay"
             android:text="支付"
             tools:ignore="HardcodedText" />
+
+        <Button
+            android:id="@+id/check"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:onClick="check"
+            android:text="检查账户"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
 </ScrollView>

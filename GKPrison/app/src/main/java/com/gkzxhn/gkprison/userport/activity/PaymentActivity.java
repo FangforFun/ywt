@@ -63,6 +63,7 @@ public class PaymentActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         setRemittanceVisibility(View.VISIBLE);
         setTextContent("完成");
+        TradeNo = getIntent().getStringExtra("TradeNo");
         countmoney = getIntent().getStringExtra("totalmoney");
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();

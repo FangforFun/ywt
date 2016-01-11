@@ -139,7 +139,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         }
         // 订单
 
-        String orderInfo = getOrderInfo(1,"测试的商品", "该测试商品的详细描述", "0.01");
+        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
@@ -213,7 +213,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
      * create the order info. 创建订单信息
      *
      */
-    public String getOrderInfo(int jail_id,String subject, String body, String price) {
+    public String getOrderInfo(String subject, String body, String price) {
 
         // 签约合作者身份ID
         String orderInfo = "partner=" + "\"" + PARTNER + "\"";
@@ -223,7 +223,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
 
         // 商户网站唯一订单号
         orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo + "\"";
-        orderInfo += "&jail_id=" + "\""+jail_id +"\"";
+
 
         // 商品名称
         orderInfo += "&subject=" + "\"" + subject + "\"";

@@ -74,8 +74,9 @@ public class LawsRegulationsActivity extends BaseActivity {
     protected void initData() {
         setTitle("法律法规");
         setBackVisibility(View.VISIBLE);
-//        token = sp.getString("token","00");
-        url = "http://10.93.1.10:3000/api/v1/laws?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1";
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        token = sp.getString("token","00");
+        url = "http://10.93.1.10:3000/api/v1/laws?jail_id=1&access_token="+token;
         getLaws();
 
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {

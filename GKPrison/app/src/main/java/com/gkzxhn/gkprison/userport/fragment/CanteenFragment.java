@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.renderscript.RenderScript;
 import android.support.v4.app.FragmentManager;
@@ -61,6 +62,7 @@ import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -72,11 +74,15 @@ import org.json.simple.JSONValue;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -104,7 +110,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://www.fushuile.com/api/v1/orders?access_token=";
+    private String url = "http://www.fushuile.com/api/v1/orders?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -116,7 +122,7 @@ public class CanteenFragment extends BaseFragment {
     private Bundle data;
     private View image_buycar;
     private int count = 0;
-
+    private String ip;
     private BadgeView badgeView;
     private List<Integer> lcount = new ArrayList<Integer>();
     private int allcount;
@@ -126,6 +132,7 @@ public class CanteenFragment extends BaseFragment {
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
     private ProgressDialog dialog;
+
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -166,8 +173,10 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-
+        ip = getLocalHostIp();
+        Log.d("ipadress",ip);
         TradeNo = getOutTradeNo();
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         long time = System.currentTimeMillis();
        //fm  = ((BaseActivity) context).getSupportFragmentManager();
 
@@ -334,6 +343,7 @@ public class CanteenFragment extends BaseFragment {
                 if (total != 0) {
                     Intent intent = new Intent(context, PaymentActivity.class);
                     intent.putExtra("totalmoney", send);
+                    intent.putExtra("TradeNo",TradeNo);
                     context.startActivity(intent);
                 } else {
                     Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
@@ -427,6 +437,7 @@ public class CanteenFragment extends BaseFragment {
     }
 
     private void sendOrderToServer() {
+
         final Order order = new Order();
         order.setItems(itemses);
         order.setJail_id(1);
@@ -436,15 +447,18 @@ public class CanteenFragment extends BaseFragment {
         gson = new Gson();
         order.setOut_trade_no(TradeNo);
         apply = gson.toJson(order);
-        final String token = sp.getString("token","");
+
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
        new Thread(){
             @Override
           public void run() {
+                String token = sp.getString("token", "");
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url+token);
+                String s = url+token;
+                Log.d("订单号成功", s);
                 try {
                   Log.d("TTT", str);
                    StringEntity entity = new StringEntity(str);
@@ -454,7 +468,7 @@ public class CanteenFragment extends BaseFragment {
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("TTT", result);
+                        Log.d("订单号成功", result);
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -482,5 +496,39 @@ public class CanteenFragment extends BaseFragment {
         key = key + r.nextInt();
         key = key.substring(0, 15);
         return key;
+    }
+
+    public String getLocalHostIp() {
+        String ipaddress = "";
+        try
+        {
+            Enumeration<NetworkInterface> en = NetworkInterface
+                    .getNetworkInterfaces();
+            // 遍历所用的网络接口
+            while (en.hasMoreElements())
+            {
+                NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
+                Enumeration<InetAddress> inet = nif.getInetAddresses();
+                // 遍历每一个接口绑定的所有ip
+                while (inet.hasMoreElements())
+                {
+                    InetAddress ip = inet.nextElement();
+                    if (!ip.isLoopbackAddress()
+                            && InetAddressUtils.isIPv4Address(ip
+                            .getHostAddress()))
+                    {
+                        return ipaddress = ip.getHostAddress();
+                    }
+                }
+
+            }
+        }
+        catch (SocketException e)
+        {
+            Log.e("feige", "获取本地ip地址失败");
+            e.printStackTrace();
+        }
+        return ipaddress;
+
     }
 }
