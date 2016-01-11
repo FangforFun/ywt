@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
@@ -35,7 +37,8 @@ public class MenuFragment extends BaseFragment {
     private RelativeLayout rl_header_info;
     private ImageView iv_user_icon;
     private TextView tv_menu_user_name;
-    private LinearLayout ll_root;
+    private RelativeLayout ll_root;
+    private Button bt_logout;
 
     @Override
     protected View initView() {
@@ -44,7 +47,8 @@ public class MenuFragment extends BaseFragment {
         rl_header_info = (RelativeLayout) view.findViewById(R.id.rl_header_info);
         iv_user_icon = (ImageView) view.findViewById(R.id.iv_user_icon);
         tv_menu_user_name = (TextView) view.findViewById(R.id.tv_menu_user_name);
-        ll_root = (LinearLayout) view.findViewById(R.id.ll_root);
+        ll_root = (RelativeLayout) view.findViewById(R.id.ll_root);
+        bt_logout = (Button) view.findViewById(R.id.bt_logout);
         return view;
     }
 
@@ -55,6 +59,8 @@ public class MenuFragment extends BaseFragment {
         if(!isRegisteredUser){
             iv_user_icon.setImageResource(R.drawable.default_icon);
             tv_menu_user_name.setText("用户名");
+        }else {
+            tv_menu_user_name.setText(sp.getString("name", ""));
         }
         lv_home_menu.setAdapter(new MenuAdapter());
         lv_home_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -107,6 +113,17 @@ public class MenuFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 // 无响应
+            }
+        });
+        bt_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, LoadingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.clear();
+                editor.commit();
+                startActivity(intent);
             }
         });
     }

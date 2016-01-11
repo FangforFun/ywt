@@ -17,16 +17,17 @@
             android:layout_height="wrap_content"
             android:text="V1.21"
             android:layout_gravity="center"
-            android:textColor="@android:color/white"
-            android:textSize="11sp"/>
+            android:textColor="@color/white"
+            android:textSize="11sp"
+            android:padding="2dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/white"
             android:textSize="11sp"
             android:layout_gravity="center"
             android:text="国科政信（北京）股份有限公司"
-            />
+            android:padding="2dp"/>
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,19 +37,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="11sp"
-                android:textColor="@android:color/white"
-                android:text="copyright"/>
-            <ImageView
-                android:layout_marginTop="1dp"
-                android:layout_width="10dp"
-                android:layout_height="12dp"
-                android:src="@drawable/c"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:textSize="11sp"
-                android:text="2006-2015.All right reserver"/>
+                android:textColor="@color/white"
+                android:text="copyright©2006-2015.All right reserver"
+                android:padding="2dp"/>
         </LinearLayout>
     </LinearLayout>
 </RelativeLayout>
