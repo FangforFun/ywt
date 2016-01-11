@@ -55,7 +55,7 @@ import java.io.UnsupportedEncodingException;
  */
 public class PersonLoadingFragment extends BaseFragment {
 //    private String url = "http://www.fushuile.com/api/v1/login";
-    private String url = "http://10.93.1.10:3000/api/v1/login";
+    private String url = "http://www.fushuile.com/api/v1/login";
     private Button bt_register;
     private ActionProcessButton btn_login;
     private EditText et_login_username;
@@ -207,6 +207,7 @@ public class PersonLoadingFragment extends BaseFragment {
             editor.putString("name", userInfo.getUser().getName());
             editor.putString("relationship", userInfo.getUser().getRelationship());
             editor.putString("token", userInfo.getToken());
+            editor.putInt("family_id", userInfo.getUser().getId());
         }
         editor.putBoolean("isRegisteredUser", true);
         editor.commit();

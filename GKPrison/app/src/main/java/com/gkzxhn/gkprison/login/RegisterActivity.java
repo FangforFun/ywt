@@ -88,7 +88,7 @@ public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
 //    private String url = "http://www.fushuile.com/api/v1/apply";
-    private String url = "http://10.93.1.10:3000/api/v1/apply";
+    private String url = "http://www.fushuile.com/api/v1/apply";
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号

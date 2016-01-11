@@ -1,6 +1,10 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -10,15 +14,24 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +51,28 @@ public class PrisonOpenActivity extends BaseActivity {
     private TextView top_news_title;
     private LinearLayout top_news_viewpager;
     private final List<String> list_news_title = new ArrayList<>();
+    private String url = "";
+    private SharedPreferences sp;
+    private String token;
+    private List<News> newsList = new ArrayList<News>();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String tag = (String)msg.obj;
+                    if (tag.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String result = bundle.getString("result");
+                        newsList = analysisNews(result);
+                        lv_prison_open.setAdapter(new MyAdapter());
+                    }else if (tag.equals("error")){
+                        Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
     /**
      * 轮播图导航点集合
      */
@@ -61,6 +96,9 @@ public class PrisonOpenActivity extends BaseActivity {
         setTitle("狱务公开");
         setBackVisibility(View.VISIBLE);
         initDot();// 初始化轮播图底部小圆圈
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        token = sp.getString("token", "");
+        url = "http://10.93.1.10:3000/api/v1/news?jail_id=1&access_token=fdf63bd8761f918540b68626d3120623";
         getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
@@ -80,22 +118,65 @@ public class PrisonOpenActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        lv_prison_open.setAdapter(new MyAdapter());
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int i = newsList.get(position).getId();
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                intent.putExtra("id",i);
                 startActivity(intent);
             }
         });
     }
 
     private void getNews(){
-        new Thread(){
-            HttpClient httpClient = new DefaultHttpClient();
-            HttpGet  get = new HttpGet();
+            new Thread(){
+                @Override
+                public void run() {
+                    Message msg = handler.obtainMessage();
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpGet Get = new HttpGet(url);
+                    try {
+                        HttpResponse response = httpClient.execute(Get);
+                        if (response.getStatusLine().getStatusCode()==200){
+                            String result = EntityUtils.toString(response.getEntity(),"UTF-8");
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result",result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
 
-        }.start();
+    }
+
+    private List<News> analysisNews(String s){
+        List<News> newses = new ArrayList<News>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0;i < jsonArray.length();i++){
+                News news = new News();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                news.setId(jsonObject.getInt("id"));
+                news.setTitle(jsonObject.getString("title"));
+                news.setContents(jsonObject.getString("contents"));
+                news.setJail_id(jsonObject.getInt("jail_id"));
+                newses.add(news);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return newses;
     }
 
     private void initDot() {
@@ -128,7 +209,7 @@ public class PrisonOpenActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return CAROUSEL_IVS.length;
+            return newsList.size();
         }
 
         @Override
@@ -154,9 +235,9 @@ public class PrisonOpenActivity extends BaseActivity {
             }else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.iv_home_news_icon.setImageResource(CAROUSEL_IVS[position]);
-            holder.tv_home_news_title.setText(NEWS_TITLES[position]);
-            holder.tv_home_news_content.setText(NEWS_CONTENTS[position]);
+            Picasso.with(holder.iv_home_news_icon.getContext()).load("sss").into(holder.iv_home_news_icon);
+            holder.tv_home_news_title.setText(newsList.get(position).getTitle());
+            holder.tv_home_news_content.setText(newsList.get(position).getContents());
             return convertView;
         }
     }

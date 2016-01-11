@@ -46,6 +46,7 @@
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
+
         <activity android:name=".welcome.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
