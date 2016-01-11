@@ -73,19 +73,12 @@ public class ShoppingRecoderActivity extends BaseActivity {
                 viewHoler.tvshopping_money = (TextView)convertView.findViewById(R.id.tvshopping_money);
                 viewHoler.tv_alipay_trading_num = (TextView) convertView.findViewById(R.id.tv_alipay_trading_num);
                 viewHoler.tv_transact_state = (TextView) convertView.findViewById(R.id.tv_transact_state);
-                viewHoler.bt_shopping_record_operate = (Button) convertView.findViewById(R.id.bt_shopping_record_operate);
                 convertView.setTag(viewHoler);
             }else {
                 viewHoler = (ViewHoler)convertView.getTag();
             }
             viewHoler.tv_paytime.setText(recodertime.get(position));
             viewHoler.tvshopping_money.setText(money_count.get(position));
-            viewHoler.bt_shopping_record_operate.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showToastMsgShort("申请退款...");
-                }
-            });
             return convertView;
         }
         private class ViewHoler{
@@ -93,7 +86,6 @@ public class ShoppingRecoderActivity extends BaseActivity {
             TextView tvshopping_money;
             TextView tv_paytime;
             TextView tv_transact_state;
-            Button bt_shopping_record_operate;
         }
     }
 }

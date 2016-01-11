@@ -110,7 +110,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://www.fushuile.com/api/v1/orders?jail_id=1&access_token=";
+    private String url = "http://10.93.1.10:3000/api/v1/orders?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -174,7 +174,6 @@ public class CanteenFragment extends BaseFragment {
     @Override
     protected void initData() {
         ip = getLocalHostIp();
-        Log.d("ipadress",ip);
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         long time = System.currentTimeMillis();
@@ -437,8 +436,10 @@ public class CanteenFragment extends BaseFragment {
     }
 
     private void sendOrderToServer() {
-
+        int family_id = sp.getInt("family_id",1);
         final Order order = new Order();
+        order.setFamily_id(family_id);
+        order.setIp(ip);
         order.setItems(itemses);
         order.setJail_id(1);
         order.setCreated_at(times);
@@ -447,7 +448,7 @@ public class CanteenFragment extends BaseFragment {
         gson = new Gson();
         order.setOut_trade_no(TradeNo);
         apply = gson.toJson(order);
-
+        Log.d("结算发送",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
