@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -39,6 +40,8 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.StatusCode;
 import com.squareup.okhttp.Call;
 
 import org.json.JSONArray;
@@ -77,6 +80,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private CalendarCard[] views;
     private List<MeetingInfo> meetingInfoList;
     private ScrollView scrollView;
+    private SharedPreferences sp;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -117,6 +121,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 meetingInfo.setPrisoner_number(jsonObject.getString("prisoner_number"));
                 meetingInfo.setRelationship(jsonObject.getString("relationship"));
                 meetingInfo.setUuid(jsonObject.getString("uuid"));
+                meetingInfo.setAccess_token(jsonObject.getString("access_token"));
 //                meetingInfo.setPrison_area(jsonObject.getString("prison_area"));
 //                meetingInfo.setReply_date(jsonObject.getString("reply_date"));
                 meetingInfoList.add(meetingInfo);
@@ -133,6 +138,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         if((date.getYear() + "年" + date.getMonth() + "月").equals(monthText.getText().toString())){
             // 点击的是当月的
 //            showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
+            scrollView.scrollTo(0,0);// 刷新时滑到顶端
             requestData(date.getYear() + "-" + date.getMonth() + "-" + date.getDay());
         }else if(date.getMonth() < Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))){
             showToastMsgShort("左滑至下个月份");
@@ -170,6 +176,12 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("is_first", false);
+        editor.commit();
+        StatusCode code = NIMClient.getStatus();
+        Log.i("监狱端进主页啦", code + sp.getString("password", "") + "---" + sp.getString("token", ""));
         setTitle("会见列表");
         preImgBtn.setOnClickListener(this);
         nextImgBtn.setOnClickListener(this);
@@ -189,7 +201,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
                 intent.putExtra("申请人", meetingInfoList.get(position).getName());
-                intent.putExtra("accid", meetingInfoList.get(position).getPhone());
+                intent.putExtra("accid", meetingInfoList.get(position).getAccess_token());
                 startActivity(intent);
             }
         });
@@ -208,6 +220,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 SystemClock.sleep(2000);
                 HttpUtils httpUtils = new HttpUtils();
                 msg = handler.obtainMessage();
+                Log.i("会见列表请求", Constants.URL_HEAD +
+                        Constants.PRISON_PORT_MEETING_LIST_URL + date);
                 httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD +
 //                        "---hahah" +
                         Constants.PRISON_PORT_MEETING_LIST_URL + date, new RequestCallBack<Object>() {
@@ -334,8 +348,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.tv_meeting_name.setText(meetingInfoList.get(position).getName());
-            holder.tv_meeting_time.setText(MEETING_TIMES[position]);
-            holder.tv_meeting_prison_area.setText(MEETING_AREAS[position]);
+            holder.tv_meeting_time.setText(MEETING_TIMES[0]);
+            holder.tv_meeting_prison_area.setText(MEETING_AREAS[0]);
             holder.iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

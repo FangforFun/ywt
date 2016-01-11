@@ -11,18 +11,22 @@ import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -36,6 +40,8 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.userport.bean.Register;
 import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
 import com.gkzxhn.gkprison.utils.Base64;
@@ -56,11 +62,15 @@ import junit.framework.Test;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
@@ -95,7 +105,12 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_relationship_with_prisoner;// 与服刑人员关系
     private EditText et_prisoner_number;// 服刑人员囚号
     private Gson gson;
-    private EditText et_prison_chooes;//监狱选择
+    private AutoCompleteTextView actv_prison_choose;//监狱选择
+    private List<String> suggest;// 自动提示的集合
+    private Map<String, Integer> prison_map;
+    private ArrayAdapter<String> aAdapter; // actv_prison_choose适配器
+    private AutoTextAdapater autoTextAdapater;
+    private String data; // 监狱选择访问服务器返回的字符串
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
@@ -177,6 +192,10 @@ public class RegisterActivity extends BaseActivity {
                             showToastMsgShort("验证码错误");
                             rl_register.setVisibility(View.GONE);
                             bt_register.setEnabled(true);
+                        } else if(error == 500){
+                            showToastMsgShort("注册失败");
+                            rl_register.setVisibility(View.GONE);
+                            bt_register.setEnabled(true);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -208,7 +227,7 @@ public class RegisterActivity extends BaseActivity {
         et_relationship_with_prisoner = (EditText) view.findViewById(R.id.et_relationship_with_prisoner);
         et_prisoner_number = (EditText) view.findViewById(R.id.et_prisoner_num);
         et_identifying_code = (EditText) view.findViewById(R.id.et_identifying_code);
-        et_prison_chooes = (EditText)view.findViewById(R.id.et_prison_choose);
+        actv_prison_choose = (AutoCompleteTextView)view.findViewById(R.id.actv_prison_choose);
         bt_send_identifying_code = (Button) view.findViewById(R.id.bt_send_identifying_code);
         bt_register = (Button) view.findViewById(R.id.bt_register);
         iv_add_photo_01 = (ImageView) view.findViewById(R.id.iv_add_photo_01);
@@ -245,7 +264,68 @@ public class RegisterActivity extends BaseActivity {
         iv_add_photo_01.setOnClickListener(this);
         iv_add_photo_02.setOnClickListener(this);
         bt_send_identifying_code.setOnClickListener(this);
+        prison_map = new HashMap<>();
+        actv_prison_choose.setThreshold(1);
+        actv_prison_choose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String newText = s.toString();
+                new GetSuggestData().execute(newText);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
+
+    /**
+     *
+     */
+    private class GetSuggestData extends AsyncTask<String,String,String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            autoTextAdapater = new AutoTextAdapater(suggest, RegisterActivity.this);
+            actv_prison_choose.setAdapter(autoTextAdapater);
+        }
+
+        @Override
+        protected String doInBackground(String... key) {
+            String newText = key[0];
+            newText = newText.trim();
+            newText = newText.replace(" ", "+");
+            try{
+                HttpClient hClient = new DefaultHttpClient();
+                HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
+                ResponseHandler<String> rHandler = new BasicResponseHandler();
+                data = hClient.execute(hGet,rHandler);
+//                Log.i("监狱数据...", data);
+                suggest = new ArrayList<>();
+                prison_map.clear();
+                JSONObject jsonObject = new JSONObject(data);
+                JSONArray jArray = jsonObject.getJSONArray("jails");
+                for(int i = 0; i < jArray.length(); i++){
+                    JSONObject jsonObject1 = jArray.getJSONObject(i);
+                    String suggestKey = jsonObject1.getString("title");
+                    int id = jsonObject1.getInt("id");
+                    suggest.add(suggestKey);
+                    prison_map.put(suggestKey, id);
+                }
+            }catch(Exception e){
+                Log.w("Error", e.getMessage());
+            }
+            return null;
+        }
+    }
+
 
     /**
      * 判断是否有网
@@ -296,10 +376,11 @@ public class RegisterActivity extends BaseActivity {
                 register.setPhone(phone_num);
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
-                register.setPrison(prison_chooes);
+//                register.setPrison(prison_chooes);
                 register.setCode(identifying_code);
-                register.setJail_id(1 + "");
-                register.setType_id(3 + "");
+                register.setJail_id(prison_map.get(prison_chooes));
+                Log.i("注册监狱id", prison_map.get(prison_chooes) + "");
+                register.setType_id(3);
                 register.setUuid_images_attributes(uuid_images);
                 gson = new Gson();
                 String str = gson.toJson(register);
@@ -344,7 +425,7 @@ public class RegisterActivity extends BaseActivity {
                 phone_num = et_phone_num.getText().toString().trim();
                 relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
                 prisoner_number = et_prisoner_number.getText().toString().trim();
-                prison_chooes = et_prison_chooes.getText().toString().trim();
+                prison_chooes = actv_prison_choose.getText().toString().trim();
                 identifying_code = et_identifying_code.getText().toString().trim();
                 // 判断姓名是否都是汉字组成
                 if(TextUtils.isEmpty(name)){

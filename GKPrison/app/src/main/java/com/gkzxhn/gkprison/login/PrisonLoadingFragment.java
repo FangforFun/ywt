@@ -52,6 +52,7 @@ public class PrisonLoadingFragment extends BaseFragment {
                     btn_login.setEnabled(true);
                     btn_login.setClickable(true);
                     SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("token", username);
                     editor.putString("username", username);
                     editor.putString("password", password);
                     editor.putBoolean("isCommonUser", false);

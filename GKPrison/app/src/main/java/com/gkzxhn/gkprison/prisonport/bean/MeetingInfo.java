@@ -12,6 +12,15 @@ public class MeetingInfo {
     String uuid;
     String reply_date;
     String prison_area;
+    String access_token;
+
+    public String getAccess_token() {
+        return access_token;
+    }
+
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
+    }
 
     public String getName() {
         return name;

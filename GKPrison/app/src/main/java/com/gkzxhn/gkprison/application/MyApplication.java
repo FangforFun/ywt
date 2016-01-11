@@ -236,6 +236,7 @@ public class MyApplication extends Application {
 
     // 如果已经存在用户登录信息，返回LoginInfo，否则返回null即可
     private LoginInfo loginInfo() {
+        Log.i("application启动了", "hahahahah");
         if(getLoginInfo() != null) {
             Log.i("自动登录。。。", getLoginInfo().getAccount() + "---" + getLoginInfo().getToken());
         }
@@ -244,35 +245,16 @@ public class MyApplication extends Application {
 
     private LoginInfo getLoginInfo() {
         // 从本地读取上次登录成功时保存的用户登录信息
-        String account = sp.getString("username", "");
-        String token = tokenFromPassword(sp.getString("password", ""));
-        Log.i("application", account + "---" + token + "---" + sp.getString("password", ""));
-
-        if (!TextUtils.isEmpty(account) && !TextUtils.isEmpty(token)) {
-            DemoCache.setAccount(account.toLowerCase());
-            return new LoginInfo(account, token);
+//        String account = sp.getString("username", "");
+//        String token = tokenFromPassword(sp.getString("password", ""));
+//        Log.i("application", account + "---" + token + "---" + sp.getString("password", ""));
+        String token = sp.getString("token", "");
+        Log.i("自动登录...", token);
+        if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(token)) {
+            DemoCache.setAccount(token.toLowerCase());
+            return new LoginInfo(token, token);
         } else {
             return null;
         }
-    }
-
-    private String tokenFromPassword(String password) {
-        String appKey = readAppKey(getApplicationContext());
-        boolean isDemo = "45c6af3c98409b18a84451215d0bdd6e".equals(appKey)
-                || "fe416640c8e8a72734219e1847ad2547".equals(appKey);
-
-        return isDemo ? MD5Utils.ecoder(password) : password;
-    }
-
-    private static String readAppKey(Context context) {
-        try {
-            ApplicationInfo appInfo = context.getPackageManager().getApplicationInfo(context.getPackageName(), PackageManager.GET_META_DATA);
-            if (appInfo != null) {
-                return appInfo.metaData.getString("com.netease.nim.appKey");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

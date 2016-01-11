@@ -55,7 +55,7 @@
                 android:minHeight="50dp"
                 android:text="@string/quit_normal_team"
                 android:textColor="@color/white"
-                android:textSize="@dimen/tv_apply_meeting_call" />
+                android:textSize="@dimen/text_size_17" />
 
         </RelativeLayout>
     </LinearLayout>

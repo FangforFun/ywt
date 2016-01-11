@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -65,7 +64,7 @@
                     android:id="@+id/tv_meeting_request_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="刘思佳"
+                    android:text="叶惠美"
                     android:textColor="@color/tv_mid"
                     android:layout_marginLeft="3dp"
                     android:textSize="16sp"/>
@@ -154,12 +153,13 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/tv_gray"
                     android:text="申请会见时间："
+                    android:layout_gravity="center_vertical"
                     android:textSize="16sp"/>
 
                 <com.weiwangcn.betterspinner.library.BetterSpinner
                     android:id="@+id/bs_meeting_request_time"
                     android:layout_width="match_parent"
-                    android:layout_height="35dp"
+                    android:layout_height="45dp"
                     android:hint="点击选择"
                     android:textColor="@color/tv_mid"
                     android:textSize="16sp"
