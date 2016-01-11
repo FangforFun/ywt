@@ -159,7 +159,6 @@ public class SalesPriorityFragment extends BaseFragment {
                 viewHolder.rl_reduce = (RelativeLayout)convertView.findViewById(R.id.rl_reduce);
                 viewHolder.rl_add = (RelativeLayout)convertView.findViewById(R.id.rl_add);
                 viewHolder.tv_num = (TextView)convertView.findViewById(R.id.tv_num);
-                viewHolder.imageView_shopping = (ImageView) convertView.findViewById(R.id.image_shopping);
                 viewHolder.imageView = (ImageView) convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView) convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
@@ -247,7 +246,7 @@ public class SalesPriorityFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            String t ="http://10.93.1.115:3000"+commodities.get(position).getAvatar_url();
+            String t ="http://www.fushuile.com"+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty()+"");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
