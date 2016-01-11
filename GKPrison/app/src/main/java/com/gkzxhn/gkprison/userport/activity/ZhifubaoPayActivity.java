@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -26,6 +27,7 @@ import java.util.Locale;
 import java.util.Random;
 
 public class ZhifubaoPayActivity extends FragmentActivity {
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";
@@ -49,7 +51,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     private static final int SDK_PAY_FLAG = 1;
 
     private static final int SDK_CHECK_FLAG = 2;
-
+    private String times;
     private String orderkey = "";
     private int countmoney = 0;
     private String getOutTradeNo = "";
@@ -67,6 +69,8 @@ public class ZhifubaoPayActivity extends FragmentActivity {
 
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
+                        String sql = "update Cart set finish = 1 where time = '"+times+"'";
+                        db.execSQL(sql);
                         Toast.makeText(ZhifubaoPayActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
                     } else {
@@ -102,6 +106,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         setContentView(R.layout.activity_zhifubao_pay);
         countmoney = getIntent().getIntExtra("price",0);
         getOutTradeNo = getIntent().getStringExtra("outorderno");
+        times = getIntent().getStringExtra("times");
     }
 
 /**

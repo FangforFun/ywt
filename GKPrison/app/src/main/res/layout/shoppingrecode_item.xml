@@ -63,6 +63,12 @@
             android:layout_height="1dp"
             android:background="@color/tv_gray" />
 
+        <ListView
+            android:id="@+id/lv_recode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></ListView>
+
+<!--
         <TextView
             android:id="@+id/tv_shopping_desciption"
             android:layout_width="match_parent"
@@ -101,7 +107,8 @@
             android:layout_gravity="right"
             android:textColor="@color/tv_bg"
             android:text="¥ 29.90 × 1"/>
-            
+
+-->
         <View
             android:id="@+id/fenge"
             android:layout_width="match_parent"

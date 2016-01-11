@@ -17,14 +17,6 @@
             android:layout_height="match_parent"
             android:src="@drawable/beizi1"
             />
-        <ImageView
-            android:id="@+id/image_shopping"
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:background="@drawable/image_bg_shap"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"/>
-
     </RelativeLayout>
 
     <LinearLayout
