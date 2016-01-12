@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.squareup.picasso.Picasso;
@@ -217,7 +218,7 @@ public class AllClassificationFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            String t ="http://10.93.1.10:3000"+commodities.get(position).getAvatar_url();
+            String t = "http://www.fushuile.com"+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());

@@ -98,7 +98,7 @@ public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
 //    private String url = "http://www.fushuile.com/api/v1/apply";
-    private String url = "http://10.93.1.10:3000/api/v1/apply";
+    private String url = Constants.URL_HEAD + "apply";
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号
@@ -311,7 +311,6 @@ public class RegisterActivity extends BaseActivity {
                 HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
                 ResponseHandler<String> rHandler = new BasicResponseHandler();
                 data = hClient.execute(hGet,rHandler);
-//                Log.i("监狱数据...", data);
                 suggest = new ArrayList<>();
                 prison_map.clear();
                 JSONObject jsonObject = new JSONObject(data);
@@ -585,8 +584,7 @@ public class RegisterActivity extends BaseActivity {
                                 @Override
                                 public void run() {
                                     HttpClient httpClient = new DefaultHttpClient();
-//                                HttpPost post = new HttpPost("http://www.fushuile.com/api/v1/request_sms");
-                                    HttpPost post = new HttpPost("http://10.93.1.10:3000/api/v1/request_sms");
+                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
                                     Looper.prepare();
                                     Message msg = handler.obtainMessage();
                                     try {

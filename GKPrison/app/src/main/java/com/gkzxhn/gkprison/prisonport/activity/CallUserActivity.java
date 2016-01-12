@@ -57,9 +57,9 @@ public class CallUserActivity extends BaseActivity {
         Log.i("tupian", image_url);
         if(image_url.contains("|")) {
             String[] img_urls = image_url.split("\\|");
-            bitmapUtil.display(iv_id_card_01, "http://10.93.1.10:3000" + img_urls[0]);
-            bitmapUtil.display(iv_id_card_02, "http://10.93.1.10:3000" + img_urls[1]);
-            Log.i("tupian", "http://10.93.1.10:3000" + img_urls[0] + "---" + "http://10.93.1.10:3000" + img_urls[1]);
+            bitmapUtil.display(iv_id_card_01, Constants.URL_HEAD + img_urls[0]);
+            bitmapUtil.display(iv_id_card_02, Constants.URL_HEAD + img_urls[1]);
+            Log.i("tupian", Constants.URL_HEAD + img_urls[0] + "---" + Constants.URL_HEAD + img_urls[1]);
         }
         bt_call.setOnClickListener(this);
     }

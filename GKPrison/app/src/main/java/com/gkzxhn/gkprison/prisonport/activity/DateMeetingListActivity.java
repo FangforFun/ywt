@@ -82,6 +82,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ScrollView scrollView;
     private SharedPreferences sp;
     private CustomDate mDate;
+    private TextView tv_no_list;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -98,8 +99,16 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         }else {
                             meetingListAdapter.notifyDataSetChanged();
                         }
+                        if(meetingInfoList.size() == 0){
+                            tv_no_list.setVisibility(View.VISIBLE);
+                        }else {
+                            tv_no_list.setVisibility(View.GONE);
+                        }
                         DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
                         lv_meeting_list.setVisibility(View.VISIBLE);
+                        for (int i = 0; i < 3; i++) {
+                            views[i].setEnabled(true);
+                        }
                     }
                     break;
             }
@@ -175,6 +184,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
         tv_loading = (TextView) view.findViewById(R.id.tv_loading);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
+        tv_no_list = (TextView) view.findViewById(R.id.tv_no_list);
         return view;
     }
 
@@ -229,6 +239,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         ll_loading.setVisibility(View.VISIBLE);
         tv_loading.setText("正在刷新...");
         pb_loading.setVisibility(View.VISIBLE);
+        for (int i = 0; i < 3; i++) {
+            views[i].setEnabled(false);
+        }
         new Thread(){
             @Override
             public void run() {
@@ -255,6 +268,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         tv_loading.setText("点击刷新");
                         pb_loading.setVisibility(View.GONE);
                         ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                        for (int i = 0; i < 3; i++) {
+                            views[i].setEnabled(true);
+                        }
                     }
                 });
             }
