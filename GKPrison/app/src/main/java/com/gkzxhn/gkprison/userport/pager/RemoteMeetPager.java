@@ -54,6 +54,7 @@ public class RemoteMeetPager extends BasePager {
             switch (msg.what){
                 case 0: // 发送会见申请成功
                     showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
+
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");

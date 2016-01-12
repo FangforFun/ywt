@@ -81,6 +81,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private List<MeetingInfo> meetingInfoList;
     private ScrollView scrollView;
     private SharedPreferences sp;
+    private CustomDate mDate;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -124,6 +125,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 meetingInfo.setAccess_token(jsonObject.getString("access_token"));
 //                meetingInfo.setPrison_area(jsonObject.getString("prison_area"));
 //                meetingInfo.setReply_date(jsonObject.getString("reply_date"));
+                meetingInfo.setPrisoner_name(jsonObject.getString("prisoner_name"));
+                meetingInfo.setImage_url(TextUtils.isEmpty(jsonObject.getString("image_url")) ? "url错误" : jsonObject.getString("image_url"));
                 meetingInfoList.add(meetingInfo);
             }
         } catch (JSONException e) {
@@ -135,6 +138,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     public void clickDate(CustomDate date) {
+        mDate = date;
         if((date.getYear() + "年" + date.getMonth() + "月").equals(monthText.getText().toString())){
             // 点击的是当月的
 //            showToastMsgShort(date.getYear() + "年" + date.getMonth() + "月" + date.getDay() + "日");
@@ -191,18 +195,29 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         }
         adapter = new CalendarViewAdapter<>(views);
         setViewPager();
+        mDate = CalendarCard.mShowDate;
         long currentDate = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(currentDate);
-        String formatDate = format.format(date);
+        final String formatDate = format.format(date);
         requestData(formatDate);// 请求数据
+        Log.i("时间", (CalendarCard.mShowDate.getDay() + "") + "---" + (formatDate.substring(formatDate.length() - 3, formatDate.length())));
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
-                intent.putExtra("申请人", meetingInfoList.get(position).getName());
-                intent.putExtra("accid", meetingInfoList.get(position).getAccess_token());
-                startActivity(intent);
+                if(mDate != null) {
+                    if((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))){
+                        Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
+                        intent.putExtra("申请人", meetingInfoList.get(position).getName());
+                        intent.putExtra("accid", meetingInfoList.get(position).getAccess_token());
+                        intent.putExtra("image_url", meetingInfoList.get(position).getImage_url());
+                        startActivity(intent);
+                        showToastMsgShort(mDate.getDay() + "" + formatDate.substring(formatDate.length() - 3, formatDate.length()));
+                    }else {
+                        showToastMsgShort(mDate.getYear() + "-" + mDate.getMonth() + "-" + mDate.getDay() + "才能会见哦");
+                    }
+                    Log.i("时间", (mDate.getDay() + "") + "---" + (formatDate.substring(formatDate.length() - 3, formatDate.length())));
+                }
             }
         });
     }

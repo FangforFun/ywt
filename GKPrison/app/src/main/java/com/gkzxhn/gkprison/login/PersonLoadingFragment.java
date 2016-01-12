@@ -65,7 +65,6 @@ public class PersonLoadingFragment extends BaseFragment {
     private String ic_card_num;
     private String identifying_code;// 验证码
     private SharedPreferences sp;
-    private Button bt_scan_login;
     private Button bt_fast_login;
     private TextView tv_send_identifying_code;
     private boolean isRunning = false;// 倒计时任务正在执行
@@ -92,7 +91,7 @@ public class PersonLoadingFragment extends BaseFragment {
                     gson = new Gson();
                     userInfo = gson.fromJson(result_login, UserInfo.class);
                     int error = userInfo.getError();
-                    if(error == 201){
+                    if(error == 401){
                         showToastMsgShort("用户身份验证失败");
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
@@ -117,7 +116,14 @@ public class PersonLoadingFragment extends BaseFragment {
 //                        Log.i("hehehe", userInfo.getToken());
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
+                    }else {
+                        btn_login.setProgress(0);
+                        btn_login.setText("登录失败");
+                        btn_login.setEnabled(true);
+                        btn_login.setClickable(true);
+                        successCode = 0;
                     }
+                    showToastMsgShort("返回码..." + error);
                     break;
                 case 1:// 云信id登录失败
                     successCode = 0;
@@ -188,7 +194,7 @@ public class PersonLoadingFragment extends BaseFragment {
         }
         editor.putBoolean("isRegisteredUser", true);
         editor.commit();
-        DemoCache.setAccount(username);
+        DemoCache.setAccount(userInfo.getToken());
         Intent intent = new Intent(context, MainActivity.class);
         startActivity(intent);
         getActivity().finish();
@@ -201,7 +207,6 @@ public class PersonLoadingFragment extends BaseFragment {
         btn_login = (ActionProcessButton) view.findViewById(R.id.btn_login);
         et_login_username = (EditText) view.findViewById(R.id.et_login_username);
         et_login_ic_card_num = (EditText) view.findViewById(R.id.et_login_ic_card_num);
-        bt_scan_login = (Button) view.findViewById(R.id.bt_scan_login);
         bt_fast_login = (Button) view.findViewById(R.id.bt_fast_login);
         tv_send_identifying_code = (TextView) view.findViewById(R.id.tv_send_identifying_code);
         et_identifying_code = (EditText) view.findViewById(R.id.et_identifying_code);
@@ -215,13 +220,6 @@ public class PersonLoadingFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
-        bt_scan_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, CaptureActivity.class);
                 startActivity(intent);
             }
         });

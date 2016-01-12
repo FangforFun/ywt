@@ -124,18 +124,5 @@
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
             android:textColor="@color/theme"/>
-
-        <Button
-            android:id="@+id/bt_scan_login"
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_height="50dp"
-            android:gravity="center"
-            android:text="扫码登录"
-            android:padding="5dp"
-            android:layout_centerHorizontal="true"
-            style="?android:attr/borderlessButtonStyle"
-            android:textSize="15sp"
-            android:textColor="@color/theme"/>
     </RelativeLayout>
 </FrameLayout>

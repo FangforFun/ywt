@@ -24,11 +24,14 @@
         android:orientation="vertical"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+
         android:layout_weight="2">
         <TextView
             android:id="@+id/tv_title"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:textColor="@color/tv_bg"
+            android:textSize="18sp"/>
 
         <TextView
             android:id="@+id/tv_description"
@@ -37,6 +40,7 @@
             android:lineSpacingExtra="3dp"
             android:maxLines="2"
             android:ellipsize="end"
+
             android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"/>
         <LinearLayout
             android:layout_width="match_parent"

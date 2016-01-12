@@ -13,6 +13,24 @@ public class MeetingInfo {
     String reply_date;
     String prison_area;
     String access_token;
+    String prisoner_name;
+    String image_url;
+
+    public String getPrisoner_name() {
+        return prisoner_name;
+    }
+
+    public void setPrisoner_name(String prisoner_name) {
+        this.prisoner_name = prisoner_name;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
+    }
 
     public String getAccess_token() {
         return access_token;
