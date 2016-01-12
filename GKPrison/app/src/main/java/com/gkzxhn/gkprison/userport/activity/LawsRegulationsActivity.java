@@ -76,7 +76,7 @@ public class LawsRegulationsActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token","00");
-        url = "http://10.93.1.10:3000/api/v1/laws?jail_id=1&access_token="+token;
+        url = "http://192.168.169.5:3000/api/v1/laws?jail_id=1&access_token="+token;
         getLaws();
 
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {

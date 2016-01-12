@@ -98,7 +98,7 @@ public class PrisonOpenActivity extends BaseActivity {
         initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = "http://10.93.1.10:3000/api/v1/news?jail_id=1&access_token=fdf63bd8761f918540b68626d3120623";
+        url = "http://192.168.169.5:3000/api/v1/news?jail_id=1&access_token=fdf63bd8761f918540b68626d3120623";
         getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override

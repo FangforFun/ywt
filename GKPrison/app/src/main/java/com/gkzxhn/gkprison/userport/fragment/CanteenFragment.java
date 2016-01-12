@@ -346,6 +346,7 @@ public class CanteenFragment extends BaseFragment {
 
                 if (total != 0) {
                     sendOrderToServer();
+                    String sql = "update Cart set total_money = '"+send+"' where time = '"+times+"'";
                     Intent intent = new Intent(context, PaymentActivity.class);
                     intent.putExtra("totalmoney", send);
                     intent.putExtra("TradeNo", TradeNo);

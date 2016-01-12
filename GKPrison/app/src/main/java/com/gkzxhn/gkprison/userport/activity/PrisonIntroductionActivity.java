@@ -40,7 +40,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         id = getIntent().getIntExtra("id",1);
-        wv_news_detail.loadUrl("http://10.93.1.115:3000/jails/1");
+        wv_news_detail.loadUrl("http://192.168.169.5:3000/jails/1");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

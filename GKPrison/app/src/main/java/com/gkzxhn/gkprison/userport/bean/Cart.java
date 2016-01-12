@@ -8,6 +8,20 @@ public class Cart {
     private String time;
     private String out_trade_no;
     private int finish;
+    private String total_money;
+
+    public String getTotal_money() {
+        return total_money;
+    }
+
+    public void setTotal_money(String total_money) {
+        this.total_money = total_money;
+    }
+
+    public int getFinish() {
+        return finish;
+    }
+
     public int isFinish() {
         return finish;
     }
