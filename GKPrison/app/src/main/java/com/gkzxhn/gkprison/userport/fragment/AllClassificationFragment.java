@@ -89,6 +89,7 @@ public class AllClassificationFragment extends BaseFragment {
                 commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
                 commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
                 commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
+                commodity.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 String sql = "select line_items.qty from line_items where line_items.Items_id = "+commodity.getId()+" and line_items.cart_id = "+cart_id;
                 Cursor cursor2 = db.rawQuery(sql,null);
                 if (cursor2.getCount() != 0){
@@ -132,6 +133,7 @@ public class AllClassificationFragment extends BaseFragment {
                 viewHolder.rl_reduce = (RelativeLayout)convertView.findViewById(R.id.rl_reduce);
                 viewHolder.rl_add = (RelativeLayout)convertView.findViewById(R.id.rl_add);
                 viewHolder.tv_num = (TextView)convertView.findViewById(R.id.tv_num);
+                viewHolder.tv_title = (TextView)convertView.findViewById(R.id.tv_title);
                 viewHolder.imageView = (ImageView) convertView.findViewById(R.id.image_commodity);
                 viewHolder.tv_description = (TextView) convertView.findViewById(R.id.tv_description);
                 viewHolder.tv_money = (TextView) convertView.findViewById(R.id.tv_money);
@@ -215,9 +217,10 @@ public class AllClassificationFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            String t ="http://www.fushuile.com"+commodities.get(position).getAvatar_url();
+            String t ="http://10.93.1.10:3000"+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
+            viewHolder.tv_title.setText(commodities.get(position).getTitle());
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
             DecimalFormat fnum = new DecimalFormat("####0.0");
@@ -228,6 +231,7 @@ public class AllClassificationFragment extends BaseFragment {
     private class ViewHolder{
         ImageView imageView;
         TextView  tv_description;
+        TextView tv_title;
         TextView  tv_money;
         ImageView imageView_shopping;
         RelativeLayout rl_reduce;
