@@ -28,7 +28,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="测试的商品"
+                android:text="小卖部商品"
                 android:textColor="#333333"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
@@ -52,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="right"
-                android:text="该测试商品的详细描述"
+                android:text="小卖部商品"
                 android:textColor="#333333"
                 tools:ignore="HardcodedText" />
         </LinearLayout>
