@@ -142,13 +142,6 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        dialog = new ProgressDialog(context);
-        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        dialog.setCancelable(false);// 设置是否可以通过点击Back键取消
-        dialog.setCanceledOnTouchOutside(false);// 设置在点击Dialog外是否取消Dialog进度条
-        dialog.setTitle("提示");
-        dialog.setMessage("正在同步数据...");
-        dialog.show();
         view = View.inflate(context, R.layout.fragment_canteen, null);
         settlement = (Button)view.findViewById(R.id.bt_shopping_cart_commit);
         rl_allclass = (RelativeLayout)view.findViewById(R.id.rl_allclass);
@@ -213,14 +206,12 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 0);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-                        dialog.cancel();
                         break;
                     case 1:
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 1);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-                        dialog.cancel();
                         break;
                     case 2:
                         allclass = new AllClassificationFragment();
