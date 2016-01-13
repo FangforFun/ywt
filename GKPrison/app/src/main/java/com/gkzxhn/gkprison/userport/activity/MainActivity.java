@@ -245,6 +245,7 @@ public class MainActivity extends BaseActivity {
                     @Override
                     public void onSuccess(ResponseInfo<Object> responseInfo) {
                         Log.i("请求成功", responseInfo.result.toString());
+                        parseUserInfoResult(responseInfo.result.toString());
                     }
 
                     @Override
@@ -254,6 +255,22 @@ public class MainActivity extends BaseActivity {
                 });
             }
         }.start();
+    }
+
+    /**
+     * 解析用户和囚犯关系信息
+     */
+    private void parseUserInfoResult(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray jsonArray = jsonObject.getJSONArray("result");
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private class MyPagerAdapter extends PagerAdapter {

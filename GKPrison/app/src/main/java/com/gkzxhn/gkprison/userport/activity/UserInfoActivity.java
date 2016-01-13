@@ -82,7 +82,9 @@ public class UserInfoActivity extends BaseActivity {
                     }
                     break;
                 case 3:// 身份证号码
-                    holder.tv_user_info_right.setText(id_num);
+                    String str = id_num.substring(6, id_num.length() - 4);
+                    String pwded_id_num = id_num.replace(str, "********");
+                    holder.tv_user_info_right.setText(pwded_id_num);
                     break;
                 case 4:// 与服刑人员关系
                     holder.tv_user_info_right.setText(sp.getString("relationship", ""));
