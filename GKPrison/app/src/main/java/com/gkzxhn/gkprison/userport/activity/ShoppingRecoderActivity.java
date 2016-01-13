@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;

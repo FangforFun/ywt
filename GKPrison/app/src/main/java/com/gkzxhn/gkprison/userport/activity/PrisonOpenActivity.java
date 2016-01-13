@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.squareup.picasso.Picasso;
@@ -98,7 +99,7 @@ public class PrisonOpenActivity extends BaseActivity {
         initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = "http://10.93.1.10:3000/api/v1/news?jail_id=1&access_token=" + token;
+        url = Constants.URL_HEAD+"news?jail_id=1&access_token=" + token;
         getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override

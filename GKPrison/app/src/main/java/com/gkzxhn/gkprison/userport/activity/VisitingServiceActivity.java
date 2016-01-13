@@ -114,7 +114,7 @@ public class VisitingServiceActivity extends BaseActivity {
             @Override
             public void run() {
                 String prisoner_number = sp.getString("prisoner_number", "4000002");
-                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":\"2\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"2\"}}";
+                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"2\"}}";
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                 Looper.prepare();
