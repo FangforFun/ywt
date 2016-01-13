@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Laws;
 
 import org.apache.http.HttpResponse;
@@ -39,8 +40,7 @@ import java.util.List;
 public class LawsRegulationsActivity extends BaseActivity {
 
     private ListView lv_laws_regulations;
-    private List<Laws> lawses = new ArrayList<Laws>();
-    private final String[] ITEM_TVS = {"关于进一步深化狱务公开的意见", "中华人民共和国赔偿法", "中华人民共和国劳动法", "中华人民共和国职业病防治法", "中华人民共和国刑事诉讼法"};
+    private List<Laws> lawses = new ArrayList<>();
     private SharedPreferences sp;
     private String token = "";
     private String url = "";
@@ -76,9 +76,8 @@ public class LawsRegulationsActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token","00");
-        url = "http://10.93.1.10:3000/api/v1/laws?jail_id=1&access_token="+token;
+        url = Constants.URL_HEAD + "laws?jail_id=1&access_token=" + token;
         getLaws();
-
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -88,7 +87,6 @@ public class LawsRegulationsActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-
     }
 
     private void getLaws(){
@@ -102,7 +100,6 @@ public class LawsRegulationsActivity extends BaseActivity {
                     HttpResponse Response = httpClient.execute(Get);
                     if (Response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(Response.getEntity(), "utf-8");
-
                         msg.obj = "sucess";
                         Bundle bundle = new Bundle();
                         bundle.putString("result",result);
@@ -122,7 +119,7 @@ public class LawsRegulationsActivity extends BaseActivity {
     }
 
     private List<Laws> analysisLaws(String s){
-        List<Laws> lawsList = new ArrayList<Laws>();
+        List<Laws> lawsList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(s);
             JSONArray  jsonArray1 = jsonObject.getJSONArray("laws");
