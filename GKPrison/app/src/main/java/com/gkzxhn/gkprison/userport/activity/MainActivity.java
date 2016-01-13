@@ -70,7 +70,7 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sp;
     private boolean isRegisteredUser;
     private MyPagerAdapter adapter;
-    private String url ="http://10.93.1.10:3000/api/v1/items?jail_id=1&access_token=";
+    private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
 
     private Handler handler = new Handler(){
         @Override
@@ -378,5 +378,4 @@ public class MainActivity extends BaseActivity {
         }
         return commodities;
     }
-
 }

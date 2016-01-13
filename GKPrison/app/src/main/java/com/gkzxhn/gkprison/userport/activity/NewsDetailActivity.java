@@ -28,7 +28,7 @@ public class NewsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        wv_news_detail.loadUrl("http://192.168.169.5:3000/jails/1");
+        wv_news_detail.loadUrl("http://10.93.1.116:3000/news/2");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
@@ -39,8 +39,8 @@ public class NewsDetailActivity extends BaseActivity {
         });
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setSupportZoom(true);
+//        webSettings.setBuiltInZoomControls(true);
+//        webSettings.setSupportZoom(true);
     }
 
     @Override

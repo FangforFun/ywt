@@ -246,7 +246,7 @@ public class SalesPriorityFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            String t ="http://10.93.1.10:3000"+commodities.get(position).getAvatar_url();
+            String t ="http://www.fushuile.com"+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty()+"");
             viewHolder.tv_description.setText(commodities.get(position).getDescription());

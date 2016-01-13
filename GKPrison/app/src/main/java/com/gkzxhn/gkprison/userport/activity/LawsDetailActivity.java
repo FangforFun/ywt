@@ -33,7 +33,7 @@ public class LawsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         id = getIntent().getIntExtra("id",1);
-        wv_news_detail.loadUrl("http://10.93.1.115:3000/laws/"+id+"");
+        wv_news_detail.loadUrl("http://10.93.1.116:3000/laws/"+id+"");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

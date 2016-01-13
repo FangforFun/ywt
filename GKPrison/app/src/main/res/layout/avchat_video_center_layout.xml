@@ -19,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
-            android:textColor="@color/white"
+            android:textColor="@color/tv_bg"
             android:textSize="20sp"
             android:text=""
             android:gravity="center"
@@ -32,7 +32,7 @@
             android:id="@+id/avchat_video_notify"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/tv_bg"
             android:textSize="@dimen/tv_apply_meeting_call"
             android:text="请求视频聊天..."
             android:gravity="center"
@@ -48,16 +48,16 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:text="您的会见时间只有20分钟\n20分钟后会见将自动结束"
-        android:textColor="@color/tv_red"
+        android:textColor="#f65c44"
         android:gravity="center"
-        android:textSize="@dimen/tv_apply_meeting_call_notice"
+        android:textSize="@dimen/text_size_18"
         android:background="#88ffffff" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingBottom="20dp">
+        android:paddingBottom="40dp">
         <include
             android:id="@+id/avchat_video_refuse_receive"
             layout="@layout/avchat_refuse_receive_layout"
