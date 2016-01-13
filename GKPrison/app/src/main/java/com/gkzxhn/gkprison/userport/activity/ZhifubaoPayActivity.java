@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
@@ -54,8 +55,9 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     private static final int SDK_CHECK_FLAG = 2;
     private String times;
     private String orderkey = "";
-    private int countmoney = 0;
+    private String countmoney = "";
     private String getOutTradeNo = "";
+    private TextView  totalmoney;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -108,9 +110,11 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhifubao_pay);
-        countmoney = getIntent().getIntExtra("price",0);
+        countmoney = getIntent().getStringExtra("price");
         getOutTradeNo = getIntent().getStringExtra("outorderno");
         times = getIntent().getStringExtra("times");
+        totalmoney = (TextView)findViewById(R.id.product_price);
+        totalmoney.setText(countmoney);
     }
 
 /**
@@ -148,7 +152,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         }
         // 订单
 
-        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述",countmoney );
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
