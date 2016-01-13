@@ -99,6 +99,7 @@ public class RegisterActivity extends BaseActivity {
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
 //    private String url = "http://www.fushuile.com/api/v1/apply";
     private String url = Constants.URL_HEAD + "apply";
+    private String url1 = Constants.URL_HEAD+"verify_code";
     private EditText et_name;// 姓名
     private EditText et_ic_card;// 身份证号
     private EditText et_phone_num;// 手机号
@@ -169,7 +170,23 @@ public class RegisterActivity extends BaseActivity {
                 case 2: // 发送验证码请求异常
                     showToastMsgShort("验证码请求异常，请稍后再试");
                     break;
-                case 3: // 发送注册信息至服务器请求成功
+                case 3:
+                    String code = (String)msg.obj;
+                    try {
+                        JSONObject jsonObject = new JSONObject(code);
+                        int error = jsonObject.getInt("error");
+                        if (error == 0){
+                            sendRegisterMessge();
+                        }else if (error == 404){
+                            showToastMsgShort("验证码错误");
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+
+
+                case 4: // 发送注册信息至服务器请求成功
                     String register_result = (String) msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(register_result);
@@ -205,18 +222,23 @@ public class RegisterActivity extends BaseActivity {
                         bt_register.setEnabled(true);
                     }
                     break;
-                case 4:// 发送注册信息至服务器请求失败
+
+                case 5:// 发送注册信息至服务器请求失败
                     showToastMsgShort("注册请求失败，请稍后再试");
                     rl_register.setVisibility(View.GONE);
                     bt_register.setEnabled(true);
                     break;
-                case 5:// 发送注册信息至服务器请求异常
+
+                case 6:// 发送注册信息至服务器请求异常
                     showToastMsgShort("注册请求异常，请稍后再试");
                     rl_register.setVisibility(View.GONE);
                     bt_register.setEnabled(true);
                     break;
+
             }
+
         }
+
     };
 
     @Override
@@ -349,11 +371,10 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     * 发送注册请求至服务端
+     * 发送注册信息
      */
-    private void sendRegisterToServer() {
-        rl_register.setVisibility(View.VISIBLE);
-        bt_register.setEnabled(false);
+
+    private void sendRegisterMessge(){
         new Thread(){
             @Override
             public void run() {
@@ -374,45 +395,85 @@ public class RegisterActivity extends BaseActivity {
                 Register register = new Register();
                 register.setName(name);
                 register.setUuid(ic_card);
-                register.setPhone(phone_num);
+
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
 //                register.setPrison(prison_chooes);
-                register.setCode(identifying_code);
+
                 register.setJail_id(1);
 //                Log.i("注册监狱id", prison_map.get(prison_chooes) + "");
                 register.setType_id(3);
                 register.setUuid_images_attributes(uuid_images);
+
                 gson = new Gson();
                 String str = gson.toJson(register);
                 apply = "{\"apply\":"+str+"}";
+                Log.d("注册信息",apply);
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
                 Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
-                    StringEntity entity = new StringEntity(apply, HTTP.UTF_8);
+                    StringEntity entity = new StringEntity(apply,HTTP.UTF_8);
                     entity.setContentType("application/json");
                     post.setEntity(entity);
-                    HttpResponse httpResponse = httpClient.execute(post);
-                    if (httpResponse.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                    HttpResponse response = httpClient.execute(post);
+                    if (response.getStatusLine().getStatusCode()==200){
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
                         Log.d("注册请求成功",result);
                         msg.obj = result;
-                        msg.what = 3;
+                        msg.what = 4;
                         handler.sendMessage(msg);
                     }else {
-                        handler.sendEmptyMessage(4);
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                        handler.sendEmptyMessage(5);
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
                         Log.d("注册请求失败", result);
                     }
-                } catch (Exception e){
-                    handler.sendEmptyMessage(5);
+                } catch (Exception e) {
+                    handler.sendEmptyMessage(6);
                     Log.i("注册请求异常", e.getMessage());
                 } finally {
                     Looper.loop();
                 }
             }
+        }.start();
+
+    }
+    /**
+     * 发送手机号码和验证码
+     */
+    private void sendRegisterToServer() {
+        rl_register.setVisibility(View.VISIBLE);
+        bt_register.setEnabled(false);
+        new Thread(){
+            @Override
+            public void run() {
+                String phoneandcode = "{\"session\":{\"phone\":\""+phone_num+"\",\"code\":\""+identifying_code+"\"}}";
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url1);
+                Looper.prepare();
+                Message msg = handler.obtainMessage();
+                try {
+                    StringEntity entity = new StringEntity(phoneandcode,HTTP.UTF_8);
+                    entity.setContentType("application/json");
+                    post.setEntity(entity);
+                    HttpResponse response = httpClient.execute(post);
+                    if (response.getStatusLine().getStatusCode()==200){
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                        Log.d("测试注册码",result);
+                        msg.obj = result;
+                        msg.what = 3;
+                        handler.sendMessage(msg);
+                    }
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
         }.start();
     }
 

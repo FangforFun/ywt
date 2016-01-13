@@ -9,22 +9,14 @@ import java.util.List;
 public class Register {
     private String name;
     private String uuid;
-    private String phone;
     private String relationship;
     private String prisoner_number;
     private String prison;
     private int jail_id;
     private int type_id;
-    private String code;
     private List<Uuid_images_attributes> uuid_images_attributes;
 
-    public String getCode() {
-        return code;
-    }
 
-    public void setCode(String code) {
-        this.code = code;
-    }
 
     public String getPrison() {
         return prison;
@@ -50,13 +42,7 @@ public class Register {
         this.name = name;
     }
 
-    public String getPhone() {
-        return phone;
-    }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
 
     public String getPrisoner_number() {
         return prisoner_number;
