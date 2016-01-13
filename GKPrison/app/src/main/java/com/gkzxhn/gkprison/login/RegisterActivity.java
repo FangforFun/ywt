@@ -190,26 +190,20 @@ public class RegisterActivity extends BaseActivity {
                             editor.commit();
                         }else if(error == 404){
                             showToastMsgShort("验证码错误");
-                            rl_register.setVisibility(View.GONE);
-                            bt_register.setEnabled(true);
                         } else if(error == 500){
                             showToastMsgShort("注册失败");
-                            rl_register.setVisibility(View.GONE);
-                            bt_register.setEnabled(true);
                         }else if(error == 501){
                             showToastMsgShort("已注册用户");
-                            rl_register.setVisibility(View.GONE);
-                            bt_register.setEnabled(true);
                         }else {
                             showToastMsgShort("注册失败");
-                            rl_register.setVisibility(View.GONE);
-                            bt_register.setEnabled(true);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        showToastMsgShort("异常");
+                    }finally {
+                        rl_register.setVisibility(View.GONE);
+                        bt_register.setEnabled(true);
                     }
-//                    rl_register.setVisibility(View.VISIBLE);
-//                    bt_register.setEnabled(true);
                     break;
                 case 4:// 发送注册信息至服务器请求失败
                     showToastMsgShort("注册请求失败，请稍后再试");

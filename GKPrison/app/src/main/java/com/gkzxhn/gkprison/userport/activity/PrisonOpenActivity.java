@@ -180,6 +180,9 @@ public class PrisonOpenActivity extends BaseActivity {
         return newses;
     }
 
+    /**
+     * 初始化轮播小圆点
+     */
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
@@ -192,11 +195,10 @@ public class PrisonOpenActivity extends BaseActivity {
             }
             // 指定点的大小
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    30, 30);
+                    getResources().getDimensionPixelSize(R.dimen.dot_radius), getResources().getDimensionPixelSize(R.dimen.dot_radius));
             // 间距
             layoutParams.setMargins(10, 0, 10, 0);
             dots_ll.addView(view, layoutParams);
-
             dotList.add(view);
         }
     }

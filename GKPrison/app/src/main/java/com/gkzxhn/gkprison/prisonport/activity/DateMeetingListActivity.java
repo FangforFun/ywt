@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -40,6 +41,8 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.melnykov.fab.FloatingActionButton;
+import com.melnykov.fab.ScrollDirectionListener;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.squareup.okhttp.Call;
@@ -83,6 +86,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private SharedPreferences sp;
     private CustomDate mDate;
     private TextView tv_no_list;
+    private FloatingActionButton fab_refresh;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -185,6 +189,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         tv_loading = (TextView) view.findViewById(R.id.tv_loading);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         tv_no_list = (TextView) view.findViewById(R.id.tv_no_list);
+        fab_refresh = (FloatingActionButton) view.findViewById(R.id.fab_refresh);
         return view;
     }
 
@@ -215,19 +220,51 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(mDate != null) {
-                    if((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))){
+                if (mDate != null) {
+                    if ((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))) {
                         Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
                         intent.putExtra("申请人", meetingInfoList.get(position).getName());
                         intent.putExtra("accid", meetingInfoList.get(position).getAccess_token());
                         intent.putExtra("image_url", meetingInfoList.get(position).getImage_url());
                         startActivity(intent);
                         showToastMsgShort(mDate.getDay() + "" + formatDate.substring(formatDate.length() - 3, formatDate.length()));
-                    }else {
+                    } else {
                         showToastMsgShort(mDate.getYear() + "-" + mDate.getMonth() + "-" + mDate.getDay() + "才能会见哦");
                     }
                     Log.i("时间", (mDate.getDay() + "") + "---" + (formatDate.substring(formatDate.length() - 3, formatDate.length())));
                 }
+            }
+        });
+        fab_refresh.attachToListView(lv_meeting_list, new ScrollDirectionListener() {
+            @Override
+            public void onScrollDown() {
+
+            }
+
+            @Override
+            public void onScrollUp() {
+
+            }
+        }, new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
+        fab_refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                scrollView.scrollTo(0,0);// 刷新时滑到顶端
+                long currentDate = System.currentTimeMillis();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                Date date = new Date(currentDate);
+                final String formatDate = format.format(date);
+                requestData(formatDate);// 请求数据
             }
         });
     }

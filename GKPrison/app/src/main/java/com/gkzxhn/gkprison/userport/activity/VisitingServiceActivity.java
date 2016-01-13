@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.Looper;
@@ -12,7 +14,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.apache.http.HttpResponse;
@@ -34,9 +38,10 @@ public class VisitingServiceActivity extends BaseActivity {
     private TextView tv_visit_request_id_num;
     private TextView tv_visit_request_phone;
     private Button bt_commit_request;
+    private AlertDialog dialog;
     private static final String MEETING_REQUEST_URL = "http://www.fushuile.com/api/v1/apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
-            "2016-01-05", "2016-01-06", "2016-01-07", "2016-01-08", "2016-01-09"
+            "2016-01-13", "2016-01-14", "2016-01-15", "2016-01-16", "2016-01-17"
     };
     private ArrayAdapter<String> adapter;
     private SharedPreferences sp;
@@ -45,7 +50,18 @@ public class VisitingServiceActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送探监申请成功
-                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
+//                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(VisitingServiceActivity.this);
+                    builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    dialog = builder.create();
+                    builder.show();
                     break;
                 case 1: // 发送探监申请失败
                     showToastMsgLong("提交失败，请稍后再试");
@@ -81,7 +97,7 @@ public class VisitingServiceActivity extends BaseActivity {
         }
         setTitle("申请探监");
         setBackVisibility(View.VISIBLE);
-        adapter = new ArrayAdapter<>(this,
+        adapter = new ArrayAdapter<>(DemoCache.getContext(),
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
         bs_visit_request_time.setAdapter(adapter);
         bt_commit_request.setOnClickListener(this);
@@ -110,40 +126,44 @@ public class VisitingServiceActivity extends BaseActivity {
      * 发送申请至服务器
      */
     private void sendRequestToServer() {
-        new Thread(){
-            @Override
-            public void run() {
-                String prisoner_number = sp.getString("prisoner_number", "4000002");
-                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":\"2\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"2\"}}";
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
-                Looper.prepare();
-                try {
-                    StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-                    HttpResponse httpResponse = httpClient.execute(post);
-                    if (httpResponse.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        msg.obj = result;
-                        msg.what = 0;
-                        handler.sendMessage(msg);
-                        Log.d("发送成功", result);
-                    }else {
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        msg.obj = result;
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                        Log.d("发送失败", result);
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
+                @Override
+                public void run() {
+                    String prisoner_number = sp.getString("prisoner_number", "4000002");
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"2\"}}";
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+                    Looper.prepare();
+                    try {
+                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
+                        entity.setContentType("application/json");
+                        post.setEntity(entity);
+                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
+                        HttpResponse httpResponse = httpClient.execute(post);
+                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            msg.obj = result;
+                            msg.what = 0;
+                            handler.sendMessage(msg);
+                            Log.d("发送成功", result);
+                        } else {
+                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                            Log.d("发送失败", result);
+                        }
+                    } catch (Exception e) {
+                        Log.d("发送异常", e.getMessage());
+                        handler.sendEmptyMessage(2);
+                    } finally {
+                        Looper.loop();
                     }
-                } catch (Exception e){
-                    Log.d("发送异常", e.getMessage());
-                    handler.sendEmptyMessage(2);
-                } finally {
-                    Looper.loop();
                 }
-            }
-        }.start();
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
     }
 }

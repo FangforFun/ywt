@@ -162,8 +162,7 @@
                     android:layout_height="45dp"
                     android:hint="点击选择"
                     android:textColor="@color/tv_mid"
-                    android:textSize="16sp"
-                    android:dropDownSelector="@drawable/item_selector" />
+                    android:textSize="16sp" />
             </LinearLayout>
         </LinearLayout>
 
