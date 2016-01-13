@@ -47,8 +47,7 @@ public class PaymentActivity extends BaseActivity {
     private String TradeNo;
     private String times;
     private String apply = "";
-    private String url = "http://10.93.1.10:3000/api/v1/orders";
-    private String token = "cb21c49928249f05ae8e4075c6018ff0";
+
     @Override
     protected View initView() {
         View view =View.inflate(this,R.layout.activity_payment,null);
