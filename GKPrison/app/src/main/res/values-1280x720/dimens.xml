@@ -2,6 +2,7 @@
 <resources>
     <dimen name="home_tab_width">40px</dimen>
     <dimen name="home_tab_height">55px</dimen>
+    <dimen name="visit_tab_height">40px</dimen>
     <dimen name="dot_radius">20px</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
@@ -11,11 +12,12 @@
     <dimen name="title_bar_height">48dp</dimen>
     <dimen name="text_size_20">20sp</dimen>
     <dimen name="small_title_size">16sp</dimen>
-    <dimen name="iv_back_height_width">22dp</dimen>
+    <dimen name="iv_back_height_width">18dp</dimen>
     <dimen name="login_choose_size">10dp</dimen>
     <dimen name="login_choose_width">32dp</dimen>
     <dimen name="three_grid_unit">24dp</dimen>
     <dimen name="one_and_a_half_grid_unit">12dp</dimen>
     <dimen name="tv_apply_meeting_call">17sp</dimen>
     <dimen name="tv_apply_meeting_call_notice">20sp</dimen>
+    <dimen name="msg_width">22dp</dimen>
 </resources>

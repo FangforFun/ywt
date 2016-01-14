@@ -1,12 +1,9 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -174,7 +171,7 @@ public class MainActivity extends BaseActivity {
                     case R.id.rb_bottom_guide_visit: // 远程会见
                         if (isRegisteredUser) {
                             home_viewPager.setCurrentItem(1);
-                            setTitle("远程会见");
+                            setTitle("探监");
                             setMenuVisibility(View.GONE);
                             setActionBarGone(View.VISIBLE);
                             setMessageVisibility(View.GONE);
@@ -185,7 +182,7 @@ public class MainActivity extends BaseActivity {
                     case R.id.rb_bottom_guide_canteen: // 小卖部
                         if (isRegisteredUser) {
                             home_viewPager.setCurrentItem(2);
-                            setTitle("小卖部");
+                            setTitle("电子商务");
                             setMenuVisibility(View.GONE);
                             setActionBarGone(View.GONE);
                             setMessageVisibility(View.GONE);
@@ -212,13 +209,13 @@ public class MainActivity extends BaseActivity {
                     setMessageVisibility(View.VISIBLE);
                 } else if (i == 1) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
-                    setTitle("远程会见");
+                    setTitle("探监");
                     setMenuVisibility(View.GONE);
                     setActionBarGone(View.VISIBLE);
                     setMessageVisibility(View.GONE);
                 } else if (i == 2) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
-                    setTitle("小卖部");
+                    setTitle("电子商务");
                     setMenuVisibility(View.GONE);
                     setActionBarGone(View.GONE);
                     setMessageVisibility(View.GONE);

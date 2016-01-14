@@ -2,6 +2,7 @@
 <resources>
     <dimen name="home_tab_width">70px</dimen>
     <dimen name="home_tab_height">85px</dimen>
+    <dimen name="visit_tab_height">70px</dimen>
     <dimen name="dot_radius">30px</dimen>
     <dimen name="av_small_size_width">128dp</dimen>
     <dimen name="av_small_size_height">196dp</dimen>
@@ -16,4 +17,5 @@
     <dimen name="one_and_a_half_grid_unit">24dp</dimen>
     <dimen name="tv_apply_meeting_call">30sp</dimen>
     <dimen name="tv_apply_meeting_call_notice">26sp</dimen>
+    <dimen name="msg_width">22dp</dimen>
 </resources>

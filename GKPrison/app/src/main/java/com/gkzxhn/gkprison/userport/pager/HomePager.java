@@ -206,7 +206,7 @@ public class HomePager extends BasePager {
                                         showToastMsgShort("注册后可用");
                                     }
                                     break;
-                                case 4:
+                                case 5:
                                     if (isRegisteredUser) {
                                         intent = new Intent(context, PrisonWardenActivity.class);
                                         context.startActivity(intent);
@@ -214,7 +214,7 @@ public class HomePager extends BasePager {
                                         showToastMsgShort("注册后使用");
                                     }
                                     break;
-                                case 5:
+                                case 4:
                                     if(isRegisteredUser){
                                         intent = new Intent(context, FamilyServiceActivity.class);
                                         context.startActivity(intent);

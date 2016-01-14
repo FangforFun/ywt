@@ -21,6 +21,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
@@ -124,14 +125,18 @@ public class PrisonOpenActivity extends BaseActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int i = newsList.get(position).getId();
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
-                intent.putExtra("id",i);
+                intent.putExtra("id", i);
                 startActivity(intent);
             }
         });
     }
 
+    /**
+     * 获取新闻
+     */
     private void getNews(){
-            new Thread(){
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
@@ -139,15 +144,15 @@ public class PrisonOpenActivity extends BaseActivity {
                     HttpGet Get = new HttpGet(url);
                     try {
                         HttpResponse response = httpClient.execute(Get);
-                        if (response.getStatusLine().getStatusCode()==200){
-                            String result = EntityUtils.toString(response.getEntity(),"UTF-8");
+                        if (response.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
                             msg.obj = "success";
                             Bundle bundle = new Bundle();
-                            bundle.putString("result",result);
+                            bundle.putString("result", result);
                             msg.setData(bundle);
                             msg.what = 1;
                             handler.sendMessage(msg);
-                        }else {
+                        } else {
                             msg.obj = "error";
                             msg.what = 1;
                             handler.sendMessage(msg);
@@ -157,11 +162,13 @@ public class PrisonOpenActivity extends BaseActivity {
                     }
                 }
             }.start();
-
+        }else {
+            showToastMsgShort("没有网络");
+        }
     }
 
     private List<News> analysisNews(String s){
-        List<News> newses = new ArrayList<News>();
+        List<News> newses = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);
             for (int i = 0;i < jsonArray.length();i++){

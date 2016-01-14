@@ -6,178 +6,418 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/bg"
         android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:paddingTop="10dp">
-
-        <TextView
-            android:id="@+id/tv_meeting_last_time"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="上次会见时间：2015年11月11日"
-            android:textSize="16sp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/tv_gray"
-            android:background="@color/white"/>
-
-        <TextView
-            android:id="@+id/tv_meeting_notes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="会见须知：\n1、根据本监狱规定，每位服刑人员每月只能接受两次及以内远程会见。\n2、根据监狱管理法，只有近亲属（父母、直系兄妹及其配偶等）才可申请远程会见，服刑人员在狱警监督下与亲属进行远程会见。\n3、根据安全要求，您的会见信息可能会被记录。\n4、每次远程会见时长不超过15分钟。\n5、重刑犯、表现不加的服刑人员不接受远程会见。\n6、本服务端每月只能提交3次远程申请，请勿无故提交，以免浪费机会。"
-            android:textSize="14sp"
-            android:textColor="@color/tv_gray"
-            android:background="@color/white"
-            android:padding="10dp"
-            android:lineSpacingExtra="5dp"
-            android:layout_below="@id/tv_meeting_last_time"/>
+        android:focusableInTouchMode="true">
 
         <LinearLayout
-            android:id="@+id/ll_meeting_request_info"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp"
-            android:layout_marginTop="10dp"
-            android:background="@color/white"
-            android:layout_below="@id/tv_meeting_notes">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/tv_gray"
-                    android:text="姓名："
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tv_meeting_request_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="叶惠美"
-                    android:textColor="@color/tv_mid"
-                    android:layout_marginLeft="3dp"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/tv_gray"
-                    android:text="与服刑人员关系："
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tv_meeting_request_relationship"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="母子"
-                    android:textColor="@color/tv_mid"
-                    android:layout_marginLeft="3dp"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/tv_gray"
-                    android:text="身份证号："
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tv_meeting_request_id_num"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="430482199404074444"
-                    android:textColor="@color/tv_mid"
-                    android:layout_marginLeft="3dp"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:paddingTop="2dp"
-                android:paddingBottom="2dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/tv_gray"
-                    android:text="电话号码："
-                    android:textSize="16sp"/>
-
-                <TextView
-                    android:id="@+id/tv_meeting_request_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="18888888888"
-                    android:textColor="@color/tv_mid"
-                    android:layout_marginLeft="3dp"
-                    android:textSize="16sp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="10dp"
-                android:layout_marginBottom="10dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/tv_gray"
-                    android:text="申请会见时间："
-                    android:layout_gravity="center_vertical"
-                    android:textSize="16sp"/>
-
-                <com.weiwangcn.betterspinner.library.BetterSpinner
-                    android:id="@+id/bs_meeting_request_time"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:hint="点击选择"
-                    android:textColor="@color/tv_mid"
-                    android:textSize="16sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/bt_commit_request"
+            android:id="@+id/ll_tab"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="20dp"
-            android:textColor="@color/white"
-            android:textSize="18sp"
-            android:text="申请会见"
-            android:layout_below="@id/ll_meeting_request_info"
-            android:background="@drawable/theme_bg_bt_selector"/>
+            android:orientation="horizontal"
+            android:background="@color/white">
+
+            <RadioGroup
+                android:id="@+id/rg_top_guide"
+                android:layout_width="match_parent"
+                android:layout_gravity="bottom"
+                android:background="@color/white"
+                android:layout_height="50dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="40dp"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/rb_top_guide_meeting"
+                    style="@style/main_tab_style"
+                    android:drawableLeft="@drawable/tab_remote_meeting_bg_selector"
+                    android:drawablePadding="5dp"
+                    android:gravity="center_vertical"
+                    android:textSize="18sp"
+                    android:text="远程探监"
+                    android:checked="true"/>
+
+                <RadioButton
+                    android:id="@+id/rb_top_guide_visit"
+                    style="@style/main_tab_style"
+                    android:drawableLeft="@drawable/tab_visit_bg_selector"
+                    android:drawablePadding="5dp"
+                    android:textSize="18sp"
+                    android:paddingLeft="20dp"
+                    android:gravity="center_vertical"
+                    android:text="实地探监" />
+            </RadioGroup>
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_centerHorizontal="true"
+            android:background="@color/et_hint"/>
+
+        <View
+            android:id="@+id/view_line_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/ll_tab"
+            android:background="@color/et_hint"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_meeting"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg"
+            android:layout_below="@id/view_line_horizontal">
+
+            <TextView
+                android:id="@+id/tv_meeting_last_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="上次会见时间：2015年11月11日"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:textColor="@color/tv_gray"
+                android:background="@color/white"/>
+
+            <TextView
+                android:id="@+id/tv_meeting_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/meeting_note"
+                android:textSize="14sp"
+                android:textColor="@color/tv_gray"
+                android:background="@color/white"
+                android:padding="10dp"
+                android:lineSpacingExtra="5dp"
+                android:layout_below="@id/tv_meeting_last_time"/>
+
+            <LinearLayout
+                android:id="@+id/ll_meeting_request_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:layout_below="@id/tv_meeting_notes">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="姓名："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_meeting_request_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="叶惠美"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="与服刑人员关系："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_meeting_request_relationship"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="母子"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="身份证号："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_meeting_request_id_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="430482199404074444"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="电话号码："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_meeting_request_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="18888888888"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="申请会见时间："
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"/>
+
+                    <com.weiwangcn.betterspinner.library.BetterSpinner
+                        android:id="@+id/bs_meeting_request_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:hint="点击选择"
+                        android:textColor="@color/tv_mid"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bt_commit_request"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="申请会见"
+                android:layout_below="@id/ll_meeting_request_info"
+                android:background="@drawable/theme_bg_bt_selector"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_visit"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/bg"
+            android:paddingBottom="10dp"
+            android:layout_below="@id/view_line_horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_visit_last_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="上次会见时间：2015年11月11日"
+                android:textSize="16sp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="10dp"
+                android:textColor="@color/tv_gray"
+                android:background="@color/white"/>
+
+            <TextView
+                android:id="@+id/tv_visit_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/tanjian_notice"
+                android:textSize="14sp"
+                android:padding="10dp"
+                android:textColor="@color/tv_gray"
+                android:background="@color/white"
+                android:layout_marginTop="5dp"
+                android:lineSpacingExtra="5dp"/>
+
+            <LinearLayout
+                android:id="@+id/ll_visit_request_info"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
+                android:paddingTop="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/white"
+                android:layout_below="@id/tv_visit_notes">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="姓名："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_visit_request_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="叶惠美"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="与服刑人员关系："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_visit_request_relationship"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="母子"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="身份证号："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_visit_request_id_num"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="430482199404074444"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="电话号码："
+                        android:textSize="16sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_visit_request_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="18888888888"
+                        android:textColor="@color/tv_mid"
+                        android:layout_marginLeft="3dp"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/tv_gray"
+                        android:text="申请探监时间："
+                        android:layout_gravity="center_vertical"
+                        android:textSize="16sp"/>
+
+                    <com.weiwangcn.betterspinner.library.BetterSpinner
+                        android:id="@+id/bs_visit_request_time"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:hint="点击选择"
+                        android:textColor="@color/tv_mid"
+                        android:textSize="16sp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/bt_commit_request_visit"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="20dp"
+                android:text="申请探监"
+                android:layout_below="@id/ll_visit_request_info"
+                android:background="@drawable/theme_bg_bt_selector"/>
+
+        </RelativeLayout>
     </RelativeLayout>
 </ScrollView>

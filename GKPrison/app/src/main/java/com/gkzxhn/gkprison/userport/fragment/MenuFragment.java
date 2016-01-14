@@ -1,9 +1,12 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,7 +32,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 /**
  * 左侧侧滑菜单fragment
  */
-public class MenuFragment extends BaseFragment {
+public class MenuFragment extends BaseFragment{
 
     private ListView lv_home_menu;
     private final String[] menu_options_tv = {"个人信息", "汇款记录", "购物记录", "设置"};
@@ -116,13 +119,28 @@ public class MenuFragment extends BaseFragment {
         bt_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, LoadingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.commit();
-                startActivity(intent);
-                NIMClient.getService(AuthService.class).logout();
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setMessage("确定退出当前账号?");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(context, LoadingActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.clear();
+                        editor.commit();
+                        startActivity(intent);
+                        NIMClient.getService(AuthService.class).logout();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

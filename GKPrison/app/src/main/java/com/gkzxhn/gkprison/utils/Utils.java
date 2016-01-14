@@ -21,6 +21,8 @@ import java.util.regex.Pattern;
  */
 public class Utils {
 
+    private static long lastClickTime;
+
     public static final boolean isChineseCharacter(String chineseStr) {
         char[] charArray = chineseStr.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
@@ -33,6 +35,19 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    /**
+     * 防止快速点击
+     * @return
+     */
+    public synchronized static boolean isFastClick(){
+        long time = System.currentTimeMillis();
+        if ( time - lastClickTime < 500) {
+            return true;
+        }
+        lastClickTime = time;
+        return false;
     }
 
     /**

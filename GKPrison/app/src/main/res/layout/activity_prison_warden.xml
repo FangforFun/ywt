@@ -19,12 +19,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@+id/rl_carousel">
+        android:layout_below="@id/rl_carousel">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs1"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="45dp"
             app:tabIndicatorColor="@color/theme"
             app:tabIndicatorHeight="3dp"
             app:tabBackground="@color/white"
@@ -35,4 +35,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="35dp"
+        android:layout_below="@id/rl_carousel"
+        android:background="@color/et_hint"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"/>
 </RelativeLayout>

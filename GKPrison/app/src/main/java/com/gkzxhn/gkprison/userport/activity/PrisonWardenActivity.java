@@ -66,7 +66,7 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         TabLayout tabLayout = (TabLayout)findViewById(R.id.tabs1);
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
-        tv_title.setText("监狱长信箱");
+        tv_title.setText("投诉建议");
         initDot();// 初始化轮播图底部小圆圈
         vp_carousel = new RollViewPager(this, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
@@ -97,7 +97,7 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
             }
             // 指定点的大小
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    30, 30);
+                    getResources().getDimensionPixelSize(R.dimen.dot_radius), getResources().getDimensionPixelSize(R.dimen.dot_radius));
             // 间距
             layoutParams.setMargins(10, 0, 10, 0);
             dots_ll.addView(view, layoutParams);
