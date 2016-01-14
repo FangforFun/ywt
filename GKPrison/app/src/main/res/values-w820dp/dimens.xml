@@ -2,6 +2,9 @@
     <!-- Example customization of dimensions originally defined in res/values/dimens.xml
          (such as screen margins) for screens with more than 820dp of available width. This
          would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively). -->
+    <dimen name="home_tab_width">70px</dimen>
+    <dimen name="home_tab_height">85px</dimen>
+    <dimen name="dot_radius">30px</dimen>
     <dimen name="activity_horizontal_margin">64dp</dimen>
     <dimen name="av_small_size_width">64dp</dimen>
     <dimen name="av_small_size_height">98dp</dimen>

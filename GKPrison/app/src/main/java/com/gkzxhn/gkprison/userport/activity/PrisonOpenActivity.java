@@ -55,7 +55,7 @@ public class PrisonOpenActivity extends BaseActivity {
     private String url = "";
     private SharedPreferences sp;
     private String token;
-    private List<News> newsList = new ArrayList<News>();
+    private List<News> newsList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -99,7 +99,7 @@ public class PrisonOpenActivity extends BaseActivity {
         initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD+"news?jail_id=1&access_token=" + token;
+        url = Constants.URL_HEAD + "news?jail_id=1&access_token=" + token;
         getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
@@ -180,6 +180,9 @@ public class PrisonOpenActivity extends BaseActivity {
         return newses;
     }
 
+    /**
+     * 初始化轮播小圆点
+     */
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
@@ -192,11 +195,10 @@ public class PrisonOpenActivity extends BaseActivity {
             }
             // 指定点的大小
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    30, 30);
+                    getResources().getDimensionPixelSize(R.dimen.dot_radius), getResources().getDimensionPixelSize(R.dimen.dot_radius));
             // 间距
             layoutParams.setMargins(10, 0, 10, 0);
             dots_ll.addView(view, layoutParams);
-
             dotList.add(view);
         }
     }

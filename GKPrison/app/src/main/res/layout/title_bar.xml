@@ -114,6 +114,23 @@
                     android:textSize="@dimen/small_title_size"
                     android:textColor="@android:color/white" />
             </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_message"
+                android:layout_width="@dimen/title_bar_height"
+                android:layout_height="@dimen/title_bar_height"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/img_selector"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_message"
+                    android:layout_width="@dimen/iv_back_height_width"
+                    android:layout_height="@dimen/iv_back_height_width"
+                    android:src="@drawable/messge"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"/>
+            </RelativeLayout>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 </RelativeLayout>

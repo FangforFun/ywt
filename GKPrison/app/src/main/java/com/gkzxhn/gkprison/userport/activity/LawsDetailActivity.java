@@ -44,8 +44,8 @@ public class LawsDetailActivity extends BaseActivity {
         });
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
-        webSettings.setBuiltInZoomControls(true);
-        webSettings.setSupportZoom(true);
+//        webSettings.setBuiltInZoomControls(true);
+//        webSettings.setSupportZoom(true);
     }
 
     @Override

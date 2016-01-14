@@ -1,6 +1,8 @@
 package com.gkzxhn.gkprison.userport.pager;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.apache.http.HttpResponse;
@@ -26,6 +29,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
+import java.lang.reflect.Field;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -39,9 +44,10 @@ public class RemoteMeetPager extends BasePager {
     private BetterSpinner bs_meeting_request_time;
     private Button bt_commit_request;
     private SharedPreferences sp;
+    private AlertDialog dialog;
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
-            "2016-01-09", "2016-01-10", "2016-01-11", "2016-01-12", "2016-01-13"
+            "2016-01-13", "2016-01-14", "2016-01-15", "2016-01-16", "2016-01-17"
     };
     private ArrayAdapter<String> adapter;
 
@@ -53,14 +59,27 @@ public class RemoteMeetPager extends BasePager {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送会见申请成功
-                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
-
+//                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setCancelable(false);
+                    dialog = builder.create();
+                    builder.show();
+                    bt_commit_request.setEnabled(true);
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");
+                    bt_commit_request.setEnabled(true);
                     break;
                 case 2:// 发送会见申请异常
                     showToastMsgLong("提交异常，请稍后再试");
+                    bt_commit_request.setEnabled(true);
                     break;
             }
         }
@@ -117,40 +136,45 @@ public class RemoteMeetPager extends BasePager {
      * 发送申请至服务器
      */
     private void sendRequestToServer() {
-        new Thread(){
-            @Override
-            public void run() {
-                String prisoner_number = sp.getString("prisoner_number", "4000002");
-                String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"1\"}}";
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
-                Looper.prepare();
-                try {
-                    StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-                    HttpResponse httpResponse = httpClient.execute(post);
-                    if (httpResponse.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        msg.obj = result;
-                        msg.what = 0;
-                        handler.sendMessage(msg);
-                        Log.d("发送成功", result);
-                    }else {
-                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                        msg.obj = result;
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                        Log.d("发送失败", result);
+        if(Utils.isNetworkAvailable()) {
+            bt_commit_request.setEnabled(false);
+            new Thread() {
+                @Override
+                public void run() {
+                    String prisoner_number = sp.getString("prisoner_number", "4000002");
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"1\"}}";
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+                    Looper.prepare();
+                    try {
+                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
+                        entity.setContentType("application/json");
+                        post.setEntity(entity);
+                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
+                        HttpResponse httpResponse = httpClient.execute(post);
+                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            msg.obj = result;
+                            msg.what = 0;
+                            handler.sendMessage(msg);
+                            Log.d("发送成功", result);
+                        } else {
+                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                            Log.d("发送失败", result);
+                        }
+                    } catch (Exception e) {
+                        Log.d("发送异常", e.getMessage());
+                        handler.sendEmptyMessage(2);
+                    } finally {
+                        Looper.loop();
                     }
-                } catch (Exception e){
-                    Log.d("发送异常", e.getMessage());
-                    handler.sendEmptyMessage(2);
-                } finally {
-                    Looper.loop();
                 }
-            }
-        }.start();
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
     }
 }

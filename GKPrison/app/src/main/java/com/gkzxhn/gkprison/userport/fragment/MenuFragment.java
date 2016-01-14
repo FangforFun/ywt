@@ -32,8 +32,8 @@ import com.netease.nimlib.sdk.auth.AuthService;
 public class MenuFragment extends BaseFragment {
 
     private ListView lv_home_menu;
-    private final String[] menu_options_tv = {"个人信息", "汇款记录", "购物记录", "系统消息", "设置"};
-    private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.system_msg, R.drawable.setting};
+    private final String[] menu_options_tv = {"个人信息", "汇款记录", "购物记录", "设置"};
+    private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.setting};
     private SharedPreferences sp;
     private boolean isRegisteredUser;
     private RelativeLayout rl_header_info;
@@ -95,10 +95,6 @@ public class MenuFragment extends BaseFragment {
                         }
                         break;
                     case 3:
-                        intent = new Intent(context, SystemMessageActivity.class);
-                        startActivity(intent);
-                        break;
-                    case 4:
                         intent = new Intent(context, SettingActivity.class);
                         startActivity(intent);
                         break;

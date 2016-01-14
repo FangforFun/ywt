@@ -33,6 +33,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 //    protected TextView tv_user_type;
     protected NiceSpinner ns_login_type;
     protected Toolbar tool_bar;
+    protected RelativeLayout rl_message;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,6 +51,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         rl_regist = (RelativeLayout)findViewById(R.id.rl_regist);
 //        tv_user_type = (TextView) findViewById(R.id.tv_user_type);
         ns_login_type = (NiceSpinner) findViewById(R.id.ns_login_type);
+        rl_message = (RelativeLayout) findViewById(R.id.rl_message);
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
         View view = initView();
         rl_content.addView(view);
@@ -117,6 +119,14 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected void setRegistVisiblity(int visiblity){
         rl_regist.setVisibility(visiblity);
+    }
+
+    /**
+     * 设置消息图标是否可见
+     * @param visibility
+     */
+    protected void setMessageVisibility(int visibility){
+        rl_message.setVisibility(visibility);
     }
 
     /**

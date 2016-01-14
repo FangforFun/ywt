@@ -1,8 +1,12 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +34,7 @@ import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -111,13 +116,13 @@ public class MainActivity extends BaseActivity {
         fl_drawer = (FrameLayout) view.findViewById(R.id.fl_drawer);
 //        tv_title_bar_title = (TextView) view.findViewById(R.id.tv_title_bar_title);
         Drawable[] drawables = rb_bottom_guide_home.getCompoundDrawables();
-        drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
+        drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
         rb_bottom_guide_home.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         Drawable[] drawables2 = rb_bottom_guide_visit.getCompoundDrawables();
-        drawables2[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
+        drawables2[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
         rb_bottom_guide_visit.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
         Drawable[] drawables3 = rb_bottom_guide_canteen.getCompoundDrawables();
-        drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), 70, 85);
+        drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
         rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
         return view;
     }
@@ -134,20 +139,9 @@ public class MainActivity extends BaseActivity {
         if(isRegisteredUser) {
             getCommodity();
         }
+        setMessageVisibility(View.VISIBLE);
         setSupportActionBar(tool_bar);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close){
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-//                showToastMsgShort("关闭");
-            }
-
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-//                showToastMsgShort("打开");
-            }
-        };
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         MenuFragment menuFragment = new MenuFragment();
@@ -175,6 +169,7 @@ public class MainActivity extends BaseActivity {
                         setTitle("首页");
                         setMenuVisibility(View.VISIBLE);
                         setActionBarGone(View.VISIBLE);
+                        setMessageVisibility(View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_visit: // 远程会见
                         if (isRegisteredUser) {
@@ -182,6 +177,7 @@ public class MainActivity extends BaseActivity {
                             setTitle("远程会见");
                             setMenuVisibility(View.GONE);
                             setActionBarGone(View.VISIBLE);
+                            setMessageVisibility(View.GONE);
                         } else {
                             showToastMsgShort("注册后可用");
                         }
@@ -192,6 +188,7 @@ public class MainActivity extends BaseActivity {
                             setTitle("小卖部");
                             setMenuVisibility(View.GONE);
                             setActionBarGone(View.GONE);
+                            setMessageVisibility(View.GONE);
                         } else {
                             showToastMsgShort("注册后可用");
                         }
@@ -212,16 +209,19 @@ public class MainActivity extends BaseActivity {
                     setTitle("首页");
                     setMenuVisibility(View.VISIBLE);
                     setActionBarGone(View.VISIBLE);
+                    setMessageVisibility(View.VISIBLE);
                 } else if (i == 1) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
                     setTitle("远程会见");
                     setMenuVisibility(View.GONE);
                     setActionBarGone(View.VISIBLE);
+                    setMessageVisibility(View.GONE);
                 } else if (i == 2) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
                     setTitle("小卖部");
                     setMenuVisibility(View.GONE);
                     setActionBarGone(View.GONE);
+                    setMessageVisibility(View.GONE);
                 }
             }
 
@@ -231,29 +231,59 @@ public class MainActivity extends BaseActivity {
             }
         });
         rl_home_menu.setOnClickListener(this);
+        rl_message.setOnClickListener(this);
     }
 
     /**
      * 获取用户信息
      */
     private void getUserInfo() {
-        new Thread(){
-            @Override
-            public void run() {
-                HttpUtils httpUtils = new HttpUtils();
-                httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
-                    @Override
-                    public void onSuccess(ResponseInfo<Object> responseInfo) {
-                        Log.i("请求成功", responseInfo.result.toString());
-                    }
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
+                @Override
+                public void run() {
+                    HttpUtils httpUtils = new HttpUtils();
+                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<Object> responseInfo) {
+                            Log.i("请求成功", responseInfo.result.toString());
+                            parseUserInfoResult(responseInfo.result.toString());
+                        }
 
-                    @Override
-                    public void onFailure(HttpException e, String s) {
-                        Log.i("请求失败", s + "---" + e.getMessage());
-                    }
-                });
+                        @Override
+                        public void onFailure(HttpException e, String s) {
+                            Log.i("请求失败", s + "---" + e.getMessage());
+                            showToastMsgShort("请求失败");
+                        }
+                    });
+                }
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
+    }
+
+    /**
+     * 解析用户和囚犯关系信息
+     */
+    private void parseUserInfoResult(String json) {
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            JSONArray jsonArray = jsonObject.getJSONArray("result");
+            for(int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("prison_term_started_at", jsonObject1.getString("prison_term_started_at"));
+                editor.putString("prison_term_ended_at", jsonObject1.getString("prison_term_ended_at"));
+                editor.putString("gender", jsonObject1.getString("gender"));
+                editor.putString("prisoner_name", jsonObject1.getString("name"));
+                editor.putInt("jail_id", jsonObject1.getInt("jail_id"));
+                editor.putString("prisoner_number", jsonObject1.getString("prisoner_number"));
+                editor.commit();
             }
-        }.start();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private class MyPagerAdapter extends PagerAdapter {
@@ -315,6 +345,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
+        Intent intent;
         switch (v.getId()){
             case R.id.rl_home_menu:
                 if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
@@ -323,43 +354,59 @@ public class MainActivity extends BaseActivity {
                     drawerLayout.openDrawer(Gravity.LEFT);
                 }
                 break;
+            case R.id.rl_message:
+                intent = new Intent(MainActivity.this, SystemMessageActivity.class);
+                startActivity(intent);
+                break;
         }
         super.onClick(v);
     }
 
     private void getCommodity(){
-        new Thread(){
-            @Override
-            public void run() {
-                Message msg = handler.obtainMessage();
-                HttpClient httpClient = new DefaultHttpClient();
-                String token = sp.getString("token", "");
-                HttpGet httpGet = new HttpGet(url + token);
-                try {
-                    HttpResponse response = httpClient.execute(httpGet);
-                    if (response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }else {
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
+                @Override
+                public void run() {
+                    Message msg = handler.obtainMessage();
+                    HttpClient httpClient = new DefaultHttpClient();
+                    String token = sp.getString("token", "");
+                    HttpGet httpGet = new HttpGet(url + token);
+                    try {
+                        HttpResponse response = httpClient.execute(httpGet);
+                        if (response.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result", result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        } else {
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                         msg.obj = "error";
                         msg.what = 1;
                         handler.sendMessage(msg);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-            }
-        }.start();
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
     }
 
 
+    /**
+     *
+     * @param s
+     * @return
+     */
     private List<Commodity> analysiscommodity(String s){
-        List<Commodity> commodities = new ArrayList<Commodity>();
+        List<Commodity> commodities = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);
             for (int i = 0;i < jsonArray.length();i++){

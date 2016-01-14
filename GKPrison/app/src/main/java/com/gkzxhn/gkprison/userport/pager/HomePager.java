@@ -49,9 +49,9 @@ public class HomePager extends BasePager {
 //    private TextView tv_home_news_title;
 //    private TextView tv_home_news_content;
     private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
-    private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.sms_press, R.drawable.family_service_press};
-    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.sms, R.drawable.family_service};
-    private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "探监服务", "监狱长信箱", "家属服务"};
+    private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.family_service_press, R.drawable.sms_press};
+    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.family_service, R.drawable.sms};
+    private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "工作动态", "家属服务", "投诉建议"};
     private final List<String> list_news_title = new ArrayList<>();
     private SharedPreferences sp;
     /**
@@ -125,7 +125,7 @@ public class HomePager extends BasePager {
             }
             // 指定点的大小
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    30, 30);
+                    context.getResources().getDimensionPixelSize(R.dimen.dot_radius), context.getResources().getDimensionPixelSize(R.dimen.dot_radius));
             // 间距
             layoutParams.setMargins(10, 0, 10, 0);
             dots_ll.addView(view, layoutParams);

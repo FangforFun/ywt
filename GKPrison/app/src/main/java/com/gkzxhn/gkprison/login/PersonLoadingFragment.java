@@ -233,7 +233,7 @@ public class PersonLoadingFragment extends BaseFragment {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }else {
-                    if(isNetworkAvailable()) {
+                    if(Utils.isNetworkAvailable()) {
                         btn_login.setEnabled(false);
                         btn_login.setClickable(false);
                         btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
@@ -352,7 +352,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         showToastMsgShort("请输入正确的用户名");
                         return;
                     } else {
-                        if (isNetworkAvailable()) {
+                        if (Utils.isNetworkAvailable()) {
                             final String phone_str = "{" +
                                     "    \"apply\":{" +
                                     "        \"phone\":" + "\"" + username + "\"" +
@@ -404,26 +404,6 @@ public class PersonLoadingFragment extends BaseFragment {
                 }
             }
         });
-    }
-
-    /**
-     * 判断是否有网
-     * @return
-     */
-    public boolean isNetworkAvailable(){
-        Context context = getActivity().getApplicationContext();
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-            if (info != null && info.isConnected()) {
-                // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    // 当前所连接的网络可用
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     @Override
