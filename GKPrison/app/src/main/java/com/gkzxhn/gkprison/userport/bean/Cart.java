@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.userport.bean;
 
+import java.util.List;
+
 /**
  * Created by admin on 2015/12/22.
  */
@@ -9,6 +11,24 @@ public class Cart {
     private String out_trade_no;
     private int finish;
     private String total_money;
+     List<Commodity> commodityList;
+    private int count;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public List<Commodity> getCommodityList() {
+        return commodityList;
+    }
+
+    public void setCommodityList(List<Commodity> commodityList) {
+        this.commodityList = commodityList;
+    }
 
     public String getTotal_money() {
         return total_money;

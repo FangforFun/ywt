@@ -63,6 +63,12 @@
             android:layout_height="1dp"
             android:background="@color/tv_gray" />
 
+        <com.gkzxhn.gkprison.userport.view.CustomListView
+            android:id="@+id/lv_recode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></com.gkzxhn.gkprison.userport.view.CustomListView>
+
+<!--
         <TextView
             android:id="@+id/tv_shopping_desciption"
             android:layout_width="match_parent"
@@ -101,7 +107,8 @@
             android:layout_gravity="right"
             android:textColor="@color/tv_bg"
             android:text="¥ 29.90 × 1"/>
-            
+
+-->
         <View
             android:id="@+id/fenge"
             android:layout_width="match_parent"
@@ -120,7 +127,19 @@
                 android:id="@+id/tv_shopping_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="共 2 件商品"
+                android:text="共"
+                android:textColor="@color/tv_bg"
+                android:textSize="14sp"/>
+            <TextView
+                android:id="@+id/tv_qty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/tv_bg"
+                android:textSize="14sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="件商品"
                 android:textColor="@color/tv_bg"
                 android:textSize="14sp"/>
 
@@ -132,6 +151,13 @@
                 android:layout_marginLeft="20dp"
                 android:textColor="@color/tv_bg"
                 android:textSize="14sp"/>
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="¥"
+                android:textSize="14sp"
+                android:textColor="@color/tv_bg"/>
 
             <TextView
                 android:id="@+id/tvshopping_money"
@@ -146,7 +172,7 @@
                 android:layout_height="wrap_content"
                 android:text="（运费:¥2.00）"
                 android:textColor="@color/tv_bg"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:layout_marginLeft="5dp"/>
         </LinearLayout>
 

@@ -1,15 +1,30 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.adapter.CommidtyAdapter;
+import com.gkzxhn.gkprison.userport.adapter.ShoppingAdapter;
+import com.gkzxhn.gkprison.userport.bean.Cart;
+import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
+import com.google.gson.Gson;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,75 +32,65 @@ import java.util.List;
  * 购物记录
  */
 public class ShoppingRecoderActivity extends BaseActivity {
+    private TextView nothing;
     private ListView lv_shoppingrecoder;
     private ShoppingAdapter adapter;
-    private List<String> money_count = new ArrayList<String>(){
-        {
-            add("¥ 59.80");
-            add("¥ 59.80");
-        }
-    };
-    private List<String> recodertime = new ArrayList<String>(){
-        {
-            add("2015年5月4日");
-            add("2015年6月3日");
-        }
-    };
+    private List<Cart> carts = new ArrayList<Cart>();
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+
+
+
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_shopping_recoder,null);
         lv_shoppingrecoder = (ListView)view.findViewById(R.id.lv_shopping_recode);
+        nothing = (TextView)view.findViewById(R.id.tv_nothing);
         return view;
     }
 
-    @Override
+   @Override
     protected void initData() {
         setTitle("购物记录");
         setBackVisibility(View.VISIBLE);
-        adapter = new ShoppingAdapter();
-        lv_shoppingrecoder.setAdapter(adapter);
+        String sql = "select * from Cart where finish = 1";
+        Cursor cursor = db.rawQuery(sql,null);
+        while (cursor.moveToNext()){
+            Cart cart = new Cart();
+            cart.setId(cursor.getInt(cursor.getColumnIndex("id")));
+            cart.setCount(cursor.getInt(cursor.getColumnIndex("count")));
+            cart.setTime(cursor.getString(cursor.getColumnIndex("time")));
+            cart.setOut_trade_no(cursor.getString(cursor.getColumnIndex("out_trade_no")));
+            cart.setFinish(cursor.getInt(cursor.getColumnIndex("finish")));
+            cart.setTotal_money(cursor.getString(cursor.getColumnIndex("total_money")));
+            carts.add(cart);
+        }
+
+       if (cursor.getCount() == 0){
+            nothing.setVisibility(View.VISIBLE);
+       }else {
+           nothing.setVisibility(View.GONE);
+       }
+
+       for (int i = 0; i < carts.size();i++){
+           List<Commodity> commodities = new ArrayList<Commodity>();
+           int cart_id = carts.get(i).getId();
+           String sql1 = "select line_items.id,line_items.qty,Items.price,Cart.time,Items.description from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.finish = 1 and line_items.cart_id = "+cart_id+"  ";
+           Cursor cursor1 = db.rawQuery(sql1, null);
+           Log.d("消费记录",cursor1.getCount()+"");
+           while (cursor1.moveToNext()){
+               Commodity commodity = new Commodity();
+               commodity.setDescription(cursor1.getString(cursor1.getColumnIndex("description")));
+               commodity.setPrice(cursor1.getString(cursor1.getColumnIndex("price")));
+               commodity.setQty(cursor1.getInt(cursor1.getColumnIndex("qty")));
+               commodities.add(commodity);
+           }
+           carts.get(i).setCommodityList(commodities);
+       }
+
+       adapter = new ShoppingAdapter(this,carts);
+       lv_shoppingrecoder.setAdapter(adapter);
+
     }
-    private class ShoppingAdapter extends BaseAdapter{
 
-        @Override
-        public int getCount() {
-            return money_count.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-          ViewHoler viewHoler;
-            if (convertView == null){
-                convertView = View.inflate(getApplicationContext(),R.layout.shoppingrecode_item,null);
-                viewHoler = new ViewHoler();
-                viewHoler.tv_paytime = (TextView)convertView.findViewById(R.id.tv_paytime);
-                viewHoler.tvshopping_money = (TextView)convertView.findViewById(R.id.tvshopping_money);
-                viewHoler.tv_alipay_trading_num = (TextView) convertView.findViewById(R.id.tv_alipay_trading_num);
-                viewHoler.tv_transact_state = (TextView) convertView.findViewById(R.id.tv_transact_state);
-                convertView.setTag(viewHoler);
-            }else {
-                viewHoler = (ViewHoler)convertView.getTag();
-            }
-            viewHoler.tv_paytime.setText(recodertime.get(position));
-            viewHoler.tvshopping_money.setText(money_count.get(position));
-            return convertView;
-        }
-        private class ViewHoler{
-            TextView tv_alipay_trading_num;
-            TextView tvshopping_money;
-            TextView tv_paytime;
-            TextView tv_transact_state;
-        }
-    }
 }
