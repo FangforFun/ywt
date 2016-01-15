@@ -8,11 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,13 +28,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
@@ -48,16 +46,6 @@ import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.ImageTools;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
-
-
-import junit.framework.Test;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -73,7 +61,6 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -83,10 +70,8 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -97,7 +82,6 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends BaseActivity {
 
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
-//    private String url = "http://www.fushuile.com/api/v1/apply";
     private String url = Constants.URL_HEAD + "apply";
     private String url1 = Constants.URL_HEAD+"verify_code";
     private EditText et_name;// 姓名
@@ -107,6 +91,10 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_prisoner_number;// 服刑人员囚号
     private Gson gson;
     private AutoCompleteTextView actv_prison_choose;//监狱选择
+    private RadioGroup rg_sex;// 性别
+    private RadioButton rb_male;
+    private RadioButton rb_female;
+    private ImageView iv_user_icon;// 头像
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
     private ArrayAdapter<String> aAdapter; // actv_prison_choose适配器
@@ -115,12 +103,12 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
+    private ActionProcessButton apb_register;// 注册进度按钮
     private TextView tv_read;// 我已阅读协议
     private CheckBox cb_agree_disagree;// 我已阅读复选框
     private ImageView iv_add_photo_01;
     private ImageView iv_add_photo_02;
     private TextView tv_software_protocol;// 蓝色软件协议
-    private LinearLayout rl_register;// 注册进度布局
     private String name = "";
     private String apply = "";
     private int jail_id = 1;
@@ -138,9 +126,11 @@ public class RegisterActivity extends BaseActivity {
     private static final int SCALE = 5;// 照片缩小比例
     private String uploadFile1 = "";
     private String uploadFile2 = "";
+    private String uploadFile3 = "";
     private int imageclick = 0;
     private Bitmap newBitmap1;
     private Bitmap newBitmap2;
+    private Bitmap newBitmap3;
     private List<Uuid_images_attributes> uuid_images = new ArrayList<>();
     private int countdown = 60;
     private boolean isRunning = false;
@@ -150,14 +140,13 @@ public class RegisterActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送验证码请求成功
-//                    showToastMsgShort("发送验证码成功，请注意查看短信");
                     String result = (String) msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(result);
-                        int error = jsonObject.getInt("error");
-                        if(error == 400){
+                        int code = jsonObject.getInt("code");
+                        if(code == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
-                        }else if(error == 0){
+                        }else if(code == 200){
                             showToastMsgShort("已发送");
                         }
                     } catch (JSONException e) {
@@ -166,33 +155,47 @@ public class RegisterActivity extends BaseActivity {
                     break;
                 case 1: // 发送验证码请求失败
                     showToastMsgShort("验证码请求失败，请稍后再试");
+                    apb_register.setEnabled(true);
+                    apb_register.setClickable(true);
+                    apb_register.setProgress(0);
+                    apb_register.setText("注册");
                     break;
                 case 2: // 发送验证码请求异常
                     showToastMsgShort("验证码请求异常，请稍后再试");
+                    apb_register.setEnabled(true);
+                    apb_register.setClickable(true);
+                    apb_register.setProgress(0);
+                    apb_register.setText("注册");
                     break;
                 case 3:
                     String code = (String)msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(code);
-                        int error = jsonObject.getInt("error");
-                        if (error == 0){
+                        int back_code = jsonObject.getInt("code");
+                        if (back_code == 200){
                             sendRegisterMessge();
-                        }else if (error == 404){
+                        }else if (back_code == 404){
                             showToastMsgShort("验证码错误");
+                            apb_register.setEnabled(true);
+                            apb_register.setClickable(true);
+                            apb_register.setProgress(0);
+                            apb_register.setText("注册");
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        apb_register.setEnabled(true);
+                        apb_register.setClickable(true);
+                        apb_register.setProgress(0);
+                        apb_register.setText("注册");
                     }
                     break;
-
-
                 case 4: // 发送注册信息至服务器请求成功
                     String register_result = (String) msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(register_result);
-                        int error = jsonObject.getInt("error");
-                        Log.i("呵呵呵呵", error + "");
-                        if(error == 0){
+                        int register_back_code = jsonObject.getInt("code");
+                        Log.i("呵呵呵呵", register_back_code + "");
+                        if(register_back_code == 200){
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                             builder.setCancelable(false);
                             View view = View.inflate(RegisterActivity.this, R.layout.register_commit_success_dialog, null);
@@ -205,11 +208,11 @@ public class RegisterActivity extends BaseActivity {
                             SharedPreferences.Editor editor = sp.edit();
                             editor.putString("prisoner_number", prisoner_number);
                             editor.commit();
-                        }else if(error == 404){
+                        }else if(register_back_code == 404){
                             showToastMsgShort("验证码错误");
-                        } else if(error == 500){
+                        } else if(register_back_code == 500){
                             showToastMsgShort("注册失败");
-                        }else if(error == 501){
+                        }else if(register_back_code == 501){
                             showToastMsgShort("已注册用户");
                         }else {
                             showToastMsgShort("注册失败");
@@ -217,34 +220,34 @@ public class RegisterActivity extends BaseActivity {
                     } catch (JSONException e) {
                         e.printStackTrace();
                         showToastMsgShort("异常");
-                    }finally {
-                        rl_register.setVisibility(View.GONE);
-                        bt_register.setEnabled(true);
+                    } finally {
+                        apb_register.setEnabled(true);
+                        apb_register.setClickable(true);
+                        apb_register.setProgress(0);
+                        apb_register.setText("注册");
                     }
                     break;
-
                 case 5:// 发送注册信息至服务器请求失败
                     showToastMsgShort("注册请求失败，请稍后再试");
-                    rl_register.setVisibility(View.GONE);
-                    bt_register.setEnabled(true);
+                    apb_register.setEnabled(true);
+                    apb_register.setClickable(true);
+                    apb_register.setProgress(0);
+                    apb_register.setText("注册");
                     break;
-
                 case 6:// 发送注册信息至服务器请求异常
                     showToastMsgShort("注册请求异常，请稍后再试");
-                    rl_register.setVisibility(View.GONE);
-                    bt_register.setEnabled(true);
+                    apb_register.setEnabled(true);
+                    apb_register.setClickable(true);
+                    apb_register.setProgress(0);
+                    apb_register.setText("注册");
                     break;
-
             }
-
         }
-
     };
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_register, null);
-      //  bs_prison_choose = (BetterSpinner) view.findViewById(R.id.bs_prison_choose);
         et_name = (EditText) view.findViewById(R.id.et_name);
         et_ic_card = (EditText) view.findViewById(R.id.et_ic_card);
         et_phone_num = (EditText) view.findViewById(R.id.et_phone_num);
@@ -261,7 +264,11 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
         iv_add_photo_01.setTag(1);
         iv_add_photo_02.setTag(2);
-        rl_register = (LinearLayout) view.findViewById(R.id.rl_register);
+        apb_register = (ActionProcessButton) view.findViewById(R.id.apb_register);
+        rg_sex = (RadioGroup) view.findViewById(R.id.rg_sex);
+        rb_male = (RadioButton) view.findViewById(R.id.rb_male);
+        rb_female = (RadioButton) view.findViewById(R.id.rb_female);
+        iv_user_icon = (ImageView) view.findViewById(R.id.iv_user_icon);
         return view;
     }
 
@@ -276,18 +283,20 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    bt_register.setEnabled(true);
-                    bt_register.setBackground(getResources().getDrawable(R.drawable.theme_bg_bt_selector));
+                    bt_register.setVisibility(View.GONE);
+                    apb_register.setVisibility(View.VISIBLE);
                 } else {
-                    bt_register.setEnabled(false);
-                    bt_register.setBackground(getResources().getDrawable(R.drawable.gray_bg_bt_selector));
+                    bt_register.setVisibility(View.VISIBLE);
+                    apb_register.setVisibility(View.GONE);
                 }
             }
         });
+        apb_register.setOnClickListener(this);
         bt_register.setOnClickListener(this);
         iv_add_photo_01.setOnClickListener(this);
         iv_add_photo_02.setOnClickListener(this);
         bt_send_identifying_code.setOnClickListener(this);
+        iv_user_icon.setOnClickListener(this);
         prison_map = new HashMap<>();
         actv_prison_choose.setThreshold(1);
         actv_prison_choose.addTextChangedListener(new TextWatcher() {
@@ -326,48 +335,29 @@ public class RegisterActivity extends BaseActivity {
             String newText = key[0];
             newText = newText.trim();
             newText = newText.replace(" ", "+");
-            try{
-                HttpClient hClient = new DefaultHttpClient();
-                HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
-                ResponseHandler<String> rHandler = new BasicResponseHandler();
-                data = hClient.execute(hGet,rHandler);
-                suggest = new ArrayList<>();
-                prison_map.clear();
-                JSONObject jsonObject = new JSONObject(data);
-                JSONArray jArray = jsonObject.getJSONArray("jails");
-                for(int i = 0; i < jArray.length(); i++){
-                    JSONObject jsonObject1 = jArray.getJSONObject(i);
-                    String suggestKey = jsonObject1.getString("title");
-                    int id = jsonObject1.getInt("id");
-                    suggest.add(suggestKey);
-                    prison_map.put(suggestKey, id);
+            if(Utils.isNetworkAvailable()) {
+                try {
+                    HttpClient hClient = new DefaultHttpClient();
+                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
+                    ResponseHandler<String> rHandler = new BasicResponseHandler();
+                    data = hClient.execute(hGet, rHandler);
+                    suggest = new ArrayList<>();
+                    prison_map.clear();
+                    JSONObject jsonObject = new JSONObject(data);
+                    JSONArray jArray = jsonObject.getJSONArray("jails");
+                    for (int i = 0; i < jArray.length(); i++) {
+                        JSONObject jsonObject1 = jArray.getJSONObject(i);
+                        String suggestKey = jsonObject1.getString("title");
+                        int id = jsonObject1.getInt("id");
+                        suggest.add(suggestKey);
+                        prison_map.put(suggestKey, id);
+                    }
+                } catch (Exception e) {
+                    Log.w("Error", e.getMessage());
                 }
-            }catch(Exception e){
-                Log.w("Error", e.getMessage());
             }
             return null;
         }
-    }
-
-
-    /**
-     * 判断是否有网
-     * @return
-     */
-    public boolean isNetworkAvailable(){
-        Context context = getApplicationContext();
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
-        if (connectivityManager != null) {
-            NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-            if (info != null && info.isConnected()) {
-                // 当前网络是连接的
-                if (info.getState() == NetworkInfo.State.CONNECTED) {
-                    // 当前所连接的网络可用
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**
@@ -392,22 +382,29 @@ public class RegisterActivity extends BaseActivity {
                     uuid_images_attributes.setImage_data(tu[i]);
                     uuid_images.add(uuid_images_attributes);
                 }
+                ByteArrayOutputStream bao3 = new ByteArrayOutputStream();
+                newBitmap3.compress(Bitmap.CompressFormat.PNG, 100, bao3);
+                byte[] ba3 = bao3.toByteArray();
+                String tu3 = Base64.encode(ba3);
+                Log.i("tu3", tu3);
+                Uuid_images_attributes user_icon = new Uuid_images_attributes();
+                user_icon.setImage_data(tu3);
+
                 Register register = new Register();
                 register.setName(name);
                 register.setUuid(ic_card);
-
+                register.setPhone(phone_num);
+                register.setPhoto(tu3);
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
-//                register.setPrison(prison_chooes);
-
+                register.setGender(rg_sex.getCheckedRadioButtonId() == R.id.rb_male ? "男" : "女");
                 register.setJail_id(1);
-//                Log.i("注册监狱id", prison_map.get(prison_chooes) + "");
                 register.setType_id(3);
                 register.setUuid_images_attributes(uuid_images);
 
                 gson = new Gson();
                 String str = gson.toJson(register);
-                apply = "{\"apply\":"+str+"}";
+                apply = "{\"apply\":" + str + "}";
                 Log.d("注册信息",apply);
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url);
@@ -437,14 +434,17 @@ public class RegisterActivity extends BaseActivity {
                 }
             }
         }.start();
-
     }
+
     /**
      * 发送手机号码和验证码
      */
     private void sendRegisterToServer() {
-        rl_register.setVisibility(View.VISIBLE);
-        bt_register.setEnabled(false);
+        apb_register.setEnabled(false);
+        apb_register.setClickable(false);
+        apb_register.setMode(ActionProcessButton.Mode.ENDLESS);
+        apb_register.setProgress(1);
+        apb_register.setText("正在注册...");
         new Thread(){
             @Override
             public void run() {
@@ -460,20 +460,28 @@ public class RegisterActivity extends BaseActivity {
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode()==200){
                         String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.d("测试注册码",result);
+                        Log.i("注册验证码", result);
                         msg.obj = result;
                         msg.what = 3;
                         handler.sendMessage(msg);
+                    }else {
+                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                        Log.i("注册验证码", result);
+                        handler.sendEmptyMessage(1);
                     }
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
+                    handler.sendEmptyMessage(2);
                 } catch (ClientProtocolException e) {
                     e.printStackTrace();
+                    handler.sendEmptyMessage(2);
                 } catch (IOException e) {
                     e.printStackTrace();
+                    handler.sendEmptyMessage(2);
+                } finally {
+                    Looper.loop();
                 }
             }
-
         }.start();
     }
 
@@ -481,7 +489,7 @@ public class RegisterActivity extends BaseActivity {
     public void onClick(View v) {
         super.onClick(v);
         switch (v.getId()){
-            case R.id.bt_register:
+            case R.id.apb_register:
                 name = et_name.getText().toString().trim();
                 ic_card = et_ic_card.getText().toString().trim().toLowerCase();
                 phone_num = et_phone_num.getText().toString().trim();
@@ -504,11 +512,16 @@ public class RegisterActivity extends BaseActivity {
                         return;
                     }
                 }
+                // 判断是否上传头像
+                if(newBitmap3 == null){
+                    showToastMsgShort("请选择头像");
+                    return;
+                }
                 // 判断身份证号是否合法
                 if(TextUtils.isEmpty(ic_card)){
                     showToastMsgShort("身份证号为空");
                     return;
-                }else{
+                }else {
                     try {
                         if(!Utils.IDCardValidate(ic_card).equals("")){
                             showToastMsgShort("身份证号不合法");
@@ -568,7 +581,7 @@ public class RegisterActivity extends BaseActivity {
                     showToastMsgShort("请上传身份证正反面照");
                     return;
                 }
-                if(isNetworkAvailable()) {
+                if(Utils.isNetworkAvailable()) {
                     sendRegisterToServer(); // 发送注册信息至服务器
                 }else {
                     showToastMsgShort("没有网络");
@@ -608,12 +621,16 @@ public class RegisterActivity extends BaseActivity {
                 });
                 break;
             case R.id.iv_add_photo_01:
-                showPhotoPicker(this);
+                showPhotoPicker(this, true);
                 imageclick = 1;
                 break;
             case R.id.iv_add_photo_02:
-                showPhotoPicker(this);
+                showPhotoPicker(this, true);
                 imageclick = 2;
+                break;
+            case R.id.iv_user_icon:
+                showPhotoPicker(this, false);
+                imageclick = -1;
                 break;
             case R.id.tv_read:
                 if(cb_agree_disagree.isChecked()){
@@ -633,7 +650,7 @@ public class RegisterActivity extends BaseActivity {
                         showToastMsgShort("请输入正确的手机号码");
                         return;
                     }else {
-                        if(isNetworkAvailable()) {
+                        if(Utils.isNetworkAvailable()) {
                             final String phone_str = "{" +
                                     "    \"apply\":{" +
                                     "        \"phone\":" + "\"" + phone_num + "\"" +
@@ -695,6 +712,9 @@ public class RegisterActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 发送验证码倒计时任务
+     */
     private Runnable identifying_Code_Task = new Runnable() {
         @Override
         public void run() {
@@ -729,34 +749,55 @@ public class RegisterActivity extends BaseActivity {
      *
      * @param context
      */
-    private void showPhotoPicker(Context context) {
+    private void showPhotoPicker(Context context, boolean isTwo) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("图片来源:");
         builder.setNegativeButton("取消", null);
-        builder.setItems(new String[]{"拍照", "相册"},
-                new DialogInterface.OnClickListener() {
+        if(isTwo) {
+            builder.setItems(new String[]{"拍照", "相册"},
+                    new DialogInterface.OnClickListener() {
 
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case TAKE_PHOTO:
-                                Intent openCameraIntent = new Intent(
-                                        MediaStore.ACTION_IMAGE_CAPTURE);
-                                Uri imageUri = Uri.fromFile(new File(Environment
-                                        .getExternalStorageDirectory(), "image.jpg"));
-                                // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
-                                openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                startActivityForResult(openCameraIntent, TAKE_PHOTO);
-                                break;
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case TAKE_PHOTO:
+                                    Intent openCameraIntent = new Intent(
+                                            MediaStore.ACTION_IMAGE_CAPTURE);
+                                    Uri imageUri = Uri.fromFile(new File(Environment
+                                            .getExternalStorageDirectory(), "image.jpg"));
+                                    // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                                    openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                    startActivityForResult(openCameraIntent, TAKE_PHOTO);
+                                    break;
 
-                            case CHOOSE_PHOTO:
-                                Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                                openAlbumIntent.setType("image/*");
-                                startActivityForResult(openAlbumIntent, CHOOSE_PHOTO);
-                                break;
+                                case CHOOSE_PHOTO:
+                                    Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                                    openAlbumIntent.setType("image/*");
+                                    startActivityForResult(openAlbumIntent, CHOOSE_PHOTO);
+                                    break;
+                            }
                         }
-                    }
-                });
+                    });
+        }else {
+            builder.setItems(new String[]{"拍照"},
+                    new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case TAKE_PHOTO:
+                                    Intent openCameraIntent = new Intent(
+                                            MediaStore.ACTION_IMAGE_CAPTURE);
+                                    Uri imageUri = Uri.fromFile(new File(Environment
+                                            .getExternalStorageDirectory(), "image.jpg"));
+                                    // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                                    openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                                    startActivityForResult(openCameraIntent, TAKE_PHOTO);
+                                    break;
+                            }
+                        }
+                    });
+        }
         builder.create().show();
     }
 
@@ -803,6 +844,24 @@ public class RegisterActivity extends BaseActivity {
                                 .getAbsolutePath()
                                 + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
                             Log.d("MainActivity",uploadFile2);
+                    }else if(imageclick == -1){
+                        // 将保存在本地的图片取出并缩小后显示在界面上
+                        Bitmap bitmap = BitmapFactory.decodeFile(Environment
+                                .getExternalStorageDirectory() + "/image.jpg");
+                        newBitmap3 = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
+                                / SCALE, bitmap.getHeight() / SCALE);
+                        // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
+                        bitmap.recycle();
+                        iv_user_icon.setImageBitmap(newBitmap3);
+                        ImageTools.savePhotoToSDCard(newBitmap3, Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera", String.valueOf(System.currentTimeMillis()));
+                        uploadFile3 = Environment
+                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+                                .getAbsolutePath()
+                                + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
+                        Log.d("MainActivity",uploadFile3);
                     }
                      break;
                 case CHOOSE_PHOTO:
@@ -837,7 +896,17 @@ public class RegisterActivity extends BaseActivity {
                                         .getAbsolutePath()
                                         + "/Camera/" + "emptyphoto.png";
                             }
-
+//                            else if(imageclick == -1){
+//                                newBitmap3 = ImageTools.zoomBitmap(photo, photo.getWidth()
+//                                        / SCALE, photo.getHeight() / SCALE);
+//                                // 释放原始图片占用的内存，防止out of memory异常发生
+//                                photo.recycle();
+//                                iv_user_icon.setImageBitmap(newBitmap3);
+//                                uploadFile3 = Environment
+//                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
+//                                        .getAbsolutePath()
+//                                        + "/Camera/" + "emptyphoto.png";
+//                            }
                         }
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();

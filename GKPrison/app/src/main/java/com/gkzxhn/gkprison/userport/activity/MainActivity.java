@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -24,6 +26,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -39,6 +42,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthService;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -129,12 +133,15 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         StatusCode statusCode = NIMClient.getStatus();
         showToastMsgShort(statusCode.toString());
-        Log.i("自动登录...", statusCode.toString());
+        Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
-        getUserInfo();
+        getUserInfo();// 获取当前登录用户的信息
         if(isRegisteredUser) {
-            getCommodity();
+            getCommodity();// 获取商品
+        }
+        if(statusCode == StatusCode.KICKOUT){
+            showKickoutDialog();// 其他设备登录
         }
         setMessageVisibility(View.VISIBLE);
         setSupportActionBar(tool_bar);
@@ -142,7 +149,6 @@ public class MainActivity extends BaseActivity {
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
         MenuFragment menuFragment = new MenuFragment();
-        // 拿当前fragment去替换左侧侧拉栏目的帧布局内容
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_drawer, menuFragment, "MENU").commit();
         pagerList = new ArrayList<>();
@@ -229,6 +235,41 @@ public class MainActivity extends BaseActivity {
         });
         rl_home_menu.setOnClickListener(this);
         rl_message.setOnClickListener(this);
+    }
+
+    /**
+     * 云信id在其他设备登录
+     */
+    private void showKickoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("账号下线提示");
+        builder.setCancelable(false);
+        builder.setMessage("您的账号" + sp.getString("token", "") + "在其他设备登录，点击重新登录。");
+        builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.clear();
+                editor.commit();
+                startActivity(intent);
+                NIMClient.getService(AuthService.class).logout();
+            }
+        });
+//        builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                SharedPreferences.Editor editor = sp.edit();
+//                editor.clear();
+//                editor.commit();
+//                NIMClient.getService(AuthService.class).logout();
+////                System.exit(0);
+//                android.os.Process.killProcess(android.os.Process.myPid());
+//            }
+//        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     /**
