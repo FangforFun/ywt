@@ -234,7 +234,6 @@ public class AllClassificationFragment extends BaseFragment {
         TextView  tv_description;
         TextView tv_title;
         TextView  tv_money;
-        ImageView imageView_shopping;
         RelativeLayout rl_reduce;
         RelativeLayout rl_add;
         TextView tv_num;

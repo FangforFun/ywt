@@ -244,7 +244,6 @@ public class RegisterActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_register, null);
-      //  bs_prison_choose = (BetterSpinner) view.findViewById(R.id.bs_prison_choose);
         et_name = (EditText) view.findViewById(R.id.et_name);
         et_ic_card = (EditText) view.findViewById(R.id.et_ic_card);
         et_phone_num = (EditText) view.findViewById(R.id.et_phone_num);

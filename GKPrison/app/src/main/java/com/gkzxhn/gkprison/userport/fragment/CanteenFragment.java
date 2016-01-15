@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.AA;
@@ -110,7 +111,7 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-    private String url = "http://www.fushuile.com/api/v1/orders?jail_id=1&access_token=";
+    private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -183,11 +184,6 @@ public class CanteenFragment extends BaseFragment {
         }
         data = new Bundle();
         data.putString("times",times);
-     //   allclass = new AllClassificationFragment();
-       // allclass.setArguments(data);
-        //((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-
-        // showFragment(1);
         View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
         sp_allclass.setEnabled(true);
@@ -199,8 +195,7 @@ public class CanteenFragment extends BaseFragment {
         sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // Toast.makeText(context," position=" +  position +  " id="  + id,Toast.LENGTH_SHORT).show();
-                switch (position) {
+                 switch (position) {
                     case 0:
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 0);
@@ -218,7 +213,6 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 2);
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-
                         break;
                     case 3:
                         allclass = new AllClassificationFragment();
@@ -226,7 +220,6 @@ public class CanteenFragment extends BaseFragment {
                         );
                         allclass.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-
                         break;
                 }
             }
@@ -237,8 +230,6 @@ public class CanteenFragment extends BaseFragment {
                 Toast.makeText(context, "unselected", Toast.LENGTH_SHORT).show();
             }
         });
-
-
         rl_allclass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -269,7 +260,6 @@ public class CanteenFragment extends BaseFragment {
                 sales = new SalesPriorityFragment();
                 sales.setArguments(data);
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                //showFragment(2);
                 sp_allclass.setEnabled(false);
                 sp_allclass.setFocusable(false);
                 sp_sales.setEnabled(true);
