@@ -31,7 +31,6 @@
         android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:padding="10dp"
-        android:text="就餐许多人不排队，经常引起争执，以至于最后没有饭吃，请予以处理。"
         android:hint="输入内容"
         android:gravity="top"
         android:lineSpacingExtra="5dp"

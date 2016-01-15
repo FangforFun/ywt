@@ -1,7 +1,10 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,12 +16,25 @@ import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.bean.Reply;
 import com.gkzxhn.gkprison.userport.fragment.InterractiveMailboxFragment;
 import com.gkzxhn.gkprison.userport.fragment.ReplyPublicityFragment;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +51,10 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
     private TextView top_news_title;
     private LinearLayout top_news_viewpager;
     private final List<String> list_news_title = new ArrayList<>();
+    private String url = "";
+    private SharedPreferences sp;
+
+
     /**
      * 轮播图导航点集合
      */
@@ -46,6 +66,8 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prison_warden);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+
         rl_back = (RelativeLayout)findViewById(R.id.rl_back);
         rl_write_message = (RelativeLayout) findViewById(R.id.rl_write_message);
         rl_write_message.setVisibility(View.VISIBLE);
@@ -83,7 +105,14 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
+
+
     }
+
+
+
+
+
 
     private void initDot() {
         dotList.clear();

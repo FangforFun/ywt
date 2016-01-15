@@ -28,7 +28,8 @@ public class NewsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        wv_news_detail.loadUrl("http://10.93.1.116:3000/news/2");
+        int id = getIntent().getIntExtra("id",2);
+        wv_news_detail.loadUrl("http://10.93.1.116:3000/news/"+id);
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
