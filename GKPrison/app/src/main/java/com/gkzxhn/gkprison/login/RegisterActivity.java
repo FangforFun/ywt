@@ -174,15 +174,17 @@ public class RegisterActivity extends BaseActivity {
                         int back_code = jsonObject.getInt("code");
                         if (back_code == 200){
                             sendRegisterMessge();
-                        }else if (back_code == 404){
+                        }else if (back_code == 404 || back_code == 413){
                             showToastMsgShort("验证码错误");
                             apb_register.setEnabled(true);
                             apb_register.setClickable(true);
                             apb_register.setProgress(0);
                             apb_register.setText("注册");
                         }
+                        showToastMsgLong("注册返回码-----" + back_code);
                     } catch (JSONException e) {
                         e.printStackTrace();
+                        showToastMsgShort("异常");
                         apb_register.setEnabled(true);
                         apb_register.setClickable(true);
                         apb_register.setProgress(0);

@@ -2,6 +2,8 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -26,6 +28,8 @@ public class SettingActivity extends BaseActivity {
     private TextView tv_agreement;
     private AlertDialog agreement_dialog;
     private RelativeLayout rl_opinion_feedback;// 意见反馈
+    private SharedPreferences sp;
+    private String token;
 
     @Override
     protected View initView() {
@@ -41,6 +45,8 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        token = sp.getString("token", "");
         setTitle("设置");
         setBackVisibility(View.VISIBLE);
         tb_msg_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
@@ -75,6 +81,7 @@ public class SettingActivity extends BaseActivity {
         });
         rl_version_update.setOnClickListener(this);
         tv_agreement.setOnClickListener(this);
+        rl_opinion_feedback.setOnClickListener(this);
     }
 
     @Override
@@ -114,6 +121,14 @@ public class SettingActivity extends BaseActivity {
                         return false;
                     }
                 });
+                break;
+            case R.id.rl_opinion_feedback:
+                if(!TextUtils.isEmpty(token)) {
+                    intent = new Intent(SettingActivity.this, OpinionFeedbackActivity.class);
+                    startActivity(intent);
+                }else {
+                    showToastMsgShort("登录后可用");
+                }
                 break;
         }
     }

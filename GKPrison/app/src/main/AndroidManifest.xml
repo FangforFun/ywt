@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.gkzxhn.gkprison" >
+    package="com.gkzxhn.gkprison">
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
@@ -42,12 +42,13 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
 
-        <activity android:name=".welcome.SplashActivity"
+        <activity
+            android:name=".welcome.SplashActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,8 +58,7 @@
         </activity>
         <activity
             android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".login.LoadingActivity"
             android:screenOrientation="portrait" />
@@ -77,10 +77,10 @@
         <activity
             android:name=".userport.activity.FamilyServiceActivity"
             android:screenOrientation="portrait" />
-<!--
+        <!--
         <activity android:name=".userport.activity.MainActivity"
             android:screenOrientation="portrait"/>
--->
+        -->
         <activity
             android:name=".userport.activity.PrisonOpenActivity"
             android:screenOrientation="portrait" />
@@ -159,7 +159,7 @@
         <receiver
             android:name="com.netease.nimlib.service.NimReceiver"
             android:exported="false"
-            android:process=":core" >
+            android:process=":core">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -192,14 +192,14 @@
         <receiver
             android:name="com.netease.nimlib.receiver.AVChatBroadcastReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION" />
             </intent-filter>
         </receiver>
 
         <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
-        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver" >
+        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
@@ -209,8 +209,8 @@
         <activity android:name=".userport.activity.NewsDetailActivity" />
         <activity
             android:name=".userport.activity.LawsDetailActivity"
-            android:label="@string/title_activity_laws_detail" >
-        </activity>
+            android:label="@string/title_activity_laws_detail"></activity>
+        <activity android:name=".userport.activity.OpinionFeedbackActivity"></activity>
     </application>
 
 </manifest>

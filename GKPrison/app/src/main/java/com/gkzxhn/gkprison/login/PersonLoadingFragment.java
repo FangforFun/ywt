@@ -154,7 +154,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         int _code = jsonObject.getInt("code");
                         if(_code == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
-                        }else if(_code == 0){
+                        }else if(_code == 200){
                             showToastMsgShort("已发送");
                         }
                         Log.i("登录验证码", _code + "");
