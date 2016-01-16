@@ -3,7 +3,7 @@
     android:orientation="horizontal"
     android:background="@drawable/item_selector"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="130dp"
     android:padding="5dp">
     <RelativeLayout
         android:layout_width="110dp"
@@ -33,6 +33,7 @@
             android:textColor="@color/tv_bg"
             android:textSize="16sp"
             android:maxLines="1"
+            android:text="水壶"
             android:ellipsize="end"
             android:lineSpacingExtra="3dp"/>
 

@@ -448,11 +448,10 @@ public class CanteenFragment extends BaseFragment {
                 String s = url+token;
                 Log.d("订单号成功", s);
                 try {
-                  Log.d("TTT", str);
-                   StringEntity entity = new StringEntity(str);
+                    StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
                     entity.setContentEncoding("UTF-8");
-                   post.setEntity(entity);
+                    post.setEntity(entity);
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
