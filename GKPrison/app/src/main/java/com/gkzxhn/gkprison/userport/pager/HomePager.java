@@ -183,7 +183,6 @@ public class HomePager extends BasePager {
                             finalConvertView.setBackgroundColor(context.getResources().getColor(R.color.white));
                             holder.tv_home_options.setTextColor(context.getResources().getColor(R.color.tv_bg));
                             holder.iv_home_options.setImageResource(OPTIONS_IVS[position]);
-//                            showToastMsgShort("hehehe" + position);
                             boolean isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
                             switch (position) {
                                 case 0:

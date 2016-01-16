@@ -8,10 +8,39 @@ import java.util.List;
  */
 public class Register {
     private String name;
+    private String phone;
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
     private String uuid;
     private String relationship;
     private String prisoner_number;
     private String prison;
+    private String gender;
+    private String photo;
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
+
     private int jail_id;
     private int type_id;
     private List<Uuid_images_attributes> uuid_images_attributes;

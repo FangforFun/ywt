@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.application;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -30,6 +31,8 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
+import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
@@ -60,6 +63,20 @@ public class MyApplication extends Application {
             initUIKit();
             // 注册网络通话来电
             enableAVChat();
+            NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
+                    new Observer<StatusCode> () {
+                        public void onEvent(StatusCode status) {
+                            Log.i("tag", "User status changed to: " + status);
+                            switch (status){
+                                case KICKOUT:
+                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+//                                intent.putExtra("status", "KICKOUT");
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    break;
+                            }
+                        }
+                    }, true);
         }
     }
 

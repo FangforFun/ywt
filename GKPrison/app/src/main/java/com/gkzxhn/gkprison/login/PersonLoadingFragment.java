@@ -97,23 +97,20 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setText("登录失败");
                         btn_login.setEnabled(true);
                         btn_login.setClickable(true);
-//                        removeCodeTask();
                         successCode = 0;
                         return;
-                    }else if(error == 404){
+                    }else if(error == 404 || error == 413){
                         showToastMsgShort("验证码错误");
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
                         btn_login.setEnabled(true);
                         btn_login.setClickable(true);
-//                        removeCodeTask();
                         successCode = 0;
                         return;
                     }else if(error == 0){
                         successCode++;
 //                        info = new LoginInfo(username, userInfo.getToken()); // config...
                         info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
-//                        Log.i("hehehe", userInfo.getToken());
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
                     }else {
@@ -150,14 +147,13 @@ public class PersonLoadingFragment extends BaseFragment {
                     String result = (String) msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(result);
-                        int error_code = jsonObject.getInt("error");
-                        if(error_code == 400){
+                        int code = jsonObject.getInt("code");
+                        if(code == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
-//                            removeCodeTask();
-                        }else if(error_code == 0){
+                        }else if(code == 0){
                             showToastMsgShort("已发送");
                         }
-                        Log.i("登录验证码", error_code + "");
+                        Log.i("登录验证码", code + "");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
