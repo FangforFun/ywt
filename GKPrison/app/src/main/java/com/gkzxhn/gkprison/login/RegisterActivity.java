@@ -386,15 +386,15 @@ public class RegisterActivity extends BaseActivity {
                 newBitmap3.compress(Bitmap.CompressFormat.PNG, 100, bao3);
                 byte[] ba3 = bao3.toByteArray();
                 String tu3 = Base64.encode(ba3);
-                Log.i("tu3", tu3);
                 Uuid_images_attributes user_icon = new Uuid_images_attributes();
                 user_icon.setImage_data(tu3);
+                uuid_images.add(user_icon);
 
                 Register register = new Register();
                 register.setName(name);
                 register.setUuid(ic_card);
                 register.setPhone(phone_num);
-                register.setPhoto(tu3);
+//                register.setPhoto(user_icon.getImage_data());
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
                 register.setGender(rg_sex.getCheckedRadioButtonId() == R.id.rb_male ? "男" : "女");

@@ -23,7 +23,7 @@ public class Register {
     private String prisoner_number;
     private String prison;
     private String gender;
-    private String photo;
+//    private String photo;
 
     public String getGender() {
         return gender;
@@ -33,13 +33,13 @@ public class Register {
         this.gender = gender;
     }
 
-    public String getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(String photo) {
-        this.photo = photo;
-    }
+//    public String getPhoto() {
+//        return photo;
+//    }
+//
+//    public void setPhoto(String photo) {
+//        this.photo = photo;
+//    }
 
     private int jail_id;
     private int type_id;

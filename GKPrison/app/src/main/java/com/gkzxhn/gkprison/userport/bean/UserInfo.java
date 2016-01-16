@@ -5,16 +5,25 @@ package com.gkzxhn.gkprison.userport.bean;
  */
 public class UserInfo {
 
-    int error;
+    int code;
     String token;
+    String avatar;
     User user;
 
-    public int getError() {
-        return error;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setError(int error) {
-        this.error = error;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
+    }
+
+    public int getCode() {
+        return code;
+    }
+
+    public void setCode(int code) {
+        this.code = code;
     }
 
     public String getToken() {

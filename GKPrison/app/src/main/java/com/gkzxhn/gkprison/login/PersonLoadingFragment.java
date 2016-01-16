@@ -90,8 +90,9 @@ public class PersonLoadingFragment extends BaseFragment {
                     String result_login = (String) msg.obj;
                     gson = new Gson();
                     userInfo = gson.fromJson(result_login, UserInfo.class);
-                    int error = userInfo.getError();
-                    if(error == 401){
+                    Log.i("登录成功啦", result_login);
+                    int code = userInfo.getCode();
+                    if(code == 401){
                         showToastMsgShort("用户身份验证失败");
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
@@ -99,7 +100,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setClickable(true);
                         successCode = 0;
                         return;
-                    }else if(error == 404 || error == 413){
+                    }else if(code == 404 || code == 413){
                         showToastMsgShort("验证码错误");
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
@@ -107,12 +108,15 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setClickable(true);
                         successCode = 0;
                         return;
-                    }else if(error == 0){
+                    }else if(code == 200){
                         successCode++;
 //                        info = new LoginInfo(username, userInfo.getToken()); // config...
                         info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("avatar", userInfo.getAvatar().split("\\|")[2]);
+                        editor.commit();
                     }else {
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
@@ -120,7 +124,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setClickable(true);
                         successCode = 0;
                     }
-                    showToastMsgShort("返回码..." + error);
+                    showToastMsgShort("返回码..." + code);
                     break;
                 case 1:// 云信id登录失败
                     successCode = 0;
@@ -147,13 +151,13 @@ public class PersonLoadingFragment extends BaseFragment {
                     String result = (String) msg.obj;
                     try {
                         JSONObject jsonObject = new JSONObject(result);
-                        int code = jsonObject.getInt("code");
-                        if(code == 400){
+                        int _code = jsonObject.getInt("code");
+                        if(_code == 400){
                             showToastMsgShort("验证码请求失败，请稍后再试");
-                        }else if(code == 0){
+                        }else if(_code == 0){
                             showToastMsgShort("已发送");
                         }
-                        Log.i("登录验证码", code + "");
+                        Log.i("登录验证码", _code + "");
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
