@@ -100,7 +100,7 @@ public class PrisonOpenActivity extends BaseActivity {
         initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD + "news?jail_id=1&access_token=" + token;
+        url = Constants.URL_HEAD + "news?jail_id=1" ;
         getNews();
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
@@ -178,6 +178,7 @@ public class PrisonOpenActivity extends BaseActivity {
                 news.setTitle(jsonObject.getString("title"));
                 news.setContents(jsonObject.getString("contents"));
                 news.setJail_id(jsonObject.getInt("jail_id"));
+                news.setImage_url(jsonObject.getString("image_url"));
                 newses.add(news);
             }
 
@@ -245,7 +246,8 @@ public class PrisonOpenActivity extends BaseActivity {
             }else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            Picasso.with(holder.iv_home_news_icon.getContext()).load("sss").into(holder.iv_home_news_icon);
+            String t = Constants.RESOURSE_HEAD+newsList.get(position).getImage_url();
+            Picasso.with(holder.iv_home_news_icon.getContext()).load(t).into(holder.iv_home_news_icon);
             holder.tv_home_news_title.setText(newsList.get(position).getTitle());
             holder.tv_home_news_content.setText(newsList.get(position).getContents());
             return convertView;

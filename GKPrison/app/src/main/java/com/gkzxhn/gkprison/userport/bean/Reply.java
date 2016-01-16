@@ -15,6 +15,15 @@ public class Reply {
     private String title;
     private String contents;
     private String replies;
+    private String reply_date;
+
+    public String getReply_date() {
+        return reply_date;
+    }
+
+    public void setReply_date(String reply_date) {
+        this.reply_date = reply_date;
+    }
 
     public void setTitle(String title) {
         this.title = title;

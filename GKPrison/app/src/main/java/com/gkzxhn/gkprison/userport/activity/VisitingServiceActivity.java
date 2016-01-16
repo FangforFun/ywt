@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -39,7 +40,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private TextView tv_visit_request_phone;
     private Button bt_commit_request;
     private AlertDialog dialog;
-    private static final String MEETING_REQUEST_URL = "http://www.fushuile.com/api/v1/apply?access_token=";
+    private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = new String[] {
             "2016-01-13", "2016-01-14", "2016-01-15", "2016-01-16", "2016-01-17"
     };
