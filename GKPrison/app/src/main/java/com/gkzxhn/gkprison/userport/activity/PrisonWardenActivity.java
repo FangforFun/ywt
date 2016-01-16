@@ -127,7 +127,7 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
             // 指定点的大小
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
                     getResources().getDimensionPixelSize(R.dimen.dot_radius), getResources().getDimensionPixelSize(R.dimen.dot_radius));
-
+            //间距
             layoutParams.setMargins(10, 0, 10, 0);
             dots_ll.addView(view, layoutParams);
 

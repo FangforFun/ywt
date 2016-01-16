@@ -218,7 +218,7 @@ public class AllClassificationFragment extends BaseFragment {
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
-            String t = "http://www.fushuile.com"+commodities.get(position).getAvatar_url();
+            String t = Constants.RESOURSE_HEAD+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());

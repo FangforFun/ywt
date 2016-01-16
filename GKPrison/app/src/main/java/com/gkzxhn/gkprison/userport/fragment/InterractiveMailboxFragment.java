@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,9 +89,9 @@ public class InterractiveMailboxFragment extends Fragment {
         token = sp.getString("token", "");
         url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;
         getReply();
+        Log.d("个人信息",family_id+"");
+        Log.d("个人信息",token);
     }
-
-
 
     private void getReply(){
         new Thread(){
@@ -131,6 +132,7 @@ public class InterractiveMailboxFragment extends Fragment {
                 reply.setTitle(jsonObject.getString("title"));
                 reply.setContents(jsonObject.getString("contents"));
                 reply.setReplies(jsonObject.getString("replies"));
+                reply.setReply_date(jsonObject.getString("reply_date"));
                 replies.add(reply);
             }
         } catch (JSONException e) {
@@ -217,8 +219,8 @@ public class InterractiveMailboxFragment extends Fragment {
             }else {
                 holder = (ChildViewHolder) convertView.getTag();
             }
-            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(childPosition).getContents());
-            holder.tv_message_time.setText(replies.get(childPosition).getReplies());
+            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(childPosition).getReplies());
+            holder.tv_message_time.setText(replies.get(childPosition).getReply_date());
             return convertView;
         }
 
