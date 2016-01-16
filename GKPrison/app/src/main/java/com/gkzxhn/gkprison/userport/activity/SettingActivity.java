@@ -25,6 +25,7 @@ public class SettingActivity extends BaseActivity {
     private RelativeLayout rl_version_update;
     private TextView tv_agreement;
     private AlertDialog agreement_dialog;
+    private RelativeLayout rl_opinion_feedback;// 意见反馈
 
     @Override
     protected View initView() {
@@ -34,6 +35,7 @@ public class SettingActivity extends BaseActivity {
         tb_pwd_set = (ToggleButton) view.findViewById(R.id.tb_pwd_set);
         rl_version_update = (RelativeLayout) view.findViewById(R.id.rl_version_update);
         tv_agreement = (TextView) view.findViewById(R.id.tv_agreement);
+        rl_opinion_feedback = (RelativeLayout) view.findViewById(R.id.rl_opinion_feedback);
         return view;
     }
 

@@ -22,7 +22,8 @@
                 android:id="@+id/iv_user_icon"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:src="@drawable/user_icon"/>
+                android:src="@drawable/user_icon"
+                android:scaleType="fitXY"/>
 
             <TextView
                 android:id="@+id/tv_menu_user_name"

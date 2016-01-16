@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -20,12 +21,14 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
+import com.lidroid.xutils.BitmapUtils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 
@@ -44,6 +47,7 @@ public class MenuFragment extends BaseFragment{
     private TextView tv_menu_user_name;
     private RelativeLayout ll_root;
     private Button bt_logout;
+    private BitmapUtils bitmapUtils;
 
     @Override
     protected View initView() {
@@ -66,6 +70,11 @@ public class MenuFragment extends BaseFragment{
             tv_menu_user_name.setText("用户名");
         }else {
             tv_menu_user_name.setText(sp.getString("name", ""));
+            String ICON_URL = sp.getString("avatar", "");
+            if(!TextUtils.isEmpty(ICON_URL)){
+                bitmapUtils = new BitmapUtils(context);
+                bitmapUtils.display(iv_user_icon, "http://10.93.1.10:3000" + ICON_URL);
+            }
         }
         lv_home_menu.setAdapter(new MenuAdapter());
         lv_home_menu.setOnItemClickListener(new AdapterView.OnItemClickListener() {
