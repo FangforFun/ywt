@@ -8,6 +8,7 @@ import android.widget.EditText;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Letter;
 import com.google.gson.Gson;
 
@@ -31,7 +32,8 @@ public class WriteMessageActivity extends BaseActivity {
     private String theme;
     private String contents;
     private Gson gson;
-    private String url = "http://10.93.1.10:3000/api/v1/mail_boxes?jail_id=1&access_token=fdf63bd8761f918540b68626d3120623";
+    private String token;
+    private String url = Constants.URL_HEAD + "mail_boxes?jail_id=1&access_token=";
     private SharedPreferences sp;
     private int family_id = 0;
 
@@ -51,6 +53,7 @@ public class WriteMessageActivity extends BaseActivity {
         bt_commit_write_message.setOnClickListener(this);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         family_id = sp.getInt("family_id",1);
+        token = sp.getString("token","");
     }
 
     @Override
@@ -80,7 +83,7 @@ public class WriteMessageActivity extends BaseActivity {
             @Override
             public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url);
+                HttpPost post = new HttpPost(url+token);
                 try {
                     StringEntity entity = new StringEntity(sendmessage,HTTP.UTF_8);
                     entity.setContentType("application/json");
