@@ -10,6 +10,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 
 import java.io.File;
@@ -34,22 +35,28 @@ public class SplashActivity extends BaseActivity {
             public void run() {
                 boolean isFirst = sp.getBoolean("is_first", true);
                 Intent intent;
-                if(isFirst){
-                    intent = new Intent(SplashActivity.this, WelcomeActivity.class);
-                    startActivity(intent);
-                }else {
-                    if(TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))){
-                        intent = new Intent(SplashActivity.this, LoadingActivity.class);
+                if (!sp.getBoolean("isLock", false)) {
+                    if (isFirst) {
+                        intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                         startActivity(intent);
-                    }else {
-                        if(sp.getBoolean("isCommonUser", true)) {
-                            intent = new Intent(SplashActivity.this, MainActivity.class);
+                    } else {
+                        if (TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))) {
+                            intent = new Intent(SplashActivity.this, LoadingActivity.class);
                             startActivity(intent);
-                        }else {
-                            intent = new Intent(SplashActivity.this, DateMeetingListActivity.class);
-                            startActivity(intent);
+                        } else {
+
+                            if (sp.getBoolean("isCommonUser", true)) {
+                                intent = new Intent(SplashActivity.this, MainActivity.class);
+                                startActivity(intent);
+                            } else {
+                                intent = new Intent(SplashActivity.this, DateMeetingListActivity.class);
+                                startActivity(intent);
+                            }
                         }
                     }
+                } else{
+                    intent = new Intent(SplashActivity.this, InputPasswordActivity.class);
+                    startActivity(intent);
                 }
                 SplashActivity.this.finish();
             }

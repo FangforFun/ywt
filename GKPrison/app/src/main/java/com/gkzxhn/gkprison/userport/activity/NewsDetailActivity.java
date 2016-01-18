@@ -9,8 +9,11 @@ import android.widget.FrameLayout;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 
-
+/**
+ * 新闻详情页
+ */
 public class NewsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
@@ -29,7 +32,7 @@ public class NewsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         int id = getIntent().getIntExtra("id",2);
-        wv_news_detail.loadUrl("http://10.93.1.116:3000/news/"+id);
+        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/news/"+ id);
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
@@ -40,8 +43,6 @@ public class NewsDetailActivity extends BaseActivity {
         });
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
-//        webSettings.setBuiltInZoomControls(true);
-//        webSettings.setSupportZoom(true);
     }
 
     @Override

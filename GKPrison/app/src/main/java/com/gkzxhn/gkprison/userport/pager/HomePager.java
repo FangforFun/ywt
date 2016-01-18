@@ -131,7 +131,7 @@ public class HomePager extends BasePager {
         vp_carousel = new RollViewPager(context, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                showToastMsgShort(list_news_title.get(position));
+//                showToastMsgShort(list_news_title.get(position));
                 Intent intent = new Intent(context, NewsDetailActivity.class);
                 context.startActivity(intent);
             }
@@ -193,19 +193,36 @@ public class HomePager extends BasePager {
      * 填充焦新闻数据
      */
     private void fillNewsData() {
-        if(focus_news_list.size() > 5){
-            int i, k = -1;
-            int j = -1;
-            Random random = new Random();
-            i = random.nextInt(focus_news_list.size());
-            focus_news_1 = focus_news_list.get(i);
-            tv_home_news_title1.setText(focus_news_1.getTitle());
-            tv_home_news_content1.setText(focus_news_1.getContents());
-            bitmapUtils = new BitmapUtils(context);
-            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
-            setSecondFocusNewsData(i, j);
-            setThirdFocusNewsData(i, j, k);
-        }
+//        if(focus_news_list.size() > 5){
+//            int i, k = -1;
+//            int j = -1;
+//            Random random = new Random();
+//            i = random.nextInt(focus_news_list.size());
+//            focus_news_1 = focus_news_list.get(i);
+//            tv_home_news_title1.setText(focus_news_1.getTitle());
+//            tv_home_news_content1.setText(focus_news_1.getContents());
+//            bitmapUtils = new BitmapUtils(context);
+//            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+//            setSecondFocusNewsData(i, j);
+//            setThirdFocusNewsData(i, j, k);
+//        }
+        focus_news_1 = focus_news_list.get(0);
+        tv_home_news_title1.setText(focus_news_1.getTitle());
+        tv_home_news_content1.setText(focus_news_1.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+
+        focus_news_2 = focus_news_list.get(1);
+        tv_home_news_title2.setText(focus_news_2.getTitle());
+        tv_home_news_content2.setText(focus_news_2.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
+
+        focus_news_3 = focus_news_list.get(2);
+        tv_home_news_title3.setText(focus_news_3.getTitle());
+        tv_home_news_content3.setText(focus_news_3.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
     }
 
     /**
@@ -413,9 +430,18 @@ public class HomePager extends BasePager {
         Intent intent;
         switch (v.getId()){
             case R.id.ll_home_news1:
+                intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_1.getId());
+                context.startActivity(intent);
+                break;
             case R.id.ll_home_news2:
+                intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_2.getId());
+                context.startActivity(intent);
+                break;
             case R.id.ll_home_news3:
                 intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_3.getId());
                 context.startActivity(intent);
                 break;
         }

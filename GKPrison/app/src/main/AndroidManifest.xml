@@ -58,7 +58,7 @@
         </activity>
         <activity
             android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".login.LoadingActivity"
             android:screenOrientation="portrait" />
@@ -209,8 +209,10 @@
         <activity android:name=".userport.activity.NewsDetailActivity" />
         <activity
             android:name=".userport.activity.LawsDetailActivity"
-            android:label="@string/title_activity_laws_detail"></activity>
-        <activity android:name=".userport.activity.OpinionFeedbackActivity"></activity>
+            android:label="@string/title_activity_laws_detail" />
+        <activity android:name=".userport.activity.OpinionFeedbackActivity" />
+        <activity android:name=".userport.activity.SettingPasswordActivity" />
+        <activity android:name=".userport.activity.InputPasswordActivity"></activity>
     </application>
 
 </manifest>
