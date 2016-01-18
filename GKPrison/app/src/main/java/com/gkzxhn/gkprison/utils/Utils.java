@@ -9,10 +9,14 @@ import android.net.Uri;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 
 import java.text.ParseException;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -141,6 +145,25 @@ public class Utils {
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri
                 .getAuthority());
+    }
+
+    /**
+     *
+     * @param n
+     * @return
+     */
+    public static List<String> afterNDay(int n){
+        List<String> list = new ArrayList<>();
+        for(int i = 1; i <= n; i++) {
+            Calendar c = Calendar.getInstance();
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            c.setTime(new Date());
+            c.add(Calendar.DATE, i);
+            Date d2 = c.getTime();
+            String s = df.format(d2);
+            list.add(s);
+        }
+        return list;
     }
 
     /**

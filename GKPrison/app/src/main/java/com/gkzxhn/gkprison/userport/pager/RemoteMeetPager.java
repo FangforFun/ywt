@@ -34,6 +34,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by hzn on 2015/12/3.
  */
@@ -59,9 +62,7 @@ public class RemoteMeetPager extends BasePager {
     private RadioButton rb_top_guide_visit;
     private boolean isCommonUser;
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
-    private static final String[] REQUEST_TIME = new String[] {
-            "2016-01-13", "2016-01-14", "2016-01-15", "2016-01-16", "2016-01-17"
-    };
+    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[30]);
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;

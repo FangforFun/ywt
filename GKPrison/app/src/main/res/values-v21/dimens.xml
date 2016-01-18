@@ -17,4 +17,5 @@
     <dimen name="tv_apply_meeting_call">17sp</dimen>
     <dimen name="tv_apply_meeting_call_notice">20sp</dimen>
     <dimen name="msg_width">22dp</dimen>
+    <dimen name="login_spinner">30px</dimen>
 </resources>
