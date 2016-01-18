@@ -58,7 +58,7 @@
         </activity>
         <activity
             android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".login.LoadingActivity"
             android:screenOrientation="portrait" />
@@ -205,12 +205,26 @@
             </intent-filter>
         </receiver>
 
+        <!-- 声明自定义通知的广播接收器，第三方 APP 集成时，action 中的 com.netease.nim.demo 请替换为自己的包名 -->
+        <!-- 需要权限声明 <uses-permission android:name="com.netease.nim.demo.permission.RECEIVE_MSG"/> -->
+        <receiver
+            android:name=".userport.receiver.CustomNotificationReceiver"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_CUSTOM_NOTIFICATION" />
+            </intent-filter>
+        </receiver>
+
         <activity android:name=".welcome.WelcomeActivity" />
         <activity android:name=".userport.activity.NewsDetailActivity" />
         <activity
             android:name=".userport.activity.LawsDetailActivity"
-            android:label="@string/title_activity_laws_detail"></activity>
-        <activity android:name=".userport.activity.OpinionFeedbackActivity"></activity>
+            android:label="@string/title_activity_laws_detail" />
+        <activity android:name=".userport.activity.OpinionFeedbackActivity" />
+        <activity android:name=".userport.activity.SettingPasswordActivity" />
+        <activity android:name=".userport.activity.InputPasswordActivity" />
+
     </application>
 
 </manifest>

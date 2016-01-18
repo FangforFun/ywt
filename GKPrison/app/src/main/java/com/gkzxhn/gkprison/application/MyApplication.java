@@ -17,6 +17,8 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
+import com.gkzxhn.gkprison.userport.receiver.CustomNotificationReceiver;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
@@ -37,7 +39,9 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatRingerConfig;
+import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
+import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
@@ -64,19 +68,24 @@ public class MyApplication extends Application {
             // 注册网络通话来电
             enableAVChat();
             NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
-                    new Observer<StatusCode> () {
+                    new Observer<StatusCode>() {
                         public void onEvent(StatusCode status) {
                             Log.i("tag", "User status changed to: " + status);
-                            switch (status){
+                            switch (status) {
                                 case KICKOUT:
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-//                                intent.putExtra("status", "KICKOUT");
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                     break;
                             }
                         }
                     }, true);
+            NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
+                @Override
+                public void onEvent(CustomNotification message) {
+                    // 在这里处理自定义通知。
+                }
+            }, true);
         }
     }
 

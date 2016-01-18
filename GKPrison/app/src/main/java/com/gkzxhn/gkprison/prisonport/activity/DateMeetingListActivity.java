@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
@@ -38,17 +36,13 @@ import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
-import com.melnykov.fab.FloatingActionButton;
-import com.melnykov.fab.ScrollDirectionListener;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
-import com.squareup.okhttp.Call;
 
 import org.json.JSONArray;
 import org.json.JSONException;

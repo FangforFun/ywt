@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.pager;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -33,6 +34,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by hzn on 2015/12/3.
  */
@@ -47,7 +51,6 @@ public class RemoteMeetPager extends BasePager {
     private BetterSpinner bs_meeting_request_time;
     private Button bt_commit_request;
     private SharedPreferences sp;
-    private AlertDialog dialog;
     private BetterSpinner bs_visit_request_time;
     private TextView tv_visit_request_name;
     private TextView tv_visit_request_relationship;
@@ -59,11 +62,10 @@ public class RemoteMeetPager extends BasePager {
     private RadioButton rb_top_guide_visit;
     private boolean isCommonUser;
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
-    private static final String[] REQUEST_TIME = new String[] {
-            "2016-01-13", "2016-01-14", "2016-01-15", "2016-01-16", "2016-01-17"
-    };
+    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[30]);
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
+    private ProgressDialog dialog;
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -73,6 +75,7 @@ public class RemoteMeetPager extends BasePager {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送会见申请成功
+                    dialog.dismiss();
 //                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
@@ -83,19 +86,22 @@ public class RemoteMeetPager extends BasePager {
                         }
                     });
                     builder.setCancelable(false);
-                    dialog = builder.create();
-                    builder.show();
+                    AlertDialog commit_success_dialog = builder.create();
+                    commit_success_dialog.show();
                     bt_commit_request.setEnabled(true);
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");
                     bt_commit_request.setEnabled(true);
+                    dialog.dismiss();
                     break;
                 case 2:// 发送会见申请异常
                     showToastMsgLong("提交异常，请稍后再试");
                     bt_commit_request.setEnabled(true);
+                    dialog.dismiss();
                     break;
                 case 3: // 发送探监申请成功
+                    dialog.dismiss();
 //                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder visit_builder = new AlertDialog.Builder(context);
                     visit_builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
@@ -106,19 +112,23 @@ public class RemoteMeetPager extends BasePager {
                         }
                     });
                     visit_builder.setCancelable(false);
-                    dialog = visit_builder.create();
-                    visit_builder.show();
+                    AlertDialog visit_success_dialog = visit_builder.create();
+                    visit_success_dialog.show();
+                    bt_commit_request_visit.setEnabled(true);
                     break;
                 case 4: // 发送探监申请失败
+                    dialog.dismiss();
                     showToastMsgLong("提交失败，请稍后再试");
+                    bt_commit_request_visit.setEnabled(true);
                     break;
                 case 5:// 发送探监申请异常
+                    dialog.dismiss();
                     showToastMsgLong("提交异常，请稍后再试");
+                    bt_commit_request_visit.setEnabled(true);
                     break;
             }
         }
     };
-    private Message msg = handler.obtainMessage();
 
     @Override
     public View initView() {
@@ -238,6 +248,13 @@ public class RemoteMeetPager extends BasePager {
      */
     private void sendVisitRequestToServer() {
         if(Utils.isNetworkAvailable()) {
+            bt_commit_request_visit.setEnabled(false);
+            dialog = new ProgressDialog(context);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setMessage("正在提交，请稍后");
+            dialog.show();
             new Thread() {
                 @Override
                 public void run() {
@@ -245,7 +262,6 @@ public class RemoteMeetPager extends BasePager {
                     String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"2\"}}";
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
-//                    Looper.prepare();
                     try {
                         StringEntity entity = new StringEntity(body, HTTP.UTF_8);
                         entity.setContentType("application/json");
@@ -254,12 +270,14 @@ public class RemoteMeetPager extends BasePager {
                         HttpResponse httpResponse = httpClient.execute(post);
                         if (httpResponse.getStatusLine().getStatusCode() == 200) {
                             String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            Message msg = handler.obtainMessage();
                             msg.obj = result;
                             msg.what = 3;
                             handler.sendMessage(msg);
                             Log.d("发送成功", result);
                         } else {
                             String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            Message msg = handler.obtainMessage();
                             msg.obj = result;
                             msg.what = 4;
                             handler.sendMessage(msg);
@@ -268,8 +286,6 @@ public class RemoteMeetPager extends BasePager {
                     } catch (Exception e) {
                         Log.d("发送异常", e.getMessage());
                         handler.sendEmptyMessage(5);
-                    } finally {
-//                        Looper.loop();
                     }
                 }
             }.start();
@@ -284,6 +300,12 @@ public class RemoteMeetPager extends BasePager {
     private void sendMeetingRequestToServer() {
         if(Utils.isNetworkAvailable()) {
             bt_commit_request.setEnabled(false);
+            dialog = new ProgressDialog(context);
+            dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setMessage("正在提交，请稍后");
+            dialog.show();
             new Thread() {
                 @Override
                 public void run() {
@@ -291,7 +313,6 @@ public class RemoteMeetPager extends BasePager {
                     String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":\"1\",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":\"1\"}}";
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
-//                    Looper.prepare();
                     try {
                         StringEntity entity = new StringEntity(body, HTTP.UTF_8);
                         entity.setContentType("application/json");
@@ -300,12 +321,14 @@ public class RemoteMeetPager extends BasePager {
                         HttpResponse httpResponse = httpClient.execute(post);
                         if (httpResponse.getStatusLine().getStatusCode() == 200) {
                             String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            Message msg = handler.obtainMessage();
                             msg.obj = result;
                             msg.what = 0;
                             handler.sendMessage(msg);
                             Log.d("发送成功", result);
                         } else {
                             String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+                            Message msg = handler.obtainMessage();
                             msg.obj = result;
                             msg.what = 1;
                             handler.sendMessage(msg);
@@ -314,8 +337,6 @@ public class RemoteMeetPager extends BasePager {
                     } catch (Exception e) {
                         Log.d("发送异常", e.getMessage());
                         handler.sendEmptyMessage(2);
-                    } finally {
-//                        Looper.loop();
                     }
                 }
             }.start();

@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,6 +23,7 @@ public class RemittanceWaysActivity extends BaseActivity {
     private boolean[] ischeckeds = {true, false, false, false};
     private MyAdapter myAdapter;
     private Button bt_next;
+    private String money;
 
     @Override
     protected View initView() {
@@ -49,6 +52,7 @@ public class RemittanceWaysActivity extends BaseActivity {
                 myAdapter.notifyDataSetChanged();
             }
         });
+        money = getIntent().getStringExtra("money");
         bt_next.setOnClickListener(this);
     }
 
@@ -57,7 +61,19 @@ public class RemittanceWaysActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_next:
-                showToastMsgShort("下一步...");
+                if (ischeckeds[0] == true){
+
+                    Intent intent = new Intent(RemittanceWaysActivity.this,BankPayActivity.class);
+                    RemittanceWaysActivity.this.startActivity(intent);
+                }else if (ischeckeds[1] == true){
+
+                    Intent intent = new Intent(RemittanceWaysActivity.this,ZhifubaoPayActivity.class);
+                    RemittanceWaysActivity.this.startActivity(intent);
+                }else if (ischeckeds[2] == true){
+
+                    Intent intent = new Intent(RemittanceWaysActivity.this,WeixinPayActivity.class);
+                    RemittanceWaysActivity.this.startActivity(intent);
+                }
                 break;
         }
     }

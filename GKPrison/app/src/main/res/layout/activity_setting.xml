@@ -11,41 +11,41 @@
         android:orientation="vertical"
         android:background="@color/bg">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:background="@drawable/item_selector">
+        <!--<RelativeLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:background="@drawable/item_selector">-->
 
-            <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@drawable/gray_msg"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"/>
+            <!--<ImageView-->
+                <!--android:layout_width="25dp"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:src="@drawable/gray_msg"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginLeft="10dp"/>-->
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:text="短信提醒"
-                android:gravity="center_vertical"
-                android:textSize="16sp"
-                android:layout_marginLeft="50dp"
-                android:textColor="@color/tv_bg"/>
+            <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:text="短信提醒"-->
+                <!--android:gravity="center_vertical"-->
+                <!--android:textSize="16sp"-->
+                <!--android:layout_marginLeft="50dp"-->
+                <!--android:textColor="@color/tv_bg"/>-->
 
-            <com.zcw.togglebutton.ToggleButton
-                android:id="@+id/tb_msg_remind"
-                android:layout_width="54dp"
-                toggle:onColor="#c1eaf7"
-                toggle:offColor="#bcbcbc"
-                toggle:spotColor="#32b1df"
-                toggle:offBorderColor="#bcbcbc"
-                toggle:borderWidth="2dp"
-                android:layout_height="25dp"
-                android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_alignParentRight="true">
-            </com.zcw.togglebutton.ToggleButton>
-        </RelativeLayout>
+            <!--<com.zcw.togglebutton.ToggleButton-->
+                <!--android:id="@+id/tb_msg_remind"-->
+                <!--android:layout_width="54dp"-->
+                <!--toggle:onColor="#c1eaf7"-->
+                <!--toggle:offColor="#bcbcbc"-->
+                <!--toggle:spotColor="#32b1df"-->
+                <!--toggle:offBorderColor="#bcbcbc"-->
+                <!--toggle:borderWidth="2dp"-->
+                <!--android:layout_height="25dp"-->
+                <!--android:layout_centerVertical="true"-->
+                <!--android:layout_marginRight="10dp"-->
+                <!--android:layout_alignParentRight="true">-->
+            <!--</com.zcw.togglebutton.ToggleButton>-->
+        <!--</RelativeLayout>-->
 
         <RelativeLayout
             android:layout_width="match_parent"
