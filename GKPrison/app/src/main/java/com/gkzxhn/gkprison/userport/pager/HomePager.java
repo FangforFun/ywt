@@ -1,9 +1,12 @@
 package com.gkzxhn.gkprison.userport.pager;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
@@ -23,10 +27,23 @@ import com.gkzxhn.gkprison.userport.activity.PrisonIntroductionActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonOpenActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
+import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.google.gson.Gson;
+import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -45,15 +62,29 @@ public class HomePager extends BasePager {
     private LinearLayout ll_home_news1;
     private LinearLayout ll_home_news2;
     private LinearLayout ll_home_news3;
-//    private ImageView iv_home_news_icon;
-//    private TextView tv_home_news_title;
-//    private TextView tv_home_news_content;
+    private ImageView iv_home_news_icon1;
+    private TextView tv_home_news_title1;
+    private TextView tv_home_news_content1;
+    private ImageView iv_home_news_icon2;
+    private TextView tv_home_news_title2;
+    private TextView tv_home_news_content2;
+    private ImageView iv_home_news_icon3;
+    private TextView tv_home_news_title3;
+    private TextView tv_home_news_content3;
+    private News focus_news_1;
+    private News focus_news_2;
+    private News focus_news_3;
     private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.family_service_press, R.drawable.sms_press};
     private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.family_service, R.drawable.sms};
     private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "工作动态", "家属服务", "投诉建议"};
     private final List<String> list_news_title = new ArrayList<>();
     private SharedPreferences sp;
+    private String token;// 当前登录用户的token
+    private boolean isRegisteredUser;
+    private ProgressDialog dialog;
+    private List<News> focus_news_list;
+    private BitmapUtils bitmapUtils;
     /**
      * 轮播图导航点集合
      */
@@ -72,9 +103,15 @@ public class HomePager extends BasePager {
         ll_home_news1 = (LinearLayout) view.findViewById(R.id.ll_home_news1);
         ll_home_news2 = (LinearLayout) view.findViewById(R.id.ll_home_news2);
         ll_home_news3 = (LinearLayout) view.findViewById(R.id.ll_home_news3);
-//        iv_home_news_icon = (ImageView) view.findViewById(R.id.iv_home_news_icon);
-//        tv_home_news_title = (TextView) view.findViewById(R.id.tv_home_news_title);
-//        tv_home_news_content = (TextView) view.findViewById(R.id.tv_home_news_content);
+        iv_home_news_icon1 = (ImageView) view.findViewById(R.id.iv_home_news_icon1);
+        tv_home_news_title1 = (TextView) view.findViewById(R.id.tv_home_news_title1);
+        tv_home_news_content1 = (TextView) view.findViewById(R.id.tv_home_news_content1);
+        iv_home_news_icon2 = (ImageView) view.findViewById(R.id.iv_home_news_icon2);
+        tv_home_news_title2 = (TextView) view.findViewById(R.id.tv_home_news_title2);
+        tv_home_news_content2 = (TextView) view.findViewById(R.id.tv_home_news_content2);
+        iv_home_news_icon3 = (ImageView) view.findViewById(R.id.iv_home_news_icon3);
+        tv_home_news_title3 = (TextView) view.findViewById(R.id.tv_home_news_title3);
+        tv_home_news_content3 = (TextView) view.findViewById(R.id.tv_home_news_content3);
         layout_roll_view = View.inflate(context, R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
@@ -86,6 +123,7 @@ public class HomePager extends BasePager {
     @Override
     public void initData() {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
         tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -93,7 +131,7 @@ public class HomePager extends BasePager {
         vp_carousel = new RollViewPager(context, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                showToastMsgShort(list_news_title.get(position));
+//                showToastMsgShort(list_news_title.get(position));
                 Intent intent = new Intent(context, NewsDetailActivity.class);
                 context.startActivity(intent);
             }
@@ -111,6 +149,152 @@ public class HomePager extends BasePager {
         ll_home_news1.setOnClickListener(this);
         ll_home_news2.setOnClickListener(this);
         ll_home_news3.setOnClickListener(this);
+        if(isRegisteredUser) {
+            token = sp.getString("token", "");
+            getFocusNews();// 获取焦点新闻
+        }
+    }
+
+    /**
+     * 加载数据进度对话框
+     */
+    private void showLoadingDialog() {
+        dialog = new ProgressDialog(context);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.setMessage("");
+        dialog.show();
+    }
+
+    /**
+     * 获取焦点新闻
+     */
+    private void getFocusNews() {
+        showLoadingDialog();
+        HttpUtils httpUtils = new HttpUtils();
+        Log.i("获取焦点新闻url", Constants.URL_HEAD + Constants.NEWS_URL);
+        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.NEWS_URL, new RequestCallBack<Object>() {
+            @Override
+            public void onSuccess(ResponseInfo<Object> responseInfo) {
+                parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
+                dialog.dismiss();
+                fillNewsData();// 填充新闻数据
+                Log.i("获取焦点新闻成功", responseInfo.result.toString());
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                dialog.dismiss();
+                Log.i("获取焦点新闻失败", e.getMessage() + "---" + s);
+            }
+        });
+    }
+
+    /**
+     * 填充焦新闻数据
+     */
+    private void fillNewsData() {
+//        if(focus_news_list.size() > 5){
+//            int i, k = -1;
+//            int j = -1;
+//            Random random = new Random();
+//            i = random.nextInt(focus_news_list.size());
+//            focus_news_1 = focus_news_list.get(i);
+//            tv_home_news_title1.setText(focus_news_1.getTitle());
+//            tv_home_news_content1.setText(focus_news_1.getContents());
+//            bitmapUtils = new BitmapUtils(context);
+//            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+//            setSecondFocusNewsData(i, j);
+//            setThirdFocusNewsData(i, j, k);
+//        }
+        focus_news_1 = focus_news_list.get(0);
+        tv_home_news_title1.setText(focus_news_1.getTitle());
+        tv_home_news_content1.setText(focus_news_1.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+
+        focus_news_2 = focus_news_list.get(1);
+        tv_home_news_title2.setText(focus_news_2.getTitle());
+        tv_home_news_content2.setText(focus_news_2.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
+
+        focus_news_3 = focus_news_list.get(2);
+        tv_home_news_title3.setText(focus_news_3.getTitle());
+        tv_home_news_content3.setText(focus_news_3.getContents());
+        bitmapUtils = new BitmapUtils(context);
+        bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
+    }
+
+    /**
+     * 设置第三条焦点新闻数据
+     * @param i
+     * @param j
+     * @param k
+     */
+    private void setThirdFocusNewsData(int i, int j, int k) {
+        Random random = new Random();
+        j = random.nextInt(focus_news_list.size());
+        if(k != i && k != j){
+            focus_news_3 = focus_news_list.get(k);
+            tv_home_news_title3.setText(focus_news_3.getTitle());
+            tv_home_news_content3.setText(focus_news_3.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
+        }else {
+            setThirdFocusNewsData(i, j, k);
+        }
+    }
+
+    /**
+     * 设置第二条焦点新闻数据
+     * @param i
+     * @param j
+     */
+    private void setSecondFocusNewsData(int i, int j) {
+        Random random = new Random();
+        j = random.nextInt(focus_news_list.size());
+        if(j != i){
+            focus_news_2 = focus_news_list.get(i);
+            tv_home_news_title2.setText(focus_news_2.getTitle());
+            tv_home_news_content2.setText(focus_news_2.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
+        }else {
+            setSecondFocusNewsData(i, j);
+        }
+    }
+
+    /**
+     * 解析焦点新闻
+     */
+    private void parseFocusNews(String focus_news) {
+        focus_news_list = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(focus_news);
+            for (int i = 0; i < jsonArray.length(); i++){
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                News news = new News();
+                news.setContents(jsonObject.getString("contents"));
+                news.setCreated_at(jsonObject.getString("created_at"));
+                news.setId(jsonObject.getInt("id"));
+                news.setImage_content_type(jsonObject.getString("image_content_type"));
+                news.setImage_file_name(jsonObject.getString("image_file_name"));
+                news.setImage_file_size(jsonObject.getInt("image_file_size"));
+                news.setImage_updated_at(jsonObject.getString("image_updated_at"));
+                news.setImage_url(jsonObject.getString("image_url"));
+                news.setIsFocus(jsonObject.getBoolean("isFocus"));
+                news.setJail_id(jsonObject.getInt("jail_id"));
+                news.setTitle(jsonObject.getString("title"));
+                news.setType_id(TextUtils.isEmpty(jsonObject.getInt("type_id") + "") ? 1 : 1);
+                news.setUpdated_at(jsonObject.getString("updated_at"));
+                if(news.getIsFocus()) {
+                    focus_news_list.add(news);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+            showToastMsgShort("新闻解析异常");
+        }
     }
 
     private void initDot() {
@@ -246,9 +430,18 @@ public class HomePager extends BasePager {
         Intent intent;
         switch (v.getId()){
             case R.id.ll_home_news1:
+                intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_1.getId());
+                context.startActivity(intent);
+                break;
             case R.id.ll_home_news2:
+                intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_2.getId());
+                context.startActivity(intent);
+                break;
             case R.id.ll_home_news3:
                 intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", focus_news_3.getId());
                 context.startActivity(intent);
                 break;
         }

@@ -5,21 +5,20 @@ package com.gkzxhn.gkprison.userport.bean;
  */
 public class News {
 
-
     /**
-     * id : 1
-     * title : 【刑法执行】昭通市食药监局到昭通监狱开展警示教育
-     * contents : 为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力<br><b><p></p><i></i></b><br><br><br><br><br><br><br><br>
-     * isFocus : true
-     * jail_id : 1
-     * created_at : 2015-12-23T02:03:57.000Z
-     * updated_at : 2016-01-16T09:03:23.000Z
-     * image_file_name : QQ截图20160116170130.png
-     * image_content_type : image/png
-     * image_file_size : 37975
-     * image_updated_at : 2016-01-16T09:03:23.000Z
-     * image_url : /system/news/images/000/000/001/medium/QQ%E6%88%AA%E5%9B%BE20160116170130.png?1452935003
-     * type_id : 1
+     contents": "为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力<br><b><p></p><i></i></b><br><br><br><br><br><br><br><br>",
+    "created_at": "2015-12-23T02:03:57.000Z",
+    "id": 1,
+    "image_content_type": "image/png",
+    "image_file_name": "553.png",
+    "image_file_size": 12406,
+    "image_updated_at": "2016-01-15T02:12:31.000Z",
+    "image_url": "/system/news/images/000/000/001/medium/553.png?1452823951",
+    "isFocus": true,
+    "jail_id": 1,
+    "title": "【刑法执行】昭通市食药监局到昭通监狱开展警示教育",
+    "type_id": 1,
+    "updated_at": "2016-01-15T02:12:32.000Z"
      */
 
     private int id;
@@ -100,7 +99,7 @@ public class News {
         return contents;
     }
 
-    public boolean isIsFocus() {
+    public boolean getIsFocus() {
         return isFocus;
     }
 

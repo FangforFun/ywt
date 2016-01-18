@@ -2,6 +2,8 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -19,18 +21,21 @@ import com.zcw.togglebutton.ToggleButton;
  */
 public class SettingActivity extends BaseActivity {
 
-    private ToggleButton tb_msg_remind;
+//    private ToggleButton tb_msg_remind;
     private ToggleButton tb_clock_remind;
     private ToggleButton tb_pwd_set;
     private RelativeLayout rl_version_update;
     private TextView tv_agreement;
     private AlertDialog agreement_dialog;
     private RelativeLayout rl_opinion_feedback;// 意见反馈
+    private SharedPreferences sp;
+    private String token;
+    private boolean isLock;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
-        tb_msg_remind = (ToggleButton) view.findViewById(R.id.tb_msg_remind);
+//        tb_msg_remind = (ToggleButton) view.findViewById(R.id.tb_msg_remind);
         tb_clock_remind = (ToggleButton) view.findViewById(R.id.tb_clock_remind);
         tb_pwd_set = (ToggleButton) view.findViewById(R.id.tb_pwd_set);
         rl_version_update = (RelativeLayout) view.findViewById(R.id.rl_version_update);
@@ -41,18 +46,26 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        token = sp.getString("token", "");
         setTitle("设置");
         setBackVisibility(View.VISIBLE);
-        tb_msg_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                if (on) {
-                    showToastMsgShort("短信提醒已开启");
-                } else {
-                    showToastMsgShort("短信提醒已关闭");
-                }
-            }
-        });
+        isLock = sp.getBoolean("isLock", false);
+        if(isLock){
+            tb_pwd_set.setToggleOn();
+        }else {
+            tb_pwd_set.setToggleOff();
+        }
+//        tb_msg_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
+//            @Override
+//            public void onToggle(boolean on) {
+//                if (on) {
+//                    showToastMsgShort("短信提醒已开启");
+//                } else {
+//                    showToastMsgShort("短信提醒已关闭");
+//                }
+//            }
+//        });
         tb_clock_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(boolean on) {
@@ -66,15 +79,31 @@ public class SettingActivity extends BaseActivity {
         tb_pwd_set.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(boolean on) {
+                Intent intent = new Intent(SettingActivity.this, SettingPasswordActivity.class);
                 if(on){
-                    showToastMsgShort("独立密码设置已开启");
+//                    showToastMsgShort("独立密码设置已开启");
+                    intent.putExtra("type", "open");
                 }else {
-                    showToastMsgShort("独立密码设置已关闭");
+//                    showToastMsgShort("独立密码设置已关闭");
+                    intent.putExtra("type", "close");
                 }
+                startActivity(intent);
             }
         });
         rl_version_update.setOnClickListener(this);
         tv_agreement.setOnClickListener(this);
+        rl_opinion_feedback.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        isLock = sp.getBoolean("isLock", false);
+        if(isLock){
+            tb_pwd_set.setToggleOn();
+        }else {
+            tb_pwd_set.setToggleOff();
+        }
     }
 
     @Override
@@ -114,6 +143,14 @@ public class SettingActivity extends BaseActivity {
                         return false;
                     }
                 });
+                break;
+            case R.id.rl_opinion_feedback:
+                if(!TextUtils.isEmpty(token)) {
+                    intent = new Intent(SettingActivity.this, OpinionFeedbackActivity.class);
+                    startActivity(intent);
+                }else {
+                    showToastMsgShort("登录后可用");
+                }
                 break;
         }
     }

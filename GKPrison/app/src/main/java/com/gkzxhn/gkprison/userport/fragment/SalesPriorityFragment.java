@@ -40,32 +40,7 @@ public class SalesPriorityFragment extends BaseFragment {
     private int cart_id = 0;
     private int qty = 0;
     private int Items_id;
-    private List<Shoppinglist> shoppinglists = new ArrayList<Shoppinglist>();
-    private List<Integer> image = new ArrayList<Integer>(){
-        {
-            add(R.drawable.beizi1);
-            add(R.drawable.beizi2);
-            add(R.drawable.beizi3);
-            add(R.drawable.beizi4);
-        }
-    };
-    private List<String> description = new ArrayList<String>(){
-        {
-            add("天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子");
-            add("潮牌易拉罐学生保温不锈钢吸管水杯大肚杯创意随行随手情侣杯子");
-            add("天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子");
-            add("天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子");
-        }
-    };
 
-    private List<String> money = new ArrayList<String>(){
-        {
-            add("29.8");
-            add("41.3");
-            add("38.9");
-            add("24.1");
-        }
-    };
 
     @Override
     protected View initView() {

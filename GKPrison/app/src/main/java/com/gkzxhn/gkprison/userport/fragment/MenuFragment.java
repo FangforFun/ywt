@@ -73,7 +73,7 @@ public class MenuFragment extends BaseFragment{
             String ICON_URL = sp.getString("avatar", "");
             if(!TextUtils.isEmpty(ICON_URL)){
                 bitmapUtils = new BitmapUtils(context);
-                bitmapUtils.display(iv_user_icon, "http://10.93.1.10:3000" + ICON_URL);
+                bitmapUtils.display(iv_user_icon, Constants.RESOURSE_HEAD + ICON_URL);
             }
         }
         lv_home_menu.setAdapter(new MenuAdapter());
