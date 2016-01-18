@@ -7,6 +7,15 @@ public class Shoppinglist {
     private String price;
     private int id;
     private int qty;
+    private String title;
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getPrice() {
         return price;

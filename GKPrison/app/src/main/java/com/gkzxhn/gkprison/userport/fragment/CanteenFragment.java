@@ -18,10 +18,14 @@ import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -133,7 +137,9 @@ public class CanteenFragment extends BaseFragment {
     private  List<Items> itemses = new ArrayList<Items>();
     private String times;
     private ProgressDialog dialog;
-
+    private FrameLayout fl;//购物车详情页面
+    private ListView lv_buycar;
+    private BuyCarAdapter adapter;
 
 
     @Override
@@ -158,11 +164,11 @@ public class CanteenFragment extends BaseFragment {
         image_buycar = view.findViewById(R.id.image_buycar);
         badgeView = new BadgeView(context);
         badgeView.setTargetView(image_buycar);
+        fl = (FrameLayout)view.findViewById(R.id.fl_buycar);
+        lv_buycar = (ListView)view.findViewById(R.id.lv_buycar);
         badgeView.setTextSize(6);
         badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
         badgeView.setBadgeGravity(Gravity.TOP | Gravity.RIGHT);
-
-
         return view;
     }
 
@@ -192,6 +198,23 @@ public class CanteenFragment extends BaseFragment {
         sp_sales.setFocusable(false);
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
         sp_allclass.setBackgroundResource(R.drawable.spinner_down);
+        adapter = new BuyCarAdapter();
+        lv_buycar.setAdapter(adapter);
+        image_buycar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int i = fl.getVisibility();
+                if (commodities.size() == 0){
+                    showToastMsgShort("没有选择商品");
+                }else {
+                    if (i == 0) {
+                        fl.setVisibility(View.GONE);
+                    } else if (i == 8) {
+                        fl.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
         sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -377,7 +400,7 @@ public class CanteenFragment extends BaseFragment {
         lcount.clear();
         itemses.clear();
         allcount = 0;
-        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
+        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql, null);
         total = 0;
         if (cursor.getCount() == 0){
@@ -390,6 +413,7 @@ public class CanteenFragment extends BaseFragment {
                 shoppinglist.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
                 shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 commodities.add(shoppinglist);
             }
 
@@ -517,5 +541,150 @@ public class CanteenFragment extends BaseFragment {
         }
         return ipaddress;
 
+    }
+
+    private class BuyCarAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return commodities.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            final ViewHolder viewHolder;
+            if (convertView == null){
+                convertView = View.inflate(context,R.layout.buycar_items,null);
+                viewHolder = new ViewHolder();
+                viewHolder.title = (TextView)convertView.findViewById(R.id.tv_title);
+                viewHolder.price = (TextView)convertView.findViewById(R.id.tv_price);
+                viewHolder.add = (RelativeLayout)convertView.findViewById(R.id.rl_buycar_add);
+                viewHolder.reduce = (RelativeLayout)convertView.findViewById(R.id.rl_buycar_reduce);
+                viewHolder.num = (TextView)convertView.findViewById(R.id.tv_buycar_num);
+                convertView.setTag(viewHolder);
+            }else {
+                viewHolder = (ViewHolder)convertView.getTag();
+            }
+            viewHolder.title.setText(commodities.get(position).getTitle());
+            viewHolder.num.setText(commodities.get(position).getQty()+"");
+            viewHolder.price.setText(commodities.get(position).getPrice());
+            final Handler handler = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what){
+                        case 1:
+                            String s = (String)msg.obj;
+                            tv_total_money.setText(s);
+                            break;
+                    }
+                }
+            };
+            final Handler handler1 = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what){
+                        case 1:
+                            int i = (Integer)msg.obj;
+                            badgeView.setText(i+"");
+                            break;
+                    }
+                }
+            };
+            final Handler handler2 = new Handler(){
+                @Override
+                public void handleMessage(Message msg) {
+                    switch (msg.what){
+                        case 1:
+                            int i = (Integer)msg.obj;
+                            viewHolder.num.setText(i+"");
+                            break;
+                    }
+                }
+            };
+            viewHolder.add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String t = viewHolder.num.getText().toString();
+                    int i = Integer.parseInt(t);
+                    int j = i + 1;
+                    int id = commodities.get(position).getId();
+                    String sql = "update line_items set qty ="+j+"  where Items_id ="+id+"  and cart_id ="+cart_id;
+                    db.execSQL(sql);
+                    String price = commodities.get(position).getPrice();
+                    float p = Float.parseFloat(price);
+                    total += p;
+                    DecimalFormat fnum = new DecimalFormat("####0.00");
+                    send = fnum.format(total);
+                    Message msg = handler.obtainMessage();
+                    msg.obj = send;
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                    allcount += 1;
+                    Message msg1 = handler1.obtainMessage();
+                    msg1.obj = allcount;
+                    msg1.what = 1;
+                    handler1.sendMessage(msg1);
+                    Message msg2 = handler2.obtainMessage();
+                    msg2.obj = j;
+                    msg2.what = 1;
+                    handler2.sendMessage(msg2);
+                }
+            });
+            viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String t = viewHolder.num.getText().toString();
+                    int i = Integer.parseInt(t);
+                    int id = commodities.get(position).getId();
+                    if (i == 1){
+                        String sql = "delete from line_items where Items_id ="+id+"  and card_id ="+cart_id;
+                        db.execSQL(sql);
+                        commodities.remove(position);
+                        adapter.notifyDataSetChanged();
+                    }else {
+                        int j = i-1;
+                        String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and card_id="+cart_id;
+                        db.execSQL(sql);
+                        String price = commodities.get(position).getPrice();
+                        float p = Float.parseFloat(price);
+                        total -= p;
+                        DecimalFormat fnum = new DecimalFormat("####0.00");
+                        send = fnum.format(total);
+                        Message msg = handler.obtainMessage();
+                        msg.obj = send;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                        allcount -= 1;
+                        Message msg1 = handler1.obtainMessage();
+                        msg1.obj = allcount;
+                        msg1.what = 1;
+                        handler1.sendMessage(msg1);
+                        Message msg2 = handler2.obtainMessage();
+                        msg2.obj = j;
+                        msg2.what = 1;
+                        handler2.sendMessage(msg2);
+                    }
+                }
+            });
+            return convertView;
+        }
+
+        private class ViewHolder{
+            TextView title;
+            TextView price;
+            RelativeLayout add;
+            RelativeLayout reduce;
+            TextView num;
+        }
     }
 }
