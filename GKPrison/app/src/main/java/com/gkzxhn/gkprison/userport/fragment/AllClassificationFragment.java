@@ -238,4 +238,9 @@ public class AllClassificationFragment extends BaseFragment {
         RelativeLayout rl_add;
         TextView tv_num;
     }
+
+    public void onEvent(ClickEvent event){
+
+
+    }
 }

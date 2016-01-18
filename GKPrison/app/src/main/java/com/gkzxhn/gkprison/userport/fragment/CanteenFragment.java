@@ -191,7 +191,7 @@ public class CanteenFragment extends BaseFragment {
         data = new Bundle();
         data.putString("times",times);
         View image_buycar = view.findViewById(R.id.image_buycar);
-        EventBus.getDefault().register(this);
+        EventBus.getDefault().register(this);//注册Eventbus
         sp_allclass.setEnabled(true);
         sp_allclass.setFocusable(true);
         sp_sales.setEnabled(false);
@@ -638,6 +638,7 @@ public class CanteenFragment extends BaseFragment {
                     msg2.obj = j;
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
+                    EventBus.getDefault().post(new ClickEvent());
                 }
             });
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
@@ -673,6 +674,7 @@ public class CanteenFragment extends BaseFragment {
                         msg2.obj = j;
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
+                        EventBus.getDefault().post(new ClickEvent());
                     }
                 }
             });
