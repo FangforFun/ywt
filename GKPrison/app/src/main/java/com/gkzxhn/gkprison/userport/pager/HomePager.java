@@ -29,7 +29,6 @@ import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
-import com.google.gson.Gson;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -151,8 +150,8 @@ public class HomePager extends BasePager {
         ll_home_news3.setOnClickListener(this);
         if(isRegisteredUser) {
             token = sp.getString("token", "");
-            getFocusNews();// 获取焦点新闻
         }
+        getFocusNews();// 获取焦点新闻
     }
 
     /**

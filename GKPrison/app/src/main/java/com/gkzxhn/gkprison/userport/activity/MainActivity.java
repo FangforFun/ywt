@@ -33,6 +33,7 @@ import com.gkzxhn.gkprison.userport.pager.CanteenPager;
 import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
+import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.HttpUtils;
@@ -63,7 +64,7 @@ import java.util.List;
 public class MainActivity extends BaseActivity {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
-    private ViewPager home_viewPager;
+    private LazyViewPager home_viewPager;
     private RadioGroup rg_bottom_guide;
     private List<BasePager> pagerList;
     private RadioButton rb_bottom_guide_home;
@@ -108,7 +109,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_main, null);
-        home_viewPager = (ViewPager) view.findViewById(R.id.layout_content);
+        home_viewPager = (LazyViewPager) view.findViewById(R.id.layout_content);
         rg_bottom_guide = (RadioGroup) view.findViewById(R.id.rg_bottom_guide);
         rb_bottom_guide_home = (RadioButton) view.findViewById(R.id.rb_bottom_guide_home);
         rb_bottom_guide_visit = (RadioButton) view.findViewById(R.id.rb_bottom_guide_visit);
@@ -200,26 +201,27 @@ public class MainActivity extends BaseActivity {
             }
         });
         rg_bottom_guide.check(R.id.rb_bottom_guide_home); // 默认选择首页
-        home_viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        home_viewPager.setOnPageChangeListener(new LazyViewPager.OnPageChangeListener() {
             @Override
-            public void onPageScrolled(int i, float v, int i1) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
-            public void onPageSelected(int i) {
-                if (i == 0) {
+            public void onPageSelected(int position) {
+                if (position == 0) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_home);
                     setTitle("首页");
                     setMenuVisibility(View.VISIBLE);
                     setActionBarGone(View.VISIBLE);
                     setMessageVisibility(View.VISIBLE);
-                } else if (i == 1) {
+                } else if (position == 1) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
                     setTitle("探监");
                     setMenuVisibility(View.GONE);
                     setActionBarGone(View.VISIBLE);
                     setMessageVisibility(View.GONE);
-                } else if (i == 2) {
+                } else if (position == 2) {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
                     setTitle("电子商务");
                     setMenuVisibility(View.GONE);
@@ -229,7 +231,7 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageScrollStateChanged(int i) {
+            public void onPageScrollStateChanged(int state) {
 
             }
         });

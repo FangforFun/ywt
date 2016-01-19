@@ -48,14 +48,14 @@ public class SettingActivity extends BaseActivity {
     protected void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        setTitle("设置");
-        setBackVisibility(View.VISIBLE);
         isLock = sp.getBoolean("isLock", false);
         if(isLock){
             tb_pwd_set.setToggleOn();
         }else {
             tb_pwd_set.setToggleOff();
         }
+        setTitle("设置");
+        setBackVisibility(View.VISIBLE);
 //        tb_msg_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
 //            @Override
 //            public void onToggle(boolean on) {

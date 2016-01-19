@@ -185,7 +185,7 @@ public class NiceSpinner extends TextView {
                     DrawableCompat.setTint(mDrawable, resId);
                 }
             }
-            mDrawable.setBounds(0, 0, 30, 30);
+            mDrawable.setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.login_spinner), context.getResources().getDimensionPixelSize(R.dimen.login_spinner));
             setCompoundDrawables(null, null, mDrawable, null);
         }
         typedArray.recycle();
