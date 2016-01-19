@@ -10,7 +10,7 @@
     </RelativeLayout>
 
     <ListView
-        android:id="@+id/lv_prison_open"
+        android:id="@+id/lv_work_dynamic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/rl_carousel"
