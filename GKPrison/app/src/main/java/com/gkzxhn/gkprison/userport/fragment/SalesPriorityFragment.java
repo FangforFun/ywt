@@ -19,6 +19,7 @@ import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
+import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.squareup.picasso.Picasso;
 
@@ -40,6 +41,7 @@ public class SalesPriorityFragment extends BaseFragment {
     private int cart_id = 0;
     private int qty = 0;
     private int Items_id;
+    private  int category_id;
 
 
     @Override
@@ -51,9 +53,10 @@ public class SalesPriorityFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        EventBus.getDefault().register(this);
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
-        int category_id = bundle.getInt("leibie", 0);
+        category_id = bundle.getInt("leibie", 0);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = null;
         Cursor cursor1 = db.rawQuery(sql1, null);
@@ -171,9 +174,11 @@ public class SalesPriorityFragment extends BaseFragment {
                     if ( i == 0){
                         String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id  +"," + cart_id +",1)";
                         db.execSQL(sql);
+                        commodities.get(position).setQty(1);
                     }else {
                         String sql = "update line_items set qty = "+ j +" where Items_id = " +Items_id +" and cart_id ="+cart_id;
                         db.execSQL(sql);
+                        commodities.get(position).setQty(j);
                     }
                     String sql = "select qty from line_items where Items_id = "+Items_id+" and cart_id ="+cart_id;
                     Cursor cursor = db.rawQuery(sql,null);
@@ -203,9 +208,11 @@ public class SalesPriorityFragment extends BaseFragment {
                     if (i == 1) {
                         String sql = "delete from line_items where Items_id = " + Items_id + " and cart_id ="+cart_id;
                         db.execSQL(sql);
+                        commodities.get(position).setQty(0);
                     } else if (i > 1) {
                         String sql = "update line_items set qty = " + j + " where Items_id = " + Items_id + " and cart_id="+cart_id;
                         db.execSQL(sql);
+                        commodities.get(position).setQty(j);
                     }
                     String sql = "select qty from line_items where Items_id = " + Items_id+" and cart_id ="+cart_id;
                     Cursor cursor = db.rawQuery(sql, null);
@@ -245,4 +252,48 @@ public class SalesPriorityFragment extends BaseFragment {
     }
 
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
+
+    public void onEvent(ClickEven1 even1){
+        commodities.clear();
+        Cursor cursor =null;
+        if (category_id == 0){
+            cursor = db.query("Items",null,null,null,null,null,null);
+        }else if (category_id == 1){
+            String sql = "select * from Items where category_id = 1";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 2){
+            String sql = "select * from Items where category_id = 2";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 3){
+            String sql = "select * from Items where category_id = 3";
+            cursor = db.rawQuery(sql,null);
+        }
+        while (cursor.moveToNext()) {
+            if (commodities.size() < cursor.getCount()) {
+                Commodity commodity = new Commodity();
+                commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
+                commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+                commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
+                commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
+                commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
+                commodity.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                String sql = "select qty from line_items where line_items.Items_id = "+commodity.getId()+" and line_items.cart_id = "+cart_id;
+                Cursor cursor2 = db.rawQuery(sql,null);
+                if (cursor2.getCount() != 0){
+                    while (cursor2.moveToNext()) {
+                        commodity.setQty(cursor2.getInt(cursor2.getColumnIndex("qty")));
+                    }
+                }else {
+                    commodity.setQty(0);
+                }
+                commodities.add(commodity);
+            }
+        }
+        adapter.notifyDataSetChanged();
+    }
 }

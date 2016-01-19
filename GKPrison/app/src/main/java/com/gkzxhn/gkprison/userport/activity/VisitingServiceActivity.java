@@ -29,7 +29,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
 /**
- * 探监服务--探监申请
+ * 工作动态
  */
 public class VisitingServiceActivity extends BaseActivity {
 
