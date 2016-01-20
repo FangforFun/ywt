@@ -13,20 +13,32 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 public class ApplyResultActivity extends BaseActivity {
 
     private TextView tv_request_state;//申请状态
+    private TextView tv_request_name;// 申请人
+    private TextView tv_request_time;// 申请时间
     private LinearLayout ll_request_not_pass_reason;// 探监申请未通过原因
     private LinearLayout ll_request_pass_notice;// 探监申请通过备注
     private LinearLayout ll_meeting_request_pass_notice;// 会见申请通过备注
     private LinearLayout ll_meeting_request_not_pass_reason;// 会见未通过原因
-    private String type;
+    private TextView tv_visit_time;
+    private TextView tv_meeting_time;
+    private int type_id;
+    private String result;
+    private String apply_date;
+    private String meeting_date;
+    private String name;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_apply_result, null);
+        tv_request_name = (TextView) view.findViewById(R.id.tv_request_name);
+        tv_request_time = (TextView) view.findViewById(R.id.tv_request_time);
         tv_request_state = (TextView) view.findViewById(R.id.tv_request_state);
         ll_request_not_pass_reason = (LinearLayout) view.findViewById(R.id.ll_request_not_pass_reason);
         ll_request_pass_notice = (LinearLayout) view.findViewById(R.id.ll_request_pass_notice);
         ll_meeting_request_pass_notice = (LinearLayout) view.findViewById(R.id.ll_meeting_request_pass_notice);
         ll_meeting_request_not_pass_reason = (LinearLayout) view.findViewById(R.id.ll_meeting_request_not_pass_reason);
+        tv_visit_time = (TextView) view.findViewById(R.id.tv_visit_time);
+        tv_meeting_time = (TextView) view.findViewById(R.id.tv_meeting_time);
         return view;
     }
 
@@ -34,35 +46,48 @@ public class ApplyResultActivity extends BaseActivity {
     protected void initData() {
         setTitle("申请结果页");
         setBackVisibility(View.VISIBLE);
-        type = getIntent().getStringExtra("type");
-        if(type.equals("探监已通过")){
-            ll_request_pass_notice.setVisibility(View.VISIBLE);
-            tv_request_state.setText("已通过");
-            tv_request_state.setTextColor(getResources().getColor(R.color.tv_green));
-            ll_request_not_pass_reason.setVisibility(View.GONE);
-            ll_meeting_request_pass_notice.setVisibility(View.GONE);
-            ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
-        }else if(type.equals("探监未通过")){
-            ll_request_pass_notice.setVisibility(View.GONE);
-            tv_request_state.setText("未通过");
-            tv_request_state.setTextColor(getResources().getColor(R.color.tv_red));
-            ll_request_not_pass_reason.setVisibility(View.VISIBLE);
-            ll_meeting_request_pass_notice.setVisibility(View.GONE);
-            ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
-        }else if(type.equals("会见未通过")){
-            ll_request_pass_notice.setVisibility(View.GONE);
-            tv_request_state.setText("未通过");
-            tv_request_state.setTextColor(getResources().getColor(R.color.tv_red));
-            ll_request_not_pass_reason.setVisibility(View.GONE);
-            ll_meeting_request_not_pass_reason.setVisibility(View.VISIBLE);
-            ll_meeting_request_pass_notice.setVisibility(View.GONE);
-        }else if(type.equals("会见已通过")){
-            ll_request_pass_notice.setVisibility(View.GONE);
-            tv_request_state.setText("已通过");
-            tv_request_state.setTextColor(getResources().getColor(R.color.tv_green));
-            ll_request_not_pass_reason.setVisibility(View.GONE);
-            ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
-            ll_meeting_request_pass_notice.setVisibility(View.VISIBLE);
+        result = getIntent().getStringExtra("result");
+        apply_date = getIntent().getStringExtra("apply_date");
+        name = getIntent().getStringExtra("name");
+        type_id = getIntent().getIntExtra("type_id", 0);
+        tv_request_name.setText(name);
+        tv_request_time.setText(apply_date);
+        if(type_id == 2){
+            if(result.contains("已通过")) {
+                meeting_date = getIntent().getStringExtra("meeting_date");
+                tv_visit_time.setText(meeting_date);
+                ll_request_pass_notice.setVisibility(View.VISIBLE);
+                tv_request_state.setText(result);
+                tv_request_state.setTextColor(getResources().getColor(R.color.tv_green));
+                ll_request_not_pass_reason.setVisibility(View.GONE);
+                ll_meeting_request_pass_notice.setVisibility(View.GONE);
+                ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
+            }else {
+                ll_request_pass_notice.setVisibility(View.GONE);
+                tv_request_state.setText(result);
+                tv_request_state.setTextColor(getResources().getColor(R.color.tv_red));
+                ll_request_not_pass_reason.setVisibility(View.VISIBLE);
+                ll_meeting_request_pass_notice.setVisibility(View.GONE);
+                ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
+            }
+        }else if(type_id == 1){
+            if(result.contains("已通过")){
+                meeting_date = getIntent().getStringExtra("meeting_date");
+                ll_request_pass_notice.setVisibility(View.GONE);
+                tv_request_state.setText(result);
+                tv_request_state.setTextColor(getResources().getColor(R.color.tv_green));
+                ll_request_not_pass_reason.setVisibility(View.GONE);
+                ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
+                ll_meeting_request_pass_notice.setVisibility(View.VISIBLE);
+                tv_meeting_time.setText(meeting_date);
+            }else {
+                ll_request_pass_notice.setVisibility(View.GONE);
+                tv_request_state.setText("未通过");
+                tv_request_state.setTextColor(getResources().getColor(R.color.tv_red));
+                ll_request_not_pass_reason.setVisibility(View.GONE);
+                ll_meeting_request_not_pass_reason.setVisibility(View.VISIBLE);
+                ll_meeting_request_pass_notice.setVisibility(View.GONE);
+            }
         }
     }
 }
