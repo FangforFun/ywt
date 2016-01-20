@@ -13,8 +13,8 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 
 public class UserInfoActivity extends BaseActivity {
 
-    private final String[] USER_INFO_LEFT_TVS = {"姓名", "性别", "与服刑人员关系", "服刑人员囚号", "服刑人员刑期", "联系电话"};
-    private final String[] USER_INFO_RIGHT_TVS = {"叶美惠", "女", "母子", "217459123", "3年3个月", "13232324328"};
+    private final String[] USER_INFO_LEFT_TVS = {"姓名", "身份证号", "联系电话",  "与服刑人员关系","服刑人员性别", "服刑人员囚号", "服刑人员刑期"};
+    private final String[] USER_INFO_RIGHT_TVS = {"叶美惠", "34523423423423534", "13232324328", "女", "母子", "217459123", "3年3个月"};
 
     private ListView lv_user_info;
     private SharedPreferences sp;
@@ -69,24 +69,27 @@ public class UserInfoActivity extends BaseActivity {
                 case 0:// 姓名
                     holder.tv_user_info_right.setText(sp.getString("name", "叶美惠"));
                     break;
-                case 1:// 性别
-                    if(sp.getString("gender", "").equals("m")) {
-                        holder.tv_user_info_right.setText("男");
-                    }else if(sp.getString("gender", "").equals("f")){
-                        holder.tv_user_info_right.setText("女");
-                    }
+                case 1:// 身份证号
+                    holder.tv_user_info_right.setText(sp.getString("password", "").substring(0, 4) + "******" + sp.getString("password", "").substring(sp.getString("password", "").length() - 4, sp.getString("password", "").length()));
                     break;
-                case 2:// 与服刑人员关系
+                case 2:// 联系电话
+                    holder.tv_user_info_right.setText(sp.getString("username", ""));
+                    break;
+                case 3:// 与服刑人员关系
                     holder.tv_user_info_right.setText(sp.getString("relationship", ""));
                     break;
-                case 3:// 服刑人员囚号
+                case 4:// 服刑人员性别
+                    if(sp.getString("gender", "").equals("m")) {
+                            holder.tv_user_info_right.setText("男");
+                        }else if(sp.getString("gender", "").equals("f")){
+                            holder.tv_user_info_right.setText("女");
+                        }
+                    break;
+                case 5:// 服刑人员囚号
                     holder.tv_user_info_right.setText(sp.getString("prisoner_number", ""));
                     break;
-                case 4:// 服刑人员刑期
+                case 6:// 服刑人员刑期
                     holder.tv_user_info_right.setText(sp.getString("prison_term_started_at", "") + " 至 " + sp.getString("prison_term_ended_at", ""));
-                    break;
-                case 5:// 联系电话
-                    holder.tv_user_info_right.setText(sp.getString("username", ""));
                     break;
             }
             return convertView;

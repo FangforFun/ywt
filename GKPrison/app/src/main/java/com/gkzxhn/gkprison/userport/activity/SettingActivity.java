@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
@@ -21,7 +22,6 @@ import com.zcw.togglebutton.ToggleButton;
  */
 public class SettingActivity extends BaseActivity {
 
-//    private ToggleButton tb_msg_remind;
     private ToggleButton tb_clock_remind;
     private ToggleButton tb_pwd_set;
     private RelativeLayout rl_version_update;
@@ -35,7 +35,6 @@ public class SettingActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
-//        tb_msg_remind = (ToggleButton) view.findViewById(R.id.tb_msg_remind);
         tb_clock_remind = (ToggleButton) view.findViewById(R.id.tb_clock_remind);
         tb_pwd_set = (ToggleButton) view.findViewById(R.id.tb_pwd_set);
         rl_version_update = (RelativeLayout) view.findViewById(R.id.rl_version_update);
@@ -56,21 +55,21 @@ public class SettingActivity extends BaseActivity {
         }
         setTitle("设置");
         setBackVisibility(View.VISIBLE);
-//        tb_msg_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-//            @Override
-//            public void onToggle(boolean on) {
-//                if (on) {
-//                    showToastMsgShort("短信提醒已开启");
-//                } else {
-//                    showToastMsgShort("短信提醒已关闭");
-//                }
-//            }
-//        });
         tb_clock_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(boolean on) {
                 if(on){
                     showToastMsgShort("闹钟提醒已开启");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
+                    builder.setMessage("闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时已闹钟形式提醒您，请注意手机状态。");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }else {
                     showToastMsgShort("闹钟提醒已关闭");
                 }

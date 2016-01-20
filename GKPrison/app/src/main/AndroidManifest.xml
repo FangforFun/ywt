@@ -225,6 +225,9 @@
         <activity android:name=".userport.activity.SettingPasswordActivity" />
         <activity android:name=".userport.activity.InputPasswordActivity" />
 
+        <receiver
+            android:name=".userport.receiver.AlarmReceiver"
+            android:enabled="true"></receiver>
     </application>
 
 </manifest>

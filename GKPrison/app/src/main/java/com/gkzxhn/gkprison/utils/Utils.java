@@ -1,12 +1,21 @@
 package com.gkzxhn.gkprison.utils;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.Log;
 
+import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 
 import java.text.ParseException;
 import java.text.DateFormat;
