@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.receiver;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,10 +8,12 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.userport.activity.AlarmActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
@@ -18,6 +21,11 @@ import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Calendar;
 
 public class CustomNotificationReceiver extends BroadcastReceiver {
 
@@ -61,6 +69,40 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
+        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        if(sp.getBoolean("isMsgRemind", false)) {
+            setRemindAlarm(context, content);
+        }
+    }
+
+    /**
+     * 设置闹钟
+     */
+    private static void setRemindAlarm(Context context, String content) {
+        Log.i("消息内容", content);
+        String meeting_date = "";
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            meeting_date = jsonObject.getString("meeting_date");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(context, AlarmActivity.class);
+        intent.setAction("short");
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent, 0);
+        Calendar calendar = Calendar.getInstance();
+//        calendar.set(Calendar.DAY_OF_MONTH, Integer.parseInt(meeting_date.split("-")[2]));
+//        calendar.set(Calendar.MONTH, Integer.parseInt(meeting_date.split("-")[1]));
+//        calendar.set(Calendar.YEAR, Integer.parseInt(meeting_date.split("-")[0]));
+//        calendar.set(Calendar.HOUR, 0);
+//        calendar.set(Calendar.MINUTE, 0);
+//        calendar.set(Calendar.MILLISECOND, 0);
+//        calendar.set(Calendar.SECOND, 0);
+        calendar.setTimeInMillis(System.currentTimeMillis());
+
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, calendar.getTimeInMillis(), sender);
     }
 
     /**

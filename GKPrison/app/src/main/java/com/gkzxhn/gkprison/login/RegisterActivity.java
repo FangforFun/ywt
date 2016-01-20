@@ -215,7 +215,9 @@ public class RegisterActivity extends BaseActivity {
                         } else if(register_back_code == 500){
                             showToastMsgShort("注册失败");
                         }else if(register_back_code == 501){
-                            showToastMsgShort("已注册用户");
+                            JSONObject errors = jsonObject.getJSONObject("errors");
+                            JSONArray apply_create = errors.getJSONArray("apply_create");
+                            showToastMsgShort(apply_create.getString(0));
                         }else {
                             showToastMsgShort("注册失败");
                         }
@@ -366,7 +368,6 @@ public class RegisterActivity extends BaseActivity {
     /**
      * 发送注册信息
      */
-
     private void sendRegisterMessge(){
         new Thread(){
             @Override
