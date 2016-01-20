@@ -21,11 +21,14 @@ public class ApplyResultActivity extends BaseActivity {
     private LinearLayout ll_meeting_request_not_pass_reason;// 会见未通过原因
     private TextView tv_visit_time;
     private TextView tv_meeting_time;
+    private TextView tv_meeting_not_pass_reason;
+    private TextView tv_request_not_pass_reason;
     private int type_id;
     private String result;
     private String apply_date;
     private String meeting_date;
     private String name;
+    private String reason;
 
     @Override
     protected View initView() {
@@ -39,6 +42,8 @@ public class ApplyResultActivity extends BaseActivity {
         ll_meeting_request_not_pass_reason = (LinearLayout) view.findViewById(R.id.ll_meeting_request_not_pass_reason);
         tv_visit_time = (TextView) view.findViewById(R.id.tv_visit_time);
         tv_meeting_time = (TextView) view.findViewById(R.id.tv_meeting_time);
+        tv_meeting_not_pass_reason = (TextView) view.findViewById(R.id.tv_meeting_not_pass_reason);
+        tv_request_not_pass_reason = (TextView) view.findViewById(R.id.tv_request_not_pass_reason);
         return view;
     }
 
@@ -49,6 +54,7 @@ public class ApplyResultActivity extends BaseActivity {
         result = getIntent().getStringExtra("result");
         apply_date = getIntent().getStringExtra("apply_date");
         name = getIntent().getStringExtra("name");
+        reason = getIntent().getStringExtra("reason");
         type_id = getIntent().getIntExtra("type_id", 0);
         tv_request_name.setText(name);
         tv_request_time.setText(apply_date);
@@ -87,6 +93,7 @@ public class ApplyResultActivity extends BaseActivity {
                 ll_request_not_pass_reason.setVisibility(View.GONE);
                 ll_meeting_request_not_pass_reason.setVisibility(View.VISIBLE);
                 ll_meeting_request_pass_notice.setVisibility(View.GONE);
+                tv_meeting_not_pass_reason.setText(reason);
             }
         }
     }

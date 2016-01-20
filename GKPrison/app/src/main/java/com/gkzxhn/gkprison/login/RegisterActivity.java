@@ -299,6 +299,7 @@ public class RegisterActivity extends BaseActivity {
         iv_add_photo_02.setOnClickListener(this);
         bt_send_identifying_code.setOnClickListener(this);
         iv_user_icon.setOnClickListener(this);
+        rl_back.setOnClickListener(this);
         prison_map = new HashMap<>();
         actv_prison_choose.setThreshold(1);
         actv_prison_choose.addTextChangedListener(new TextWatcher() {
@@ -489,7 +490,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-        super.onClick(v);
+//        super.onClick(v);
         switch (v.getId()){
             case R.id.apb_register:
                 name = et_name.getText().toString().trim();
@@ -702,6 +703,30 @@ public class RegisterActivity extends BaseActivity {
                 bt_send_identifying_code.setText(countdown + "秒后可重发");
                 handler.postDelayed(identifying_Code_Task, 1000);
                 break;
+            case R.id.rl_back:
+                if(!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+                    || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+                    || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null ) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                    builder.setTitle("提示");
+                    builder.setMessage("放弃所修改的内容吗？");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            RegisterActivity.this.finish();
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog remind_dialog = builder.create();
+                    remind_dialog.show();
+                }
+                break;
         }
     }
 
@@ -737,10 +762,43 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(dialog != null && dialog.isShowing()){
-            return true;
-        }else if(agreement_dialog != null && agreement_dialog.isShowing()){
-            return false;
+        if(keyCode == KeyEvent.KEYCODE_BACK) {
+            name = et_name.getText().toString().trim();
+            ic_card = et_ic_card.getText().toString().trim().toLowerCase();
+            phone_num = et_phone_num.getText().toString().trim();
+            relationship_with_prisoner = et_relationship_with_prisoner.getText().toString().trim();
+            prisoner_number = et_prisoner_number.getText().toString().trim();
+            prison_chooes = actv_prison_choose.getText().toString().trim();
+            identifying_code = et_identifying_code.getText().toString().trim();
+            if (dialog != null && dialog.isShowing()) {
+                return true;
+            } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
+                return false;
+            } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+                    || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+                    || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("放弃所修改的内容吗？");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        RegisterActivity.this.finish();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog remind_dialog = builder.create();
+                remind_dialog.show();
+                return false;
+            } else {
+                return super.onKeyDown(keyCode, event);
+            }
         }else {
             return super.onKeyDown(keyCode, event);
         }
@@ -898,17 +956,6 @@ public class RegisterActivity extends BaseActivity {
                                         .getAbsolutePath()
                                         + "/Camera/" + "emptyphoto.png";
                             }
-//                            else if(imageclick == -1){
-//                                newBitmap3 = ImageTools.zoomBitmap(photo, photo.getWidth()
-//                                        / SCALE, photo.getHeight() / SCALE);
-//                                // 释放原始图片占用的内存，防止out of memory异常发生
-//                                photo.recycle();
-//                                iv_user_icon.setImageBitmap(newBitmap3);
-//                                uploadFile3 = Environment
-//                                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-//                                        .getAbsolutePath()
-//                                        + "/Camera/" + "emptyphoto.png";
-//                            }
                         }
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this, "文件不存在", Toast.LENGTH_SHORT).show();

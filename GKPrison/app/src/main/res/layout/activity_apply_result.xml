@@ -102,6 +102,7 @@
                 android:textColor="@color/tv_bg"/>
 
             <TextView
+                android:id="@+id/tv_request_not_pass_reason"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1、根据本监狱的规定，每位服刑囚犯每月只能接受两次及以内的探视服务。\n2、重刑犯、表现不佳的服刑人员不接受探监。\n3、本服务端每月只能提交3次探监申请。"
@@ -130,6 +131,7 @@
                 android:textColor="@color/tv_bg"/>
 
             <TextView
+                android:id="@+id/tv_meeting_not_pass_reason"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="1、根据本监狱的规定，每位服刑囚犯每月只能接受两次及以内的远程。\n2、重刑犯、表现不佳的服刑人员不接受会见。\n3、本服务端每月只能提交3次会见申请。"

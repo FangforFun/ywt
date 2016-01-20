@@ -4,11 +4,9 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,12 +14,9 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
-import com.google.gson.Gson;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -35,46 +30,38 @@ public class SystemMessageActivity extends BaseActivity {
     private List<SystemMessage> messageList = new ArrayList<>();
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private SystemMsgAdapter msgAdapter;
+    private TextView tv_no_system_message;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_system_message, null);
         lv_system_msg = (ListView) view.findViewById(R.id.lv_system_msg);
+        tv_no_system_message = (TextView) view.findViewById(R.id.tv_no_system_message);
         return view;
     }
 
     @Override
     protected void initData() {
         messageList.clear();
-//        if("notification_click".equals(getIntent().getStringExtra("type"))){
-//            String notification_content = getIntent().getStringExtra("content");
-//            Log.i("新的系统消息", notification_content);
-//            if(!TextUtils.isEmpty(notification_content)) {
-//                Gson gson = new Gson();
-//                SystemMessage systemMessage = gson.fromJson(notification_content, SystemMessage.class);
-//                ContentValues values = new ContentValues();
-//                values.put("apply_date", systemMessage.getApply_date());
-//                values.put("type_id", systemMessage.getType_id());
-//                values.put("name", systemMessage.getName());
-//                values.put("is_read", systemMessage.is_read());
-//                values.put("result", systemMessage.getResult());
-//                values.put("meeting_date", systemMessage.getMeeting_date());
-//                values.put("reason", systemMessage.getReason());
-//                db.insert("sysmsg", null, values);
-//            }
-////            parseContent(notification_content);
-//        }
         setTitle("系统消息");
         setBackVisibility(View.VISIBLE);
         getMessageList();
         for (SystemMessage systemMessage : messageList){
             Log.i("消息数据。。。", systemMessage.toString());
         }
+        if(messageList.size() > 0) {
+            Collections.reverse(messageList);
+        }
         if(msgAdapter == null) {
             msgAdapter = new SystemMsgAdapter();
             lv_system_msg.setAdapter(msgAdapter);
         }else {
             msgAdapter.notifyDataSetChanged();
+        }
+        if(messageList.size() == 0){
+            tv_no_system_message.setVisibility(View.VISIBLE);
+        }else {
+            tv_no_system_message.setVisibility(View.GONE);
         }
     }
 
@@ -112,32 +99,14 @@ public class SystemMessageActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 解析消息内容
-     */
-    private void parseContent(String content) {
-        SystemMessage systemMessage = new SystemMessage();
-        try {
-            JSONObject jsonObject = new JSONObject(content);
-            String apply_date = jsonObject.getString("apply_date");
-            String name = jsonObject.getString("name");
-            String result = jsonObject.getString("result");
-            systemMessage.setApply_date(apply_date);
-            systemMessage.setName(name);
-            systemMessage.setResult(result);
-            systemMessage.setIs_read(jsonObject.getBoolean("is_read"));
-            systemMessage.setMeeting_date(jsonObject.getString("meeting_date"));
-            systemMessage.setType_id(jsonObject.getInt("type_id"));
-            systemMessage.setReason(jsonObject.getString("reason"));
-            messageList.add(systemMessage);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
+        if(messageList.size() == 0){
+            tv_no_system_message.setVisibility(View.VISIBLE);
+        }else {
+            tv_no_system_message.setVisibility(View.GONE);
+        }
         if(msgAdapter == null) {
             msgAdapter = new SystemMsgAdapter();
             lv_system_msg.setAdapter(msgAdapter);
@@ -206,13 +175,13 @@ public class SystemMessageActivity extends BaseActivity {
                         ContentValues values = new ContentValues();
                         values.put("is_read", "true");
                         db.update("sysmsg", values, " apply_date = ? and meeting_date = ? ", new String[]{messageList.get(position).getApply_date(), messageList.get(position).getMeeting_date()});
-//                        db.close();
                         intent = new Intent(SystemMessageActivity.this, ApplyResultActivity.class);
                         intent.putExtra("type_id", messageList.get(position).getType_id());
                         intent.putExtra("result", messageList.get(position).getResult());
                         intent.putExtra("apply_date", messageList.get(position).getApply_date());
                         intent.putExtra("meeting_date", messageList.get(position).getMeeting_date());
                         intent.putExtra("name", messageList.get(position).getName());
+                        intent.putExtra("reason", messageList.get(position).getReason());
                         startActivity(intent);
                     }else {
 
@@ -226,5 +195,13 @@ public class SystemMessageActivity extends BaseActivity {
     private static class SystemMsgViewHolder{
         TextView tv_system_msg_left;
         TextView tv_system_msg_right;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(db != null && db.isOpen()){
+            db.close();
+        }
     }
 }

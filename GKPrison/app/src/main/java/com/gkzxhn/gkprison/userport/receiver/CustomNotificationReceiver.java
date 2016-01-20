@@ -46,12 +46,10 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * @param formId
      */
     public static void sendNotification(Context context, String content, String formId){
-        SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+        saveToDataBase(content);
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, SystemMessageActivity.class);
         Log.i("gongju通知", content);
-//        intent.putExtra("content", content);
-//        intent.putExtra("type", "notification_click");
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         Notification notification = new Notification.Builder(context)
@@ -63,8 +61,15 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
+    }
 
+    /**
+     * 保存至数据库
+     * @param content
+     */
+    private static void saveToDataBase(String content) {
         // 保存至数据库
+        SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
         Gson gson = new Gson();
         SystemMessage systemMessage = gson.fromJson(content, SystemMessage.class);
         ContentValues values = new ContentValues();
@@ -76,5 +81,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         values.put("meeting_date", systemMessage.getMeeting_date());
         values.put("reason", systemMessage.getReason());
         db.insert("sysmsg", null, values);
+        db.close();
     }
 }
