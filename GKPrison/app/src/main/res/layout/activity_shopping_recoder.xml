@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:divider="@null"
         android:scrollbars="none"
-        android:visibility="gone"
+
         ></ListView>
 
     <TextView
@@ -16,8 +16,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="没有购物记录"
-        android:textColor="@color/holo_red_light"
         android:visibility="gone"
+        android:textColor="@color/holo_red_light"
         android:layout_centerInParent="true"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"

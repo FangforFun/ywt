@@ -42,6 +42,7 @@ import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Items;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
+import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
@@ -140,6 +141,29 @@ public class CanteenFragment extends BaseFragment {
     private FrameLayout fl;//购物车详情页面
     private ListView lv_buycar;
     private BuyCarAdapter adapter;
+    private RelativeLayout clear;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    int i = (Integer)msg.obj;
+                    badgeView.setText(i+"");
+                    break;
+            }
+        }
+    };
+    private Handler handler1 = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String s = (String)msg.obj;
+                    tv_total_money.setText(s);
+                    break;
+            }
+        }
+    };
 
 
     @Override
@@ -166,6 +190,7 @@ public class CanteenFragment extends BaseFragment {
         badgeView.setTargetView(image_buycar);
         fl = (FrameLayout)view.findViewById(R.id.fl_buycar);
         lv_buycar = (ListView)view.findViewById(R.id.lv_buycar);
+        clear = (RelativeLayout)view.findViewById(R.id.rl_clear);
         badgeView.setTextSize(6);
         badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
         badgeView.setBadgeGravity(Gravity.TOP | Gravity.RIGHT);
@@ -198,8 +223,26 @@ public class CanteenFragment extends BaseFragment {
         sp_sales.setFocusable(false);
         tv_allclass.setTextColor(Color.parseColor("#6495ed"));
         sp_allclass.setBackgroundResource(R.drawable.spinner_down);
-        adapter = new BuyCarAdapter();
-        lv_buycar.setAdapter(adapter);
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                commodities.clear();
+                String sql = "delete from line_items where cart_id ="+cart_id;
+                db.execSQL(sql);
+                allcount = 0;
+                Message msg = handler.obtainMessage();
+                msg.obj = allcount;
+                msg.what = 1;
+                handler.sendMessage(msg);
+                send = "0.00";
+                Message msg1 = handler1.obtainMessage();
+                msg1.obj = send;
+                msg1.what = 1;
+                handler1.sendMessage(msg1);
+                EventBus.getDefault().post(new ClickEven1());
+                fl.setVisibility(View.GONE);
+            }
+        });
         image_buycar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -215,6 +258,13 @@ public class CanteenFragment extends BaseFragment {
                 }
             }
         });
+        fl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fl.setVisibility(View.GONE);
+            }
+        });
+
         sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -416,7 +466,8 @@ public class CanteenFragment extends BaseFragment {
                 shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
                 commodities.add(shoppinglist);
             }
-
+            adapter = new BuyCarAdapter();
+            lv_buycar.setAdapter(adapter);
         }
         for (int i = 0;i < commodities.size();i++){
             String t = commodities.get(i).getPrice();
@@ -638,6 +689,8 @@ public class CanteenFragment extends BaseFragment {
                     msg2.obj = j;
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
+                    commodities.get(position).setQty(j);
+                    EventBus.getDefault().post(new ClickEven1());
                 }
             });
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
@@ -647,13 +700,28 @@ public class CanteenFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int id = commodities.get(position).getId();
                     if (i == 1){
-                        String sql = "delete from line_items where Items_id ="+id+"  and card_id ="+cart_id;
+                        String price = commodities.get(position).getPrice();
+                        float  p = Float.parseFloat(price);
+                        total -= p;
+                        DecimalFormat fnum = new DecimalFormat("####0.00");
+                        send = fnum.format(total);
+                        Message msg = handler.obtainMessage();
+                        msg.obj = send;
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                        allcount -= 1;
+                        Message msg1 = handler1.obtainMessage();
+                        msg1.obj = allcount;
+                        msg1.what = 1;
+                        handler1.sendMessage(msg1);
+                        String sql = "delete from line_items where Items_id ="+id+"  and cart_id ="+cart_id;
                         db.execSQL(sql);
                         commodities.remove(position);
                         adapter.notifyDataSetChanged();
+
                     }else {
                         int j = i-1;
-                        String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and card_id="+cart_id;
+                        String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and cart_id="+cart_id;
                         db.execSQL(sql);
                         String price = commodities.get(position).getPrice();
                         float p = Float.parseFloat(price);
@@ -673,6 +741,11 @@ public class CanteenFragment extends BaseFragment {
                         msg2.obj = j;
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
+                        commodities.get(position).setQty(j);
+                    }
+                    EventBus.getDefault().post(new ClickEven1());
+                    if (commodities.size()==0){
+                        fl.setVisibility(View.GONE);
                     }
                 }
             });
