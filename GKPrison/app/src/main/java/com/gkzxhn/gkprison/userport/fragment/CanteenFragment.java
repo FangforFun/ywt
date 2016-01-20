@@ -44,6 +44,7 @@ import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
 import com.lidroid.xutils.HttpUtils;
@@ -422,28 +423,6 @@ public class CanteenFragment extends BaseFragment {
 
 
     public void onEvent(ClickEvent event) {
-        Handler handler = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what){
-                    case 1:
-                        String i = (String)msg.obj;
-                        tv_total_money.setText(i);
-                        break;
-                }
-            }
-        };
-        Handler handler1 = new Handler(){
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what){
-                    case 1:
-                        int i = (Integer)msg.obj;
-                        badgeView.setText(i+"");
-                        break;
-                }
-            }
-        };
         // 从事件中获得参数值
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
@@ -485,16 +464,16 @@ public class CanteenFragment extends BaseFragment {
             allcount += lcount.get(i);
         }
 
-        Message msg1 = handler1.obtainMessage();
+        Message msg1 = handler.obtainMessage();
         msg1.obj = allcount;
         msg1.what = 1;
-        handler1.sendMessage(msg1);
+        handler.sendMessage(msg1);
         DecimalFormat fnum = new DecimalFormat("####0.00");
         send = fnum.format(total);
-        Message msg = handler.obtainMessage();
+        Message msg = handler1.obtainMessage();
         msg.obj = send;
         msg.what = 1;
-        handler.sendMessage(msg);
+        handler1.sendMessage(msg);
     }
 
     private void sendOrderToServer() {
@@ -629,28 +608,6 @@ public class CanteenFragment extends BaseFragment {
             viewHolder.title.setText(commodities.get(position).getTitle());
             viewHolder.num.setText(commodities.get(position).getQty()+"");
             viewHolder.price.setText(commodities.get(position).getPrice());
-            final Handler handler = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    switch (msg.what){
-                        case 1:
-                            String s = (String)msg.obj;
-                            tv_total_money.setText(s);
-                            break;
-                    }
-                }
-            };
-            final Handler handler1 = new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    switch (msg.what){
-                        case 1:
-                            int i = (Integer)msg.obj;
-                            badgeView.setText(i+"");
-                            break;
-                    }
-                }
-            };
             final Handler handler2 = new Handler(){
                 @Override
                 public void handleMessage(Message msg) {
@@ -665,6 +622,9 @@ public class CanteenFragment extends BaseFragment {
             viewHolder.add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(Utils.isFastClick()){
+                        return;
+                    }
                     String t = viewHolder.num.getText().toString();
                     int i = Integer.parseInt(t);
                     int j = i + 1;
@@ -676,17 +636,27 @@ public class CanteenFragment extends BaseFragment {
                     total += p;
                     DecimalFormat fnum = new DecimalFormat("####0.00");
                     send = fnum.format(total);
-                    Message msg = handler.obtainMessage();
+                    Message msg = handler1.obtainMessage();
                     msg.obj = send;
                     msg.what = 1;
-                    handler.sendMessage(msg);
+                    handler1.sendMessage(msg);
                     allcount += 1;
-                    Message msg1 = handler1.obtainMessage();
+                    Message msg1 = handler.obtainMessage();
                     msg1.obj = allcount;
                     msg1.what = 1;
-                    handler1.sendMessage(msg1);
+                    handler.sendMessage(msg1);
+                    String sql1 = "select qty from line_items where Items_id = "+id+" and cart_id ="+cart_id;
+                    Cursor cursor = db.rawQuery(sql1,null);
+                    int qty = 0;
+                    if (cursor.getCount() == 0){
+                        qty = 0;
+                    }else {
+                        while (cursor.moveToNext()){
+                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                        }
+                    }
                     Message msg2 = handler2.obtainMessage();
-                    msg2.obj = j;
+                    msg2.obj = qty;
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
                     commodities.get(position).setQty(j);
@@ -696,6 +666,9 @@ public class CanteenFragment extends BaseFragment {
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if(Utils.isFastClick()){
+                        return;
+                    }
                     String t = viewHolder.num.getText().toString();
                     int i = Integer.parseInt(t);
                     int id = commodities.get(position).getId();
@@ -705,15 +678,15 @@ public class CanteenFragment extends BaseFragment {
                         total -= p;
                         DecimalFormat fnum = new DecimalFormat("####0.00");
                         send = fnum.format(total);
-                        Message msg = handler.obtainMessage();
+                        Message msg = handler1.obtainMessage();
                         msg.obj = send;
                         msg.what = 1;
-                        handler.sendMessage(msg);
+                        handler1.sendMessage(msg);
                         allcount -= 1;
-                        Message msg1 = handler1.obtainMessage();
+                        Message msg1 = handler.obtainMessage();
                         msg1.obj = allcount;
                         msg1.what = 1;
-                        handler1.sendMessage(msg1);
+                        handler.sendMessage(msg1);
                         String sql = "delete from line_items where Items_id ="+id+"  and cart_id ="+cart_id;
                         db.execSQL(sql);
                         commodities.remove(position);
@@ -728,17 +701,23 @@ public class CanteenFragment extends BaseFragment {
                         total -= p;
                         DecimalFormat fnum = new DecimalFormat("####0.00");
                         send = fnum.format(total);
-                        Message msg = handler.obtainMessage();
+                        Message msg = handler1.obtainMessage();
                         msg.obj = send;
                         msg.what = 1;
-                        handler.sendMessage(msg);
+                        handler1.sendMessage(msg);
                         allcount -= 1;
-                        Message msg1 = handler1.obtainMessage();
+                        Message msg1 = handler.obtainMessage();
                         msg1.obj = allcount;
                         msg1.what = 1;
-                        handler1.sendMessage(msg1);
+                        handler.sendMessage(msg1);
+                        String sql1 = "select qty from line_items where Items_id = " + id + "  and cart_id = " + cart_id;
+                        Cursor cursor = db.rawQuery(sql1, null);
+                        int qty = 0;
+                        while (cursor.moveToNext()) {
+                            qty = cursor.getInt(cursor.getColumnIndex("qty"));
+                        }
                         Message msg2 = handler2.obtainMessage();
-                        msg2.obj = j;
+                        msg2.obj = qty;
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
                         commodities.get(position).setQty(j);
