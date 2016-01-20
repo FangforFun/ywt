@@ -18,8 +18,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class
-        IntellingentSortingFragment extends BaseFragment {
+public class IntellingentSortingFragment extends BaseFragment {
     private ListView lv_intelling;
     private SalesAdapter adapter;
     private List<Integer> image = new ArrayList<Integer>(){

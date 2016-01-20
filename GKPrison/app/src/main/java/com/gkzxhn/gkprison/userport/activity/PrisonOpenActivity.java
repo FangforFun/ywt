@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -56,6 +57,7 @@ public class PrisonOpenActivity extends BaseActivity {
     private String url = "";
     private SharedPreferences sp;
     private String token;
+    private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
@@ -66,7 +68,14 @@ public class PrisonOpenActivity extends BaseActivity {
                     if (tag.equals("success")){
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
-                        newsList = analysisNews(result);
+                        allnews = analysisNews(result);
+                        for (int i = 0;i < allnews.size();i++){
+                            News news = allnews.get(i);
+                            if (news.getType_id() == 1){
+                                newsList.add(news);
+                            }
+                        }
+                        Log.d("新闻数量",newsList.size()+"");
                         lv_prison_open.setAdapter(new MyAdapter());
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
@@ -179,6 +188,7 @@ public class PrisonOpenActivity extends BaseActivity {
                 news.setContents(jsonObject.getString("contents"));
                 news.setJail_id(jsonObject.getInt("jail_id"));
                 news.setImage_url(jsonObject.getString("image_url"));
+                news.setType_id(jsonObject.getInt("type_id"));
                 newses.add(news);
             }
 

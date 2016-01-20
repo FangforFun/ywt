@@ -54,6 +54,23 @@ public class SalesPriorityFragment extends BaseFragment {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
+        getDate();
+        Collections.sort(commodities, new Comparator<Commodity>() {
+            @Override
+            public int compare(Commodity lhs, Commodity rhs) {
+                int heat1 = lhs.getRanking();
+                int heat2 = rhs.getRanking();
+                if (heat1 < heat2){
+                    return 1;
+                }
+                return -1;
+            }
+        });
+        adapter = new SalesAdapter();
+        lv_sale.setAdapter(adapter);
+    }
+
+    private void getDate(){
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
         category_id = bundle.getInt("leibie", 0);
@@ -98,19 +115,6 @@ public class SalesPriorityFragment extends BaseFragment {
                 commodities.add(commodity);
             }
         }
-        Collections.sort(commodities, new Comparator<Commodity>() {
-            @Override
-            public int compare(Commodity lhs, Commodity rhs) {
-                int heat1 = lhs.getRanking();
-                int heat2 = rhs.getRanking();
-                if (heat1 < heat2){
-                    return 1;
-                }
-                return -1;
-            }
-        });
-        adapter = new SalesAdapter();
-        lv_sale.setAdapter(adapter);
     }
 
     private class SalesAdapter extends BaseAdapter {

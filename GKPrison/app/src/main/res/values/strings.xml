@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">狱务通</string>
-
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_base">BaseActivity</string>
@@ -83,4 +82,14 @@
     <string name="avchat_device_no_ready">音视频设备未准备好</string>
     <string name="title_activity_laws_detail">LawsDetailActivity</string>
     <string name="meeting_note">会见须知： \n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供远程探监服务，您可以通过狱务通申请探监，并通过手机视频和服刑人员进行远程探视。 在申请远程探监前，请您详细阅读以下注意事项：\n1、服刑人员每月可远程探监次数不限。 \n2、部分服刑人员不提供探视服务。 \n3、狱务通软件暂时只提供直系亲属远程探视，请谅解。 \n4、根据安全要求，您的会见信息可能会被记录。 \n5、每次会见需缴纳一定费用，请勿无故提交远程探监申请。</string>
+
+
+<!--listview下拉刷新-->
+    <string name="pull_to_refresh">下拉可以刷新</string>
+    <string name="updated_at">上次更新于%1$s前</string>
+    <string name="release_to_refresh">释放立即刷新</string>
+    <string name="refreshing">正在刷新…</string>
+    <string name="not_updated_yet">暂未更新过</string>
+    <string name="updated_just_now">刚刚更新</string>
+    <string name="time_error">时间有问题</string>
 </resources>
