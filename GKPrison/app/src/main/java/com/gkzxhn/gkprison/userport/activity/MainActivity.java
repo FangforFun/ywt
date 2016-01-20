@@ -1,6 +1,10 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -396,6 +400,7 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.rl_message:
                 intent = new Intent(MainActivity.this, SystemMessageActivity.class);
+//                intent.putExtra("type", "main_click");
                 startActivity(intent);
                 break;
         }

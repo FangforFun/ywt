@@ -689,6 +689,7 @@ public class CanteenFragment extends BaseFragment {
                     msg2.obj = j;
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
+                    commodities.get(position).setQty(j);
                     EventBus.getDefault().post(new ClickEven1());
                 }
             });
@@ -740,6 +741,7 @@ public class CanteenFragment extends BaseFragment {
                         msg2.obj = j;
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
+                        commodities.get(position).setQty(j);
                     }
                     EventBus.getDefault().post(new ClickEven1());
                     if (commodities.size()==0){

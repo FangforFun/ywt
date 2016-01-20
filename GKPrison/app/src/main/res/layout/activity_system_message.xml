@@ -10,4 +10,15 @@
         android:divider="@color/bg"
         android:dividerHeight="5dp"/>
 
+    <TextView
+        android:id="@+id/tv_no_system_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="还没有系统消息哦..."
+        android:textColor="@color/tv_red"
+        android:textSize="16sp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:visibility="gone"/>
+
 </RelativeLayout>
