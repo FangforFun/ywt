@@ -26,7 +26,6 @@ import com.squareup.picasso.Picasso;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import de.greenrobot.event.EventBus;
 
 /**
@@ -43,7 +42,6 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
     private int category_id;
-
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -57,13 +55,19 @@ public class AllClassificationFragment extends BaseFragment {
 
         view = View.inflate(context,R.layout.fragment_all_classification,null);
         lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
-
         return view;
     }
 
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
+       getDate();
+        adapter = new SalesAdapter();
+        lv_allclass.setAdapter(adapter);
+
+    }
+
+    private void getDate(){
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
         category_id = bundle.getInt("leibie", 0);
@@ -73,20 +77,20 @@ public class AllClassificationFragment extends BaseFragment {
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
-       if (category_id == 0){
-        cursor = db.query("Items",null,null,null,null,null,null);
-       }else if (category_id == 1){
-           String sql = "select * from Items where category_id = 1";
-           cursor = db.rawQuery(sql,null);
-       }else if (category_id == 2){
-           String sql = "select * from Items where category_id = 2";
-           cursor = db.rawQuery(sql,null);
-       }else if (category_id == 3){
-           String sql = "select * from Items where category_id = 3";
-           cursor = db.rawQuery(sql,null);
-       }
+        if (category_id == 0){
+            cursor = db.query("Items",null,null,null,null,null,null);
+        }else if (category_id == 1){
+            String sql = "select * from Items where category_id = 1";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 2){
+            String sql = "select * from Items where category_id = 2";
+            cursor = db.rawQuery(sql,null);
+        }else if (category_id == 3){
+            String sql = "select * from Items where category_id = 3";
+            cursor = db.rawQuery(sql,null);
+        }
         while (cursor.moveToNext()) {
-           if (commodities.size() < cursor.getCount()) {
+            if (commodities.size() < cursor.getCount()) {
                 Commodity commodity = new Commodity();
                 commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
                 commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
@@ -106,9 +110,6 @@ public class AllClassificationFragment extends BaseFragment {
                 commodities.add(commodity);
             }
         }
-        adapter = new SalesAdapter();
-        lv_allclass.setAdapter(adapter);
-
     }
 
     private class SalesAdapter extends BaseAdapter{

@@ -67,6 +67,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private String url = "";
     private SharedPreferences sp;
     private String token;
+    private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private Handler handler = new Handler(){
         @Override
@@ -77,7 +78,13 @@ public class VisitingServiceActivity extends BaseActivity {
                     if (tag.equals("success")){
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
-                        newsList = analysisNews(result);
+                        allnews = analysisNews(result);
+                        for (int i = 0;i < allnews.size();i++){
+                            News news = allnews.get(i);
+                            if (news.getType_id() == 2){
+                                newsList.add(news);
+                            }
+                        }
                         lv_prison_open.setAdapter(new MyAdapter());
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
@@ -218,6 +225,7 @@ public class VisitingServiceActivity extends BaseActivity {
                 news.setContents(jsonObject.getString("contents"));
                 news.setJail_id(jsonObject.getInt("jail_id"));
                 news.setImage_url(jsonObject.getString("image_url"));
+                news.setType_id(jsonObject.getInt("type_id"));
                 newses.add(news);
             }
 

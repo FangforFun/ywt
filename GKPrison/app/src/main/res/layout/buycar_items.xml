@@ -57,19 +57,19 @@
                     android:src="@drawable/shoppiing_reduce"/>
             </RelativeLayout>
             <RelativeLayout
-                android:layout_width="25dp"
+                android:layout_width="34dp"
                 android:layout_height="25dp"
                 android:background="#F1F1F1"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="1dp">
                 <TextView
                     android:id="@+id/tv_buycar_num"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
+                    android:layout_width="34dp"
+                    android:layout_height="25dp"
                     android:gravity="center"
                     android:layout_centerInParent="true"
                     android:textSize="16sp"
-                    android:text="0"
+                    android:text="15"
                     />
             </RelativeLayout>
             <RelativeLayout

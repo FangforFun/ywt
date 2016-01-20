@@ -2,7 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userport.fragment.AllClassificationFragment">
-
    <ListView
        android:id="@+id/lv_allclassification"
        android:layout_width="match_parent"
@@ -10,4 +9,5 @@
        android:divider="#F1F1F1"
        android:dividerHeight="2dp"
        android:scrollbars="none"></ListView>
+
 </FrameLayout>
