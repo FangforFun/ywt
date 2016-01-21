@@ -31,6 +31,7 @@ public class SettingActivity extends BaseActivity {
     private SharedPreferences sp;
     private String token;
     private boolean isLock;
+    private boolean isMsgRemind;
 
     @Override
     protected View initView() {
@@ -53,15 +54,22 @@ public class SettingActivity extends BaseActivity {
         }else {
             tb_pwd_set.setToggleOff();
         }
+        isMsgRemind = sp.getBoolean("isMsgRemind", false);
+        if(isMsgRemind){
+            tb_clock_remind.setToggleOn();
+        }else {
+            tb_clock_remind.setToggleOff();
+        }
         setTitle("设置");
         setBackVisibility(View.VISIBLE);
         tb_clock_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(boolean on) {
+                SharedPreferences.Editor editor = sp.edit();
                 if(on){
                     showToastMsgShort("闹钟提醒已开启");
                     AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                    builder.setMessage("闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时已闹钟形式提醒您，请注意手机状态。");
+                    builder.setMessage("        闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -70,9 +78,12 @@ public class SettingActivity extends BaseActivity {
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
+                    editor.putBoolean("isMsgRemind", true);
                 }else {
                     showToastMsgShort("闹钟提醒已关闭");
+                    editor.putBoolean("isMsgRemind", false);
                 }
+                editor.commit();
             }
         });
         tb_pwd_set.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
@@ -102,6 +113,12 @@ public class SettingActivity extends BaseActivity {
             tb_pwd_set.setToggleOn();
         }else {
             tb_pwd_set.setToggleOff();
+        }
+        isMsgRemind = sp.getBoolean("isMsgRemind", false);
+        if(isMsgRemind){
+            tb_clock_remind.setToggleOn();
+        }else {
+            tb_clock_remind.setToggleOff();
         }
     }
 

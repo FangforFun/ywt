@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.receiver;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,19 +8,27 @@ import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
-import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
 public class CustomNotificationReceiver extends BroadcastReceiver {
+
+    private SharedPreferences sp;
 
     public CustomNotificationReceiver() {
     }
@@ -45,22 +54,59 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * @param content
      * @param formId
      */
-    public static void sendNotification(Context context, String content, String formId){
+    public void sendNotification(Context context, String content, String formId){
         saveToDataBase(content);
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, SystemMessageActivity.class);
         Log.i("gongju通知", content);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         Notification notification = new Notification.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker("您有新的消息，点击查看")
-                .setContentTitle(formId)
-                .setContentText(content)
+                .setContentTitle("狱务通提醒")
+                .setContentText("您有来自" + sp.getString("jail", "德山监狱") +"新的消息，点击查看")
                 .setContentIntent(pendingIntent).setNumber(1).build();
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
+        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        if(sp.getBoolean("isMsgRemind", false)) {
+            setRemindAlarm(context, content);
+        }
+    }
+
+    /**
+     * 设置闹钟
+     */
+    private static void setRemindAlarm(Context context, String content) {
+        Log.i("消息内容", content);
+        String meeting_date = "";
+        long alarm_time = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            meeting_date = jsonObject.getString("meeting_date");
+            String meeting_time = meeting_date.substring(0, meeting_date.lastIndexOf("-"));
+            Log.i("meeting_time", meeting_time);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            long pre_alarm_time = format.parse(meeting_time).getTime();
+            alarm_time = pre_alarm_time - 1800000;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent, 0);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        calendar.set(Calendar.HOUR, 2);        //设置闹钟小时数
+        calendar.set(Calendar.MINUTE, 1);            //设置闹钟的分钟数
+        calendar.set(Calendar.SECOND, 0);                //设置闹钟的秒数
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000, sender);
     }
 
     /**

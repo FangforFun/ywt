@@ -8,7 +8,16 @@ public class UserInfo {
     int code;
     String token;
     String avatar;
+    String jail;
     User user;
+
+    public String getJail() {
+        return jail;
+    }
+
+    public void setJail(String jail) {
+        this.jail = jail;
+    }
 
     public String getAvatar() {
         return avatar;

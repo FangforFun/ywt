@@ -42,27 +42,28 @@ import java.util.List;
  */
 public class RemoteMeetPager extends BasePager {
 
-    private RelativeLayout rl_meeting;
-    private RelativeLayout rl_visit;
-    private TextView tv_meeting_request_name;
-    private TextView tv_meeting_request_id_num;
-    private TextView tv_meeting_request_relationship;
-    private TextView tv_meeting_request_phone;
-    private BetterSpinner bs_meeting_request_time;
-    private Button bt_commit_request;
+    private RelativeLayout rl_meeting;// 会见
+    private RelativeLayout rl_visit;// 探监
+    private TextView tv_meeting_request_name;// 会见申请姓名
+    private TextView tv_meeting_request_id_num;// 会见申请身份证
+    private TextView tv_meeting_request_relationship;// 会见申请人与服刑人员关系
+    private TextView tv_meeting_request_phone;// 会见申请电话号码
+    private BetterSpinner bs_meeting_request_time;// 会见申请时间
+    private TextView tv_meeting_last_time;// 上次会见时间
+    private Button bt_commit_request;// 提交会见申请按钮
     private SharedPreferences sp;
-    private BetterSpinner bs_visit_request_time;
-    private TextView tv_visit_request_name;
-    private TextView tv_visit_request_relationship;
-    private TextView tv_visit_request_id_num;
-    private TextView tv_visit_request_phone;
-    private Button bt_commit_request_visit;
-    private RadioGroup rg_top_guide;
+    private BetterSpinner bs_visit_request_time;// 探监申请时间
+    private TextView tv_visit_request_name;// 探监申请姓名
+    private TextView tv_visit_request_relationship;// 探监申请又服刑人员关系
+    private TextView tv_visit_request_id_num;// 探监申请身份证
+    private TextView tv_visit_request_phone;// 探监申请手机号
+    private Button bt_commit_request_visit;// 探监申请按钮
+    private RadioGroup rg_top_guide;// 顶部页面切换
     private RadioButton rb_top_guide_meeting;
     private RadioButton rb_top_guide_visit;
-    private boolean isCommonUser;
+    private boolean isCommonUser;// 普通用户/监狱用户
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
-    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[30]);
+    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[30]);// 时间选择
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;
@@ -139,6 +140,7 @@ public class RemoteMeetPager extends BasePager {
         tv_meeting_request_phone = (TextView) view.findViewById(R.id.tv_meeting_request_phone);
         bs_meeting_request_time = (BetterSpinner) view.findViewById(R.id.bs_meeting_request_time);
         bt_commit_request = (Button) view.findViewById(R.id.bt_commit_request);
+        tv_meeting_last_time = (TextView) view.findViewById(R.id.tv_meeting_last_time);
         rl_meeting = (RelativeLayout) view.findViewById(R.id.rl_meeting);
         rl_visit = (RelativeLayout) view.findViewById(R.id.rl_visit);
         bs_visit_request_time = (BetterSpinner) view.findViewById(R.id.bs_visit_request_time);
@@ -168,6 +170,7 @@ public class RemoteMeetPager extends BasePager {
             tv_meeting_request_id_num.setText(sp.getString("password", ""));
             tv_meeting_request_phone.setText(sp.getString("username", ""));
             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
+            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "暂无会见"));
         }
         adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
@@ -189,6 +192,7 @@ public class RemoteMeetPager extends BasePager {
                             tv_meeting_request_id_num.setText(sp.getString("password", ""));
                             tv_meeting_request_phone.setText(sp.getString("username", ""));
                             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
+                            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "暂无会见"));
                         }
                         break;
                     case R.id.rb_top_guide_visit:

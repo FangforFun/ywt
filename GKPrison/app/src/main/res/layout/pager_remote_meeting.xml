@@ -73,7 +73,7 @@
                 android:id="@+id/tv_meeting_last_time"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="上次会见时间：2015年11月11日"
+                android:text="上次会见时间：暂无会见"
                 android:textSize="16sp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"

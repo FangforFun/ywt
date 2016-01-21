@@ -81,6 +81,7 @@ import java.util.regex.Pattern;
  */
 public class RegisterActivity extends BaseActivity {
 
+    private static final int CROP_SMALL_PICTURE = 2;
     private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
     private String url = Constants.URL_HEAD + "apply";
     private String url1 = Constants.URL_HEAD+"verify_code";
@@ -215,7 +216,9 @@ public class RegisterActivity extends BaseActivity {
                         } else if(register_back_code == 500){
                             showToastMsgShort("注册失败");
                         }else if(register_back_code == 501){
-                            showToastMsgShort("已注册用户");
+                            JSONObject errors = jsonObject.getJSONObject("errors");
+                            JSONArray apply_create = errors.getJSONArray("apply_create");
+                            showToastMsgShort(apply_create.getString(0));
                         }else {
                             showToastMsgShort("注册失败");
                         }
@@ -366,7 +369,6 @@ public class RegisterActivity extends BaseActivity {
     /**
      * 发送注册信息
      */
-
     private void sendRegisterMessge(){
         new Thread(){
             @Override
@@ -905,23 +907,9 @@ public class RegisterActivity extends BaseActivity {
                                 + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
                             Log.d("MainActivity",uploadFile2);
                     }else if(imageclick == -1){
-                        // 将保存在本地的图片取出并缩小后显示在界面上
-                        Bitmap bitmap = BitmapFactory.decodeFile(Environment
-                                .getExternalStorageDirectory() + "/image.jpg");
-                        newBitmap3 = ImageTools.zoomBitmap(bitmap, bitmap.getWidth()
-                                / SCALE, bitmap.getHeight() / SCALE);
-                        // 由于Bitmap内存占用较大，这里需要回收内存，否则会报out of memory异常
-                        bitmap.recycle();
-                        iv_user_icon.setImageBitmap(newBitmap3);
-                        ImageTools.savePhotoToSDCard(newBitmap3, Environment
-                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                                .getAbsolutePath()
-                                + "/Camera", String.valueOf(System.currentTimeMillis()));
-                        uploadFile3 = Environment
-                                .getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
-                                .getAbsolutePath()
-                                + "/Camera/" + String.valueOf(System.currentTimeMillis()) + ".png";
-                        Log.d("MainActivity",uploadFile3);
+                        Uri imageUri = Uri.fromFile(new File(Environment
+                                .getExternalStorageDirectory(), "image.jpg"));
+                        cropImageUri(imageUri, 300, 300, CROP_SMALL_PICTURE);// 裁剪
                     }
                      break;
                 case CHOOSE_PHOTO:
@@ -963,7 +951,37 @@ public class RegisterActivity extends BaseActivity {
                         Toast.makeText(this, "读取文件,出错啦", Toast.LENGTH_SHORT).show();
                     }
                     break;
+                case CROP_SMALL_PICTURE:
+                    // 将保存在本地的图片取出并缩小后显示在界面上
+                    Bitmap bitmap = BitmapFactory.decodeFile(Environment
+                            .getExternalStorageDirectory() + "/image.jpg");
+                    newBitmap3 = bitmap;
+                    iv_user_icon.setImageBitmap(newBitmap3);
+                    break;
             }
         }
+    }
+
+    /**
+     * 裁剪照片
+     * @param uri  image uri
+     * @param outputX  default image width
+     * @param outputY  default image height
+     * @param requestCode
+     */
+    private void cropImageUri(Uri uri, int outputX, int outputY, int requestCode){
+        Intent intent = new Intent("com.android.camera.action.CROP");
+        intent.setDataAndType(uri, "image/*");
+        intent.putExtra("crop", "true");
+        intent.putExtra("aspectX", 1);
+        intent.putExtra("aspectY", 1);
+        intent.putExtra("outputX", outputX);
+        intent.putExtra("outputY", outputY);
+        intent.putExtra("scale", true);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+        intent.putExtra("return-data", false);
+        intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
+        intent.putExtra("noFaceDetection", true); // no face detection
+        startActivityForResult(intent, requestCode);
     }
 }
