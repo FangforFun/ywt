@@ -67,7 +67,6 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prison_warden);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-
         rl_back = (RelativeLayout)findViewById(R.id.rl_back);
         rl_write_message = (RelativeLayout) findViewById(R.id.rl_write_message);
         rl_write_message.setVisibility(View.VISIBLE);

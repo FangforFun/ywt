@@ -24,6 +24,8 @@ public class RemittanceWaysActivity extends BaseActivity {
     private MyAdapter myAdapter;
     private Button bt_next;
     private String money;
+    private String times;
+    private String TradeNo;
 
     @Override
     protected View initView() {
@@ -37,6 +39,9 @@ public class RemittanceWaysActivity extends BaseActivity {
     protected void initData() {
         setTitle("汇款");
         setBackVisibility(View.VISIBLE);
+        money = getIntent().getStringExtra("money");
+        times = getIntent().getStringExtra("times");
+        TradeNo = getIntent().getStringExtra("TradeNo");
         myAdapter = new MyAdapter();
         lv_remittance_way.setAdapter(myAdapter);
         lv_remittance_way.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -66,8 +71,10 @@ public class RemittanceWaysActivity extends BaseActivity {
                     Intent intent = new Intent(RemittanceWaysActivity.this,BankPayActivity.class);
                     RemittanceWaysActivity.this.startActivity(intent);
                 }else if (ischeckeds[1] == true){
-
                     Intent intent = new Intent(RemittanceWaysActivity.this,ZhifubaoPayActivity.class);
+                    intent.putExtra("price",money);
+                    intent.putExtra("outorderno",TradeNo);
+                    intent.putExtra("times",times);
                     RemittanceWaysActivity.this.startActivity(intent);
                 }else if (ischeckeds[2] == true){
 

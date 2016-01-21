@@ -3,7 +3,11 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -17,12 +21,32 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.bean.AA;
+import com.gkzxhn.gkprison.userport.bean.Items;
+import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
+import com.google.gson.Gson;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.util.InetAddressUtils;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -31,6 +55,15 @@ public class FamilyServiceActivity extends BaseActivity {
     private ExpandableListView el_messge;
     private MyAdapter adapter;
     private String TradeNo;
+    private String times ="";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SharedPreferences sp;
+    private String ip;
+    private String money = "";
+    private Gson gson;
+    private String apply;
+    private List<Items> itemses = new ArrayList<Items>();
+    private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
     private List<String> sentence_time = new ArrayList<String>(){
         {
             add("2014年2月11日");
@@ -63,7 +96,7 @@ public class FamilyServiceActivity extends BaseActivity {
             add("笔记本");
         }
     };
-    private List<String> money = new ArrayList<String>(){
+    private List<String> money1 = new ArrayList<String>(){
         {
             add("20元");
             add("10元");
@@ -108,10 +141,12 @@ public class FamilyServiceActivity extends BaseActivity {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
         setRemittanceVisibility(View.VISIBLE);
+        sp = getSharedPreferences("config",MODE_PRIVATE);
+        ip = getLocalHostIp();
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
-        TradeNo = getOutTradeNo();
+
     }
 
     @Override
@@ -122,6 +157,11 @@ public class FamilyServiceActivity extends BaseActivity {
             case R.id.rl_remittance:
                // intent = new Intent(this, RemittanceWaysActivity.class);
                 //startActivity(intent);
+                long time = System.currentTimeMillis();
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = new Date(time);
+                times = format.format(date);
+                TradeNo = getOutTradeNo();
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
                 builder.setTitle("请输入汇款金额");
                 View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
@@ -130,7 +170,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        String money = et_money.getText().toString();
+                             money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
                             Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
                             try {
@@ -145,8 +185,21 @@ public class FamilyServiceActivity extends BaseActivity {
                             }
                             return;
                         } else {
+                            sendOrderToServer();
+                            String sql = "insert into Cart(time,out_trade_no,finish,total_money) values('"+times+"','"+TradeNo+"',0,'"+money+"')";
+                            db.execSQL(sql);
+                            int cart_id = 0;
+                            String sql1 = "select id from Cart where time = '"+times+"'";
+                            Cursor cursor = db.rawQuery(sql1,null);
+                            while (cursor.moveToNext()){
+                                cart_id = cursor.getInt(cursor.getColumnIndex("id"));
+                            }
+                            String sql2 = "insert into line_items(Items_id,cart_id) values (9999,"+cart_id+")";
+                            db.execSQL(sql2);
                             Intent intent = new Intent(FamilyServiceActivity.this, RemittanceWaysActivity.class);
                             intent.putExtra("money", money);
+                            intent.putExtra("times",times);
+                            intent.putExtra("TradeNo",TradeNo);
                             startActivity(intent);
                         }
                     }
@@ -169,6 +222,95 @@ public class FamilyServiceActivity extends BaseActivity {
                 dialog.show();
                 break;
         }
+    }
+
+    private void sendOrderToServer() {
+        int family_id = sp.getInt("family_id",1);
+        final Order order = new Order();
+        order.setFamily_id(family_id);
+        order.setIp(ip);
+        Items  items = new Items();
+        items.setItem_id(9999);
+        items.setQuantity(1);
+        itemses.add(items);
+        order.setItems(itemses);
+        order.setJail_id(1);
+        order.setCreated_at(times);
+        Float f = Float.parseFloat(money);
+        order.setAmount(f);
+        gson = new Gson();
+        order.setOut_trade_no(TradeNo);
+        apply = gson.toJson(order);
+        Log.d("结算发送",apply);
+        final AA aa = new AA();
+        aa.setOrder(order);
+        final String str = gson.toJson(aa);
+        new Thread(){
+            @Override
+            public void run() {
+                String token = sp.getString("token", "");
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpPost post = new HttpPost(url+token);
+                String s = url+token;
+                Log.d("订单号成功", s);
+                try {
+                    StringEntity entity = new StringEntity(str);
+                    entity.setContentType("application/json");
+                    entity.setContentEncoding("UTF-8");
+                    post.setEntity(entity);
+                    HttpResponse response = httpClient.execute(post);
+                    if (response.getStatusLine().getStatusCode() == 200){
+                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                        Log.d("订单号成功", result);
+                    }
+                }  catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (ClientProtocolException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+
+        }.start();
+
+
+    }
+
+    public String getLocalHostIp() {
+        String ipaddress = "";
+        try
+        {
+            Enumeration<NetworkInterface> en = NetworkInterface
+                    .getNetworkInterfaces();
+            // 遍历所用的网络接口
+            while (en.hasMoreElements())
+            {
+                NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
+                Enumeration<InetAddress> inet = nif.getInetAddresses();
+                // 遍历每一个接口绑定的所有ip
+                while (inet.hasMoreElements())
+                {
+                    InetAddress ip = inet.nextElement();
+                    if (!ip.isLoopbackAddress()
+                            && InetAddressUtils.isIPv4Address(ip
+                            .getHostAddress()))
+                    {
+                        return ipaddress = ip.getHostAddress();
+                    }
+                }
+
+            }
+        }
+        catch (SocketException e)
+        {
+            Log.e("feige", "获取本地ip地址失败");
+            e.printStackTrace();
+        }
+        return ipaddress;
+
     }
 
     private class MyAdapter extends BaseExpandableListAdapter{
@@ -354,7 +496,7 @@ public class FamilyServiceActivity extends BaseActivity {
             }else {
                 viewHolder.buy_time.setText(sentence_time.get(position-1));
                 viewHolder.buy_commodity.setText(commodity.get(position-1));
-                viewHolder.buy_money.setText(money.get(position-1));
+                viewHolder.buy_money.setText(money1.get(position-1));
             }
             return convertView;
         }
@@ -369,7 +511,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return money.size()+1;
+            return money1.size()+1;
         }
 
         @Override
@@ -407,7 +549,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.receipt.setVisibility(View.VISIBLE);
                 viewHolder.qianshou_time.setText(sentence_time.get(position-1));
                 viewHolder.qianshou_id.setText(buyer_id.get(position-1));
-                viewHolder.qianshou_money.setText(money.get(position-1));
+                viewHolder.qianshou_money.setText(money1.get(position-1));
             }
             return convertView;
         }
