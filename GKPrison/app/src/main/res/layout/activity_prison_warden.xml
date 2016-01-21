@@ -7,19 +7,11 @@
     <include
         android:id="@+id/layout_title"
         layout="@layout/title_bar"/>
-
-    <RelativeLayout
-        android:id="@+id/rl_carousel"
-        android:layout_width="match_parent"
-        android:layout_height="150dp"
-        android:layout_below="@id/layout_title">
-    </RelativeLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@id/rl_carousel">
+        android:layout_below="@id/layout_title">
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs1"

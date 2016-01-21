@@ -44,23 +44,8 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
     private ViewPager viewPager;
     private RelativeLayout rl_back;
     private RelativeLayout rl_write_message;
-    private RelativeLayout rl_carousel;
-    private RollViewPager vp_carousel;
-    private View layout_roll_view;
-    private LinearLayout dots_ll;
-    private TextView top_news_title;
-    private LinearLayout top_news_viewpager;
-    private final List<String> list_news_title = new ArrayList<>();
     private String url = "";
     private SharedPreferences sp;
-
-
-    /**
-     * 轮播图导航点集合
-     */
-    private List<View> dotList = new ArrayList<>();
-    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,12 +56,6 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         rl_write_message = (RelativeLayout) findViewById(R.id.rl_write_message);
         rl_write_message.setVisibility(View.VISIBLE);
         rl_write_message.setOnClickListener(this);
-        rl_carousel = (RelativeLayout) findViewById(R.id.rl_carousel);
-        layout_roll_view = View.inflate(this, R.layout.layout_roll_view, null);
-        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
-        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
-        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
-        rl_carousel.addView(layout_roll_view);
         tv_title = (TextView) findViewById(R.id.tv_title);
         rl_back.setVisibility(View.VISIBLE);
         rl_back.setOnClickListener(this);
@@ -88,55 +67,11 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_FIXED);
         tv_title.setText("投诉建议");
-        initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(this, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-//                Toast.makeText(this, list_news_title.get(position), Toast.LENGTH_SHORT).show();
-            }
-        });
-        list_news_title.clear();
-        list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花3”");
-        vp_carousel.initTitle(list_news_title, top_news_title);
-        vp_carousel.initImgUrl(list_news_title.size());
-        vp_carousel.startRoll();
-        top_news_viewpager.removeAllViews();
-        top_news_viewpager.addView(vp_carousel);
-
-
-    }
-
-
-
-
-
-
-    private void initDot() {
-        dotList.clear();
-        dots_ll.removeAllViews();
-        for (int i = 0; i < 3; i++) {
-            View view = new View(this);
-            if (i == 0) {
-                view.setBackgroundResource(R.drawable.rb_shape_blue);
-            } else {
-                view.setBackgroundResource(R.drawable.rb_shape_gray);
-            }
-            // 指定点的大小
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    getResources().getDimensionPixelSize(R.dimen.dot_radius), getResources().getDimensionPixelSize(R.dimen.dot_radius));
-            //间距
-            layoutParams.setMargins(10, 0, 10, 0);
-            dots_ll.addView(view, layoutParams);
-
-            dotList.add(view);
-        }
     }
     private void setupViewPager(ViewPager viewPager){
         MyPagerAdapter adapter = new MyPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new ReplyPublicityFragment(), "答复公示");
-        adapter.addFragment(new InterractiveMailboxFragment(), "互动信箱");
+        adapter.addFragment(new ReplyPublicityFragment(), "公示信息");
+        adapter.addFragment(new InterractiveMailboxFragment(), "投诉反馈");
         viewPager.setAdapter(adapter);
     }
 
