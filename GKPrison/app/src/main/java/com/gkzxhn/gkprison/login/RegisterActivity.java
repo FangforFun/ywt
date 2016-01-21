@@ -32,6 +32,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -136,6 +137,8 @@ public class RegisterActivity extends BaseActivity {
     private int countdown = 60;
     private boolean isRunning = false;
     private SharedPreferences sp;
+
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -727,6 +730,8 @@ public class RegisterActivity extends BaseActivity {
                     });
                     AlertDialog remind_dialog = builder.create();
                     remind_dialog.show();
+                }else {
+                    finish();
                 }
                 break;
         }

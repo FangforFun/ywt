@@ -59,7 +59,7 @@ public class CommidtyAdapter extends BaseAdapter {
             holder1 = (ViewHolder1)convertView.getTag();
         }
         final Commodity commodity = list.get(position);
-        holder1.description.setText(commodity.getDescription());
+        holder1.description.setText(commodity.getTitle());
         holder1.price.setText(commodity.getPrice());
         holder1.qty.setText(commodity.getQty()+"");
         return convertView;

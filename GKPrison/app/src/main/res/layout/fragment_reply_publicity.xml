@@ -4,15 +4,13 @@
     android:background="@color/bg"
     tools:context=".userport.fragment.ReplyPublicityFragment">
 
-    <ExpandableListView
-        android:id="@+id/elv_reply_list"
+    <ListView
+        android:id="@+id/reply_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@color/transparent"
         android:dividerHeight="2dp"
-        android:childDivider="@color/transparent"
-        android:background="@color/bg"
         android:groupIndicator="@null">
-    </ExpandableListView>
+    </ListView>
 
 </FrameLayout>

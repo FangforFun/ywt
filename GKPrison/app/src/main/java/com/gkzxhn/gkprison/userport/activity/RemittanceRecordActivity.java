@@ -51,7 +51,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     }
 
     private void getDate() {
-        String sql = "select Cart.id,Cart.time,Cart.total_money from Cart,line_items where line_items.Items_id = 9999";
+        String sql = "select Cart.id,Cart.time,Cart.total_money from Cart,line_items where line_items.Items_id = 9999 and Cart.finish = 1";
         Cursor cursor = db.rawQuery(sql,null);
         while (cursor.moveToNext()){
             Remittance remittance = new Remittance();

@@ -53,6 +53,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
     protected void initData() {
         setTitle("购物记录");
         setBackVisibility(View.VISIBLE);
+        carts.clear();
         String sql = "select * from Cart where finish = 1";
         Cursor cursor = db.rawQuery(sql,null);
         while (cursor.moveToNext()){
@@ -74,8 +75,9 @@ public class ShoppingRecoderActivity extends BaseActivity {
 
        for (int i = 0; i < carts.size();i++){
            List<Commodity> commodities = new ArrayList<Commodity>();
+           commodities.clear();
            int cart_id = carts.get(i).getId();
-           String sql1 = "select line_items.id,line_items.qty,Items.price,Cart.time,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.finish = 1 and line_items.cart_id = "+cart_id+"  ";
+           String sql1 = "select line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.finish = 1 and line_items.cart_id = "+cart_id;
            Cursor cursor1 = db.rawQuery(sql1, null);
            Log.d("消费记录",cursor1.getCount()+"");
            while (cursor1.moveToNext()){
