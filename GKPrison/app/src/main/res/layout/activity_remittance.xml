@@ -2,7 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userport.activity.RemittanceRecordActivity">
-
+  <TextView
+      android:id="@+id/tv_recode"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="没有汇款记录"
+      android:textColor="@color/red_error"
+      android:textSize="18sp"
+      android:layout_centerHorizontal="true"
+      android:visibility="gone"/>
   <ListView
       android:id="@+id/lv_remittance"
       android:layout_width="match_parent"

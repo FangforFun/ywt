@@ -1,5 +1,8 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -8,6 +11,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.bean.Remittance;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,39 +19,18 @@ import java.util.List;
 public class RemittanceRecordActivity extends BaseActivity {
     private ListView lv_remittance;
     private RemittanceAdapter adapter;
-    private List<String> paytime = new ArrayList<String>(){
-        {
-            add("2016年4月18日");
-            add("2016年6月19日");
-            add("2016年8月20日");
-        }
-    };
-    private List<String> payment = new ArrayList<String>(){
-        {
-            add("支付宝");
-            add("银行卡支付");
-            add("微信支付");
-        }
-    };
-    private List<String> money = new ArrayList<String>(){
-        {
-            add("1230.6");
-            add("164.5");
-            add("98.3");
-        }
-    };
-    private List<String> prisonernum = new ArrayList<String>(){
-        {
-            add("囚号9527");
-            add("囚号342133444");
-            add("囚号813147");
-        }
-    };
+    private SharedPreferences sp;
+    private String prisonernum = "";
+    private List<Remittance> remittances = new ArrayList<Remittance>();
+    private TextView noonerecode;
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_remittance,null);
         lv_remittance = (ListView)view.findViewById(R.id.lv_remittance);
+        noonerecode = (TextView)view.findViewById(R.id.tv_recode);
         return view;
     }
 
@@ -55,14 +38,34 @@ public class RemittanceRecordActivity extends BaseActivity {
     protected void initData() {
         setTitle("汇款记录");
         setBackVisibility(View.VISIBLE);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        prisonernum = sp.getString("prisoner_number","1");
+        getDate();
+        if (remittances.size() == 0){
+            noonerecode.setVisibility(View.VISIBLE);
+        }else {
+            noonerecode.setVisibility(View.GONE);
+        }
         adapter = new RemittanceAdapter();
         lv_remittance.setAdapter(adapter);
     }
+
+    private void getDate() {
+        String sql = "select Cart.id,Cart.time,Cart.total_money from Cart,line_items where line_items.Items_id = 9999";
+        Cursor cursor = db.rawQuery(sql,null);
+        while (cursor.moveToNext()){
+            Remittance remittance = new Remittance();
+            remittance.setPrice(cursor.getString(cursor.getColumnIndex("total_money")));
+            remittance.setTimes(cursor.getString(cursor.getColumnIndex("time")));
+            remittances.add(remittance);
+        }
+    }
+
     private class RemittanceAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {
-            return payment.size();
+            return remittances.size();
         }
 
         @Override
@@ -82,17 +85,17 @@ public class RemittanceRecordActivity extends BaseActivity {
                 convertView = View.inflate(getApplicationContext(),R.layout.remittance_item,null);
                 viewHolder = new ViewHolder();
                 viewHolder.tv_paytime = (TextView)convertView.findViewById(R.id.tv_paytime);
-                viewHolder.tv_payment = (TextView)convertView.findViewById(R.id.tv_transtype);
+                viewHolder.tv_payment = (TextView)convertView.findViewById(R.id.tv_transtype_name);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_pay_money);
                 viewHolder.tv_prisonnernum = (TextView)convertView.findViewById(R.id.tv_prisonnernum);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (ViewHolder)convertView.getTag();
             }
-            viewHolder.tv_paytime.setText(paytime.get(position));
-            viewHolder.tv_payment.setText(payment.get(position));
-            viewHolder.tv_money.setText(money.get(position));
-            viewHolder.tv_prisonnernum.setText(prisonernum.get(position));
+            viewHolder.tv_paytime.setText(remittances.get(position).getTimes());
+            viewHolder.tv_payment.setText("支付宝");
+            viewHolder.tv_money.setText(remittances.get(position).getPrice());
+            viewHolder.tv_prisonnernum.setText(prisonernum);
             return convertView;
         }
     }
