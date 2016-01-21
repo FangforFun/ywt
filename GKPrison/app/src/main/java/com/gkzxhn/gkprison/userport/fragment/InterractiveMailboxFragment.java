@@ -55,6 +55,7 @@ public class InterractiveMailboxFragment extends Fragment {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         replies = analysisReply(result);
+                        elv_my_mailbox_list.setAdapter(new MyAdapter());
                     }
                     break;
             }
@@ -69,10 +70,6 @@ public class InterractiveMailboxFragment extends Fragment {
         }
     };
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,7 +83,9 @@ public class InterractiveMailboxFragment extends Fragment {
     private void initData(){
         sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
         family_id = sp.getInt("family_id", 1);
+        Log.d("个人ID",family_id+"");
         token = sp.getString("token", "");
+        Log.d("个人ID",token);
         url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;
         getReply();
         Log.d("个人信息",family_id+"");
@@ -142,11 +141,6 @@ public class InterractiveMailboxFragment extends Fragment {
     }
 
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        elv_my_mailbox_list.setAdapter(new MyAdapter());
-    }
 
     private class MyAdapter extends BaseExpandableListAdapter {
 
@@ -219,8 +213,8 @@ public class InterractiveMailboxFragment extends Fragment {
             }else {
                 holder = (ChildViewHolder) convertView.getTag();
             }
-            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(childPosition).getReplies());
-            holder.tv_message_time.setText(replies.get(childPosition).getReply_date());
+            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(groupPosition).getReplies());
+            holder.tv_message_time.setText(replies.get(groupPosition).getReply_date());
             return convertView;
         }
 
