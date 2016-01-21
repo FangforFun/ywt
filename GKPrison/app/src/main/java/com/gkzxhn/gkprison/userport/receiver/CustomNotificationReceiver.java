@@ -15,6 +15,7 @@ import android.util.Log;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
@@ -55,7 +56,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * @param formId
      */
     public void sendNotification(Context context, String content, String formId){
-        saveToDataBase(content);
+        saveToDataBase(content);// 系统通知保存至数据库
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, SystemMessageActivity.class);
         Log.i("gongju通知", content);
@@ -126,6 +127,9 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         values.put("result", systemMessage.getResult());
         values.put("meeting_date", systemMessage.getMeeting_date());
         values.put("reason", systemMessage.getReason());
+        String msg_reveice_time = StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
+        Log.i("消息接收时间", msg_reveice_time);
+        values.put("receive_time", msg_reveice_time);
         db.insert("sysmsg", null, values);
         db.close();
     }
