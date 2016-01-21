@@ -191,6 +191,7 @@ public class PersonLoadingFragment extends BaseFragment {
             editor.putString("relationship", userInfo.getUser().getRelationship());
             editor.putString("token", userInfo.getToken());
             editor.putInt("family_id", userInfo.getUser().getId());
+            editor.putString("jail", userInfo.getJail());
         }
         editor.putBoolean("isRegisteredUser", true);
         editor.commit();

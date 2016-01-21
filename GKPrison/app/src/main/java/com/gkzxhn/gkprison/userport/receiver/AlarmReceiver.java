@@ -7,6 +7,7 @@ import android.media.MediaPlayer;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.userport.activity.AlarmActivity;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public AlarmReceiver() {
@@ -14,10 +15,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(intent.getAction().equals("short")){
-            Toast.makeText(context, "short alarm", Toast.LENGTH_SHORT).show();
-        }else {
-            Toast.makeText(context, "repeating alarm", Toast.LENGTH_SHORT).show();
-        }
+        Intent intent1 = new Intent(context, AlarmActivity.class);
+        intent1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent1);
     }
 }

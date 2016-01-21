@@ -162,7 +162,7 @@ public class SettingActivity extends BaseActivity {
                 break;
             case R.id.rl_opinion_feedback:
                 if(!TextUtils.isEmpty(token)) {
-                    intent = new Intent(SettingActivity.this, AlarmActivity.class);
+                    intent = new Intent(SettingActivity.this, OpinionFeedbackActivity.class);
                     startActivity(intent);
                 }else {
                     showToastMsgShort("登录后可用");

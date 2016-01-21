@@ -227,7 +227,7 @@
 
         <receiver
             android:name=".userport.receiver.AlarmReceiver"
-            android:enabled="true" />
+            android:process=":remote"/>
 
         <activity android:name=".userport.activity.AlarmActivity"></activity>
     </application>

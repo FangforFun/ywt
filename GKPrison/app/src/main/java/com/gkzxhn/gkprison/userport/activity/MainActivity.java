@@ -263,17 +263,6 @@ public class MainActivity extends BaseActivity {
                 NIMClient.getService(AuthService.class).logout();
             }
         });
-//        builder.setNegativeButton("退出", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                SharedPreferences.Editor editor = sp.edit();
-//                editor.clear();
-//                editor.commit();
-//                NIMClient.getService(AuthService.class).logout();
-////                System.exit(0);
-//                android.os.Process.killProcess(android.os.Process.myPid());
-//            }
-//        });
         AlertDialog dialog = builder.create();
         dialog.show();
     }

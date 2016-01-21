@@ -74,6 +74,7 @@ public class AlarmActivity extends BaseActivity {
                 player.stop();
                 vibrator.cancel();
                 handler.removeCallbacks(alarm_Task);
+                AlarmActivity.this.finish();
                 break;
         }
     }
