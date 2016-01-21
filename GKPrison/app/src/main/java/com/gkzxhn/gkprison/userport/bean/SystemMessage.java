@@ -13,6 +13,15 @@ public class SystemMessage {
     int type_id;
     String reason;
     String msg_receive_time;
+    String user_id;
+
+    public String getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(String user_id) {
+        this.user_id = user_id;
+    }
 
     public String getMsg_receive_time() {
         return msg_receive_time;
@@ -89,6 +98,7 @@ public class SystemMessage {
                 ", type_id=" + type_id +
                 ", reason='" + reason + '\'' +
                 ", msg_receive_time='" + msg_receive_time + '\'' +
+                ", user_id='" + user_id + '\'' +
                 '}';
     }
 }

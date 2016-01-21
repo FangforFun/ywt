@@ -141,8 +141,8 @@ public class MainActivity extends BaseActivity {
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
-        getUserInfo();// 获取当前登录用户的信息
         if(isRegisteredUser) {
+            getUserInfo();// 获取当前登录用户的信息
             getCommodity();// 获取商品
         }
         if(statusCode == StatusCode.KICKOUT){

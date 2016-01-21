@@ -38,6 +38,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = context.getPackageName() + NimIntent.ACTION_RECEIVE_CUSTOM_NOTIFICATION;
         if (action.equals(intent.getAction())) {
+            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
             // 从 intent 中取出自定义通知， intent 中只包含了一个 CustomNotification 对象
             CustomNotification notification = (CustomNotification)
                     intent.getSerializableExtra(NimIntent.EXTRA_BROADCAST_MSG);
@@ -62,7 +63,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         Log.i("gongju通知", content);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         Notification notification = new Notification.Builder(context)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setTicker("您有新的消息，点击查看")
@@ -72,7 +72,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
-        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+//        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         if(sp.getBoolean("isMsgRemind", false)) {
             setRemindAlarm(context, content);
         }
@@ -81,7 +81,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
     /**
      * 设置闹钟
      */
-    private static void setRemindAlarm(Context context, String content) {
+    private void setRemindAlarm(Context context, String content) {
         Log.i("消息内容", content);
         String meeting_date = "";
         long alarm_time = 0;
@@ -101,20 +101,20 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
                 context, 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
-        calendar.set(Calendar.HOUR, 2);        //设置闹钟小时数
-        calendar.set(Calendar.MINUTE, 1);            //设置闹钟的分钟数
-        calendar.set(Calendar.SECOND, 0);                //设置闹钟的秒数
+        String time = StringUtils.formatTime(System.currentTimeMillis(), "HH:mm:ss");
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
+        calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000, sender);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), sender);
     }
 
     /**
      * 保存至数据库
      * @param content
      */
-    private static void saveToDataBase(String content) {
+    private void saveToDataBase(String content) {
         // 保存至数据库
         SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
         Gson gson = new Gson();
@@ -127,8 +127,8 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         values.put("result", systemMessage.getResult());
         values.put("meeting_date", systemMessage.getMeeting_date());
         values.put("reason", systemMessage.getReason());
+        values.put("user_id", sp.getString("username", ""));
         String msg_reveice_time = StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
-        Log.i("消息接收时间", msg_reveice_time);
         values.put("receive_time", msg_reveice_time);
         db.insert("sysmsg", null, values);
         db.close();

@@ -29,7 +29,7 @@ public class UserInfoActivity extends BaseActivity {
     @Override
     protected void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        setTitle("个人信息");
+        setTitle("账号信息");
         setBackVisibility(View.VISIBLE);
         lv_user_info.setAdapter(new MyAdapter());
     }

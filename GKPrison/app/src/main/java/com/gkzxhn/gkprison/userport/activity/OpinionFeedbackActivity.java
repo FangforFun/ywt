@@ -42,20 +42,24 @@ public class OpinionFeedbackActivity extends BaseActivity {
     private ProgressDialog commit_dialog;
     private SharedPreferences sp;
     private String token;
+    private boolean isFinish = false;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
                     commit_dialog.setMessage("提交成功，谢谢您的反馈，我们会做的更好。");
+                    isFinish = true;
                     handler.postDelayed(dismiss_dialog_delay_task, 2000);
                     break;
                 case 1:
                     commit_dialog.setMessage("糟糕，提交失败了，歇会儿再试吧！");
+                    isFinish = false;
                     handler.postDelayed(dismiss_dialog_delay_task, 2000);
                     break;
                 case 2:
                     commit_dialog.setMessage("糟糕，提交异常了，歇会儿再试吧！");
+                    isFinish = false;
                     handler.postDelayed(dismiss_dialog_delay_task, 2000);
                     break;
             }
@@ -104,7 +108,6 @@ public class OpinionFeedbackActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-//        super.onClick(v);
         switch (v.getId()){
             case R.id.bt_commit_opinions:
                 opinion_content = et_content.getText().toString().trim();
@@ -203,7 +206,9 @@ public class OpinionFeedbackActivity extends BaseActivity {
         @Override
         public void run() {
             commit_dialog.dismiss();
-            OpinionFeedbackActivity.this.finish();
+            if(isFinish){
+                OpinionFeedbackActivity.this.finish();
+            }
         }
     };
 

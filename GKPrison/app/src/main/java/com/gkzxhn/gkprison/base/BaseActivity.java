@@ -5,6 +5,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -20,22 +21,23 @@ import com.gkzxhn.gkprison.login.view.NiceSpinner;
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
 //    protected Context mContext;
-    protected RelativeLayout rl_content;
+    protected RelativeLayout rl_content;// title以下的内容view
     protected TextView tv_title;
-    protected ImageView iv_back;
-    protected RelativeLayout rl_back;
-    protected RelativeLayout rl_remittance;
-    protected RelativeLayout rl_home_menu;
-    protected ImageView iv_home_menu;
+    protected ImageView iv_back;// 返回
+    protected RelativeLayout rl_back;// 返回
+    protected RelativeLayout rl_remittance;// 汇款
+    protected RelativeLayout rl_home_menu;// 菜单
+    protected ImageView iv_home_menu;// 菜单
     protected View ly_title_bar;
-    protected TextView tv_remittance;
+    protected TextView tv_remittance;// 汇款
     protected RelativeLayout rl_regist;
 //    protected TextView tv_user_type;
-    protected NiceSpinner ns_login_type;
+    protected NiceSpinner ns_login_type;// 登录类型选择下拉
     protected Toolbar tool_bar;
-    protected RelativeLayout rl_message;
-    protected RelativeLayout rl_refresh;
-    protected ImageView iv_refresh;
+    protected RelativeLayout rl_message;// 消息
+    protected RelativeLayout rl_refresh;// 刷新
+    protected ImageView iv_refresh;// 刷新
+    protected Button bt_logout;// 注销
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         rl_refresh = (RelativeLayout) findViewById(R.id.rl_refresh);
         iv_refresh = (ImageView) findViewById(R.id.iv_refresh);
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
+        bt_logout = (Button) findViewById(R.id.bt_logout);
         View view = initView();
         rl_content.addView(view);
         initData();
@@ -148,6 +151,15 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void setRemittanceVisibility(int visibility){
         rl_remittance.setVisibility(visibility);
     }
+
+    /**
+     * 设置注销是否可见
+     * @param visibility
+     */
+    protected void setLogoutVisibility(int visibility){
+        bt_logout.setVisibility(visibility);
+    }
+
     @Override
     public void onClick(View v) {
         //子类选择性重写

@@ -74,8 +74,14 @@ public class HomePager extends BasePager {
     private News focus_news_2;
     private News focus_news_3;
     private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
-    private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press, R.drawable.laws_press, R.drawable.prison_open_press, R.drawable.visit_service_press, R.drawable.family_service_press, R.drawable.sms_press};
-    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction, R.drawable.laws, R.drawable.prison_open, R.drawable.visit_service, R.drawable.family_service, R.drawable.sms};
+    private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press,
+            R.drawable.laws_press, R.drawable.prison_open_press,
+            R.drawable.visit_service_press, R.drawable.family_service_press,
+            R.drawable.sms_press};
+    private final int[] OPTIONS_IVS = {R.drawable.prison_introduction,
+            R.drawable.laws, R.drawable.prison_open,
+            R.drawable.visit_service,
+            R.drawable.family_service, R.drawable.sms};
     private final String[] OPTIONS_TVS = {"监狱简介", "法律法规", "狱务公开", "工作动态", "家属服务", "投诉建议"};
     private final List<String> list_news_title = new ArrayList<>();
     private SharedPreferences sp;
@@ -381,12 +387,8 @@ public class HomePager extends BasePager {
                                     context.startActivity(intent);
                                     break;
                                 case 3:
-                                    if (isRegisteredUser) {
-                                        intent = new Intent(context, VisitingServiceActivity.class);
-                                        context.startActivity(intent);
-                                    } else {
-                                        showToastMsgShort("注册后可用");
-                                    }
+                                    intent = new Intent(context, VisitingServiceActivity.class);
+                                    context.startActivity(intent);
                                     break;
                                 case 5:
                                     if (isRegisteredUser) {

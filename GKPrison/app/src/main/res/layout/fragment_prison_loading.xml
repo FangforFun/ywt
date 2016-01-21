@@ -41,6 +41,7 @@
             android:layout_marginTop="2dp"
             android:background="@drawable/et_shape_search"
             android:hint="密码"
+            android:inputType="textPassword"
             android:paddingLeft="10dp"
             android:textSize="16sp"
             android:textColor="@color/tv_bg"/>

@@ -30,6 +30,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
@@ -43,6 +44,7 @@ import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthService;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -200,6 +202,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         showToastMsgShort("" + code);
         Log.i("监狱端进主页啦", code + sp.getString("password", "") + "---" + sp.getString("token", ""));
         setTitle("会见列表");
+        setLogoutVisibility(View.VISIBLE);
         preImgBtn.setOnClickListener(this);
         nextImgBtn.setOnClickListener(this);
         views = new CalendarCard[3];
@@ -234,6 +237,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             }
         });
         rl_refresh.setOnClickListener(this);
+        bt_logout.setOnClickListener(this);
     }
 
     private Runnable rotateTask = new Runnable() {
@@ -344,6 +348,30 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 Date date = new Date(currentDate);
                 String formatDate = format.format(date);
                 requestData(formatDate);// 请求数据
+                break;
+            case R.id.bt_logout:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("确定退出当前账号?");
+                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.clear();
+                        editor.commit();
+                        startActivity(intent);
+                        NIMClient.getService(AuthService.class).logout();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
                 break;
             default:
                 break;

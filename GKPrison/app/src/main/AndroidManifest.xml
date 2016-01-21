@@ -138,6 +138,28 @@
         <activity
             android:name=".avchat.AVChatActivity"
             android:screenOrientation="portrait" />
+
+        <activity android:name=".welcome.WelcomeActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.NewsDetailActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.LawsDetailActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.OpinionFeedbackActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.SettingPasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.InputPasswordActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.AlarmActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".scan.CaptureActivity"
             android:configChanges="orientation|keyboardHidden"
@@ -216,20 +238,8 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name=".welcome.WelcomeActivity" />
-        <activity android:name=".userport.activity.NewsDetailActivity" />
-        <activity
-            android:name=".userport.activity.LawsDetailActivity"
-            android:label="@string/title_activity_laws_detail" />
-        <activity android:name=".userport.activity.OpinionFeedbackActivity" />
-        <activity android:name=".userport.activity.SettingPasswordActivity" />
-        <activity android:name=".userport.activity.InputPasswordActivity" />
-
         <receiver
             android:name=".userport.receiver.AlarmReceiver"
-            android:process=":remote"/>
-
-        <activity android:name=".userport.activity.AlarmActivity"></activity>
+            android:process=":remote" />
     </application>
-
 </manifest>

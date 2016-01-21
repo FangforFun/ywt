@@ -148,6 +148,18 @@
                     android:layout_centerInParent="true"
                     android:layout_centerVertical="true"/>
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/bt_logout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="注销"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:visibility="gone"
+                android:background="@drawable/red_bg_bt_selector"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 </RelativeLayout>

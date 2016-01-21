@@ -68,7 +68,9 @@ public class MenuFragment extends BaseFragment{
         if(!isRegisteredUser){
             iv_user_icon.setImageResource(R.drawable.default_icon);
             tv_menu_user_name.setText("用户名");
+            bt_logout.setText("登录");
         }else {
+            bt_logout.setText("注销登录");
             tv_menu_user_name.setText(sp.getString("name", ""));
             String ICON_URL = sp.getString("avatar", "");
             if(!TextUtils.isEmpty(ICON_URL)){
@@ -128,28 +130,34 @@ public class MenuFragment extends BaseFragment{
         bt_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("确定退出当前账号?");
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(context, LoadingActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.clear();
-                        editor.commit();
-                        startActivity(intent);
-                        NIMClient.getService(AuthService.class).logout();
-                    }
-                });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                if(isRegisteredUser) { // 注册用户弹提示
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("确定退出当前账号?");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(context, LoadingActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.clear();
+                            editor.commit();
+                            startActivity(intent);
+                            NIMClient.getService(AuthService.class).logout();
+                        }
+                    });
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                }else {// 非注册用户直接跳到登录
+                    Intent intent = new Intent(context, LoadingActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
             }
         });
     }

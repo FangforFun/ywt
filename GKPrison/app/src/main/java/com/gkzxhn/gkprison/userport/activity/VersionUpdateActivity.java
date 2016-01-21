@@ -1,6 +1,9 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.os.Handler;
+import android.os.Message;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -10,6 +13,23 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.Utils;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 /**
@@ -58,8 +78,28 @@ public class VersionUpdateActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_update:
                 handler.post(rotateTask);
+                checkNewVersion();
                 break;
         }
+    }
+
+    /**
+     * 检查新版本
+     */
+    private void checkNewVersion() {
+        //访问服务器检查是否有新版本
+        HttpUtils httpUtils = new HttpUtils();
+        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "version", new RequestCallBack<Object>() {
+            @Override
+            public void onSuccess(ResponseInfo<Object> responseInfo) {
+                Log.i("检查更新成功", responseInfo.result.toString());
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                Log.i("检查更新失败", e.getMessage() + "-----" + s);
+            }
+        });
     }
 
     @Override
