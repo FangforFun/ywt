@@ -157,7 +157,7 @@ public class Utils {
     }
 
     /**
-     *
+     * 返回当前日之后的n天日期(yyyy-MM-dd),过滤掉周末的
      * @param n
      * @return
      */
@@ -170,7 +170,9 @@ public class Utils {
             c.add(Calendar.DATE, i);
             Date d2 = c.getTime();
             String s = df.format(d2);
-            list.add(s);
+            if(!(c.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY) && !(c.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)){
+                list.add(s);
+            }
         }
         return list;
     }

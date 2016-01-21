@@ -12,6 +12,15 @@ public class SystemMessage {
     String meeting_date;
     int type_id;
     String reason;
+    String msg_receive_time;
+
+    public String getMsg_receive_time() {
+        return msg_receive_time;
+    }
+
+    public void setMsg_receive_time(String msg_receive_time) {
+        this.msg_receive_time = msg_receive_time;
+    }
 
     public String getReason() {
         return reason;
@@ -79,6 +88,7 @@ public class SystemMessage {
                 ", meeting_date='" + meeting_date + '\'' +
                 ", type_id=" + type_id +
                 ", reason='" + reason + '\'' +
+                ", msg_receive_time='" + msg_receive_time + '\'' +
                 '}';
     }
 }

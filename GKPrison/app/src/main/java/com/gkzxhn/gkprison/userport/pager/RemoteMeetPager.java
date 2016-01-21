@@ -39,6 +39,7 @@ import java.util.List;
 
 /**
  * Created by hzn on 2015/12/3.
+ * 探监pager
  */
 public class RemoteMeetPager extends BasePager {
 
@@ -63,7 +64,7 @@ public class RemoteMeetPager extends BasePager {
     private RadioButton rb_top_guide_visit;
     private boolean isCommonUser;// 普通用户/监狱用户
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
-    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[30]);// 时间选择
+    private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[Utils.afterNDay(30).size()]);// 时间选择
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;

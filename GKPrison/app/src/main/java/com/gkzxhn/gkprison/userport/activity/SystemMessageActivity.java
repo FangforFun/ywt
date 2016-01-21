@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
+import com.gkzxhn.gkprison.utils.StringUtils;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -79,6 +81,8 @@ public class SystemMessageActivity extends BaseActivity {
             String result = cursor.getString(cursor.getColumnIndex("result"));
             String meeting_date = cursor.getString(cursor.getColumnIndex("meeting_date"));
             String reason = cursor.getString(cursor.getColumnIndex("reason"));
+            String receive_time = cursor.getString(cursor.getColumnIndex("receive_time"));
+            systemMessage.setMsg_receive_time(receive_time);
             systemMessage.setReason(reason);
             systemMessage.setName(name);
             systemMessage.setApply_date(apply_date);
@@ -140,9 +144,26 @@ public class SystemMessageActivity extends BaseActivity {
                 holder = new SystemMsgViewHolder();
                 holder.tv_system_msg_left = (TextView) convertView.findViewById(R.id.tv_system_msg_left);
                 holder.tv_system_msg_right = (TextView) convertView.findViewById(R.id.tv_system_msg_right);
+                holder.tv_system_msg_time = (TextView) convertView.findViewById(R.id.tv_system_msg_time);
                 convertView.setTag(holder);
             }else {
                 holder = (SystemMsgViewHolder) convertView.getTag();
+            }
+            String msg_time = messageList.get(position).getMsg_receive_time();
+            long msg_mills = 0;
+            try {
+                msg_mills = StringUtils.formatToMill(msg_time, "yyyy-MM-dd HH:mm:ss");
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            if(StringUtils.isCurrentYear(msg_mills)) {// 是否是今年的消息
+                if (StringUtils.isToday(msg_mills)) {// 是否是今天的消息
+                    holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "HH:mm"));
+                } else {// 不是今天的精确到某月某日
+                    holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "MM-dd HH:mm"));
+                }
+            }else {// 不是今年的时间显示精确到年份
+                holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "yyyy-MM-dd HH:mm"));
             }
             if(messageList.get(position).getType_id() == 1) {// 会见
                 if(messageList.get(position).getResult().contains("已通过")){
@@ -170,7 +191,7 @@ public class SystemMessageActivity extends BaseActivity {
                 @Override
                 public void onClick(View v) {
                     Intent intent;
-                    if(messageList.get(position).getType_id() == 1 || messageList.get(position).getType_id() == 2){
+                    if (messageList.get(position).getType_id() == 1 || messageList.get(position).getType_id() == 2) {
                         messageList.get(position).setIs_read(true);
                         ContentValues values = new ContentValues();
                         values.put("is_read", "true");
@@ -183,7 +204,7 @@ public class SystemMessageActivity extends BaseActivity {
                         intent.putExtra("name", messageList.get(position).getName());
                         intent.putExtra("reason", messageList.get(position).getReason());
                         startActivity(intent);
-                    }else {
+                    } else {
 
                     }
                 }
@@ -195,6 +216,7 @@ public class SystemMessageActivity extends BaseActivity {
     private static class SystemMsgViewHolder{
         TextView tv_system_msg_left;
         TextView tv_system_msg_right;
+        TextView tv_system_msg_time;
     }
 
     @Override
