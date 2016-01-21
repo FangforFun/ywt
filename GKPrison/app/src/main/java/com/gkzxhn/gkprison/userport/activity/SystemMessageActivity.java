@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -33,6 +34,7 @@ public class SystemMessageActivity extends BaseActivity {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private SystemMsgAdapter msgAdapter;
     private TextView tv_no_system_message;
+    private SharedPreferences sp;
 
     @Override
     protected View initView() {
@@ -44,6 +46,7 @@ public class SystemMessageActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         messageList.clear();
         setTitle("系统消息");
         setBackVisibility(View.VISIBLE);
@@ -82,16 +85,20 @@ public class SystemMessageActivity extends BaseActivity {
             String meeting_date = cursor.getString(cursor.getColumnIndex("meeting_date"));
             String reason = cursor.getString(cursor.getColumnIndex("reason"));
             String receive_time = cursor.getString(cursor.getColumnIndex("receive_time"));
-            systemMessage.setMsg_receive_time(receive_time);
-            systemMessage.setReason(reason);
-            systemMessage.setName(name);
-            systemMessage.setApply_date(apply_date);
-            systemMessage.setType_id(type_id);
-            systemMessage.setIs_read(Boolean.parseBoolean(is_read));
-            systemMessage.setResult(result);
-            systemMessage.setMeeting_date(meeting_date);
-            if(!messageList.contains(systemMessage)) {
-                messageList.add(systemMessage);
+            String user_id = cursor.getString(cursor.getColumnIndex("user_id"));
+            if(user_id.equals(sp.getString("username", ""))) {
+                systemMessage.setMsg_receive_time(receive_time);
+                systemMessage.setReason(reason);
+                systemMessage.setName(name);
+                systemMessage.setApply_date(apply_date);
+                systemMessage.setType_id(type_id);
+                systemMessage.setIs_read(Boolean.parseBoolean(is_read));
+                systemMessage.setResult(result);
+                systemMessage.setMeeting_date(meeting_date);
+                systemMessage.setUser_id(user_id);
+                if (!messageList.contains(systemMessage)) {
+                    messageList.add(systemMessage);
+                }
             }
         }
         cursor.close();

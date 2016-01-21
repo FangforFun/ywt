@@ -82,7 +82,6 @@ import java.util.regex.Pattern;
 public class RegisterActivity extends BaseActivity {
 
     private static final int CROP_SMALL_PICTURE = 2;
-    private final String[] PRISONS = {"监狱1", "监狱2", "监狱3", "监狱4"};
     private String url = Constants.URL_HEAD + "apply";
     private String url1 = Constants.URL_HEAD+"verify_code";
     private EditText et_name;// 姓名
@@ -182,7 +181,7 @@ public class RegisterActivity extends BaseActivity {
                             apb_register.setProgress(0);
                             apb_register.setText("注册");
                         }
-                        showToastMsgLong("注册返回码-----" + back_code);
+//                        showToastMsgLong("注册返回码-----" + back_code);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         showToastMsgShort("异常");
@@ -587,7 +586,23 @@ public class RegisterActivity extends BaseActivity {
                     return;
                 }
                 if(Utils.isNetworkAvailable()) {
-                    sendRegisterToServer(); // 发送注册信息至服务器
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                    builder.setMessage("        即将提交注册，注册信息将会严格审核，注册信息一旦通过，将不可修改，确定提交？");
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            sendRegisterToServer(); // 发送注册信息至服务器
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setNegativeButton("再确认一下", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog register_remind_dialog = builder.create();
+                    register_remind_dialog.show();
                 }else {
                     showToastMsgShort("没有网络");
                 }
@@ -727,6 +742,8 @@ public class RegisterActivity extends BaseActivity {
                     });
                     AlertDialog remind_dialog = builder.create();
                     remind_dialog.show();
+                }else {
+                    finish();
                 }
                 break;
         }
@@ -981,7 +998,7 @@ public class RegisterActivity extends BaseActivity {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
         intent.putExtra("return-data", false);
         intent.putExtra("outputFormat", Bitmap.CompressFormat.JPEG.toString());
-        intent.putExtra("noFaceDetection", true); // no face detection
+        intent.putExtra("noFaceDetection", true);
         startActivityForResult(intent, requestCode);
     }
 }
