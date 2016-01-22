@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -36,6 +37,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -75,6 +78,17 @@ public class PrisonOpenActivity extends BaseActivity {
                                 newsList.add(news);
                             }
                         }
+                        Collections.sort(newsList, new Comparator<News>() {
+                            @Override
+                            public int compare(News lhs, News rhs) {
+                                int heat1 = lhs.getId();
+                                int heat2 = rhs.getId();
+                                if (heat1 < heat2){
+                                    return 1;
+                                }
+                                return -1;
+                            }
+                        });
                         lv_prison_open.setAdapter(new MyAdapter());
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
