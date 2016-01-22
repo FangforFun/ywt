@@ -207,7 +207,7 @@ public class CanteenFragment extends BaseFragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time);
         times = format.format(date);
-        String sql = "insert into Cart (time,out_trade_no,isfinish，remittance) values ('"+times+"','"+TradeNo+"',0,0)";
+        String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
         db.execSQL(sql);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = db.rawQuery(sql1, null);

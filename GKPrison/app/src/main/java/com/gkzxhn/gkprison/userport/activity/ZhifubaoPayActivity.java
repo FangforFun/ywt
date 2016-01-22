@@ -72,7 +72,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
 
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
-                        String sql = "update Cart set finish = 1 where time = '"+times+"'";
+                        String sql = "update Cart set isfinish = 1 where time = '"+times+"'";
                         db.execSQL(sql);
                         Toast.makeText(ZhifubaoPayActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
