@@ -96,9 +96,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(context, AlarmReceiver.class);
-        PendingIntent sender = PendingIntent.getBroadcast(
-                context, 0, intent, 0);
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(System.currentTimeMillis());
         String time = StringUtils.formatTime(System.currentTimeMillis(), "HH:mm:ss");
@@ -106,8 +103,11 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent, 0);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), sender);
+        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000, sender);
     }
 
     /**
