@@ -90,7 +90,6 @@ public class PersonLoadingFragment extends BaseFragment {
                     String result_login = (String) msg.obj;
                     gson = new Gson();
                     userInfo = gson.fromJson(result_login, UserInfo.class);
-                    Log.i("登录成功啦", result_login);
                     int code = userInfo.getCode();
                     if(code == 401){
                         showToastMsgShort("用户身份验证失败");
@@ -110,6 +109,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         return;
                     }else if(code == 200){
                         successCode++;
+                        Log.i("登录成功啦", result_login);
 //                        info = new LoginInfo(username, userInfo.getToken()); // config...
                         info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
                         NIMClient.getService(AuthService.class).login(info)
