@@ -228,7 +228,6 @@ public class CanteenFragment extends BaseFragment {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commodities.clear();
                 String sql = "delete from line_items where cart_id ="+cart_id;
                 db.execSQL(sql);
                 allcount = 0;
@@ -241,7 +240,12 @@ public class CanteenFragment extends BaseFragment {
                 msg1.obj = send;
                 msg1.what = 1;
                 handler1.sendMessage(msg1);
-                EventBus.getDefault().post(new ClickEven1(eventlist));
+                for (int i = 0;i < commodities.size();i++){
+                    eventlist.add(commodities.get(i).getPosition());
+                }
+                commodities.clear();
+                EventBus.getDefault().post(new ClickEven1(1,eventlist));
+                eventlist.clear();
                 fl.setVisibility(View.GONE);
             }
         });
@@ -663,7 +667,7 @@ public class CanteenFragment extends BaseFragment {
                     int d = commodities.get(position).getPosition();
                     eventlist.add(d);
                     eventlist.add(qty);
-                    EventBus.getDefault().post(new ClickEven1(eventlist));
+                    EventBus.getDefault().post(new ClickEven1(0,eventlist));
                     eventlist.clear();
                 }
             });
@@ -693,13 +697,13 @@ public class CanteenFragment extends BaseFragment {
                         handler.sendMessage(msg1);
                         String sql = "delete from line_items where Items_id ="+id+"  and cart_id ="+cart_id;
                         db.execSQL(sql);
-                        commodities.remove(position);
                         adapter.notifyDataSetChanged();
                         int d = commodities.get(position).getPosition();
                         eventlist.add(d);
                         eventlist.add(0);
-                        EventBus.getDefault().post(new ClickEven1(eventlist));
+                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
                         eventlist.clear();
+                        commodities.remove(position);
                     }else {
                         int j = i-1;
                         String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and cart_id="+cart_id;
@@ -732,7 +736,7 @@ public class CanteenFragment extends BaseFragment {
                         int d = commodities.get(position).getPosition();
                         eventlist.add(d);
                         eventlist.add(qty);
-                        EventBus.getDefault().post(new ClickEven1(eventlist));
+                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
                         eventlist.clear();
                     }
 

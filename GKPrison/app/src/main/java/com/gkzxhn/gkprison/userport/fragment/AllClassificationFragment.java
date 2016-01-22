@@ -42,6 +42,7 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
     private int category_id;
+    private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
     @Override
     protected View initView() {
@@ -249,12 +250,19 @@ public class AllClassificationFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
+        eventint = even1.getDelete();
         eventlist = even1.getList();
-        int id = eventlist.get(0);
-        int qty = eventlist.get(1);
-        commodities.get(id).setQty(qty);
+        if (eventint == 0) {
+            int id = eventlist.get(0);
+            int qty = eventlist.get(1);
+            commodities.get(id).setQty(qty);
+            adapter.notifyDataSetChanged();
+        }else if (eventint == 1){
+            for (int i = 0;i < eventlist.size();i++){
+                commodities.get(eventlist.get(i)).setQty(0);
+            }
+        }
         adapter.notifyDataSetChanged();
-
         /**
         commodities.clear();
         Cursor cursor =null;
