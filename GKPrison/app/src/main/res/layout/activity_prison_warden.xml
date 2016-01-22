@@ -31,7 +31,7 @@
     <View
         android:layout_width="1dp"
         android:layout_height="35dp"
-        android:layout_below="@id/rl_carousel"
+        android:layout_below="@+id/layout_title"
         android:background="@color/et_hint"
         android:layout_marginTop="5dp"
         android:layout_centerHorizontal="true"/>

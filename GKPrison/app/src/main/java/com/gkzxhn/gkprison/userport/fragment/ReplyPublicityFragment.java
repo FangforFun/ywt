@@ -1,137 +1,201 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
+import com.gkzxhn.gkprison.userport.bean.News;
+import com.gkzxhn.gkprison.utils.Utils;
+import com.netease.nim.uikit.common.media.picker.adapter.PickerAlbumAdapter;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.Inflater;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ReplyPublicityFragment extends Fragment {
-    private ExpandableListView elv_reply_list;
+    private ListView reply_list;
     private MyAdapter adapter;
-    private List<String> openmessge = new ArrayList<String>(){
-        {
-            add("2015年9月份局长信箱答复情况公示");
-            add("2015年8月份局长信箱答复情况公示");
-            add("2015年7月份局长信箱答复情况公示");
-            add("2015年6月份局长信箱答复情况公示");
-            add("2015年5月份局长信箱答复情况公示");
-            add("2015年4月份局长信箱答复情况公示");
+    private String url = "";
+    private List<News> allnews = new ArrayList<>();
+    private List<News> replys = new ArrayList<News>();
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String tag = (String)msg.obj;
+                    if (tag.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String result = bundle.getString("result");
+                        allnews = analysisNews(result);
+                        for (int i = 0;i < allnews.size();i++){
+                            News news = allnews.get(i);
+                            if (news.getType_id() == 3){
+                                replys.add(news);
+                            }
+                        }
+                        reply_list.setAdapter(adapter);
+                    }else if (tag.equals("error")){
+                        Toast.makeText(getActivity().getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
         }
     };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View  view = inflater.inflate(R.layout.fragment_reply_publicity,null);
-        elv_reply_list = (ExpandableListView)view.findViewById(R.id.elv_reply_list);
+        reply_list = (ListView)view.findViewById(R.id.reply_list);
         adapter = new MyAdapter();
-        elv_reply_list.setAdapter(adapter);
+        url = Constants.URL_HEAD + "news?jail_id=1";
+        getNews();
+        initdate();
         return view;
     }
 
-    private class MyAdapter extends BaseExpandableListAdapter{
-
-
-        @Override
-        public int getGroupCount() {
-            return openmessge.size();
-        }
-
-        @Override
-        public int getChildrenCount(int groupPosition) {
-            return 1;
-        }
-
-        @Override
-        public Object getGroup(int groupPosition) {
-            return null;
-        }
-
-        @Override
-        public Object getChild(int groupPosition, int childPosition) {
-            return null;
-        }
-
-        @Override
-        public long getGroupId(int groupPosition) {
-            return 0;
-        }
-
-        @Override
-        public long getChildId(int groupPosition, int childPosition) {
-            return 0;
-        }
-
-        @Override
-        public boolean hasStableIds() {
-            return false;
-        }
-
-        @Override
-        public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
-            GroupViewHolder holder;
-            if(convertView == null){
-                convertView = View.inflate(getActivity(), R.layout.prison_warden_item, null);
-                holder = new GroupViewHolder();
-                holder.tv_reply_item_title = (TextView) convertView.findViewById(R.id.tv_reply_item_title);
-                holder.iv_reply_item = (ImageView) convertView.findViewById(R.id.iv_reply_item);
-                convertView.setTag(holder);
-            }else {
-                holder = (GroupViewHolder) convertView.getTag();
+    /**
+     * items点击事件
+     */
+    private void initdate() {
+        reply_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int i = replys.get(position).getId();
+                Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+                intent.putExtra("id",i);
+                startActivity(intent);
             }
-            holder.tv_reply_item_title.setText(openmessge.get(groupPosition));
-            if (isExpanded){
-                holder.iv_reply_item.setImageResource(R.drawable.up_gray);
-            }else {
-                holder.iv_reply_item.setImageResource(R.drawable.down_gray);
-            }
-            return convertView;
-        }
+        });
+    }
 
-        @Override
-        public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-            ChildViewHolder holder;
-            if(convertView == null){
-                convertView = View.inflate(getActivity(), R.layout.prison_warden_item_child, null);
-                holder = new ChildViewHolder();
-                holder.tv_warden_message_public = (TextView) convertView.findViewById(R.id.tv_warden_message_public);
-                convertView.setTag(holder);
-            }else {
-                holder = (ChildViewHolder) convertView.getTag();
-            }
-            return convertView;
-        }
-
-        @Override
-        public boolean isChildSelectable(int groupPosition, int childPosition) {
-            return false;
+    private void getNews() {
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
+                @Override
+                public void run() {
+                    Message msg = handler.obtainMessage();
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpGet Get = new HttpGet(url);
+                    try {
+                        HttpResponse response = httpClient.execute(Get);
+                        if (response.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result", result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        } else {
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }else {
+           Toast.makeText(getActivity().getApplicationContext(),"没有网络",Toast.LENGTH_SHORT).show();
         }
     }
 
-    private static class GroupViewHolder{
-        TextView tv_reply_item_title;
-        ImageView iv_reply_item;
+
+    private List<News> analysisNews(String s){
+        List<News> newses = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0;i < jsonArray.length();i++){
+                News news = new News();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                news.setId(jsonObject.getInt("id"));
+                news.setTitle(jsonObject.getString("title"));
+                news.setContents(jsonObject.getString("contents"));
+                news.setJail_id(jsonObject.getInt("jail_id"));
+                news.setImage_url(jsonObject.getString("image_url"));
+                news.setType_id(jsonObject.getInt("type_id"));
+                newses.add(news);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return newses;
     }
 
-    private static class ChildViewHolder{
-        TextView tv_warden_message_public;
+ private class MyAdapter extends BaseAdapter{
+
+     @Override
+     public int getCount() {
+         return replys.size();
+     }
+
+     @Override
+     public Object getItem(int position) {
+         return null;
+     }
+
+     @Override
+     public long getItemId(int position) {
+         return 0;
+     }
+
+     @Override
+     public View getView(int position, View convertView, ViewGroup parent) {
+         ViewHolder holder;
+         if (convertView == null){
+             convertView = View.inflate(getActivity(),R.layout.laws_regulations_item,null);
+             holder = new ViewHolder();
+             holder.textView = (TextView)convertView.findViewById(R.id.tv_laws_regulations_item);
+             convertView.setTag(holder);
+         }else {
+             holder = (ViewHolder)convertView.getTag();
+         }
+         holder.textView.setText(replys.get(position).getTitle());
+         return convertView;
+     }
+ }
+    private  static class ViewHolder{
+        TextView textView;
     }
+
 }

@@ -75,7 +75,6 @@ public class PrisonOpenActivity extends BaseActivity {
                                 newsList.add(news);
                             }
                         }
-                        Log.d("新闻数量",newsList.size()+"");
                         lv_prison_open.setAdapter(new MyAdapter());
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
