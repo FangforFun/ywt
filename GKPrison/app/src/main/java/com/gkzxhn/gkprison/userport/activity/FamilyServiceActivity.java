@@ -186,7 +186,7 @@ public class FamilyServiceActivity extends BaseActivity {
                             return;
                         } else {
                             sendOrderToServer();
-                            String sql = "insert into Cart(time,out_trade_no,finish,total_money) values('"+times+"','"+TradeNo+"',0,'"+money+"')";
+                            String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('"+times+"','"+TradeNo+"',0,'"+money+"',1)";
                             db.execSQL(sql);
                             int cart_id = 0;
                             String sql1 = "select id from Cart where time = '"+times+"'";

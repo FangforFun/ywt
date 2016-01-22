@@ -54,7 +54,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
         setTitle("购物记录");
         setBackVisibility(View.VISIBLE);
         carts.clear();
-        String sql = "select * from Cart where finish = 1";
+        String sql = "select * from Cart where isfinish = 1 and remittance = 0";
         Cursor cursor = db.rawQuery(sql,null);
         while (cursor.moveToNext()){
             Cart cart = new Cart();
