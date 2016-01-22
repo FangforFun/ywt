@@ -42,14 +42,7 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
     private int category_id;
-    private List<Integer> image = new ArrayList<Integer>(){
-        {
-            add(R.drawable.beizi1);
-            add(R.drawable.beizi2);
-            add(R.drawable.beizi3);
-            add(R.drawable.beizi4);
-        }
-    };
+    private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
     @Override
     protected View initView() {
 
@@ -170,7 +163,7 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id +"," + cart_id +",1,"+position+")";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -256,6 +249,13 @@ public class AllClassificationFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
+        eventlist = even1.getList();
+        int id = eventlist.get(0);
+        int qty = eventlist.get(1);
+        commodities.get(id).setQty(qty);
+        adapter.notifyDataSetChanged();
+
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
@@ -292,5 +292,7 @@ public class AllClassificationFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+         **/
     }
+
 }

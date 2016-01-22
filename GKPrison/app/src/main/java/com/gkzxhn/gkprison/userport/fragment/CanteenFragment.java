@@ -143,6 +143,7 @@ public class CanteenFragment extends BaseFragment {
     private ListView lv_buycar;
     private BuyCarAdapter adapter;
     private RelativeLayout clear;
+    private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -240,7 +241,7 @@ public class CanteenFragment extends BaseFragment {
                 msg1.obj = send;
                 msg1.what = 1;
                 handler1.sendMessage(msg1);
-                EventBus.getDefault().post(new ClickEven1());
+                EventBus.getDefault().post(new ClickEven1(eventlist));
                 fl.setVisibility(View.GONE);
             }
         });
@@ -406,7 +407,6 @@ public class CanteenFragment extends BaseFragment {
                 } else {
                     Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
 
@@ -428,7 +428,7 @@ public class CanteenFragment extends BaseFragment {
         lcount.clear();
         itemses.clear();
         allcount = 0;
-        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
+        String sql = "select distinct line_items.Items_id,line_items.qty,line_items.position,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql, null);
         total = 0;
         if (cursor.getCount() == 0){
@@ -442,6 +442,7 @@ public class CanteenFragment extends BaseFragment {
                 shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
                 shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                shoppinglist.setPosition(cursor.getInt(cursor.getColumnIndex("position")));
                 commodities.add(shoppinglist);
             }
             adapter = new BuyCarAdapter();
@@ -659,7 +660,11 @@ public class CanteenFragment extends BaseFragment {
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
                     commodities.get(position).setQty(j);
-                    EventBus.getDefault().post(new ClickEven1());
+                    int d = commodities.get(position).getPosition();
+                    eventlist.add(d);
+                    eventlist.add(qty);
+                    EventBus.getDefault().post(new ClickEven1(eventlist));
+                    eventlist.clear();
                 }
             });
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
@@ -690,7 +695,11 @@ public class CanteenFragment extends BaseFragment {
                         db.execSQL(sql);
                         commodities.remove(position);
                         adapter.notifyDataSetChanged();
-
+                        int d = commodities.get(position).getPosition();
+                        eventlist.add(d);
+                        eventlist.add(0);
+                        EventBus.getDefault().post(new ClickEven1(eventlist));
+                        eventlist.clear();
                     }else {
                         int j = i-1;
                         String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and cart_id="+cart_id;
@@ -720,8 +729,13 @@ public class CanteenFragment extends BaseFragment {
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
                         commodities.get(position).setQty(j);
+                        int d = commodities.get(position).getPosition();
+                        eventlist.add(d);
+                        eventlist.add(qty);
+                        EventBus.getDefault().post(new ClickEven1(eventlist));
+                        eventlist.clear();
                     }
-                    EventBus.getDefault().post(new ClickEven1());
+
                     if (commodities.size()==0){
                         fl.setVisibility(View.GONE);
                     }

@@ -42,7 +42,7 @@ public class SalesPriorityFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id;
     private  int category_id;
-
+    private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
 
     @Override
     protected View initView() {
@@ -176,7 +176,7 @@ public class SalesPriorityFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id  +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id  +"," + cart_id +",1,"+position+")";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -263,6 +263,12 @@ public class SalesPriorityFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
+        eventlist = even1.getList();
+        int id = eventlist.get(0);
+        int qty = eventlist.get(1);
+        commodities.get(id).setQty(qty);
+        adapter.notifyDataSetChanged();
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
@@ -299,5 +305,6 @@ public class SalesPriorityFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+         **/
     }
 }

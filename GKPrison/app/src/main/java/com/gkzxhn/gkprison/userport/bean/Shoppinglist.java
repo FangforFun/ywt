@@ -8,6 +8,15 @@ public class Shoppinglist {
     private int id;
     private int qty;
     private String title;
+    private int position;
+
+    public int getPosition() {
+        return position;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
+    }
 
     public String getTitle() {
         return title;
