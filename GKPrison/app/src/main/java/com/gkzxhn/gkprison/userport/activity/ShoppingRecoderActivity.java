@@ -62,7 +62,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
             cart.setCount(cursor.getInt(cursor.getColumnIndex("count")));
             cart.setTime(cursor.getString(cursor.getColumnIndex("time")));
             cart.setOut_trade_no(cursor.getString(cursor.getColumnIndex("out_trade_no")));
-            cart.setFinish(cursor.getInt(cursor.getColumnIndex("finish")));
+            cart.setFinish(cursor.getInt(cursor.getColumnIndex("isfinish")));
             cart.setTotal_money(cursor.getString(cursor.getColumnIndex("total_money")));
             carts.add(cart);
         }
@@ -76,7 +76,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
        for (int i = 0; i < carts.size();i++){
            List<Commodity> commodities = new ArrayList<Commodity>();
            int cart_id = carts.get(i).getId();
-           String sql1 = "select distinct line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.finish = 1 and line_items.cart_id = "+cart_id;
+           String sql1 = "select distinct line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.isfinish = 1 and line_items.cart_id = "+cart_id;
            Cursor cursor1 = db.rawQuery(sql1, null);
            Log.d("消费记录",cursor1.getCount()+"");
            while (cursor1.moveToNext()){
