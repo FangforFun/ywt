@@ -122,6 +122,7 @@ public class CanteenFragment extends BaseFragment {
     private Spinner sp_zhineng;
     private TextView tv_total_money;
     private int cart_id = 0;
+    private String result;
     private List<Shoppinglist> commodities = new ArrayList<Shoppinglist>();
     AllClassificationFragment allclass;
     SalesPriorityFragment sales;
@@ -403,6 +404,7 @@ public class CanteenFragment extends BaseFragment {
                     sendOrderToServer();
                     String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
                     db.execSQL(sql);
+
                     Intent intent = new Intent(context, PaymentActivity.class);
                     intent.putExtra("totalmoney", send);
                     intent.putExtra("TradeNo", TradeNo);
@@ -504,7 +506,6 @@ public class CanteenFragment extends BaseFragment {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url+token);
                 String s = url+token;
-                Log.d("订单号成功", s);
                 try {
                     StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
@@ -512,8 +513,8 @@ public class CanteenFragment extends BaseFragment {
                     post.setEntity(entity);
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("订单号成功", result);
+                         result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                         Log.d("成功",result);
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
