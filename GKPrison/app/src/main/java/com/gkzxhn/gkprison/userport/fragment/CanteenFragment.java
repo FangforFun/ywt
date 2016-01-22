@@ -394,8 +394,7 @@ public class CanteenFragment extends BaseFragment {
         settlement.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (total != 0) {
+                if (allcount != 0) {
                     sendOrderToServer();
                     String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
                     db.execSQL(sql);
