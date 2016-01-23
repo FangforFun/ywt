@@ -240,7 +240,7 @@ public class FamilyServiceActivity extends BaseActivity {
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
-        order.setOut_trade_no(TradeNo);
+        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
         Log.d("结算发送",apply);
         final AA aa = new AA();
