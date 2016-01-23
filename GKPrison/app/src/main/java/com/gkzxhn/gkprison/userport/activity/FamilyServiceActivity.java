@@ -163,14 +163,29 @@ public class FamilyServiceActivity extends BaseActivity {
                 times = format.format(date);
                 TradeNo = getOutTradeNo();
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
-                builder.setTitle("请输入汇款金额");
                 View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
                 final EditText et_money = (EditText)view.findViewById(R.id.et_money);
+                TextView tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
+                TextView tv_ok = (TextView) view.findViewById(R.id.tv_ok);
                 builder.setView(view);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                final AlertDialog dialog = builder.create();
+                tv_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                             money = et_money.getText().toString();
+                    public void onClick(View v) {
+                        try {
+                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+                            field.setAccessible(true);
+                            field.set(dialog, true);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                tv_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
                             Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
                             try {
@@ -204,20 +219,6 @@ public class FamilyServiceActivity extends BaseActivity {
                         }
                     }
                 });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
-                            field.setAccessible(true);
-                            field.set(dialog, true);
-                            dialog.dismiss();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                AlertDialog dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
