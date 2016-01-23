@@ -4,7 +4,7 @@ package com.gkzxhn.gkprison.userport.bean;
  * 每件商品的信息
  * Created by admin on 2015/12/29.
  */
-public class Items {
+public class line_items_attributes {
     private int item_id;
     private int quantity;
 

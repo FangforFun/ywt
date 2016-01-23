@@ -3,7 +3,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userport.fragment.InterractiveMailboxFragment">
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="暂无反馈信息"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:visibility="gone"
+        android:layout_marginTop="5dp"/>
     <ExpandableListView
         android:id="@+id/elv_my_mailbox_list"
         android:layout_width="match_parent"

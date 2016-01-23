@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Order {
     private int jail_id;
-    private List<Items> items;
+    private List<line_items_attributes> items;
     private String out_trade_no;
     private String created_at;
     private float amount;
@@ -47,11 +47,11 @@ public class Order {
         this.created_at = created_at;
     }
 
-    public List<Items> getItems() {
+    public List<line_items_attributes> getItems() {
         return items;
     }
 
-    public void setItems(List<Items> items) {
+    public void setItems(List<line_items_attributes> items) {
         this.items = items;
     }
 

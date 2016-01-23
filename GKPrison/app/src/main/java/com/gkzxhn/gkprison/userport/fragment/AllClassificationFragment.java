@@ -267,15 +267,15 @@ public class AllClassificationFragment extends BaseFragment {
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
-            cursor = db.query("Items",null,null,null,null,null,null);
+            cursor = db.query("line_items_attributes",null,null,null,null,null,null);
         }else if (category_id == 1){
-            String sql = "select * from Items where category_id = 1";
+            String sql = "select * from line_items_attributes where category_id = 1";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 2){
-            String sql = "select * from Items where category_id = 2";
+            String sql = "select * from line_items_attributes where category_id = 2";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 3){
-            String sql = "select * from Items where category_id = 3";
+            String sql = "select * from line_items_attributes where category_id = 3";
             cursor = db.rawQuery(sql,null);
         }
         while (cursor.moveToNext()) {
