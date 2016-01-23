@@ -62,7 +62,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private String money = "";
     private Gson gson;
     private String apply;
-    private List<line_items_attributes> itemses = new ArrayList<line_items_attributes>();
+    private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
     private List<String> sentence_time = new ArrayList<String>(){
         {
@@ -233,8 +233,8 @@ public class FamilyServiceActivity extends BaseActivity {
         line_items_attributes lineitemsattributes = new line_items_attributes();
         lineitemsattributes.setItem_id(9999);
         lineitemsattributes.setQuantity(1);
-        itemses.add(lineitemsattributes);
-        order.setItems(itemses);
+        line_items_attributes.add(lineitemsattributes);
+        order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
@@ -242,10 +242,11 @@ public class FamilyServiceActivity extends BaseActivity {
         gson = new Gson();
         order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
-        Log.d("结算发送",apply);
+        Log.d("成功",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
+
         new Thread(){
             @Override
             public void run() {
@@ -262,7 +263,6 @@ public class FamilyServiceActivity extends BaseActivity {
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("订单号成功", result);
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();

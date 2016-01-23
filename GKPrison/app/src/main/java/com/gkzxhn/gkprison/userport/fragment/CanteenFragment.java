@@ -106,7 +106,7 @@ public class CanteenFragment extends BaseFragment {
     private String TradeNo;
     private SharedPreferences sp;
     private String apply = "";
-    private  List<line_items_attributes> itemses = new ArrayList<line_items_attributes>();
+    private  List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String times;
     private ProgressDialog dialog;
     private FrameLayout fl;//购物车详情页面
@@ -405,7 +405,7 @@ public class CanteenFragment extends BaseFragment {
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
         lcount.clear();
-        itemses.clear();
+        line_items_attributes.clear();
         allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,line_items.position,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql, null);
@@ -434,7 +434,7 @@ public class CanteenFragment extends BaseFragment {
             line_items_attributes lineitemsattributes = new line_items_attributes();
             lineitemsattributes.setItem_id(commodities.get(i).getId());
             lineitemsattributes.setQuantity(n);
-            itemses.add(lineitemsattributes);
+            line_items_attributes.add(lineitemsattributes);
             total += p * n ;
             count = n;
             lcount.add(count);
@@ -460,7 +460,7 @@ public class CanteenFragment extends BaseFragment {
         final Order order = new Order();
         order.setFamily_id(family_id);
         order.setIp(ip);
-        order.setItems(itemses);
+        order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);

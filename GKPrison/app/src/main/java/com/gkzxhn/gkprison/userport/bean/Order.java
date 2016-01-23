@@ -8,7 +8,7 @@ import java.util.List;
  */
 public class Order {
     private int jail_id;
-    private List<line_items_attributes> items;
+    private List<line_items_attributes> line_items_attributes;
     private String trade_no;
     private String created_at;
     private float amount;
@@ -47,12 +47,12 @@ public class Order {
         this.created_at = created_at;
     }
 
-    public List<line_items_attributes> getItems() {
-        return items;
+    public List<com.gkzxhn.gkprison.userport.bean.line_items_attributes> getLine_items_attributes() {
+        return line_items_attributes;
     }
 
-    public void setItems(List<line_items_attributes> items) {
-        this.items = items;
+    public void setLine_items_attributes(List<com.gkzxhn.gkprison.userport.bean.line_items_attributes> line_items_attributes) {
+        this.line_items_attributes = line_items_attributes;
     }
 
     public int getJail_id() {
