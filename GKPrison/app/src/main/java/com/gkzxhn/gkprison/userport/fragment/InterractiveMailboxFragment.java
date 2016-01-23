@@ -42,6 +42,7 @@ public class InterractiveMailboxFragment extends Fragment {
     private SharedPreferences sp;
     private int family_id = 0;
     private String token = "";
+    private TextView nonotice;
     private List<Reply> replies = new ArrayList<Reply>();
     private Handler handler = new Handler(){
         @Override
@@ -76,6 +77,7 @@ public class InterractiveMailboxFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_interractive_mailbox,null);
         elv_my_mailbox_list = (ExpandableListView) view.findViewById(R.id.elv_my_mailbox_list);
+        nonotice = (TextView)view.findViewById(R.id.tv_nothing);
         initData();
         return view;
     }
@@ -88,6 +90,11 @@ public class InterractiveMailboxFragment extends Fragment {
         Log.d("个人ID",token);
         url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;
         getReply();
+        if (replies.size() == 0){
+            nonotice.setVisibility(View.VISIBLE);
+        }else {
+            nonotice.setVisibility(View.GONE);
+        }
         Log.d("个人信息",family_id+"");
         Log.d("个人信息",token);
     }

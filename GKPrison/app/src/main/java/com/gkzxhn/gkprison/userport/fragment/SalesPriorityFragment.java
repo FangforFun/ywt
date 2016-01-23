@@ -240,7 +240,7 @@ public class SalesPriorityFragment extends BaseFragment {
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty()+"");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
-            viewHolder.tv_description.setText(commodities.get(position).getDescription());
+           // viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
             return convertView;
         }

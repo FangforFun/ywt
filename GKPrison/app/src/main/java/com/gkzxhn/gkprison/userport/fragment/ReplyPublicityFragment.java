@@ -47,6 +47,7 @@ public class ReplyPublicityFragment extends Fragment {
     private ListView reply_list;
     private MyAdapter adapter;
     private String url = "";
+    private TextView nonotice;
     private List<News> allnews = new ArrayList<>();
     private List<News> replys = new ArrayList<News>();
     private Handler handler = new Handler(){
@@ -65,6 +66,11 @@ public class ReplyPublicityFragment extends Fragment {
                                 replys.add(news);
                             }
                         }
+                        if (replys.size() == 0){
+                            nonotice.setVisibility(View.VISIBLE);
+                        }else {
+                            nonotice.setVisibility(View.GONE);
+                        }
                         reply_list.setAdapter(adapter);
                     }else if (tag.equals("error")){
                         Toast.makeText(getActivity().getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
@@ -76,7 +82,6 @@ public class ReplyPublicityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -84,6 +89,7 @@ public class ReplyPublicityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View  view = inflater.inflate(R.layout.fragment_reply_publicity,null);
         reply_list = (ListView)view.findViewById(R.id.reply_list);
+        nonotice = (TextView)view.findViewById(R.id.tv_nothing);
         adapter = new MyAdapter();
         url = Constants.URL_HEAD + "news?jail_id=1";
         getNews();
@@ -104,6 +110,7 @@ public class ReplyPublicityFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
     }
 
     private void getNews() {

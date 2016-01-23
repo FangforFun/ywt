@@ -7,7 +7,7 @@
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
        android:divider="#F1F1F1"
-       android:dividerHeight="2dp"
+       android:dividerHeight="1dp"
        android:scrollbars="none"></ListView>
 
 </FrameLayout>

@@ -3,7 +3,16 @@
     android:layout_height="match_parent"
     android:background="@color/bg"
     tools:context=".userport.fragment.ReplyPublicityFragment">
-
+    <TextView
+        android:id="@+id/tv_nothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="暂无公示信息"
+        android:textSize="14sp"
+        android:textColor="#666666"
+        android:visibility="gone"
+        />
     <ListView
         android:id="@+id/reply_list"
         android:layout_width="match_parent"

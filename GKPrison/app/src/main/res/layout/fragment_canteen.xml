@@ -111,12 +111,19 @@
                 ></Spinner>
         </RelativeLayout>
     </LinearLayout>
+    <View
+    android:id="@+id/fenjie"
+    android:layout_width="match_parent"
+    android:layout_height="1dp"
+    android:layout_below="@+id/ll_navigation"
+    android:background="@color/et_hint"
+    android:layout_centerHorizontal="true"/>
     <FrameLayout
         android:id="@+id/fl_commodity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:layout_below="@+id/ll_navigation"></FrameLayout>
+        android:layout_below="@+id/fenjie"></FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
