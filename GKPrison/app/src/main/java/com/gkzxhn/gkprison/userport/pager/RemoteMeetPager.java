@@ -171,7 +171,7 @@ public class RemoteMeetPager extends BasePager {
             tv_meeting_request_id_num.setText(sp.getString("password", ""));
             tv_meeting_request_phone.setText(sp.getString("username", ""));
             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
-            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "暂无会见"));
+            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "上次会见时间：暂无会见"));
         }
         adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
