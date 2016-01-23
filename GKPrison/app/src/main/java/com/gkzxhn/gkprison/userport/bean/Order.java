@@ -8,8 +8,8 @@ import java.util.List;
  */
 public class Order {
     private int jail_id;
-    private List<Items> items;
-    private String out_trade_no;
+    private List<line_items_attributes> line_items_attributes;
+    private String trade_no;
     private String created_at;
     private float amount;
     private String ip;
@@ -47,12 +47,12 @@ public class Order {
         this.created_at = created_at;
     }
 
-    public List<Items> getItems() {
-        return items;
+    public List<com.gkzxhn.gkprison.userport.bean.line_items_attributes> getLine_items_attributes() {
+        return line_items_attributes;
     }
 
-    public void setItems(List<Items> items) {
-        this.items = items;
+    public void setLine_items_attributes(List<com.gkzxhn.gkprison.userport.bean.line_items_attributes> line_items_attributes) {
+        this.line_items_attributes = line_items_attributes;
     }
 
     public int getJail_id() {
@@ -63,12 +63,11 @@ public class Order {
         this.jail_id = jail_id;
     }
 
-
-    public String getOut_trade_no() {
-        return out_trade_no;
+    public String getTrade_no() {
+        return trade_no;
     }
 
-    public void setOut_trade_no(String out_trade_no) {
-        this.out_trade_no = out_trade_no;
+    public void setTrade_no(String trade_no) {
+        this.trade_no = trade_no;
     }
 }

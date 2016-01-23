@@ -24,7 +24,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.AA;
-import com.gkzxhn.gkprison.userport.bean.Items;
+import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.google.gson.Gson;
@@ -63,7 +63,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private String money = "";
     private Gson gson;
     private String apply;
-    private List<Items> itemses = new ArrayList<Items>();
+    private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
     private List<String> sentence_time = new ArrayList<String>(){
         {
@@ -232,22 +232,23 @@ public class FamilyServiceActivity extends BaseActivity {
         final Order order = new Order();
         order.setFamily_id(family_id);
         order.setIp(ip);
-        Items  items = new Items();
-        items.setItem_id(9999);
-        items.setQuantity(1);
-        itemses.add(items);
-        order.setItems(itemses);
+        line_items_attributes lineitemsattributes = new line_items_attributes();
+        lineitemsattributes.setItem_id(9999);
+        lineitemsattributes.setQuantity(1);
+        line_items_attributes.add(lineitemsattributes);
+        order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
-        order.setOut_trade_no(TradeNo);
+        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
-        Log.d("结算发送",apply);
+        Log.d("成功",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
+
         new Thread(){
             @Override
             public void run() {
@@ -264,7 +265,6 @@ public class FamilyServiceActivity extends BaseActivity {
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("订单号成功", result);
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();

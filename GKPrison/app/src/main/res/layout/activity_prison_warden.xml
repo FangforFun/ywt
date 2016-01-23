@@ -22,6 +22,11 @@
             app:tabBackground="@color/white"
             app:tabSelectedTextColor="@color/theme"
             app:tabTextColor="@color/tv_mid"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/et_hint"
+            android:layout_centerHorizontal="true"/>
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpage"
             android:layout_width="match_parent"

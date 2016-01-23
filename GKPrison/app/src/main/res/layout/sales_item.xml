@@ -42,7 +42,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:lineSpacingExtra="3dp"
-            android:maxLines="2"
+            android:maxLines="1"
             android:ellipsize="end"
             android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"/>
         <LinearLayout

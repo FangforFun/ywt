@@ -2,6 +2,15 @@
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userport.activity.ShoppingRecoderActivity">
+    <TextView
+        android:id="@+id/tv_nothing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="没有购物记录"
+        android:visibility="gone"
+        android:textColor="#666666"
+        android:layout_centerInParent="true"
+        android:textSize="18sp"/>
     <ListView
         android:id="@+id/lv_shopping_recode"
         android:layout_width="match_parent"
@@ -11,16 +20,6 @@
 
         ></ListView>
 
-    <TextView
-        android:id="@+id/tv_nothing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="没有购物记录"
-        android:visibility="gone"
-        android:textColor="@color/holo_red_light"
-        android:layout_centerInParent="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:textSize="18sp"/>
+
 
 </RelativeLayout>
