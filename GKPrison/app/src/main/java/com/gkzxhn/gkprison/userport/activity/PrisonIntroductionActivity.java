@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         id = getIntent().getIntExtra("id",1);
-        wv_news_detail.loadUrl("http://10.93.1.116:3000/jails/1");
+        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/1");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

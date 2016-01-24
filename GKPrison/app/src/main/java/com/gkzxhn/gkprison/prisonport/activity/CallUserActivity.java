@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class CallUserActivity extends BaseActivity {
     private ImageView iv_id_card_02;
     private RelativeLayout rl_getting;
     private BitmapUtils bitmapUtil;
+    private SharedPreferences sp;
 
     @Override
     protected View initView() {
@@ -48,6 +50,7 @@ public class CallUserActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
         bitmapUtil = new BitmapUtils(this);
@@ -60,6 +63,11 @@ public class CallUserActivity extends BaseActivity {
             bitmapUtil.display(iv_id_card_01, Constants.RESOURSE_HEAD + img_urls[0]);
             bitmapUtil.display(iv_id_card_02, Constants.RESOURSE_HEAD + img_urls[1]);
             Log.i("tupian", Constants.URL_HEAD + img_urls[0] + "---" + Constants.URL_HEAD + img_urls[1]);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString("img_url_01", Constants.RESOURSE_HEAD + img_urls[0]);
+            editor.putString("img_url_02", Constants.RESOURSE_HEAD + img_urls[1]);
+            editor.commit();
+
         }
         bt_call.setOnClickListener(this);
     }

@@ -5,6 +5,6 @@
     android:layout_height="match_parent"
     android:background="@drawable/img1"
     android:scaleType="fitXY"
-    android:src="@drawable/img1" >
+    android:src="@drawable/carousel_default" >
 
 </ImageView>

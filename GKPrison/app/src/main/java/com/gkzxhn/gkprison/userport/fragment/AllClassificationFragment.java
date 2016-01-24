@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -43,7 +42,8 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
     private int category_id;
-
+    private int eventint = 0;//接收点击事件传来的数据
+    private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
     @Override
     protected View initView() {
 
@@ -71,7 +71,6 @@ public class AllClassificationFragment extends BaseFragment {
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
-        Log.d("记录",cart_id+"");
         if (category_id == 0){
             cursor = db.query("Items",null,null,null,null,null,null);
         }else if (category_id == 1){
@@ -165,7 +164,7 @@ public class AllClassificationFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id +"," + cart_id +",1,"+position+")";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -251,18 +250,32 @@ public class AllClassificationFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
+        eventint = even1.getDelete();
+        eventlist = even1.getList();
+        if (eventint == 0) {
+            int id = eventlist.get(0);
+            int qty = eventlist.get(1);
+            commodities.get(id).setQty(qty);
+            adapter.notifyDataSetChanged();
+        }else if (eventint == 1){
+            for (int i = 0;i < eventlist.size();i++){
+                commodities.get(eventlist.get(i)).setQty(0);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
-            cursor = db.query("Items",null,null,null,null,null,null);
+            cursor = db.query("line_items_attributes",null,null,null,null,null,null);
         }else if (category_id == 1){
-            String sql = "select * from Items where category_id = 1";
+            String sql = "select * from line_items_attributes where category_id = 1";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 2){
-            String sql = "select * from Items where category_id = 2";
+            String sql = "select * from line_items_attributes where category_id = 2";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 3){
-            String sql = "select * from Items where category_id = 3";
+            String sql = "select * from line_items_attributes where category_id = 3";
             cursor = db.rawQuery(sql,null);
         }
         while (cursor.moveToNext()) {
@@ -287,5 +300,7 @@ public class AllClassificationFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+         **/
     }
+
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,7 +24,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.AA;
-import com.gkzxhn.gkprison.userport.bean.Items;
+import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.google.gson.Gson;
@@ -62,7 +63,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private String money = "";
     private Gson gson;
     private String apply;
-    private List<Items> itemses = new ArrayList<Items>();
+    private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
     private List<String> sentence_time = new ArrayList<String>(){
         {
@@ -141,12 +142,11 @@ public class FamilyServiceActivity extends BaseActivity {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
         setRemittanceVisibility(View.VISIBLE);
-        sp = getSharedPreferences("config",MODE_PRIVATE);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         ip = getLocalHostIp();
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
-
     }
 
     @Override
@@ -163,14 +163,31 @@ public class FamilyServiceActivity extends BaseActivity {
                 times = format.format(date);
                 TradeNo = getOutTradeNo();
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
-                builder.setTitle("请输入汇款金额");
                 View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
                 final EditText et_money = (EditText)view.findViewById(R.id.et_money);
+                Editable ea = et_money.getText();
+                et_money.setSelection(ea.length());
+                TextView tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
+                TextView tv_ok = (TextView) view.findViewById(R.id.tv_ok);
                 builder.setView(view);
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                final AlertDialog dialog = builder.create();
+                tv_cancel.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                             money = et_money.getText().toString();
+                    public void onClick(View v) {
+                        try {
+                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+                            field.setAccessible(true);
+                            field.set(dialog, true);
+                            dialog.dismiss();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                tv_ok.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
                             Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
                             try {
@@ -186,7 +203,7 @@ public class FamilyServiceActivity extends BaseActivity {
                             return;
                         } else {
                             sendOrderToServer();
-                            String sql = "insert into Cart(time,out_trade_no,finish,total_money) values('"+times+"','"+TradeNo+"',0,'"+money+"')";
+                            String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('"+times+"','"+TradeNo+"',0,'"+money+"',1)";
                             db.execSQL(sql);
                             int cart_id = 0;
                             String sql1 = "select id from Cart where time = '"+times+"'";
@@ -204,20 +221,6 @@ public class FamilyServiceActivity extends BaseActivity {
                         }
                     }
                 });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
-                            field.setAccessible(true);
-                            field.set(dialog, true);
-                            dialog.dismiss();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                AlertDialog dialog = builder.create();
                 dialog.setCancelable(false);
                 dialog.show();
                 break;
@@ -229,22 +232,23 @@ public class FamilyServiceActivity extends BaseActivity {
         final Order order = new Order();
         order.setFamily_id(family_id);
         order.setIp(ip);
-        Items  items = new Items();
-        items.setItem_id(9999);
-        items.setQuantity(1);
-        itemses.add(items);
-        order.setItems(itemses);
+        line_items_attributes lineitemsattributes = new line_items_attributes();
+        lineitemsattributes.setItem_id(9999);
+        lineitemsattributes.setQuantity(1);
+        line_items_attributes.add(lineitemsattributes);
+        order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
-        order.setOut_trade_no(TradeNo);
+        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
-        Log.d("结算发送",apply);
+        Log.d("成功",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
+
         new Thread(){
             @Override
             public void run() {
@@ -261,7 +265,6 @@ public class FamilyServiceActivity extends BaseActivity {
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("订单号成功", result);
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -270,13 +273,8 @@ public class FamilyServiceActivity extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
             }
-
         }.start();
-
-
     }
 
     public String getLocalHostIp() {

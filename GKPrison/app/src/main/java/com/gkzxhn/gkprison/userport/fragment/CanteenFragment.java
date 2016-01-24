@@ -3,15 +3,10 @@ package com.gkzxhn.gkprison.userport.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.renderscript.RenderScript;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -24,82 +19,56 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.alibaba.fastjson.JSON;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.AA;
-import com.gkzxhn.gkprison.userport.bean.Commodity;
-import com.gkzxhn.gkprison.userport.bean.Items;
+import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.jauker.widget.BadgeView;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.Headers;
-import com.squareup.okhttp.MediaType;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONValue;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 import de.greenrobot.event.EventBus;
-import io.netty.handler.codec.http.HttpContent;
 
 /**
  * Created by zhengneng on 2015/12/21.
@@ -122,6 +91,7 @@ public class CanteenFragment extends BaseFragment {
     private Spinner sp_zhineng;
     private TextView tv_total_money;
     private int cart_id = 0;
+    private String result;
     private List<Shoppinglist> commodities = new ArrayList<Shoppinglist>();
     AllClassificationFragment allclass;
     SalesPriorityFragment sales;
@@ -136,13 +106,14 @@ public class CanteenFragment extends BaseFragment {
     private String TradeNo;
     private SharedPreferences sp;
     private String apply = "";
-    private  List<Items> itemses = new ArrayList<Items>();
+    private  List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String times;
     private ProgressDialog dialog;
     private FrameLayout fl;//购物车详情页面
     private ListView lv_buycar;
     private BuyCarAdapter adapter;
     private RelativeLayout clear;
+    private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -207,7 +178,7 @@ public class CanteenFragment extends BaseFragment {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date(time);
         times = format.format(date);
-        String sql = "insert into Cart (time,out_trade_no,finish) values ('"+times+"','"+TradeNo+"',0)";
+        String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
         db.execSQL(sql);
         Log.d("记录",times);
         String sql1 = "select id from Cart where time = '"+times+"'";
@@ -228,7 +199,6 @@ public class CanteenFragment extends BaseFragment {
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                commodities.clear();
                 String sql = "delete from line_items where cart_id ="+cart_id;
                 db.execSQL(sql);
                 allcount = 0;
@@ -241,7 +211,12 @@ public class CanteenFragment extends BaseFragment {
                 msg1.obj = send;
                 msg1.what = 1;
                 handler1.sendMessage(msg1);
-                EventBus.getDefault().post(new ClickEven1());
+                for (int i = 0;i < commodities.size();i++){
+                    eventlist.add(commodities.get(i).getPosition());
+                }
+                commodities.clear();
+                EventBus.getDefault().post(new ClickEven1(1,eventlist));
+                eventlist.clear();
                 fl.setVisibility(View.GONE);
             }
         });
@@ -392,25 +367,29 @@ public class CanteenFragment extends BaseFragment {
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
             }
         });
-        settlement.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        try {
+            settlement.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (allcount != 0) {
+                        sendOrderToServer();
+                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
+                        db.execSQL(sql);
 
-                if (total != 0) {
-                    sendOrderToServer();
-                    String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
-                    db.execSQL(sql);
-                    Intent intent = new Intent(context, PaymentActivity.class);
-                    intent.putExtra("totalmoney", send);
-                    intent.putExtra("TradeNo", TradeNo);
-                    intent.putExtra("times", times);
-                    context.startActivity(intent);
-                } else {
-                    Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(context, PaymentActivity.class);
+                            intent.putExtra("totalmoney", send);
+                            intent.putExtra("TradeNo", TradeNo);
+                            intent.putExtra("times", times);
+                            context.startActivity(intent);
+
+                    } else {
+                        Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
+                    }
                 }
-
-            }
-        });
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
 
     }
@@ -422,15 +401,14 @@ public class CanteenFragment extends BaseFragment {
     }
 
 
-
     public void onEvent(ClickEvent event) {
         // 从事件中获得参数值
 //        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
         lcount.clear();
-        itemses.clear();
+        line_items_attributes.clear();
         allcount = 0;
-        String sql = "select distinct line_items.Items_id,line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
+        String sql = "select distinct line_items.Items_id,line_items.qty,line_items.position,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql, null);
         total = 0;
         if (cursor.getCount() == 0){
@@ -444,6 +422,7 @@ public class CanteenFragment extends BaseFragment {
                 shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
                 shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                shoppinglist.setPosition(cursor.getInt(cursor.getColumnIndex("position")));
                 commodities.add(shoppinglist);
             }
             adapter = new BuyCarAdapter();
@@ -453,10 +432,10 @@ public class CanteenFragment extends BaseFragment {
             String t = commodities.get(i).getPrice();
             float p = Float.parseFloat(t);
             int n = commodities.get(i).getQty();
-            Items items = new Items();
-            items.setItem_id(commodities.get(i).getId());
-            items.setQuantity(n);
-            itemses.add(items);
+            line_items_attributes lineitemsattributes = new line_items_attributes();
+            lineitemsattributes.setItem_id(commodities.get(i).getId());
+            lineitemsattributes.setQuantity(n);
+            line_items_attributes.add(lineitemsattributes);
             total += p * n ;
             count = n;
             lcount.add(count);
@@ -482,13 +461,13 @@ public class CanteenFragment extends BaseFragment {
         final Order order = new Order();
         order.setFamily_id(family_id);
         order.setIp(ip);
-        order.setItems(itemses);
+        order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
         order.setAmount(f);
         gson = new Gson();
-        order.setOut_trade_no(TradeNo);
+        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
         Log.d("结算发送",apply);
         final AA aa = new AA();
@@ -501,7 +480,6 @@ public class CanteenFragment extends BaseFragment {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url+token);
                 String s = url+token;
-                Log.d("订单号成功", s);
                 try {
                     StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
@@ -509,8 +487,9 @@ public class CanteenFragment extends BaseFragment {
                     post.setEntity(entity);
                     HttpResponse response = httpClient.execute(post);
                     if (response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("订单号成功", result);
+                         result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                         Log.d("成功",result);
+
                     }
                 }  catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
@@ -661,7 +640,11 @@ public class CanteenFragment extends BaseFragment {
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
                     commodities.get(position).setQty(j);
-                    EventBus.getDefault().post(new ClickEven1());
+                    int d = commodities.get(position).getPosition();
+                    eventlist.add(d);
+                    eventlist.add(qty);
+                    EventBus.getDefault().post(new ClickEven1(0,eventlist));
+                    eventlist.clear();
                 }
             });
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
@@ -690,9 +673,13 @@ public class CanteenFragment extends BaseFragment {
                         handler.sendMessage(msg1);
                         String sql = "delete from line_items where Items_id ="+id+"  and cart_id ="+cart_id;
                         db.execSQL(sql);
-                        commodities.remove(position);
                         adapter.notifyDataSetChanged();
-
+                        int d = commodities.get(position).getPosition();
+                        eventlist.add(d);
+                        eventlist.add(0);
+                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
+                        eventlist.clear();
+                        commodities.remove(position);
                     }else {
                         int j = i-1;
                         String sql = "update line_items set qty="+j+" where Items_id ="+id+"  and cart_id="+cart_id;
@@ -722,8 +709,13 @@ public class CanteenFragment extends BaseFragment {
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
                         commodities.get(position).setQty(j);
+                        int d = commodities.get(position).getPosition();
+                        eventlist.add(d);
+                        eventlist.add(qty);
+                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
+                        eventlist.clear();
                     }
-                    EventBus.getDefault().post(new ClickEven1());
+
                     if (commodities.size()==0){
                         fl.setVisibility(View.GONE);
                     }

@@ -42,7 +42,8 @@ public class SalesPriorityFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id;
     private  int category_id;
-
+    private int eventint = 0;//接收点击事件传来的数据
+    private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
 
     @Override
     protected View initView() {
@@ -176,7 +177,7 @@ public class SalesPriorityFragment extends BaseFragment {
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty) values ("+ Items_id  +"," + cart_id +",1)";
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id  +"," + cart_id +",1,"+position+")";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -239,7 +240,7 @@ public class SalesPriorityFragment extends BaseFragment {
             Picasso.with(viewHolder.imageView.getContext()).load(t).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty()+"");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
-            viewHolder.tv_description.setText(commodities.get(position).getDescription());
+           // viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
             return convertView;
         }
@@ -263,18 +264,32 @@ public class SalesPriorityFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
+        eventint = even1.getDelete();
+        eventlist = even1.getList();
+        if (eventint == 0) {
+            int id = eventlist.get(0);
+            int qty = eventlist.get(1);
+            commodities.get(id).setQty(qty);
+            adapter.notifyDataSetChanged();
+        }else if (eventint == 1){
+            for (int i = 0;i < eventlist.size();i++){
+                commodities.get(eventlist.get(i)).setQty(0);
+            }
+        }
+        adapter.notifyDataSetChanged();
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
-            cursor = db.query("Items",null,null,null,null,null,null);
+            cursor = db.query("line_items_attributes",null,null,null,null,null,null);
         }else if (category_id == 1){
-            String sql = "select * from Items where category_id = 1";
+            String sql = "select * from line_items_attributes where category_id = 1";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 2){
-            String sql = "select * from Items where category_id = 2";
+            String sql = "select * from line_items_attributes where category_id = 2";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 3){
-            String sql = "select * from Items where category_id = 3";
+            String sql = "select * from line_items_attributes where category_id = 3";
             cursor = db.rawQuery(sql,null);
         }
         while (cursor.moveToNext()) {
@@ -299,5 +314,6 @@ public class SalesPriorityFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
+         **/
     }
 }

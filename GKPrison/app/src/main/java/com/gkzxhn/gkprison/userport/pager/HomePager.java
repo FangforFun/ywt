@@ -57,7 +57,6 @@ public class HomePager extends BasePager {
     private TextView top_news_title;
     private LinearLayout top_news_viewpager;
     private GridView gv_home_options;
-    private TextView tv_focus_attention; // 焦点关注
     private LinearLayout ll_home_news1;
     private LinearLayout ll_home_news2;
     private LinearLayout ll_home_news3;
@@ -73,7 +72,7 @@ public class HomePager extends BasePager {
     private News focus_news_1;
     private News focus_news_2;
     private News focus_news_3;
-    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3};
+    private final int[] CAROUSEL_IVS = {R.drawable.carousel_default, R.drawable.carousel_default, R.drawable.carousel_default};
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press,
             R.drawable.laws_press, R.drawable.prison_open_press,
             R.drawable.visit_service_press, R.drawable.family_service_press,
@@ -90,6 +89,9 @@ public class HomePager extends BasePager {
     private ProgressDialog dialog;
     private List<News> focus_news_list;
     private BitmapUtils bitmapUtils;
+    private View view_01;
+    private View view_02;
+    private TextView tv_focus_attention;
     /**
      * 轮播图导航点集合
      */
@@ -104,7 +106,6 @@ public class HomePager extends BasePager {
         view = View.inflate(context, R.layout.pager_home, null);
         rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
         gv_home_options = (GridView) view.findViewById(R.id.gv_home_options);
-        tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
         ll_home_news1 = (LinearLayout) view.findViewById(R.id.ll_home_news1);
         ll_home_news2 = (LinearLayout) view.findViewById(R.id.ll_home_news2);
         ll_home_news3 = (LinearLayout) view.findViewById(R.id.ll_home_news3);
@@ -122,6 +123,9 @@ public class HomePager extends BasePager {
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
         top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
         rl_carousel.addView(layout_roll_view);
+        view_01 = view.findViewById(R.id.view_01);
+        view_02 = view.findViewById(R.id.view_02);
+        tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
         return view;
     }
 
@@ -136,7 +140,6 @@ public class HomePager extends BasePager {
         vp_carousel = new RollViewPager(context, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-//                showToastMsgShort(list_news_title.get(position));
                 Intent intent = new Intent(context, NewsDetailActivity.class);
                 context.startActivity(intent);
             }
@@ -198,74 +201,64 @@ public class HomePager extends BasePager {
      * 填充焦新闻数据
      */
     private void fillNewsData() {
-//        if(focus_news_list.size() > 5){
-//            int i, k = -1;
-//            int j = -1;
-//            Random random = new Random();
-//            i = random.nextInt(focus_news_list.size());
-//            focus_news_1 = focus_news_list.get(i);
-//            tv_home_news_title1.setText(focus_news_1.getTitle());
-//            tv_home_news_content1.setText(focus_news_1.getContents());
-//            bitmapUtils = new BitmapUtils(context);
-//            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
-//            setSecondFocusNewsData(i, j);
-//            setThirdFocusNewsData(i, j, k);
-//        }
-        focus_news_1 = focus_news_list.get(0);
-        tv_home_news_title1.setText(focus_news_1.getTitle());
-        tv_home_news_content1.setText(focus_news_1.getContents());
-        bitmapUtils = new BitmapUtils(context);
-        bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+        if(focus_news_list.size() == 0){
+            ll_home_news1.setVisibility(View.GONE);
+            ll_home_news2.setVisibility(View.GONE);
+            ll_home_news3.setVisibility(View.GONE);
+            view_01.setVisibility(View.GONE);
+            view_02.setVisibility(View.GONE);
+            tv_focus_attention.setVisibility(View.GONE);
+        }else if(focus_news_list.size() == 1){
+            ll_home_news2.setVisibility(View.GONE);
+            ll_home_news3.setVisibility(View.GONE);
+            view_01.setVisibility(View.VISIBLE);
+            view_02.setVisibility(View.VISIBLE);
+            tv_focus_attention.setVisibility(View.VISIBLE);
 
-        focus_news_2 = focus_news_list.get(1);
-        tv_home_news_title2.setText(focus_news_2.getTitle());
-        tv_home_news_content2.setText(focus_news_2.getContents());
-        bitmapUtils = new BitmapUtils(context);
-        bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
-
-        focus_news_3 = focus_news_list.get(2);
-        tv_home_news_title3.setText(focus_news_3.getTitle());
-        tv_home_news_content3.setText(focus_news_3.getContents());
-        bitmapUtils = new BitmapUtils(context);
-        bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
-    }
-
-    /**
-     * 设置第三条焦点新闻数据
-     * @param i
-     * @param j
-     * @param k
-     */
-    private void setThirdFocusNewsData(int i, int j, int k) {
-        Random random = new Random();
-        j = random.nextInt(focus_news_list.size());
-        if(k != i && k != j){
-            focus_news_3 = focus_news_list.get(k);
-            tv_home_news_title3.setText(focus_news_3.getTitle());
-            tv_home_news_content3.setText(focus_news_3.getContents());
+            focus_news_1 = focus_news_list.get(0);
+            tv_home_news_title1.setText(focus_news_1.getTitle());
+            tv_home_news_content1.setText(focus_news_1.getContents());
             bitmapUtils = new BitmapUtils(context);
-            bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
-        }else {
-            setThirdFocusNewsData(i, j, k);
-        }
-    }
+            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+        }else if(focus_news_list.size() == 2){
+            ll_home_news3.setVisibility(View.GONE);
+            view_01.setVisibility(View.VISIBLE);
+            view_02.setVisibility(View.VISIBLE);
+            tv_focus_attention.setVisibility(View.VISIBLE);
 
-    /**
-     * 设置第二条焦点新闻数据
-     * @param i
-     * @param j
-     */
-    private void setSecondFocusNewsData(int i, int j) {
-        Random random = new Random();
-        j = random.nextInt(focus_news_list.size());
-        if(j != i){
-            focus_news_2 = focus_news_list.get(i);
+            focus_news_1 = focus_news_list.get(0);
+            tv_home_news_title1.setText(focus_news_1.getTitle());
+            tv_home_news_content1.setText(focus_news_1.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+
+            focus_news_2 = focus_news_list.get(1);
             tv_home_news_title2.setText(focus_news_2.getTitle());
             tv_home_news_content2.setText(focus_news_2.getContents());
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
-        }else {
-            setSecondFocusNewsData(i, j);
+        }else if(focus_news_list.size() >= 3) {
+            view_01.setVisibility(View.VISIBLE);
+            view_02.setVisibility(View.VISIBLE);
+            tv_focus_attention.setVisibility(View.VISIBLE);
+
+            focus_news_1 = focus_news_list.get(0);
+            tv_home_news_title1.setText(focus_news_1.getTitle());
+            tv_home_news_content1.setText(focus_news_1.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1.getImage_url());
+
+            focus_news_2 = focus_news_list.get(1);
+            tv_home_news_title2.setText(focus_news_2.getTitle());
+            tv_home_news_content2.setText(focus_news_2.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
+
+            focus_news_3 = focus_news_list.get(2);
+            tv_home_news_title3.setText(focus_news_3.getTitle());
+            tv_home_news_content3.setText(focus_news_3.getContents());
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
         }
     }
 
