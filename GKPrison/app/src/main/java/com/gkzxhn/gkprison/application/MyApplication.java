@@ -78,6 +78,9 @@ public class MyApplication extends Application {
                                     startActivity(intent);
                                     break;
                             }
+                            if(status != StatusCode.LOGINED && status != StatusCode.KICKOUT){
+                                // ToDo 调登录代码
+                            }
                         }
                     }, true);
             NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
