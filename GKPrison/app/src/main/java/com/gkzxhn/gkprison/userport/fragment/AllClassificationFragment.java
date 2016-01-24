@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -42,14 +43,7 @@ public class AllClassificationFragment extends BaseFragment {
     private int qty = 0;
     private int Items_id = 0;
     private int category_id;
-    private List<Integer> image = new ArrayList<Integer>(){
-        {
-            add(R.drawable.beizi1);
-            add(R.drawable.beizi2);
-            add(R.drawable.beizi3);
-            add(R.drawable.beizi4);
-        }
-    };
+
     @Override
     protected View initView() {
 
@@ -77,6 +71,7 @@ public class AllClassificationFragment extends BaseFragment {
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
+        Log.d("记录",cart_id+"");
         if (category_id == 0){
             cursor = db.query("Items",null,null,null,null,null,null);
         }else if (category_id == 1){
