@@ -108,7 +108,6 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
             }
-
         }
     };
 
@@ -207,6 +206,9 @@ public class MainActivity extends BaseActivity {
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
             getCommodity();// 获取商品
+            if(sp.getBoolean("has_new_notification", false)){
+                view_red_point.setVisibility(View.VISIBLE);
+            }
         }
         if(statusCode == StatusCode.KICKOUT){
             showKickoutDialog();// 其他设备登录
@@ -453,6 +455,7 @@ public class MainActivity extends BaseActivity {
             case R.id.rl_message:
                 intent = new Intent(MainActivity.this, SystemMessageActivity.class);
                 startActivity(intent);
+                view_red_point.setVisibility(View.GONE);
                 break;
         }
         super.onClick(v);
