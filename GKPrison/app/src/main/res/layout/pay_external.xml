@@ -1,5 +1,6 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
@@ -8,79 +9,57 @@
         android:layout_height="wrap_content"
         android:orientation="vertical" >
 
-        <LinearLayout
+        <ListView
+            android:id="@+id/lv_commidty"
+            android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:divider="@color/transparent">
 
+        </ListView>
+        <View
+            android:id="@+id/v_fenge"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#dadada"/>
+
+        <RelativeLayout
+            android:layout_marginTop="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right">
+            <TextView
+                android:id="@+id/count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="总计:"
+                android:textSize="18sp"
+                android:textColor="#666666"/>
+            <TextView
+                android:id="@+id/tv_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="59.8"
+                android:textColor="@color/tv_red"
+                android:textSize="18sp"
+                android:layout_alignBaseline="@+id/count"
+                android:layout_toRightOf="@+id/count"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="商品名称:"
-                android:textColor="#777777"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/product_subject"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="小卖部商品"
-                android:textColor="#333333"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
+                android:text="元"
+                android:textColor="@color/tv_red"
+                android:textSize="18sp"
+                android:layout_toRightOf="@+id/tv_count"
+                android:layout_alignBaseline="@+id/count"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="商品描述:"
-                android:textColor="#777777"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="小卖部商品"
-                android:textColor="#333333"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal" >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="10dp"
-                android:text="商品价格:"
-                android:textColor="#777777"
-                tools:ignore="HardcodedText" />
-
-            <TextView
-                android:id="@+id/product_price"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:text="0.01元"
-                android:textColor="#ff6600"
-                tools:ignore="HardcodedText" />
-        </LinearLayout>
+                android:text="（含配送费2元）"
+                android:layout_below="@+id/count"
+                android:textSize="14sp"
+                android:textColor="#999999"/>
+        </RelativeLayout>
 
         <Button
             android:id="@+id/pay"
@@ -94,4 +73,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</RelativeLayout>

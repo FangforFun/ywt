@@ -114,6 +114,14 @@ public class CanteenFragment extends BaseFragment {
     private BuyCarAdapter adapter;
     private RelativeLayout clear;
     private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
+    private String[] choosestring = {"全部分类","洗涤日化","食品","服饰鞋帽"};
+    private FrameLayout choose;
+    private ListView lv_allchoose_items;
+    private ListView lv_salsechoose_items;
+    private int click = 1;
+    private int clicksalse = 1;
+    private FrameLayout salsechoose;
+    private AllchooseAdapter allchooseAdapter;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -161,7 +169,11 @@ public class CanteenFragment extends BaseFragment {
         badgeView = new BadgeView(context);
         badgeView.setTargetView(image_buycar);
         fl = (FrameLayout)view.findViewById(R.id.fl_buycar);
+        choose = (FrameLayout)view.findViewById(R.id.fl_choose);
+        salsechoose = (FrameLayout)view.findViewById(R.id.fl_saleschoose);
+        lv_allchoose_items = (ListView)view.findViewById(R.id.lv_allchoose_item);
         lv_buycar = (ListView)view.findViewById(R.id.lv_buycar);
+        lv_salsechoose_items =  (ListView)view.findViewById(R.id.lv_saleschoose_item);
         clear = (RelativeLayout)view.findViewById(R.id.rl_clear);
         badgeView.setTextSize(6);
         badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
@@ -176,7 +188,7 @@ public class CanteenFragment extends BaseFragment {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         long time = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date date = new Date(time);
+        final Date date = new Date(time);
         times = format.format(date);
         String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
         db.execSQL(sql);
@@ -240,7 +252,96 @@ public class CanteenFragment extends BaseFragment {
                 fl.setVisibility(View.GONE);
             }
         });
-
+        choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                choose.setVisibility(View.GONE);
+            }
+        });
+        salsechoose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                salsechoose.setVisibility(View.GONE);
+            }
+        });
+        rl_allclass.requestFocus();
+        allclass = new AllClassificationFragment();
+        data.putInt("leibie",0);
+        allclass.setArguments(data);
+        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        allchooseAdapter = new AllchooseAdapter();
+        lv_salsechoose_items.setAdapter(allchooseAdapter);
+        lv_allchoose_items.setAdapter(allchooseAdapter);
+        lv_salsechoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                switch (position){
+                    case 0:
+                        sales = new SalesPriorityFragment();
+                        data.putInt("leibie", 0);
+                        sales.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        break;
+                    case 1:
+                        sales = new SalesPriorityFragment();
+                        data.putInt("leibie",1);
+                        sales.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
+                        break;
+                    case 2:
+                        sales = new SalesPriorityFragment();
+                        data.putInt("leibie",2);
+                        sales.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
+                        break;
+                    case 3:
+                        sales = new SalesPriorityFragment();
+                        data.putInt("leibie",3);
+                        sales.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        });
+        lv_allchoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+               switch (position){
+                   case 0:
+                       allclass = new AllClassificationFragment();
+                       data.putInt("leibie",0);
+                       allclass.setArguments(data);
+                       ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                       choose.setVisibility(View.GONE);
+                       break;
+                   case 1:
+                       allclass = new AllClassificationFragment();
+                       data.putInt("leibie",1);
+                       allclass.setArguments(data);
+                       ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                       choose.setVisibility(View.GONE);
+                       break;
+                   case 2:
+                       allclass = new AllClassificationFragment();
+                       data.putInt("leibie",2);
+                       allclass.setArguments(data);
+                       ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                       choose.setVisibility(View.GONE);
+                       break;
+                   case 3:
+                       allclass = new AllClassificationFragment();
+                       data.putInt("leibie",3);
+                       allclass.setArguments(data);
+                       ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                       choose.setVisibility(View.GONE);
+                       break;
+               }
+            }
+        });
+        /**
         sp_allclass.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -279,6 +380,8 @@ public class CanteenFragment extends BaseFragment {
                 Toast.makeText(context, "unselected", Toast.LENGTH_SHORT).show();
             }
         });
+        **/
+
         rl_allclass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -288,13 +391,21 @@ public class CanteenFragment extends BaseFragment {
                 sp_allclass.setBackgroundResource(R.drawable.spinner_down);
                 sp_sales.setBackgroundResource(R.drawable.spinner);
                 sp_zhineng.setBackgroundResource(R.drawable.spinner);
-                allclass = new AllClassificationFragment();
-                allclass.setArguments(data);
-                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-                sp_sales.setEnabled(false);
-                sp_sales.setFocusable(false);
-                sp_allclass.setEnabled(true);
-                sp_allclass.setFocusable(true);
+
+                if (click == 1){
+                    choose.setVisibility(View.VISIBLE);
+                    click = 2;
+                }else if ( click == 2){
+                    choose.setVisibility(View.GONE);
+                    allclass = new AllClassificationFragment();
+                    allclass.setArguments(data);
+                    ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                    click = 1;
+                }
+                    //  sp_sales.setEnabled(false);
+               // sp_sales.setFocusable(false);
+              //  sp_allclass.setEnabled(true);
+              //  sp_allclass.setFocusable(true);
             }
         });
         rl_sales.setOnClickListener(new View.OnClickListener() {
@@ -306,50 +417,21 @@ public class CanteenFragment extends BaseFragment {
                 sp_sales.setBackgroundResource(R.drawable.spinner_down);
                 sp_allclass.setBackgroundResource(R.drawable.spinner);
                 sp_zhineng.setBackgroundResource(R.drawable.spinner);
-                sales = new SalesPriorityFragment();
-                sales.setArguments(data);
-                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                sp_allclass.setEnabled(false);
-                sp_allclass.setFocusable(false);
-                sp_sales.setEnabled(true);
-                sp_sales.setFocusable(true);
-                sp_sales.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                    @Override
-                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(context, " position=" + position + " id=" + id, Toast.LENGTH_SHORT).show();
-                        switch (position) {
-                            case 0:
-                                sales = new SalesPriorityFragment();
-                                data.putInt("leibie", 0);
-                                sales.setArguments(data);
-                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                                break;
-                            case 1:
-                                sales = new SalesPriorityFragment();
-                                data.putInt("leibie", 1);
-                                sales.setArguments(data);
-                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                                break;
-                            case 2:
-                                sales = new SalesPriorityFragment();
-                                data.putInt("leibie", 2);
-                                sales.setArguments(data);
-                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                                break;
-                            case 3:
-                                sales = new SalesPriorityFragment();
-                                data.putInt("leibie", 3);
-                                sales.setArguments(data);
-                                ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
-                                break;
-                        }
-                    }
+                if (clicksalse == 1) {
+                    salsechoose.setVisibility(View.VISIBLE);
+                    sales = new SalesPriorityFragment();
+                    sales.setArguments(data);
+                    ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                    clicksalse = 2;
+                }else if (clicksalse == 2){
+                    salsechoose.setVisibility(View.GONE);
+                    clicksalse = 1;
+                }
+               // sp_allclass.setEnabled(false);
+               // sp_allclass.setFocusable(false);
+               // sp_sales.setEnabled(true);
+              //  sp_sales.setFocusable(true);
 
-                    @Override
-                    public void onNothingSelected(AdapterView<?> parent) {
-
-                    }
-                });
             }
         });
         rl_zhineng.setOnClickListener(new View.OnClickListener() {
@@ -379,6 +461,7 @@ public class CanteenFragment extends BaseFragment {
                             intent.putExtra("totalmoney", send);
                             intent.putExtra("TradeNo", TradeNo);
                             intent.putExtra("times", times);
+                            intent.putExtra("cart_id",cart_id);
                             context.startActivity(intent);
 
                     } else {
@@ -439,20 +522,30 @@ public class CanteenFragment extends BaseFragment {
             count = n;
             lcount.add(count);
         }
+      //  total += 2;
         for (int i = 0;i < lcount.size();i++){
             allcount += lcount.get(i);
         }
-
         Message msg1 = handler.obtainMessage();
         msg1.obj = allcount;
         msg1.what = 1;
         handler.sendMessage(msg1);
-        DecimalFormat fnum = new DecimalFormat("####0.00");
-        send = fnum.format(total);
-        Message msg = handler1.obtainMessage();
-        msg.obj = send;
-        msg.what = 1;
-        handler1.sendMessage(msg);
+        if (allcount != 0){
+           DecimalFormat fnum = new DecimalFormat("####0.00");
+            send = fnum.format(total);
+            Message msg = handler1.obtainMessage();
+            msg.obj = send;
+            msg.what = 1;
+            handler1.sendMessage(msg);
+        }else if (allcount == 0){
+           // total -= 2;
+            DecimalFormat fnum = new DecimalFormat("####0.00");
+            send = fnum.format(total);
+            Message msg = handler1.obtainMessage();
+            msg.obj = send;
+            msg.what = 1;
+            handler1.sendMessage(msg);
+        }
     }
 
     private void sendOrderToServer() {
@@ -729,6 +822,42 @@ public class CanteenFragment extends BaseFragment {
             RelativeLayout add;
             RelativeLayout reduce;
             TextView num;
+        }
+    }
+
+    private class AllchooseAdapter extends BaseAdapter{
+
+        @Override
+        public int getCount() {
+            return choosestring.length;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Holder holder;
+            if (convertView == null){
+                convertView = View.inflate(getActivity(),R.layout.choose_item,null);
+                holder = new Holder();
+                holder.textView = (TextView)convertView.findViewById(R.id.tv_fenlei);
+                convertView.setTag(holder);
+            }else {
+                holder = (Holder)convertView.getTag();
+            }
+            holder.textView.setText(choosestring[position]);
+            return convertView;
+        }
+        private class Holder{
+            TextView textView;
         }
     }
 }
