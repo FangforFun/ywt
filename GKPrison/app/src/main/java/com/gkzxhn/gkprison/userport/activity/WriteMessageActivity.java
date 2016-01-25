@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -54,22 +55,32 @@ public class WriteMessageActivity extends BaseActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         family_id = sp.getInt("family_id",1);
         token = sp.getString("token","");
+
     }
 
     @Override
     public void onClick(View v) {
+        theme = et_theme.getText().toString();
+        contents = et_content.getText().toString();
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_commit_write_message:
-                sendMessage();
-                finish();
+                if (theme.equals("主题:") || TextUtils.isEmpty(theme)){
+                    showToastMsgShort("请输入主题");
+                    return;
+                }else if (TextUtils.isEmpty(contents)){
+                    showToastMsgShort("请输入内容");
+                    return;
+                }else {
+                    sendMessage();
+                    finish();
+                }
                 break;
         }
     }
 
     private void sendMessage(){
-        theme = et_theme.getText().toString();
-        contents = et_content.getText().toString();
+
 
         Letter letter = new Letter();
         letter.setTheme(theme);

@@ -46,6 +46,7 @@ public class PaymentActivity extends BaseActivity {
     private MyAdapter adapter;
     private String TradeNo;
     private String times;
+    private int cart_id;
     private String apply = "";
 
     @Override
@@ -64,6 +65,7 @@ public class PaymentActivity extends BaseActivity {
         TradeNo = getIntent().getStringExtra("TradeNo");
         countmoney = getIntent().getStringExtra("totalmoney");
         times = getIntent().getStringExtra("times");
+        cart_id = getIntent().getIntExtra("cart_id",0);
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
@@ -94,6 +96,7 @@ public class PaymentActivity extends BaseActivity {
                      intent.putExtra("price",countmoney);
                      intent.putExtra("outorderno",TradeNo);
                      intent.putExtra("times",times);
+                     intent.putExtra("cart_id",cart_id);
                      PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[2] == true){
 

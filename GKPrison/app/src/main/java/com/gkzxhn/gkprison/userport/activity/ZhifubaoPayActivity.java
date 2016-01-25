@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,19 +13,26 @@ import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.userport.adapter.CommidtyAdapter;
+import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -51,13 +59,16 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     // 支付宝公钥
     public static final String RSA_PUBLIC = "";
     private static final int SDK_PAY_FLAG = 1;
-
     private static final int SDK_CHECK_FLAG = 2;
+    private int cart_id;
     private String times;
+    private ListView lv_commidty;
+    private PayAdapter adapter;
     private String orderkey = "";
     private String countmoney = "";
     private String getOutTradeNo = "";
     private TextView  totalmoney;
+    private List<Commodity> commodities = new ArrayList<Commodity>();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -110,26 +121,31 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_zhifubao_pay);
+        totalmoney = (TextView)findViewById(R.id.tv_count);
         countmoney = getIntent().getStringExtra("price");
+        lv_commidty = (ListView)findViewById(R.id.lv_commidty);
         getOutTradeNo = getIntent().getStringExtra("outorderno");
         times = getIntent().getStringExtra("times");
-        totalmoney = (TextView)findViewById(R.id.product_price);
+        cart_id = getIntent().getIntExtra("cart_id",0);
         totalmoney.setText(countmoney);
+        initDate();
+        adapter = new PayAdapter();
+        lv_commidty.setAdapter(adapter);
     }
 
-/**
-    @Override
-    protected View initView() {
-        View view = View.inflate(this,R.layout.activity_zhifubao_pay,null);
-        return view;
+    private void initDate() {
+        String sql = "select distinct line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
+        Cursor cursor = db.rawQuery(sql,null);
+        while (cursor.moveToNext()){
+            Commodity commodity = new Commodity();
+            commodity.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+            commodity.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+            commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+            commodities.add(commodity);
+        }
     }
 
-    @Override
-    protected void initData() {
-     countmoney = getIntent().getIntExtra("price",0);
-     getOutTradeNo = getIntent().getStringExtra("outorderno");
-    }
-    **/
+
     /**
      * call alipay sdk pay. 调用SDK支付
      *
@@ -312,5 +328,47 @@ public class ZhifubaoPayActivity extends FragmentActivity {
      */
     public String getSignType() {
         return "sign_type=\"RSA\"";
+    }
+
+    private class PayAdapter extends BaseAdapter{
+        @Override
+        public int getCount() {
+            return commodities.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            Holder holder;
+            if (convertView == null){
+                convertView = View.inflate(getApplicationContext(),R.layout.recoding_items,null);
+                holder = new Holder();
+                holder.title = (TextView)convertView.findViewById(R.id.tv_shopping_desciption);
+                holder.price = (TextView)convertView.findViewById(R.id.tv_shopping_mongey);
+                holder.qty = (TextView)convertView.findViewById(R.id.tv_shopping_qty);
+                convertView.setTag(holder);
+            }else {
+                holder = (Holder)convertView.getTag();
+            }
+            holder.title.setText(commodities.get(position).getTitle());
+            holder.price.setText(commodities.get(position).getPrice());
+            holder.qty.setText(commodities.get(position).getQty()+"");
+            return convertView;
+        }
+
+        private class Holder{
+            TextView title;
+            TextView price;
+            TextView qty;
+        }
     }
 }
