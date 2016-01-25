@@ -14,25 +14,33 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * 准备呼叫页面
  */
 public class CallUserActivity extends BaseActivity {
 
-    private Button bt_call;
+    private Button bt_call; // 呼叫按钮  默认是不可用的  当成功解析详细会见信息后恢复可用
     private FrameLayout fl_video_view;
-    private String meeting_name;
-    private String accid;
-    private String image_url;
-    private LinearLayout ll_id_card_photo;
+    private LinearLayout ll_id_card_photo;// 身份证正反面
     private ImageView iv_id_card_01;
     private ImageView iv_id_card_02;
     private RelativeLayout rl_getting;
     private BitmapUtils bitmapUtil;
     private SharedPreferences sp;
+    private int family_id;
+    private FamilyMeetingInfo familyMeetingInfo;
 
     @Override
     protected View initView() {
@@ -54,10 +62,68 @@ public class CallUserActivity extends BaseActivity {
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
         bitmapUtil = new BitmapUtils(this);
-        meeting_name = getIntent().getStringExtra("申请人");
-        accid = getIntent().getStringExtra("accid");
-        image_url = getIntent().getStringExtra("image_url");
-        Log.i("tupian", image_url);
+        family_id = getIntent().getIntExtra("family_id", 0);
+        Log.i("family_id", family_id + "");
+        getMeetingDetailInfo(family_id);
+        bt_call.setOnClickListener(this);
+    }
+
+    /**
+     * 获取会见的详细信息
+     * @param family_id  家属idtr
+     */
+    private void getMeetingDetailInfo(int family_id) {
+        rl_getting.setVisibility(View.VISIBLE);
+        HttpUtils httpUtils = new HttpUtils();
+        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "families/" + family_id
+//                + "?access_token=" + sp.getString("token", "")
+                , new RequestCallBack<Object>() {
+            @Override
+            public void onSuccess(ResponseInfo<Object> responseInfo) {
+                Log.i("会见详细请求成功", responseInfo.result.toString());
+                parseMeetingInfo(responseInfo.result.toString());
+            }
+
+            @Override
+            public void onFailure(HttpException e, String s) {
+                Log.i("会见详细请求失败", e.getMessage() + "---" + s);
+            }
+        });
+    }
+
+    /**
+     * 解析会见详情信息
+     * @param result
+     */
+    private void parseMeetingInfo(String result) {
+        familyMeetingInfo = new FamilyMeetingInfo();
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            familyMeetingInfo.setCode(jsonObject.getInt("code"));
+            familyMeetingInfo.setAccid(jsonObject.getString("accid"));
+            JSONObject jsonObject1 = jsonObject.getJSONObject("family");
+            FamilyMeetingInfo.Family family = familyMeetingInfo.new Family();
+            family.setId(jsonObject1.getInt("id"));
+            family.setPrisoner_id(jsonObject1.getInt("prisoner_id"));
+            family.setName(jsonObject1.getString("name"));
+            family.setPhone(jsonObject1.getString("phone"));
+            family.setRelationship(jsonObject1.getString("relationship"));
+            family.setUuid(jsonObject1.getString("uuid"));
+            family.setCreated_at(jsonObject1.getString("created_at"));
+            family.setUpdated_at(jsonObject1.getString("updated_at"));
+            family.setImage_url(jsonObject1.getString("image_url"));
+            familyMeetingInfo.setFamily(family);
+            setImageResourse();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 设置身份证正反面照
+     */
+    private void setImageResourse() {
+        String image_url = familyMeetingInfo.getFamily().getImage_url();
         if(image_url.contains("|")) {
             String[] img_urls = image_url.split("\\|");
             bitmapUtil.display(iv_id_card_01, Constants.RESOURSE_HEAD + img_urls[0]);
@@ -67,9 +133,9 @@ public class CallUserActivity extends BaseActivity {
             editor.putString("img_url_01", Constants.RESOURSE_HEAD + img_urls[0]);
             editor.putString("img_url_02", Constants.RESOURSE_HEAD + img_urls[1]);
             editor.commit();
-
+            bt_call.setEnabled(true);
+            rl_getting.setVisibility(View.GONE);
         }
-        bt_call.setOnClickListener(this);
     }
 
     @Override
@@ -77,8 +143,7 @@ public class CallUserActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_call:
-                showToastMsgShort("呼叫");
-                AVChatActivity.start(this, accid, 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话
+                AVChatActivity.start(this, familyMeetingInfo.getAccid(), 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 break;
         }
     }

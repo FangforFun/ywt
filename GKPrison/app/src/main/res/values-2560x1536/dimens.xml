@@ -21,4 +21,8 @@
     <dimen name="tv_apply_meeting_call_notice">20sp</dimen>
     <dimen name="msg_width">22dp</dimen>
     <dimen name="login_spinner">40px</dimen>
+    <dimen name="ok_cancel_height">50dp</dimen>
+    <dimen name="ok_cancel_title_size">18sp</dimen>
+    <dimen name="tv_cancel_size">16sp</dimen>
+    <dimen name="ok_cancel_title_padding">20dp</dimen>
 </resources>

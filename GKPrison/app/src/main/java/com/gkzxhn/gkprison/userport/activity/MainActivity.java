@@ -145,6 +145,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Object o) {
                     showToastMsgShort("重新登录成功");
+                    Log.i("MainActivity", "MainActivity重新登录了");
                 }
 
                 @Override
@@ -183,6 +184,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onException(Throwable throwable) {
                     showToastMsgShort("登录异常");
+                    Log.i("MainActivity", "MainActivity重新登录异常" + throwable.getMessage());
                 }
             };
             LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
@@ -450,13 +452,15 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.rl_message:
                 intent = new Intent(MainActivity.this, SystemMessageActivity.class);
-//                intent.putExtra("type", "main_click");
                 startActivity(intent);
                 break;
         }
         super.onClick(v);
     }
 
+    /**
+     * 获取商品列表
+     */
     private void getCommodity(){
         if(Utils.isNetworkAvailable()) {
             new Thread() {
@@ -496,7 +500,7 @@ public class MainActivity extends BaseActivity {
 
 
     /**
-     *
+     *  解析商品列表
      * @param s
      * @return
      */
