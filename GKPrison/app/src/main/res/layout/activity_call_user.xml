@@ -42,6 +42,7 @@
                     android:id="@+id/rl_getting"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/half_transparent"
                     android:visibility="gone">
 
                     <ProgressBar
@@ -85,7 +86,8 @@
                     android:background="@drawable/theme_bg_bt_selector"
                     android:text="呼叫"
                     android:textColor="@color/white"
-                    android:textSize="30sp"/>
+                    android:textSize="30sp"
+                    android:enabled="false"/>
             </RelativeLayout>
         </RelativeLayout>
     </ScrollView>

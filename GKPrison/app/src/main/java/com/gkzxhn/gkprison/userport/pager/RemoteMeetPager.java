@@ -78,17 +78,24 @@ public class RemoteMeetPager extends BasePager {
             switch (msg.what){
                 case 0: // 发送会见申请成功
                     dialog.dismiss();
-//                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    builder.setCancelable(false);
+                    View commit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+                    View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
+                    view_01.setVisibility(View.GONE);
+                    TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
+                    tv_msg_dialog.setText("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    TextView tv_cancel = (TextView) commit_success_dialog_view.findViewById(R.id.tv_cancel);
+                    tv_cancel.setVisibility(View.GONE);
+                    TextView tv_ok = (TextView) commit_success_dialog_view.findViewById(R.id.tv_ok);
+                    builder.setView(commit_success_dialog_view);
+                    final AlertDialog commit_success_dialog = builder.create();
+                    tv_ok.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        public void onClick(View v) {
+                            commit_success_dialog.dismiss();
                         }
                     });
-                    builder.setCancelable(false);
-                    AlertDialog commit_success_dialog = builder.create();
                     commit_success_dialog.show();
                     bt_commit_request.setEnabled(true);
                     break;
@@ -106,15 +113,23 @@ public class RemoteMeetPager extends BasePager {
                     dialog.dismiss();
 //                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder visit_builder = new AlertDialog.Builder(context);
-                    visit_builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
-                    visit_builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    View visit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+                    visit_builder.setCancelable(false);
+                    View view_01_ = visit_success_dialog_view.findViewById(R.id.view_01);
+                    view_01_.setVisibility(View.GONE);
+                    TextView tv_msg_dialog_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
+                    tv_msg_dialog_.setText("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    TextView tv_cancel_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_cancel);
+                    tv_cancel_.setVisibility(View.GONE);
+                    TextView tv_ok_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_ok);
+                    visit_builder.setView(visit_success_dialog_view);
+                    final AlertDialog visit_success_dialog = visit_builder.create();
+                    tv_ok_.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        public void onClick(View v) {
+                            visit_success_dialog.dismiss();
                         }
                     });
-                    visit_builder.setCancelable(false);
-                    AlertDialog visit_success_dialog = visit_builder.create();
                     visit_success_dialog.show();
                     bt_commit_request_visit.setEnabled(true);
                     break;
