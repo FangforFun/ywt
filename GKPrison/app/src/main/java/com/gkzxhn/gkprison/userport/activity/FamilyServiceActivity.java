@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -141,12 +142,11 @@ public class FamilyServiceActivity extends BaseActivity {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
         setRemittanceVisibility(View.VISIBLE);
-        sp = getSharedPreferences("config",MODE_PRIVATE);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         ip = getLocalHostIp();
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
-
     }
 
     @Override
@@ -165,6 +165,8 @@ public class FamilyServiceActivity extends BaseActivity {
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
                 View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
                 final EditText et_money = (EditText)view.findViewById(R.id.et_money);
+                Editable ea = et_money.getText();
+                et_money.setSelection(ea.length());
                 TextView tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
                 TextView tv_ok = (TextView) view.findViewById(R.id.tv_ok);
                 builder.setView(view);
@@ -271,13 +273,8 @@ public class FamilyServiceActivity extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-
             }
-
         }.start();
-
-
     }
 
     public String getLocalHostIp() {

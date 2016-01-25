@@ -46,14 +46,27 @@
             android:visibility="gone" />
     </FrameLayout>
 
-    <ImageView
-        android:id="@+id/iv_meeting_ic_card"
-        android:layout_width="@dimen/av_small_size_width"
-        android:layout_height="80dp"
-        android:src="@drawable/ic_card"
-        android:layout_gravity="right|top"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="214dp"
-        android:scaleType="fitXY"
-        android:visibility="gone"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom"
+        android:paddingBottom="80dp">
+
+        <ImageView
+            android:id="@+id/iv_meeting_ic_card"
+            android:layout_width="200dp"
+            android:layout_height="150dp"
+            android:src="@drawable/ic_card"
+            android:scaleType="fitXY"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/iv_meeting_icon"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/default_icon"
+            android:scaleType="fitXY"
+            android:visibility="gone"/>
+    </LinearLayout>
 </FrameLayout>

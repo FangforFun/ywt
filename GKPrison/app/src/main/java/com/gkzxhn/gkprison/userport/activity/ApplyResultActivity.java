@@ -57,7 +57,7 @@ public class ApplyResultActivity extends BaseActivity {
         reason = getIntent().getStringExtra("reason");
         type_id = getIntent().getIntExtra("type_id", 0);
         tv_request_name.setText(name);
-        tv_request_time.setText(apply_date);
+        tv_request_time.setText(apply_date.substring(0, apply_date.lastIndexOf(" ")));
         if(type_id == 2){
             if(result.contains("已通过")) {
                 meeting_date = getIntent().getStringExtra("meeting_date");
