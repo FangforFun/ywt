@@ -8,6 +8,8 @@
         android:id="@+id/tv_laws_regulations_item"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
+        android:maxLines="1"
+        android:ellipsize="end"
         android:text="司法部门关于进一步深化狱务公开的意见"
         android:textSize="16sp"
         android:textColor="@color/tv_bg"

@@ -39,6 +39,9 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         String action = context.getPackageName() + NimIntent.ACTION_RECEIVE_CUSTOM_NOTIFICATION;
         if (action.equals(intent.getAction())) {
             sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("has_new_notification", true);
+            editor.commit();
             // 从 intent 中取出自定义通知， intent 中只包含了一个 CustomNotification 对象
             CustomNotification notification = (CustomNotification)
                     intent.getSerializableExtra(NimIntent.EXTRA_BROADCAST_MSG);

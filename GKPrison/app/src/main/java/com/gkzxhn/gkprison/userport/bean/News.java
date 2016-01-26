@@ -138,4 +138,23 @@ public class News {
     public int getType_id() {
         return type_id;
     }
+
+    @Override
+    public String toString() {
+        return "News{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", contents='" + contents + '\'' +
+                ", isFocus=" + isFocus +
+                ", jail_id=" + jail_id +
+                ", created_at='" + created_at + '\'' +
+                ", updated_at='" + updated_at + '\'' +
+                ", image_file_name='" + image_file_name + '\'' +
+                ", image_content_type='" + image_content_type + '\'' +
+                ", image_file_size=" + image_file_size +
+                ", image_updated_at='" + image_updated_at + '\'' +
+                ", image_url='" + image_url + '\'' +
+                ", type_id=" + type_id +
+                '}';
+    }
 }

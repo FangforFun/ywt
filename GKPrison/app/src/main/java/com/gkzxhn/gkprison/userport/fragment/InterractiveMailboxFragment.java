@@ -56,6 +56,11 @@ public class InterractiveMailboxFragment extends Fragment {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         replies = analysisReply(result);
+                        if (replies.size() == 0){
+                            nonotice.setVisibility(View.VISIBLE);
+                        }else {
+                            nonotice.setVisibility(View.GONE);
+                        }
                         elv_my_mailbox_list.setAdapter(new MyAdapter());
                     }
                     break;
@@ -90,11 +95,7 @@ public class InterractiveMailboxFragment extends Fragment {
         Log.d("个人ID",token);
         url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;
         getReply();
-        if (replies.size() == 0){
-            nonotice.setVisibility(View.VISIBLE);
-        }else {
-            nonotice.setVisibility(View.GONE);
-        }
+
         Log.d("个人信息",family_id+"");
         Log.d("个人信息",token);
     }

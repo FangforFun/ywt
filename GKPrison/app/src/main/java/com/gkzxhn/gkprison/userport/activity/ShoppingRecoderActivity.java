@@ -85,6 +85,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                commodity.setPrice(cursor1.getString(cursor1.getColumnIndex("price")));
                commodity.setQty(cursor1.getInt(cursor1.getColumnIndex("qty")));
                commodities.add(commodity);
+
            }
            carts.get(i).setCommodityList(commodities);
        }

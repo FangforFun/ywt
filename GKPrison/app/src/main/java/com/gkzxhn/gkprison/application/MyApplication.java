@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
@@ -31,9 +32,11 @@ import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.contact.ContactProvider;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
+import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
@@ -55,6 +58,7 @@ import java.util.prefs.Preferences;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
+    private int login_ = 0;
 
     @Override
     public void onCreate() {
@@ -78,9 +82,60 @@ public class MyApplication extends Application {
                                     startActivity(intent);
                                     break;
                             }
-                            if(status != StatusCode.LOGINED && status != StatusCode.KICKOUT){
-                                // ToDo 调登录代码
-                            }
+//                            if (login_ <= 3) {
+//                                if (status != StatusCode.LOGINED && status != StatusCode.KICKOUT) {
+//                                    // ToDo 调登录代码
+//                                    RequestCallback callback = new RequestCallback() {
+//                                        @Override
+//                                        public void onSuccess(Object o) {
+//                                            Log.i("login success", o.toString() + "application重新登录了");
+//                                            login_ = 0;
+//                                        }
+//
+//                                        @Override
+//                                        public void onFailed(int i) {
+//                                            switch (i) {
+//                                                case 302:
+//                                                    Toast.makeText(getApplicationContext(), "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 503:
+//                                                    Toast.makeText(getApplicationContext(), "服务器繁忙", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 415:
+//                                                    Toast.makeText(getApplicationContext(), "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 408:
+//                                                    Toast.makeText(getApplicationContext(), "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 403:
+//                                                    Toast.makeText(getApplicationContext(), "非法操作或没有权限", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 200:
+//                                                    Toast.makeText(getApplicationContext(), "操作成功", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 422:
+//                                                    Toast.makeText(getApplicationContext(), "您的账号已被禁用", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                case 500:
+//                                                    Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                                default:
+//                                                    Toast.makeText(getApplicationContext(), "登录失败", Toast.LENGTH_SHORT).show();
+//                                                    break;
+//                                            }
+//                                        }
+//
+//                                        @Override
+//                                        public void onException(Throwable throwable) {
+//                                            Log.i("login exception", throwable.getMessage());
+//                                        }
+//                                    };
+//                                    LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
+//                                    NIMClient.getService(AuthService.class).login(info)
+//                                            .setCallback(callback);
+//                                    login_++;
+//                                }
+//                            }
                         }
                     }, true);
             NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {

@@ -11,6 +11,9 @@
         android:layout_marginTop="5dp"
         android:lineSpacingExtra="5dp"
         android:layout_weight="1"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="14sp"
         android:textColor="@color/tv_bg"
         android:text="万宝路"/>
     <LinearLayout
@@ -22,24 +25,28 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_bg"
+            android:textColor="#999999"
+            android:textSize="14sp"
             android:text="¥"/>
         <TextView
             android:id="@+id/tv_shopping_mongey"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_bg"
+            android:textColor="#999999"
+            android:textSize="14sp"
             android:text="2"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_bg"
-            android:text="×"/>
+            android:textColor="#999999"
+            android:text="×"
+            android:textSize="14sp"/>
         <TextView
             android:id="@+id/tv_shopping_qty"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/tv_bg"
-            android:text="3"/>
+            android:textColor="#999999"
+            android:text="3"
+            android:textSize="14sp"/>
     </LinearLayout>
 </LinearLayout>

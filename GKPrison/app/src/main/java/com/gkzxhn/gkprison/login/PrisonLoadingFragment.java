@@ -31,7 +31,7 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 /**
- * A simple {@link Fragment} subclass.
+ * created by hzn 2015/12/14
  * 监狱用户登录界面
  */
 public class PrisonLoadingFragment extends BaseFragment {
@@ -139,8 +139,12 @@ public class PrisonLoadingFragment extends BaseFragment {
                                         case 500:
                                             Toast.makeText(context, "服务器错误", Toast.LENGTH_SHORT).show();
                                             break;
+                                        case 416:
+                                            Toast.makeText(context, "操作频繁，请稍后再试", Toast.LENGTH_SHORT).show();
+                                            break;
                                         default:
-                                            Toast.makeText(context, "登录失败", Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(context, "登录失败1", Toast.LENGTH_SHORT).show();
+                                            Log.i("登录失败1", i + "");
                                             break;
                                     }
                                     handler.sendEmptyMessage(1);

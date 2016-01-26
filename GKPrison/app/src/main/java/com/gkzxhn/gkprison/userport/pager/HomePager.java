@@ -42,7 +42,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -92,6 +91,7 @@ public class HomePager extends BasePager {
     private View view_01;
     private View view_02;
     private TextView tv_focus_attention;
+    private boolean is_request_foucs_news_successed = true; // true表示请求成功  false表示请求失败  请求失败时显示上一次缓存的焦点新闻
     /**
      * 轮播图导航点集合
      */
@@ -186,6 +186,7 @@ public class HomePager extends BasePager {
                 parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
                 dialog.dismiss();
                 fillNewsData();// 填充新闻数据
+                is_request_foucs_news_successed = true;
                 Log.i("获取焦点新闻成功", responseInfo.result.toString());
             }
 
@@ -193,8 +194,51 @@ public class HomePager extends BasePager {
             public void onFailure(HttpException e, String s) {
                 dialog.dismiss();
                 Log.i("获取焦点新闻失败", e.getMessage() + "---" + s);
+                setCacheNews();// 若请求失败  则显示缓存新闻
+                is_request_foucs_news_successed = false;
             }
         });
+    }
+
+    /**
+     * 设置缓存焦点新闻
+     */
+    private void setCacheNews() {
+        String focus_news_1_title = sp.getString("focus_news_1_title", "");
+        String focus_news_1_content = sp.getString("focus_news_1_content", "");
+        String focus_news_1_img_url = sp.getString("focus_news_1_img_url", "");
+        int focus_news_1_id = sp.getInt("focus_news_1_id", 0);
+        if(!TextUtils.isEmpty(focus_news_1_title) && !TextUtils.isEmpty(focus_news_1_content) && !TextUtils.isEmpty(focus_news_1_img_url) && focus_news_1_id != 0){
+            // 有第一条缓存新闻
+            tv_home_news_title1.setText(focus_news_1_title);
+            tv_home_news_content1.setText(focus_news_1_content);
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1_img_url);
+        }
+
+        String focus_news_2_title = sp.getString("focus_news_2_title", "");
+        String focus_news_2_content = sp.getString("focus_news_2_content", "");
+        String focus_news_2_img_url = sp.getString("focus_news_2_img_url", "");
+        int focus_news_2_id = sp.getInt("focus_news_2_id", 0);
+        if(!TextUtils.isEmpty(focus_news_2_title) && !TextUtils.isEmpty(focus_news_2_content) && !TextUtils.isEmpty(focus_news_2_img_url) && focus_news_2_id != 0){
+            // 有第二条缓存新闻
+            tv_home_news_title2.setText(focus_news_2_title);
+            tv_home_news_content2.setText(focus_news_2_content);
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2_img_url);
+        }
+
+        String focus_news_3_title = sp.getString("focus_news_3_title", "");
+        String focus_news_3_content = sp.getString("focus_news_3_content", "");
+        String focus_news_3_img_url = sp.getString("focus_news_3_img_url", "");
+        int focus_news_3_id = sp.getInt("focus_news_3_id", 0);
+        if(!TextUtils.isEmpty(focus_news_3_title) && !TextUtils.isEmpty(focus_news_3_content) && !TextUtils.isEmpty(focus_news_3_img_url) && focus_news_3_id != 0){
+            // 有第三条缓存新闻
+            tv_home_news_title3.setText(focus_news_3_title);
+            tv_home_news_content3.setText(focus_news_3_content);
+            bitmapUtils = new BitmapUtils(context);
+            bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3_img_url);
+        }
     }
 
     /**
@@ -216,6 +260,12 @@ public class HomePager extends BasePager {
             tv_focus_attention.setVisibility(View.VISIBLE);
 
             focus_news_1 = focus_news_list.get(0);
+            SharedPreferences.Editor editor = sp.edit(); // 缓存
+            editor.putString("focus_news_1_title", focus_news_1.getTitle());
+            editor.putString("focus_news_1_content", focus_news_1.getContents());
+            editor.putString("focus_news_1_img_url", focus_news_1.getImage_url());
+            editor.putInt("focus_news_1_id", focus_news_1.getId());
+            editor.commit();
             tv_home_news_title1.setText(focus_news_1.getTitle());
             tv_home_news_content1.setText(focus_news_1.getContents());
             bitmapUtils = new BitmapUtils(context);
@@ -237,6 +287,18 @@ public class HomePager extends BasePager {
             tv_home_news_content2.setText(focus_news_2.getContents());
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2.getImage_url());
+
+            SharedPreferences.Editor editor = sp.edit(); // 缓存
+            editor.putString("focus_news_1_title", focus_news_1.getTitle());
+            editor.putString("focus_news_1_content", focus_news_1.getContents());
+            editor.putString("focus_news_1_img_url", focus_news_1.getImage_url());
+            editor.putInt("focus_news_1_id", focus_news_1.getId());
+
+            editor.putString("focus_news_2_title", focus_news_2.getTitle());
+            editor.putString("focus_news_2_content", focus_news_2.getContents());
+            editor.putString("focus_news_2_img_url", focus_news_2.getImage_url());
+            editor.putInt("focus_news_2_id", focus_news_2.getId());
+            editor.commit();
         }else if(focus_news_list.size() >= 3) {
             view_01.setVisibility(View.VISIBLE);
             view_02.setVisibility(View.VISIBLE);
@@ -259,6 +321,23 @@ public class HomePager extends BasePager {
             tv_home_news_content3.setText(focus_news_3.getContents());
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3.getImage_url());
+
+            SharedPreferences.Editor editor = sp.edit(); // 缓存
+            editor.putString("focus_news_1_title", focus_news_1.getTitle());
+            editor.putString("focus_news_1_content", focus_news_1.getContents());
+            editor.putString("focus_news_1_img_url", focus_news_1.getImage_url());
+            editor.putInt("focus_news_1_id", focus_news_1.getId());
+
+            editor.putString("focus_news_2_title", focus_news_2.getTitle());
+            editor.putString("focus_news_2_content", focus_news_2.getContents());
+            editor.putString("focus_news_2_img_url", focus_news_2.getImage_url());
+            editor.putInt("focus_news_2_id", focus_news_2.getId());
+
+            editor.putString("focus_news_3_title", focus_news_3.getTitle());
+            editor.putString("focus_news_3_content", focus_news_3.getContents());
+            editor.putString("focus_news_3_img_url", focus_news_3.getImage_url());
+            editor.putInt("focus_news_3_id", focus_news_3.getId());
+            editor.commit();
         }
     }
 
@@ -425,17 +504,32 @@ public class HomePager extends BasePager {
         switch (v.getId()){
             case R.id.ll_home_news1:
                 intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", focus_news_1.getId());
+                if(is_request_foucs_news_successed) {
+                    intent.putExtra("id", focus_news_1.getId());
+                }else {
+                    int focus_news_1_id = sp.getInt("focus_news_1_id", 0);
+                    intent.putExtra("id", focus_news_1_id);
+                }
                 context.startActivity(intent);
                 break;
             case R.id.ll_home_news2:
                 intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", focus_news_2.getId());
+                if(is_request_foucs_news_successed) {
+                    intent.putExtra("id", focus_news_1.getId());
+                }else {
+                    int focus_news_2_id = sp.getInt("focus_news_2_id", 0);
+                    intent.putExtra("id", focus_news_2_id);
+                }
                 context.startActivity(intent);
                 break;
             case R.id.ll_home_news3:
                 intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", focus_news_3.getId());
+                if(is_request_foucs_news_successed) {
+                    intent.putExtra("id", focus_news_1.getId());
+                }else {
+                    int focus_news_3_id = sp.getInt("focus_news_3_id", 0);
+                    intent.putExtra("id", focus_news_3_id);
+                }
                 context.startActivity(intent);
                 break;
         }
