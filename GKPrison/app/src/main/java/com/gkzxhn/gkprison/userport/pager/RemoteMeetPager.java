@@ -92,6 +92,10 @@ public class RemoteMeetPager extends BasePager {
                     });
                     commit_success_dialog.show();
                     bt_commit_request.setEnabled(true);
+                    String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
+                    editor.commit();
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");
@@ -126,6 +130,10 @@ public class RemoteMeetPager extends BasePager {
                     });
                     visit_success_dialog.show();
                     bt_commit_request_visit.setEnabled(true);
+                    String committed_time = sp.getString("committed_time", "");
+                    SharedPreferences.Editor editor_ = sp.edit();
+                    editor_.putString("committed_time", committed_time + bs_visit_request_time.getText().toString() + "/");
+                    editor_.commit();
                     break;
                 case 4: // 发送探监申请失败
                     dialog.dismiss();
@@ -230,7 +238,13 @@ public class RemoteMeetPager extends BasePager {
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(bs_meeting_request_time.getText().toString())) {
-                        sendMeetingRequestToServer();
+                        String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                        if(committed_meeting_time.contains(bs_meeting_request_time.getText().toString())){
+                            showToastMsgLong("您已经申请过" + bs_meeting_request_time.getText().toString() + "的会见，请勿重复申请!");
+                            return;
+                        }else {
+                            sendMeetingRequestToServer();
+                        }
                     }else {
                         showToastMsgShort("请选择申请会见时间");
                         return;
@@ -245,7 +259,13 @@ public class RemoteMeetPager extends BasePager {
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(bs_visit_request_time.getText().toString())) {
-                        sendVisitRequestToServer();
+                        String committed_time = sp.getString("committed_time", "");
+                        if(committed_time.contains(bs_visit_request_time.getText().toString())){
+                            showToastMsgLong("您已经申请过" + bs_visit_request_time.getText().toString() + "的实地探监，请勿重复申请!");
+                            return;
+                        }else {
+                            sendVisitRequestToServer();
+                        }
                     }else {
                         showToastMsgShort("请选择申请探监时间");
                         return;
@@ -324,7 +344,11 @@ public class RemoteMeetPager extends BasePager {
                 @Override
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":1}}";
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
+                            sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString()
+                            + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
+                            + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\""
+                            + prisoner_number + "\",\"type_id\":1}}";
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                     try {
