@@ -55,10 +55,9 @@ public class AllClassificationFragment extends BaseFragment {
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-       getDate();
+        getDate();
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
-
     }
 
     private void getDate(){
@@ -224,6 +223,7 @@ public class AllClassificationFragment extends BaseFragment {
             });
             String t = Constants.RESOURSE_HEAD+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
+
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
