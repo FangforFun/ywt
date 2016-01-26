@@ -3,14 +3,13 @@ package com.gkzxhn.gkprison.userport.fragment;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -23,7 +22,9 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
-import com.gkzxhn.gkprison.userport.view.RefreshableView;
+
+import com.gkzxhn.gkprison.userport.view.PullToRefreshListView;
+import com.gkzxhn.gkprison.userport.view.PullToRefreshListView.OnRefreshListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -38,7 +39,6 @@ public class AllClassificationFragment extends BaseFragment {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private ListView lv_allclass;
     private SalesAdapter adapter;
-    private RefreshableView refreshableView;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
     private int cart_id = 0;
@@ -53,28 +53,30 @@ public class AllClassificationFragment extends BaseFragment {
     protected View initView() {
 
         view = View.inflate(context,R.layout.fragment_all_classification,null);
-        lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
-        refreshableView = (RefreshableView)view.findViewById(R.id.refreshable_view);
+        lv_allclass = (PullToRefreshListView)view.findViewById(R.id.lv_allclassification);
         return view;
     }
 
     @Override
     protected void initData() {
+        ((PullToRefreshListView)lv_allclass).setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+        });
         EventBus.getDefault().register(this);
         getDate();
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
-        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
-            @Override
-            public void onRefresh() {
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                refreshableView.finishRefreshing();
-            }
-        },0);
+
+    }
+    private class GetDateTask extends AsyncTask<Void,Void,List<Commodity>>{
+
+        @Override
+        protected List<Commodity> doInBackground(Void... params) {
+            return null;
+        }
     }
 
     private void getDate(){
