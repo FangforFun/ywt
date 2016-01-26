@@ -26,6 +26,7 @@ import com.gkzxhn.gkprison.userport.adapter.CommidtyAdapter;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
+import com.gkzxhn.gkprison.utils.Utils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -151,6 +152,9 @@ public class ZhifubaoPayActivity extends FragmentActivity {
      *
      */
     public void pay(View v) {
+        if(Utils.isFastClick()){
+            return;
+        }
         if (TextUtils.isEmpty(PARTNER) || TextUtils.isEmpty(RSA_PRIVATE)
                 || TextUtils.isEmpty(SELLER)) {
             new AlertDialog.Builder(this)

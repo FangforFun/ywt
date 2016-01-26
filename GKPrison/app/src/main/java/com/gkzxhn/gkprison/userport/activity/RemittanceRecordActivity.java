@@ -14,6 +14,8 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.Remittance;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class RemittanceRecordActivity extends BaseActivity {
@@ -58,8 +60,20 @@ public class RemittanceRecordActivity extends BaseActivity {
             Remittance remittance = new Remittance();
             remittance.setPrice(cursor.getString(cursor.getColumnIndex("total_money")));
             remittance.setTimes(cursor.getString(cursor.getColumnIndex("time")));
+            remittance.setCart_id(cursor.getInt(cursor.getColumnIndex("id")));
             remittances.add(remittance);
         }
+        Collections.sort(remittances, new Comparator<Remittance>() {
+            @Override
+            public int compare(Remittance lhs, Remittance rhs) {
+                int heat1 = lhs.getCart_id();
+                int heat2 = rhs.getCart_id();
+                if (heat1 < heat2){
+                    return 1;
+                }
+                return -1;
+            }
+        });
     }
 
     private class RemittanceAdapter extends BaseAdapter{
