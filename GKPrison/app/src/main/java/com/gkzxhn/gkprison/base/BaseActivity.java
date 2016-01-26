@@ -38,6 +38,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected RelativeLayout rl_refresh;// 刷新
     protected ImageView iv_refresh;// 刷新
     protected Button bt_logout;// 注销
+    protected View view_red_point;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,6 +61,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         iv_refresh = (ImageView) findViewById(R.id.iv_refresh);
         tool_bar = (Toolbar) findViewById(R.id.tool_bar);
         bt_logout = (Button) findViewById(R.id.bt_logout);
+        view_red_point = findViewById(R.id.view_red_point);
         View view = initView();
         rl_content.addView(view);
         initData();

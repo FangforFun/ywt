@@ -47,6 +47,9 @@ public class SystemMessageActivity extends BaseActivity {
     @Override
     protected void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putBoolean("has_new_notification", false);
+        editor.commit();
         messageList.clear();
         setTitle("系统消息");
         setBackVisibility(View.VISIBLE);

@@ -128,7 +128,7 @@
                 android:layout_height="wrap_content"
                 android:text="原因："
                 android:textSize="16sp"
-                android:textColor="@color/tv_bg"/>
+                android:textColor="@color/tv_mid"/>
 
             <TextView
                 android:id="@+id/tv_meeting_not_pass_reason"
@@ -137,7 +137,7 @@
                 android:text="1、根据本监狱的规定，每位服刑囚犯每月只能接受两次及以内的远程。\n2、重刑犯、表现不佳的服刑人员不接受会见。\n3、本服务端每月只能提交3次会见申请。"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/tv_mid"
+                android:textColor="@color/tv_bg"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
 
@@ -179,7 +179,7 @@
                 android:layout_height="wrap_content"
                 android:text="路线指引："
                 android:textSize="16sp"
-                android:textColor="@color/tv_bg"/>
+                android:textColor="@color/tv_mid"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -187,7 +187,7 @@
                 android:text="一、自驾车路线指引：\n1、湖南高速汝湖高速路口——德山监狱：从出口向右方向出发，进入惠民大道，经中信大桥转入三环北路，直行进入三环东路，往常德方向走，进入G324国道，后在第一个红绿灯路口左转进入新乐路，行驶约2公里后到达德山监狱。\n\n二、市区搭乘公交车路线指引：\n1、常德汽车总站——德山监狱：在常德汽车总站对面马路乘坐3路公交车可直达德山监狱（终点）。\n2、常德南高铁站——德山监狱：可搭乘常德汽车站——常德南站交通大巴到常德市汽车总站，走过常德汽车总站对面转乘3路公交车直达德山监狱。"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/tv_mid"
+                android:textColor="@color/tv_bg"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
 
@@ -229,7 +229,7 @@
                 android:layout_height="wrap_content"
                 android:text="注意事项："
                 android:textSize="16sp"
-                android:textColor="@color/tv_bg"/>
+                android:textColor="@color/tv_mid"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -237,7 +237,7 @@
                 android:text="1、除开近亲属外，其余人士请勿参与远程会见，若有违反，监狱管理人员有权切断远程会见页，并且从严控制犯人探监和远程会见机会。\n2、您的通话或者会见可能会被监控，请谅解。\n3、其余未尽事宜，我们将以短信形式通知到您，请留意您的手机信息。"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
-                android:textColor="@color/tv_mid"
+                android:textColor="@color/tv_bg"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
     </LinearLayout>

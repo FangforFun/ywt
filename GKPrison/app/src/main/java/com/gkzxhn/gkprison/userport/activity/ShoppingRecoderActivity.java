@@ -26,6 +26,8 @@ import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -66,7 +68,17 @@ public class ShoppingRecoderActivity extends BaseActivity {
             cart.setTotal_money(cursor.getString(cursor.getColumnIndex("total_money")));
             carts.add(cart);
         }
-
+       Collections.sort(carts, new Comparator<Cart>() {
+           @Override
+           public int compare(Cart lhs, Cart rhs) {
+               int heat1 = lhs.getId();
+               int heat2 = rhs.getId();
+               if (heat1 < heat2){
+                   return 1;
+               }
+               return -1;
+           }
+       });
        if (cursor.getCount() == 0){
             nothing.setVisibility(View.VISIBLE);
        }else {
@@ -85,6 +97,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                commodity.setPrice(cursor1.getString(cursor1.getColumnIndex("price")));
                commodity.setQty(cursor1.getInt(cursor1.getColumnIndex("qty")));
                commodities.add(commodity);
+
            }
            carts.get(i).setCommodityList(commodities);
        }

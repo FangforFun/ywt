@@ -3,11 +3,9 @@ package com.gkzxhn.gkprison.userport.pager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -33,9 +30,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -78,19 +72,30 @@ public class RemoteMeetPager extends BasePager {
             switch (msg.what){
                 case 0: // 发送会见申请成功
                     dialog.dismiss();
-//                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    builder.setCancelable(false);
+                    View commit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+                    View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
+                    view_01.setVisibility(View.GONE);
+                    TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
+                    tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
+                    TextView tv_cancel = (TextView) commit_success_dialog_view.findViewById(R.id.tv_cancel);
+                    tv_cancel.setVisibility(View.GONE);
+                    TextView tv_ok = (TextView) commit_success_dialog_view.findViewById(R.id.tv_ok);
+                    builder.setView(commit_success_dialog_view);
+                    final AlertDialog commit_success_dialog = builder.create();
+                    tv_ok.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        public void onClick(View v) {
+                            commit_success_dialog.dismiss();
                         }
                     });
-                    builder.setCancelable(false);
-                    AlertDialog commit_success_dialog = builder.create();
                     commit_success_dialog.show();
                     bt_commit_request.setEnabled(true);
+                    String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
+                    editor.commit();
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");
@@ -106,17 +111,29 @@ public class RemoteMeetPager extends BasePager {
                     dialog.dismiss();
 //                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
                     AlertDialog.Builder visit_builder = new AlertDialog.Builder(context);
-                    visit_builder.setMessage("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
-                    visit_builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    View visit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+                    visit_builder.setCancelable(false);
+                    View view_01_ = visit_success_dialog_view.findViewById(R.id.view_01);
+                    view_01_.setVisibility(View.GONE);
+                    TextView tv_msg_dialog_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
+                    tv_msg_dialog_.setText("提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    TextView tv_cancel_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_cancel);
+                    tv_cancel_.setVisibility(View.GONE);
+                    TextView tv_ok_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_ok);
+                    visit_builder.setView(visit_success_dialog_view);
+                    final AlertDialog visit_success_dialog = visit_builder.create();
+                    tv_ok_.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
+                        public void onClick(View v) {
+                            visit_success_dialog.dismiss();
                         }
                     });
-                    visit_builder.setCancelable(false);
-                    AlertDialog visit_success_dialog = visit_builder.create();
                     visit_success_dialog.show();
                     bt_commit_request_visit.setEnabled(true);
+                    String committed_time = sp.getString("committed_time", "");
+                    SharedPreferences.Editor editor_ = sp.edit();
+                    editor_.putString("committed_time", committed_time + bs_visit_request_time.getText().toString() + "/");
+                    editor_.commit();
                     break;
                 case 4: // 发送探监申请失败
                     dialog.dismiss();
@@ -221,7 +238,13 @@ public class RemoteMeetPager extends BasePager {
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(bs_meeting_request_time.getText().toString())) {
-                        sendMeetingRequestToServer();
+                        String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                        if(committed_meeting_time.contains(bs_meeting_request_time.getText().toString())){
+                            showToastMsgLong("您已经申请过" + bs_meeting_request_time.getText().toString() + "的会见，请勿重复申请!");
+                            return;
+                        }else {
+                            sendMeetingRequestToServer();
+                        }
                     }else {
                         showToastMsgShort("请选择申请会见时间");
                         return;
@@ -236,7 +259,13 @@ public class RemoteMeetPager extends BasePager {
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(bs_visit_request_time.getText().toString())) {
-                        sendVisitRequestToServer();
+                        String committed_time = sp.getString("committed_time", "");
+                        if(committed_time.contains(bs_visit_request_time.getText().toString())){
+                            showToastMsgLong("您已经申请过" + bs_visit_request_time.getText().toString() + "的实地探监，请勿重复申请!");
+                            return;
+                        }else {
+                            sendVisitRequestToServer();
+                        }
                     }else {
                         showToastMsgShort("请选择申请探监时间");
                         return;
@@ -315,7 +344,11 @@ public class RemoteMeetPager extends BasePager {
                 @Override
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString() + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\"" + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":1}}";
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
+                            sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString()
+                            + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
+                            + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\""
+                            + prisoner_number + "\",\"type_id\":1}}";
                     HttpClient httpClient = new DefaultHttpClient();
                     HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                     try {

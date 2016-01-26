@@ -46,8 +46,10 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
+import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
+import com.netease.nimlib.sdk.auth.LoginInfo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -106,7 +108,6 @@ public class MainActivity extends BaseActivity {
                     }
                     break;
             }
-
         }
     };
 
@@ -133,6 +134,63 @@ public class MainActivity extends BaseActivity {
         return view;
     }
 
+    /**
+     * 重新登录任务
+     */
+    private Runnable reLoginTask = new Runnable() {
+        @Override
+        public void run() {
+            RequestCallback callback = new RequestCallback() {
+                @Override
+                public void onSuccess(Object o) {
+                    showToastMsgShort("重新登录成功");
+                    Log.i("MainActivity", "MainActivity重新登录了");
+                }
+
+                @Override
+                public void onFailed(int i) {
+                    switch (i) {
+                        case 302:
+                            Toast.makeText(MainActivity.this, "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 503:
+                            Toast.makeText(MainActivity.this, "服务器繁忙", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 415:
+                            Toast.makeText(MainActivity.this, "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 408:
+                            Toast.makeText(MainActivity.this, "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 403:
+                            Toast.makeText(MainActivity.this, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 200:
+                            Toast.makeText(MainActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 422:
+                            Toast.makeText(MainActivity.this, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 500:
+                            Toast.makeText(MainActivity.this, "服务器错误", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(MainActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                }
+
+                @Override
+                public void onException(Throwable throwable) {
+                    showToastMsgShort("登录异常");
+                    Log.i("MainActivity", "MainActivity重新登录异常" + throwable.getMessage());
+                }
+            };
+            LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
+            NIMClient.getService(AuthService.class).login(info)
+                    .setCallback(callback);
+        }
+    };
 
     @Override
     protected void initData() {
@@ -141,9 +199,16 @@ public class MainActivity extends BaseActivity {
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        if(isRegisteredUser && statusCode != StatusCode.LOGINED && statusCode != StatusCode.KICKOUT){
+            // 如果是注册用户并且不是被其他端踢掉的未上线就重新登录
+            handler.post(reLoginTask);
+        }
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
             getCommodity();// 获取商品
+            if(sp.getBoolean("has_new_notification", false)){
+                view_red_point.setVisibility(View.VISIBLE);
+            }
         }
         if(statusCode == StatusCode.KICKOUT){
             showKickoutDialog();// 其他设备登录
@@ -389,13 +454,16 @@ public class MainActivity extends BaseActivity {
                 break;
             case R.id.rl_message:
                 intent = new Intent(MainActivity.this, SystemMessageActivity.class);
-//                intent.putExtra("type", "main_click");
                 startActivity(intent);
+                view_red_point.setVisibility(View.GONE);
                 break;
         }
         super.onClick(v);
     }
 
+    /**
+     * 获取商品列表
+     */
     private void getCommodity(){
         if(Utils.isNetworkAvailable()) {
             new Thread() {
@@ -435,7 +503,7 @@ public class MainActivity extends BaseActivity {
 
 
     /**
-     *
+     *  解析商品列表
      * @param s
      * @return
      */

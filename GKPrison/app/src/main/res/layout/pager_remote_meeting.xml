@@ -74,10 +74,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="上次会见时间：暂无会见"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:paddingTop="5dp"
                 android:textColor="@color/tv_mid"
                 android:background="@color/white"/>
 
@@ -89,8 +89,11 @@
                 android:textSize="14sp"
                 android:textColor="@color/tv_mid"
                 android:background="@color/white"
-                android:padding="10dp"
-                android:lineSpacingExtra="5dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp"
+                android:lineSpacingExtra="3dp"
                 android:layout_below="@id/tv_meeting_last_time"/>
 
             <LinearLayout
@@ -100,7 +103,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:paddingTop="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
                 android:layout_below="@id/tv_meeting_notes">
@@ -115,7 +118,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="姓名："
                         android:textSize="16sp"/>
 
@@ -124,7 +127,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="叶惠美"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -139,7 +142,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="与服刑人员关系："
                         android:textSize="16sp"/>
 
@@ -148,7 +151,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="母子"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -163,7 +166,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="身份证号："
                         android:textSize="16sp"/>
 
@@ -172,7 +175,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="430482199404074444"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -187,7 +190,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="电话号码："
                         android:textSize="16sp"/>
 
@@ -196,7 +199,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="18888888888"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -205,12 +208,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingRight="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="申请会见时间："
                         android:layout_gravity="center_vertical"
                         android:textSize="16sp"/>
@@ -220,7 +223,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:hint="点击选择"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:textSize="16sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -229,7 +232,7 @@
                 android:id="@+id/bt_commit_request"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginBottom="20dp"
@@ -250,28 +253,18 @@
             android:visibility="gone">
 
             <TextView
-                android:id="@+id/tv_visit_last_time"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="上次会见时间：2015年11月11日"
-                android:textSize="16sp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:textColor="@color/tv_gray"
-                android:background="@color/white"/>
-
-            <TextView
                 android:id="@+id/tv_visit_notes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/tanjian_notice"
                 android:textSize="14sp"
-                android:padding="10dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:textColor="@color/tv_mid"
                 android:background="@color/white"
-                android:layout_marginTop="5dp"
-                android:lineSpacingExtra="5dp"/>
+                android:lineSpacingExtra="3dp"/>
 
             <LinearLayout
                 android:id="@+id/ll_visit_request_info"
@@ -280,7 +273,7 @@
                 android:orientation="vertical"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp"
+                android:paddingTop="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@color/white"
                 android:layout_below="@id/tv_visit_notes">
@@ -295,7 +288,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="姓名："
                         android:textSize="16sp"/>
 
@@ -304,7 +297,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="叶惠美"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -319,7 +312,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="与服刑人员关系："
                         android:textSize="16sp"/>
 
@@ -328,7 +321,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="母子"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -343,7 +336,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="身份证号："
                         android:textSize="16sp"/>
 
@@ -352,7 +345,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="430482199404074444"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -367,7 +360,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="电话号码："
                         android:textSize="16sp"/>
 
@@ -376,7 +369,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="18888888888"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:layout_marginLeft="3dp"
                         android:textSize="16sp"/>
                 </LinearLayout>
@@ -385,12 +378,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingRight="10dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="5dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/tv_gray"
+                        android:textColor="@color/tv_bg"
                         android:text="申请探监时间："
                         android:layout_gravity="center_vertical"
                         android:textSize="16sp"/>
@@ -400,7 +393,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:hint="点击选择"
-                        android:textColor="@color/tv_mid"
+                        android:textColor="@color/tv_bg"
                         android:textSize="16sp"/>
                 </LinearLayout>
             </LinearLayout>
@@ -409,7 +402,7 @@
                 android:id="@+id/bt_commit_request_visit"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 android:layout_marginRight="10dp"

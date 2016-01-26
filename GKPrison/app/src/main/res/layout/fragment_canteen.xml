@@ -10,13 +10,13 @@
        android:id="@+id/ll_serch"
        android:layout_width="match_parent"
        android:layout_height="50dp"
-       android:background="#F0F0F0"
+       android:background="@color/theme"
        >
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="监狱超市"
+            android:text="电子商务"
             android:textColor="#333333"
             android:textSize="18sp"
             android:layout_centerInParent="true"/>
@@ -32,6 +32,8 @@
         android:id="@+id/rl_allclass"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         android:layout_weight="1">
         <TextView
             android:id="@+id/tv_allclass"
@@ -40,11 +42,12 @@
             android:text="全部分类"
             android:textSize="16sp"
             android:textColor="@color/tv_bg"
+
             android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_allclass"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_toRightOf="@+id/tv_allclass"
                 android:layout_marginLeft="5dp"
                 android:entries="@array/shopping"
@@ -72,8 +75,8 @@
                 android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_sales"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_toRightOf="@+id/tv_sales"
                 android:layout_marginLeft="5dp"
                 android:entries="@array/shopping"
@@ -101,8 +104,8 @@
                 android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_zhineng"
-                android:layout_width="15dp"
-                android:layout_height="15dp"
+                android:layout_width="8dp"
+                android:layout_height="8dp"
                 android:layout_toRightOf="@+id/tv_zhineng"
                 android:layout_marginLeft="5dp"
                 android:entries="@array/shopping"
@@ -260,5 +263,40 @@
             android:layout_height="wrap_content"
             ></ListView>
         </RelativeLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/fl_choose"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fenjie"
+        android:background="@color/half_transparent"
+        android:visibility="gone">
+        <ListView
+            android:id="@+id/lv_allchoose_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/transparent"
+            android:dividerHeight="1dp"
+            android:background="@color/white">
+        </ListView>
+
+    </FrameLayout>
+    <FrameLayout
+        android:id="@+id/fl_saleschoose"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/fenjie"
+        android:background="@color/half_transparent"
+        android:visibility="gone">
+        <ListView
+            android:id="@+id/lv_saleschoose_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@color/transparent"
+            android:dividerHeight="1dp"
+            android:background="@color/white">
+        </ListView>
+
     </FrameLayout>
 </RelativeLayout>

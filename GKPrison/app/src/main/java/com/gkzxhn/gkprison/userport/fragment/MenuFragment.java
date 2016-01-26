@@ -132,10 +132,20 @@ public class MenuFragment extends BaseFragment{
             public void onClick(View v) {
                 if(isRegisteredUser) { // 注册用户弹提示
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("确定退出当前账号?");
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    View logout_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+                    builder.setView(logout_dialog_view);
+                    TextView tv_cancel = (TextView) logout_dialog_view.findViewById(R.id.tv_cancel);
+                    final AlertDialog dialog = builder.create();
+                    tv_cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                    TextView tv_ok = (TextView) logout_dialog_view.findViewById(R.id.tv_ok);
+                    tv_ok.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
                             Intent intent = new Intent(context, LoadingActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             SharedPreferences.Editor editor = sp.edit();
@@ -145,13 +155,6 @@ public class MenuFragment extends BaseFragment{
                             NIMClient.getService(AuthService.class).logout();
                         }
                     });
-                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    AlertDialog dialog = builder.create();
                     dialog.show();
                 }else {// 非注册用户直接跳到登录
                     Intent intent = new Intent(context, LoadingActivity.class);

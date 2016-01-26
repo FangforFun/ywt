@@ -129,7 +129,18 @@
                     android:layout_height="@dimen/msg_width"
                     android:src="@drawable/messge"
                     android:layout_centerInParent="true"
-                    android:layout_centerVertical="true"/>
+                    android:layout_centerVertical="true">
+
+                </ImageView>
+
+                <View
+                    android:id="@+id/view_red_point"
+                    android:layout_width="6dp"
+                    android:layout_height="6dp"
+                    android:background="@drawable/red_circle_point"
+                    android:layout_alignEnd="@id/iv_message"
+                    android:layout_alignTop="@id/iv_message"
+                    android:visibility="gone"/>
             </RelativeLayout>
 
             <RelativeLayout
