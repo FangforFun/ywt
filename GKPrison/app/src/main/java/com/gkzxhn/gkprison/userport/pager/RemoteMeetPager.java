@@ -3,11 +3,9 @@ package com.gkzxhn.gkprison.userport.pager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -33,9 +30,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -84,7 +78,7 @@ public class RemoteMeetPager extends BasePager {
                     View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
                     view_01.setVisibility(View.GONE);
                     TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
-                    tv_msg_dialog.setText("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
                     TextView tv_cancel = (TextView) commit_success_dialog_view.findViewById(R.id.tv_cancel);
                     tv_cancel.setVisibility(View.GONE);
                     TextView tv_ok = (TextView) commit_success_dialog_view.findViewById(R.id.tv_ok);
@@ -118,7 +112,7 @@ public class RemoteMeetPager extends BasePager {
                     View view_01_ = visit_success_dialog_view.findViewById(R.id.view_01);
                     view_01_.setVisibility(View.GONE);
                     TextView tv_msg_dialog_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
-                    tv_msg_dialog_.setText("        提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    tv_msg_dialog_.setText("提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
                     TextView tv_cancel_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_cancel);
                     tv_cancel_.setVisibility(View.GONE);
                     TextView tv_ok_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_ok);

@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:text="确定退出当前账号？"
         android:textColor="@color/tv_bg"
+        android:lineSpacingExtra="5dp"
         android:textSize="@dimen/ok_cancel_title_size"
         android:padding="@dimen/ok_cancel_title_padding"/>
 
