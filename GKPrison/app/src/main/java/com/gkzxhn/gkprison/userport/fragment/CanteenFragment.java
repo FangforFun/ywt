@@ -192,6 +192,7 @@ public class CanteenFragment extends BaseFragment {
         times = format.format(date);
         String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
         db.execSQL(sql);
+        Log.d("记录",times);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = db.rawQuery(sql1, null);
         while (cursor.moveToNext()){
