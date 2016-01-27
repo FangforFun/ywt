@@ -7,6 +7,7 @@
        android:id="@+id/refreshable_view"
        android:layout_width="match_parent"
        android:layout_height="match_parent">
+
       <ListView
           android:id="@+id/lv_allclassification"
           android:layout_width="match_parent"
@@ -15,6 +16,4 @@
           android:dividerHeight="1dp"
           android:scrollbars="none"></ListView>
    </com.gkzxhn.gkprison.userport.view.RefreshableView>
-
-
 </LinearLayout>
