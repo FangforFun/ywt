@@ -1,6 +1,8 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
@@ -15,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
@@ -25,8 +28,19 @@ import com.gkzxhn.gkprison.userport.event.ClickEvent;
 
 import com.gkzxhn.gkprison.userport.view.PullToRefreshListView;
 import com.gkzxhn.gkprison.userport.view.PullToRefreshListView.OnRefreshListener;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +54,7 @@ public class AllClassificationFragment extends BaseFragment {
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
+
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
@@ -47,8 +62,35 @@ public class AllClassificationFragment extends BaseFragment {
     private RelativeLayout xiala;
     private int Items_id = 0;
     private int category_id;
+    private SharedPreferences sp;
+    private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
     private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String m = (String)msg.obj;
+                    if (m.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String commodity = bundle.getString("result");
+                        commodities = analysiscommodity(commodity);
+                        if (commodities.size() != 0){
+                            String sql = "delete from Items where 1=1";
+                            db.execSQL(sql);
+                            for (int i = 0;i < commodities.size();i++){
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodities.get(i).getId()+",'"+commodities.get(i).getTitle()+"','"+commodities.get(i).getDescription()+"','"+ commodities.get(i).getPrice()+"','"+ commodities.get(i).getAvatar_url()+"',"+commodities.get(i).getCategory_id() + ","+commodities.get(i).getRanking() + ")";
+                                db.execSQL(sql1);
+                            }
+                        }
+                    }else if (m.equals("error")){
+                        Toast.makeText(context, "同步数据失败", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
     @Override
     protected View initView() {
 
@@ -62,7 +104,7 @@ public class AllClassificationFragment extends BaseFragment {
         ((PullToRefreshListView)lv_allclass).setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh() {
-
+                new GetDateTask().execute();
             }
         });
         EventBus.getDefault().register(this);
@@ -75,9 +117,45 @@ public class AllClassificationFragment extends BaseFragment {
 
         @Override
         protected List<Commodity> doInBackground(Void... params) {
-            return null;
+            sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
+            Message msg = handler.obtainMessage();
+            HttpClient httpClient = new DefaultHttpClient();
+            String token = sp.getString("token", "");
+            HttpGet httpGet = new HttpGet(url + token);
+            try {
+                HttpResponse response = httpClient.execute(httpGet);
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    msg.obj = "success";
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", result);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                } else {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+            return commodities;
+        }
+
+        @Override
+        protected void onPostExecute(List<Commodity> commodities) {
+            ((PullToRefreshListView)lv_allclass).onRefreshComplete();
+            super.onPostExecute(commodities);
+
         }
     }
+
+
+
 
     private void getDate(){
         Bundle bundle = getArguments();
@@ -124,7 +202,35 @@ public class AllClassificationFragment extends BaseFragment {
         }
     }
 
-    private class SalesAdapter extends BaseAdapter{
+    /**
+     *  解析商品列表
+     * @param s
+     * @return
+     */
+    private List<Commodity> analysiscommodity(String s){
+        List<Commodity> commodities = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0;i < jsonArray.length();i++){
+                Commodity commodity = new Commodity();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                commodity.setId(jsonObject.getInt("id"));
+                commodity.setTitle(jsonObject.getString("title"));
+                commodity.setDescription(jsonObject.getString("description"));
+                commodity.setAvatar_url(jsonObject.getString("avatar_url"));
+                commodity.setPrice(jsonObject.getString("price"));
+                commodity.setCategory_id(jsonObject.getInt("category_id"));
+                commodities.add(commodity);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return commodities;
+    }
+
+
+
+private class SalesAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {

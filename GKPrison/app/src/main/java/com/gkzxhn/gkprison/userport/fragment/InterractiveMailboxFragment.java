@@ -31,6 +31,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -56,6 +58,12 @@ public class InterractiveMailboxFragment extends Fragment {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         replies = analysisReply(result);
+                        Collections.sort(replies, new Comparator<Reply>() {
+                            @Override
+                            public int compare(Reply lhs, Reply rhs) {
+                                return -1;
+                            }
+                        });
                         if (replies.size() == 0){
                             nonotice.setVisibility(View.VISIBLE);
                         }else {
@@ -214,6 +222,7 @@ public class InterractiveMailboxFragment extends Fragment {
             if(convertView == null){
                 convertView = View.inflate(getActivity(), R.layout.interactive_mailbox_child, null);
                 holder = new ChildViewHolder();
+                holder.tv_send_reply = (TextView)convertView.findViewById(R.id.tv_send_reply_contents);
                 holder.tv_reply_content = (TextView) convertView.findViewById(R.id.tv_reply_content);
                 holder.tv_warden_signature = (TextView) convertView.findViewById(R.id.tv_warden_signature);
                 holder.tv_message_time = (TextView) convertView.findViewById(R.id.tv_message_time);
@@ -221,7 +230,8 @@ public class InterractiveMailboxFragment extends Fragment {
             }else {
                 holder = (ChildViewHolder) convertView.getTag();
             }
-            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(groupPosition).getReplies());
+            holder.tv_send_reply.setText(replies.get(groupPosition).getContents());
+            holder.tv_reply_content.setText(replies.get(groupPosition).getReplies());
             holder.tv_message_time.setText(replies.get(groupPosition).getReply_date());
             return convertView;
         }
@@ -241,5 +251,6 @@ public class InterractiveMailboxFragment extends Fragment {
         TextView tv_reply_content;
         TextView tv_warden_signature;
         TextView tv_message_time;
+        TextView tv_send_reply;
     }
 }

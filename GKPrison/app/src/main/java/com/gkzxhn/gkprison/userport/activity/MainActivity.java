@@ -260,7 +260,7 @@ public class MainActivity extends BaseActivity {
                             home_viewPager.setCurrentItem(2);
                             setTitle("电子商务");
                             setMenuVisibility(View.GONE);
-                            setActionBarGone(View.GONE);
+                            setActionBarGone(View.VISIBLE);
                             setMessageVisibility(View.GONE);
                         } else {
                             showToastMsgShort("注册后可用");

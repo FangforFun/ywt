@@ -40,9 +40,6 @@ public class ShoppingRecoderActivity extends BaseActivity {
     private List<Cart> carts = new ArrayList<Cart>();
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
 
-
-
-
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_shopping_recoder,null);
