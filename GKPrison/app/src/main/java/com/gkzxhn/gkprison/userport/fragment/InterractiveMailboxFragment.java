@@ -214,6 +214,7 @@ public class InterractiveMailboxFragment extends Fragment {
             if(convertView == null){
                 convertView = View.inflate(getActivity(), R.layout.interactive_mailbox_child, null);
                 holder = new ChildViewHolder();
+                holder.tv_send_reply = (TextView)convertView.findViewById(R.id.tv_send_reply_contents);
                 holder.tv_reply_content = (TextView) convertView.findViewById(R.id.tv_reply_content);
                 holder.tv_warden_signature = (TextView) convertView.findViewById(R.id.tv_warden_signature);
                 holder.tv_message_time = (TextView) convertView.findViewById(R.id.tv_message_time);
@@ -221,6 +222,7 @@ public class InterractiveMailboxFragment extends Fragment {
             }else {
                 holder = (ChildViewHolder) convertView.getTag();
             }
+            holder.tv_send_reply.setText(replies.get(groupPosition).getContents());
             holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(groupPosition).getReplies());
             holder.tv_message_time.setText(replies.get(groupPosition).getReply_date());
             return convertView;
@@ -241,5 +243,6 @@ public class InterractiveMailboxFragment extends Fragment {
         TextView tv_reply_content;
         TextView tv_warden_signature;
         TextView tv_message_time;
+        TextView tv_send_reply;
     }
 }
