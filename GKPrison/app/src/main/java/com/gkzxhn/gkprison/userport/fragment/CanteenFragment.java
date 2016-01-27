@@ -282,6 +282,7 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 0);
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
                         break;
                     case 1:
                         sales = new SalesPriorityFragment();

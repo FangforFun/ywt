@@ -52,7 +52,6 @@ import de.greenrobot.event.EventBus;
 public class SalesPriorityFragment extends BaseFragment {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodities = new ArrayList<Commodity>();
-    private List<Commodity> commodityList = new ArrayList<Commodity>();
     private ListView lv_sale;
     private SalesAdapter adapter;
     private int cart_id = 0;
@@ -72,12 +71,12 @@ public class SalesPriorityFragment extends BaseFragment {
                     if (m.equals("success")){
                         Bundle bundle = msg.getData();
                         String commodity = bundle.getString("result");
-                        commodityList = analysiscommodity(commodity);
-                        if (commodityList.size() != 0){
+                        commodities = analysiscommodity(commodity);
+                        if (commodities.size() != 0){
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
-                            for (int i = 0;i < commodityList.size();i++){
-                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+ commodityList.get(i).getPrice()+"','"+ commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+","+commodityList.get(i).getRanking()+")";
+                            for (int i = 0;i < commodities.size();i++){
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodities.get(i).getId()+",'"+commodities.get(i).getTitle()+"','"+commodities.get(i).getDescription()+"','"+ commodities.get(i).getPrice()+"','"+ commodities.get(i).getAvatar_url()+"',"+commodities.get(i).getCategory_id()+","+commodities.get(i).getRanking()+")";
                                 db.execSQL(sql1);
                             }
                         }
@@ -125,8 +124,34 @@ public class SalesPriorityFragment extends BaseFragment {
     private class GetDateTask extends AsyncTask<Void,Void,List<Commodity>>{
         @Override
         protected List<Commodity> doInBackground(Void... params) {
-            getCommodity();
-            return commodityList;
+            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+            Message msg = handler.obtainMessage();
+            HttpClient httpClient = new DefaultHttpClient();
+            String token = sp.getString("token", "");
+            HttpGet httpGet = new HttpGet(url + token);
+            try {
+                HttpResponse response = httpClient.execute(httpGet);
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    msg.obj = "success";
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", result);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                } else {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+
+            return commodities;
         }
 
         @Override
@@ -136,43 +161,6 @@ public class SalesPriorityFragment extends BaseFragment {
         }
     }
 
-    private void getCommodity(){
-        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
-        if(Utils.isNetworkAvailable()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    String token = sp.getString("token", "");
-                    HttpGet httpGet = new HttpGet(url + token);
-                    try {
-                        HttpResponse response = httpClient.execute(httpGet);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                }
-            }.start();
-        }else {
-            showToastMsgShort("没有网络");
-        }
-    }
 
     /**
      *  解析商品列表
