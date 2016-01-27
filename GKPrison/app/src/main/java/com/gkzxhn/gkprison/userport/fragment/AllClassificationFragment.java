@@ -156,43 +156,7 @@ public class AllClassificationFragment extends BaseFragment {
     }
 
 
-    private void getCommodity(){
-        sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
-        if(Utils.isNetworkAvailable()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    String token = sp.getString("token", "");
-                    HttpGet httpGet = new HttpGet(url + token);
-                    try {
-                        HttpResponse response = httpClient.execute(httpGet);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                }
-            }.start();
-        }else {
-            showToastMsgShort("没有网络");
-        }
-    }
+
 
     private void getDate(){
         Bundle bundle = getArguments();
