@@ -138,6 +138,8 @@ public class AllClassificationFragment extends BaseFragment {
                     msg.what = 1;
                     handler.sendMessage(msg);
                 }
+
+                
             } catch (IOException e) {
                 e.printStackTrace();
                 msg.obj = "error";
