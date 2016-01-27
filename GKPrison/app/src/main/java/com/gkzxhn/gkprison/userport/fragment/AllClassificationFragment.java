@@ -7,8 +7,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -21,6 +23,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.userport.view.RefreshableView;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -35,11 +38,13 @@ public class AllClassificationFragment extends BaseFragment {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private ListView lv_allclass;
     private SalesAdapter adapter;
+    private RefreshableView refreshableView;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
     private int qty = 0;
+    private RelativeLayout xiala;
     private int Items_id = 0;
     private int category_id;
     private int eventint = 0;//接收点击事件传来的数据
@@ -49,16 +54,27 @@ public class AllClassificationFragment extends BaseFragment {
 
         view = View.inflate(context,R.layout.fragment_all_classification,null);
         lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
+        refreshableView = (RefreshableView)view.findViewById(R.id.refreshable_view);
         return view;
     }
 
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-       getDate();
+        getDate();
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
-
+        refreshableView.setOnRefreshListener(new RefreshableView.PullToRefreshListener() {
+            @Override
+            public void onRefresh() {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                refreshableView.finishRefreshing();
+            }
+        },0);
     }
 
     private void getDate(){
@@ -224,6 +240,7 @@ public class AllClassificationFragment extends BaseFragment {
             });
             String t = Constants.RESOURSE_HEAD+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
+
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
             viewHolder.tv_description.setText(commodities.get(position).getDescription());

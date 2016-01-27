@@ -143,7 +143,9 @@ public class CallUserActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_call:
-                AVChatActivity.start(this, familyMeetingInfo.getAccid(), 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                AVChatActivity.start(this,
+//                        familyMeetingInfo.getAccid()
+                        "a055d5791afed1baf76ff850c8244fc0", 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 break;
         }
     }
