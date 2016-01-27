@@ -1,14 +1,17 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".userport.fragment.SalesPriorityFragment">
 
-    <ListView
+
+    <com.gkzxhn.gkprison.userport.view.PullToRefreshListView
         android:id="@+id/lv_sales"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="#F1F1F1"
-        android:dividerHeight="2dp"
-        android:scrollbars="none"></ListView>
+        android:dividerHeight="1dp"
+        android:scrollbars="none"
+        ></com.gkzxhn.gkprison.userport.view.PullToRefreshListView>
 
-</FrameLayout>
+
+</LinearLayout>

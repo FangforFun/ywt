@@ -54,6 +54,7 @@ public class AllClassificationFragment extends BaseFragment {
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
+
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
@@ -104,6 +105,7 @@ public class AllClassificationFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 new GetDateTask().execute();
+
             }
         });
         EventBus.getDefault().register(this);
@@ -116,8 +118,40 @@ public class AllClassificationFragment extends BaseFragment {
 
         @Override
         protected List<Commodity> doInBackground(Void... params) {
-            getCommodity();
+            sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
+            Message msg = handler.obtainMessage();
+            HttpClient httpClient = new DefaultHttpClient();
+            String token = sp.getString("token", "");
+            HttpGet httpGet = new HttpGet(url + token);
+            try {
+                HttpResponse response = httpClient.execute(httpGet);
+                if (response.getStatusLine().getStatusCode() == 200) {
+                    String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    msg.obj = "success";
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", result);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                } else {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
             return commodities;
+        }
+
+        @Override
+        protected void onPostExecute(List<Commodity> commodities) {
+            ((PullToRefreshListView)lv_allclass).onRefreshComplete();
+            super.onPostExecute(commodities);
+
         }
     }
 

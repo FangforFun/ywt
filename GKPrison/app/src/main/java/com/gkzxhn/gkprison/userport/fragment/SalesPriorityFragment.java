@@ -1,7 +1,10 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
@@ -21,8 +25,20 @@ import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.userport.view.PullToRefreshListView;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,24 +52,59 @@ import de.greenrobot.event.EventBus;
 public class SalesPriorityFragment extends BaseFragment {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodities = new ArrayList<Commodity>();
+    private List<Commodity> commodityList = new ArrayList<Commodity>();
     private ListView lv_sale;
     private SalesAdapter adapter;
     private int cart_id = 0;
     private int qty = 0;
     private int Items_id;
     private  int category_id;
+    private SharedPreferences sp;
+    private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
     private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String m = (String)msg.obj;
+                    if (m.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String commodity = bundle.getString("result");
+                        commodityList = analysiscommodity(commodity);
+                        if (commodityList.size() != 0){
+                            String sql = "delete from Items where 1=1";
+                            db.execSQL(sql);
+                            for (int i = 0;i < commodityList.size();i++){
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+ commodityList.get(i).getPrice()+"','"+ commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+","+commodityList.get(i).getRanking()+")";
+                                db.execSQL(sql1);
+                            }
+                        }
+                    }else if (m.equals("error")){
+                        Toast.makeText(context,"同步数据失败",Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_sales_priority,null);
-        lv_sale = (ListView)view.findViewById(R.id.lv_sales);
+        lv_sale = (PullToRefreshListView)view.findViewById(R.id.lv_sales);
         return view;
     }
 
     @Override
     protected void initData() {
+        ((PullToRefreshListView)lv_sale).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new GetDateTask().execute();
+            }
+        });
         EventBus.getDefault().register(this);
         getDate();
         Collections.sort(commodities, new Comparator<Commodity>() {
@@ -69,6 +120,84 @@ public class SalesPriorityFragment extends BaseFragment {
         });
         adapter = new SalesAdapter();
         lv_sale.setAdapter(adapter);
+    }
+
+    private class GetDateTask extends AsyncTask<Void,Void,List<Commodity>>{
+        @Override
+        protected List<Commodity> doInBackground(Void... params) {
+            getCommodity();
+            return commodityList;
+        }
+
+        @Override
+        protected void onPostExecute(List<Commodity> commodities) {
+            ((PullToRefreshListView)lv_sale).onRefreshComplete();
+            super.onPostExecute(commodities);
+        }
+    }
+
+    private void getCommodity(){
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        if(Utils.isNetworkAvailable()) {
+            new Thread() {
+                @Override
+                public void run() {
+                    Message msg = handler.obtainMessage();
+                    HttpClient httpClient = new DefaultHttpClient();
+                    String token = sp.getString("token", "");
+                    HttpGet httpGet = new HttpGet(url + token);
+                    try {
+                        HttpResponse response = httpClient.execute(httpGet);
+                        if (response.getStatusLine().getStatusCode() == 200) {
+                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result", result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        } else {
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                }
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
+    }
+
+    /**
+     *  解析商品列表
+     * @param s
+     * @return
+     */
+    private List<Commodity> analysiscommodity(String s){
+        List<Commodity> commodities = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0;i < jsonArray.length();i++){
+                Commodity commodity = new Commodity();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                commodity.setId(jsonObject.getInt("id"));
+                commodity.setTitle(jsonObject.getString("title"));
+                commodity.setDescription(jsonObject.getString("description"));
+                commodity.setAvatar_url(jsonObject.getString("avatar_url"));
+                commodity.setPrice(jsonObject.getString("price"));
+                commodity.setCategory_id(jsonObject.getInt("category_id"));
+                commodities.add(commodity);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return commodities;
     }
 
     private void getDate(){
