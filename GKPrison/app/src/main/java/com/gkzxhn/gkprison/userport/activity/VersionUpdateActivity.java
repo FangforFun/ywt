@@ -1,17 +1,15 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.content.ComponentName;
-import android.content.Context;
+import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
+import android.os.Environment;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
@@ -20,14 +18,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
-import com.gkzxhn.gkprison.userport.service.DownloadService;
-import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -35,15 +31,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.File;
 
 
 /**
@@ -60,25 +48,14 @@ public class VersionUpdateActivity extends BaseActivity {
     private RotateAnimation ra;
     private SharedPreferences sp;
     private VersionInfo versionInfo;
-    private boolean has_new_version = false;// 是否有新版本
     private TextView tv_progress;
-    private boolean isPause = false;
+    private ProgressBar pb_update;
+    private boolean has_new_version = false;// 是否有新版本
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
-            tv_progress.setText("当前进度 ： " + msg.what + "%");
         }
     };
-
-    private DownloadService.DownloadBinder binder;
-    private boolean isBinded;
-    private ProgressBar mProgressBar;
-    // 获取到下载url后，直接复制给MapApp,里面的全局变量
-    private String downloadUrl;
-    //
-    private boolean isDestroy = true;
-    private MyApplication app;
-    private ServiceConnection conn;
 
     @Override
     protected View initView() {
@@ -89,14 +66,11 @@ public class VersionUpdateActivity extends BaseActivity {
         tv_new_function = (TextView) view.findViewById(R.id.tv_new_function);
         tv_new_version = (TextView) view.findViewById(R.id.tv_new_version);
         tv_new_function_contents = (TextView) view.findViewById(R.id.tv_new_function_contents);
-        tv_progress = (TextView) view.findViewById(R.id.tv_progress);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.mProgressBar);
         return view;
     }
 
     @Override
     protected void initData() {
-        app = (MyApplication) getApplication();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("版本更新");
         setBackVisibility(View.VISIBLE);
@@ -116,58 +90,8 @@ public class VersionUpdateActivity extends BaseActivity {
     };
 
     @Override
-    protected void onResume() {
-        super.onResume();
-//        if (isDestroy && app.isDownload()) {
-//            Intent it = new Intent(VersionUpdateActivity.this, DownloadService.class);
-//            startService(it);
-//            bindService(it, conn, Context.BIND_AUTO_CREATE);
-//        }
-//        System.out.println(" notification  onresume");
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        isDestroy = false;
-        System.out.println(" notification  onStop");
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (isBinded) {
-            System.out.println(" onDestroy   unbindservice");
-            unbindService(conn);
-        }
-        if (binder != null && binder.isCanceled()) {
-            System.out.println(" onDestroy  stopservice");
-            Intent it = new Intent(this, DownloadService.class);
-            stopService(it);
-        }
-    }
-
-    private ICallbackResult callback = new ICallbackResult() {
-        @Override
-        public void OnBackResult(Object result) {
-            // TODO Auto-generated method stub
-            if ("finish".equals(result)) {
-                finish();
-                return;
-            }
-            int i = (Integer) result;
-            mProgressBar.setProgress(i);
-            handler.sendEmptyMessage(i);
-        }
-    };
-
-    public interface ICallbackResult {
-        public void OnBackResult(Object result);
     }
 
     @Override
@@ -183,36 +107,65 @@ public class VersionUpdateActivity extends BaseActivity {
                     // 更新 www.fushuile.com/dist/android/1.0.0/*.apk
                     showToastMsgShort("正在更新");
                     bt_update.setClickable(false);
-                    app.setDownload(true);
-                    tv_progress.setVisibility(View.VISIBLE);
-                    mProgressBar.setVisibility(View.VISIBLE);
-                    conn = new ServiceConnection() {
-
-                        @Override
-                        public void onServiceDisconnected(ComponentName name) {
-                            // TODO Auto-generated method stub
-                            isBinded = false;
-                        }
-
-                        @Override
-                        public void onServiceConnected(ComponentName name, IBinder service) {
-                            // TODO Auto-generated method stub
-                            binder = (DownloadService.DownloadBinder) service;
-                            System.out.println("服务启动!!!");
-                            // 开始下载
-                            isBinded = true;
-                            binder.addCallback(callback);
-                            binder.start();
-                        }
-                    };
-                    if (isDestroy && app.isDownload()) {
-                        Intent it = new Intent(VersionUpdateActivity.this, DownloadService.class);
-                        startService(it);
-                        bindService(it, conn, Context.BIND_AUTO_CREATE);
-                    }
-                    System.out.println(" notification  onNewIntent");
+                    showUpdateDialog();
                 }
                 break;
+        }
+    }
+
+    /**
+     * 更新对话框
+     */
+    private void showUpdateDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(VersionUpdateActivity.this);
+        builder.setCancelable(false);
+        View update_view = View.inflate(VersionUpdateActivity.this, R.layout.update_dialog, null);
+        tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
+        pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
+        builder.setView(update_view);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        /**
+         * Intent intent = new Intent();
+         intent.setAction("android.intent.action.VIEW");
+         Uri content_url = Uri.parse(url);
+         intent.setData(content_url);
+         startActivity(intent);
+         */
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //sd卡可用，用于存放下载的apk
+            //1.下载
+            HttpUtils httpUtils = new HttpUtils();
+            httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
+                @Override
+                public void onSuccess(ResponseInfo<File> responseInfo) {
+                    //2.安装apk
+                    Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent("android.intent.action.VIEW");
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/trolley.apk")),
+                            "application/vnd.android.package-archive");
+                    startActivity(intent);
+                }
+
+                @Override
+                public void onFailure(HttpException e, String s) {
+                    e.printStackTrace();
+                    Log.i("Splash+++++", s);
+                    Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onLoading(long total, long current, boolean isUploading) {
+                    super.onLoading(total, current, isUploading);
+                    pb_update.setMax((int) total);
+                    int progress = (int) (current * 100 / total);
+                    pb_update.setProgress(progress);
+                    tv_progress.setText(progress + "%");
+                }
+            });
+        } else {
+            //sd卡不可用
+            Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
         }
     }
 

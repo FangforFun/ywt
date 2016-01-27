@@ -243,10 +243,6 @@
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote" />
 
-        <service
-            android:name=".userport.service.DownloadService"
-            android:enabled="true"
-            android:exported="true"></service>
     </application>
 
 </manifest>
