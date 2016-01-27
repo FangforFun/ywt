@@ -69,7 +69,7 @@ public class SettingActivity extends BaseActivity {
                 if(on){
                     showToastMsgShort("闹钟提醒已开启");
                     AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                    builder.setMessage("        闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。");
+                    builder.setMessage("闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

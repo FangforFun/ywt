@@ -99,6 +99,30 @@ public class VisitingServiceActivity extends BaseActivity {
                             }
                         });
                         lv_prison_open.setAdapter(new MyAdapter());
+                        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
+                            @Override
+                            public void viewClick(int position) {
+                                int i = allnews.get(position).getId();
+                                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
+                                intent.putExtra("id", i);
+                                VisitingServiceActivity.this.startActivity(intent);
+                            }
+                        });
+                        list_news_title.clear();
+                        list_news_title.add(allnews.get(0).getTitle());
+                        list_news_title.add(allnews.get(1).getTitle());
+                        list_news_title.add(allnews.get(2).getTitle());
+                        list_news_title.add(allnews.get(3).getTitle());
+                        vp_carousel.initTitle(list_news_title, top_news_title);
+                        List<String> imgurl_list = new ArrayList<>();
+                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(3).getImage_url());
+                        vp_carousel.initImgUrl(imgurl_list);
+                        vp_carousel.startRoll();
+                        top_news_viewpager.removeAllViews();
+                        top_news_viewpager.addView(vp_carousel);
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
@@ -136,24 +160,6 @@ public class VisitingServiceActivity extends BaseActivity {
         token = sp.getString("token", "");
         url = Constants.URL_HEAD + "news?jail_id=1" ;
         getNews();
-        vp_carousel = new RollViewPager(getApplicationContext(), dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-                showToastMsgShort(list_news_title.get(position));
-                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
-                startActivity(intent);
-            }
-        });
-        list_news_title.clear();
-        list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花3”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花4”");
-        vp_carousel.initTitle(list_news_title, top_news_title);
-        vp_carousel.initImgUrl(list_news_title.size());
-        vp_carousel.startRoll();
-        top_news_viewpager.removeAllViews();
-        top_news_viewpager.addView(vp_carousel);
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

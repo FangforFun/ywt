@@ -87,6 +87,7 @@ public class HomePager extends BasePager {
     private boolean isRegisteredUser;
     private ProgressDialog dialog;
     private List<News> focus_news_list;
+    private List<News> allnews;
     private BitmapUtils bitmapUtils;
     private View view_01;
     private View view_02;
@@ -133,26 +134,20 @@ public class HomePager extends BasePager {
     public void initData() {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        getFocusNews();// 获取焦点新闻
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
         tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(context, dotList, CAROUSEL_IVS, new RollViewPager.OnViewClickListener() {
+        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
+                int i = allnews.get(position).getId();
                 Intent intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", i);
                 context.startActivity(intent);
             }
         });
-        list_news_title.clear();
-        list_news_title.add("我狱杨晓红干警被评为“最美警花1”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花2”");
-        list_news_title.add("我狱杨晓红干警被评为“最美警花3”");
-        vp_carousel.initTitle(list_news_title, top_news_title);
-        vp_carousel.initImgUrl(list_news_title.size());
-        vp_carousel.startRoll();
-        top_news_viewpager.removeAllViews();
-        top_news_viewpager.addView(vp_carousel);
         gv_home_options.setAdapter(new MyOptionsAdapter());
         ll_home_news1.setOnClickListener(this);
         ll_home_news2.setOnClickListener(this);
@@ -160,7 +155,6 @@ public class HomePager extends BasePager {
         if(isRegisteredUser) {
             token = sp.getString("token", "");
         }
-        getFocusNews();// 获取焦点新闻
     }
 
     /**
@@ -184,6 +178,7 @@ public class HomePager extends BasePager {
             @Override
             public void onSuccess(ResponseInfo<Object> responseInfo) {
                 parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
+                setRoll();
                 dialog.dismiss();
                 fillNewsData();// 填充新闻数据
                 is_request_foucs_news_successed = true;
@@ -198,6 +193,25 @@ public class HomePager extends BasePager {
                 is_request_foucs_news_successed = false;
             }
         });
+    }
+
+    /**
+     * 设置轮播
+     */
+    private void setRoll() {
+        list_news_title.clear();
+        list_news_title.add(allnews.get(0).getTitle());
+        list_news_title.add(allnews.get(1).getTitle());
+        list_news_title.add(allnews.get(2).getTitle());
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        List<String> imgurl_list = new ArrayList<>();
+        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
+        vp_carousel.initImgUrl(imgurl_list);
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
     }
 
     /**
@@ -346,6 +360,7 @@ public class HomePager extends BasePager {
      */
     private void parseFocusNews(String focus_news) {
         focus_news_list = new ArrayList<>();
+        allnews = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(focus_news);
             for (int i = 0; i < jsonArray.length(); i++){
@@ -367,6 +382,7 @@ public class HomePager extends BasePager {
                 if(news.getIsFocus()) {
                     focus_news_list.add(news);
                 }
+                allnews.add(news);
             }
         } catch (JSONException e) {
             e.printStackTrace();
