@@ -31,6 +31,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -56,6 +58,12 @@ public class InterractiveMailboxFragment extends Fragment {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         replies = analysisReply(result);
+                        Collections.sort(replies, new Comparator<Reply>() {
+                            @Override
+                            public int compare(Reply lhs, Reply rhs) {
+                                return -1;
+                            }
+                        });
                         if (replies.size() == 0){
                             nonotice.setVisibility(View.VISIBLE);
                         }else {
@@ -223,7 +231,7 @@ public class InterractiveMailboxFragment extends Fragment {
                 holder = (ChildViewHolder) convertView.getTag();
             }
             holder.tv_send_reply.setText(replies.get(groupPosition).getContents());
-            holder.tv_reply_content.setText("\b\b\b\b\b\b\b\b"+replies.get(groupPosition).getReplies());
+            holder.tv_reply_content.setText(replies.get(groupPosition).getReplies());
             holder.tv_message_time.setText(replies.get(groupPosition).getReply_date());
             return convertView;
         }

@@ -6,28 +6,14 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-    <RelativeLayout
-       android:id="@+id/ll_serch"
-       android:layout_width="match_parent"
-       android:layout_height="50dp"
-       android:background="@color/theme"
-       >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="电子商务"
-            android:textColor="#333333"
-            android:textSize="18sp"
-            android:layout_centerInParent="true"/>
-    </RelativeLayout>
     <LinearLayout
         android:id="@+id/ll_navigation"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
         android:background="@color/white"
-        android:layout_below="@+id/ll_serch">
+       >
         <RelativeLayout
         android:id="@+id/rl_allclass"
         android:layout_width="0dp"

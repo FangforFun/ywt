@@ -15,6 +15,7 @@
             android:id="@+id/tv_send_reply_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
             android:text="原始信息:"
             android:textColor="#999999"
             android:textSize="12sp"/>
@@ -40,7 +41,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/v_fenjie"
-            android:text="&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;您所反馈的问题经调查属实，本狱已受理并解决，感谢您对本监狱的支持！\n\n"
+            android:text="您所反馈的问题经调查属实，本狱已受理并解决，感谢您对本监狱的支持！\n\n"
             android:textSize="16sp"
             android:paddingLeft="5dp"
             android:lineSpacingExtra="5dp"

@@ -105,7 +105,6 @@ public class AllClassificationFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 new GetDateTask().execute();
-
             }
         });
         EventBus.getDefault().register(this);
