@@ -362,9 +362,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder = (GroupViewHolder)convertView.getTag();
             }
             if (isExpanded){
-                viewHolder.image_click.setImageResource(R.drawable.clickup);
+                viewHolder.image_click.setImageResource(R.drawable.touchup);
             }else {
-                viewHolder.image_click.setImageResource(R.drawable.clickdown);
+                viewHolder.image_click.setImageResource(R.drawable.touchdown);
             }
             viewHolder.img_messge.setImageResource(image_messge.get(groupPosition));
             viewHolder.tv_messge.setText(text_messge.get(groupPosition));

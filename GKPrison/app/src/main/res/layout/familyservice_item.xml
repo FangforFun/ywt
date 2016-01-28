@@ -34,7 +34,7 @@
             android:id="@+id/image_click"
             android:layout_width="18dp"
             android:layout_height="15dp"
-            android:src="@drawable/clickdown"
+            android:src="@drawable/touchdown"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="10dp"/>
     </LinearLayout>

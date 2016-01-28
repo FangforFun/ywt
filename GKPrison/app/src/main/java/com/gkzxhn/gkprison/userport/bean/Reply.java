@@ -16,6 +16,15 @@ public class Reply {
     private String contents;
     private String replies;
     private String reply_date;
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getReply_date() {
         return reply_date;
