@@ -137,31 +137,10 @@ public class SettingActivity extends BaseActivity {
             case R.id.tv_agreement:
                 AlertDialog.Builder agreement_builder = new AlertDialog.Builder(this);
                 View agreement_view = View.inflate(this, R.layout.software_agreement_dialog, null);
-                LinearLayout ll_explain_content = (LinearLayout) agreement_view.findViewById(R.id.ll_explain_content);
                 agreement_dialog = agreement_builder.create();
                 agreement_builder.setView(agreement_view);
                 agreement_builder.show();
                 agreement_dialog.setCancelable(true);
-                ll_explain_content.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        long downTime = 0;
-                        switch (event.getAction()) {
-                            case MotionEvent.ACTION_DOWN:
-                                downTime = System.currentTimeMillis();
-                                Log.i("按下了...", downTime + "");
-                                break;
-                            case MotionEvent.ACTION_UP:
-                                long upTime = System.currentTimeMillis();
-                                if (upTime - downTime < 500) {
-                                    agreement_dialog.dismiss();
-                                }
-                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
-                                break;
-                        }
-                        return false;
-                    }
-                });
                 break;
             case R.id.rl_opinion_feedback:
                 if(!TextUtils.isEmpty(token)) {
@@ -172,7 +151,8 @@ public class SettingActivity extends BaseActivity {
                 }
                 break;
             case R.id.tv_contact_us:
-
+                intent = new Intent(this, ContactUsActivity.class);
+                startActivity(intent);
                 break;
         }
     }

@@ -142,7 +142,7 @@ public class VersionUpdateActivity extends BaseActivity {
                     //2.安装apk
                     Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent("android.intent.action.VIEW");
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/trolley.apk")),
+                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
                             "application/vnd.android.package-archive");
                     startActivity(intent);
                 }
@@ -150,17 +150,18 @@ public class VersionUpdateActivity extends BaseActivity {
                 @Override
                 public void onFailure(HttpException e, String s) {
                     e.printStackTrace();
-                    Log.i("Splash+++++", s);
+                    Log.i("版本更新...", e.getMessage() + "----" + s);
                     Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
                 }
 
                 @Override
                 public void onLoading(long total, long current, boolean isUploading) {
                     super.onLoading(total, current, isUploading);
-                    pb_update.setMax((int) total);
+                    pb_update.setMax(100);
                     int progress = (int) (current * 100 / total);
                     pb_update.setProgress(progress);
                     tv_progress.setText(progress + "%");
+                    Log.i("下载进度", current + "----" +  progress + "---" + total);
                 }
             });
         } else {
@@ -227,7 +228,7 @@ public class VersionUpdateActivity extends BaseActivity {
             // 没有新版本
             tv_new_function.setVisibility(View.VISIBLE);
             bt_update.setClickable(true);
-            bt_update.setText("点击更新");
+            bt_update.setText("检查更新");
             tv_new_function.setText("已经是最新版本!");
             ra.cancel();
         }

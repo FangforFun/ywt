@@ -243,6 +243,7 @@
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote" />
 
+        <activity android:name=".userport.activity.ContactUsActivity"></activity>
     </application>
 
 </manifest>
