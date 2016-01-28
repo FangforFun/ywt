@@ -117,56 +117,54 @@ public class VersionUpdateActivity extends BaseActivity {
      * 更新对话框
      */
     private void showUpdateDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(VersionUpdateActivity.this);
-        builder.setCancelable(false);
-        View update_view = View.inflate(VersionUpdateActivity.this, R.layout.update_dialog, null);
-        tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
-        pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
-        builder.setView(update_view);
-        AlertDialog dialog = builder.create();
-        dialog.show();
-        /**
-         * Intent intent = new Intent();
-         intent.setAction("android.intent.action.VIEW");
-         Uri content_url = Uri.parse(url);
-         intent.setData(content_url);
-         startActivity(intent);
-         */
-        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-            //sd卡可用，用于存放下载的apk
-            //1.下载
-            HttpUtils httpUtils = new HttpUtils();
-            httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
-                @Override
-                public void onSuccess(ResponseInfo<File> responseInfo) {
-                    //2.安装apk
-                    Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent("android.intent.action.VIEW");
-                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/trolley.apk")),
-                            "application/vnd.android.package-archive");
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onFailure(HttpException e, String s) {
-                    e.printStackTrace();
-                    Log.i("Splash+++++", s);
-                    Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
-                }
-
-                @Override
-                public void onLoading(long total, long current, boolean isUploading) {
-                    super.onLoading(total, current, isUploading);
-                    pb_update.setMax((int) total);
-                    int progress = (int) (current * 100 / total);
-                    pb_update.setProgress(progress);
-                    tv_progress.setText(progress + "%");
-                }
-            });
-        } else {
-            //sd卡不可用
-            Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
-        }
+//        AlertDialog.Builder builder = new AlertDialog.Builder(VersionUpdateActivity.this);
+//        builder.setCancelable(false);
+//        View update_view = View.inflate(VersionUpdateActivity.this, R.layout.update_dialog, null);
+//        tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
+//        pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
+//        builder.setView(update_view);
+//        AlertDialog dialog = builder.create();
+//        dialog.show();
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        Uri content_url = Uri.parse(Constants.NEW_VERSION_APK_URL);
+        intent.setData(content_url);
+        startActivity(intent);
+//        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+//            //sd卡可用，用于存放下载的apk
+//            //1.下载
+//            HttpUtils httpUtils = new HttpUtils();
+//            httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
+//                @Override
+//                public void onSuccess(ResponseInfo<File> responseInfo) {
+//                    //2.安装apk
+//                    Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
+//                    Intent intent = new Intent("android.intent.action.VIEW");
+//                    intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/trolley.apk")),
+//                            "application/vnd.android.package-archive");
+//                    startActivity(intent);
+//                }
+//
+//                @Override
+//                public void onFailure(HttpException e, String s) {
+//                    e.printStackTrace();
+//                    Log.i("Splash+++++", s);
+//                    Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onLoading(long total, long current, boolean isUploading) {
+//                    super.onLoading(total, current, isUploading);
+//                    pb_update.setMax((int) total);
+//                    int progress = (int) (current * 100 / total);
+//                    pb_update.setProgress(progress);
+//                    tv_progress.setText(progress + "%");
+//                }
+//            });
+//        } else {
+//            //sd卡不可用
+//            Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
+//        }
     }
 
     /**
