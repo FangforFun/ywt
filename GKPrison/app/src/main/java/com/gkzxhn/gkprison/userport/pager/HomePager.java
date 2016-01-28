@@ -71,7 +71,6 @@ public class HomePager extends BasePager {
     private News focus_news_1;
     private News focus_news_2;
     private News focus_news_3;
-    private final int[] CAROUSEL_IVS = {R.drawable.carousel_default, R.drawable.carousel_default, R.drawable.carousel_default};
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press,
             R.drawable.laws_press, R.drawable.prison_open_press,
             R.drawable.visit_service_press, R.drawable.family_service_press,

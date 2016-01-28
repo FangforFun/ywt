@@ -2,6 +2,8 @@ package com.gkzxhn.gkprison.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.text.TextUtils;
 
 /**
@@ -35,6 +37,40 @@ public class SystemUtil {
             } catch (InterruptedException ex) {
                 ex.printStackTrace();
             }
+        }
+    }
+
+    /**
+     * 得到versionCode
+     *
+     * @return
+     */
+    public static String getVersionName(Context context) {
+        // 包管理器
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo packInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            return packInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "";
+        }
+    }
+
+    /**
+     * 得到versionCode
+     *
+     * @return
+     */
+    public static int getVersionCode(Context context) {
+        // 包管理器
+        PackageManager pm = context.getPackageManager();
+        try {
+            PackageInfo packInfo = pm.getPackageInfo(context.getPackageName(), 0);
+            return packInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 }

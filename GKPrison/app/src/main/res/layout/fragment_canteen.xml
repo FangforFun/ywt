@@ -36,7 +36,6 @@
                 android:layout_height="8dp"
                 android:layout_toRightOf="@+id/tv_allclass"
                 android:layout_marginLeft="5dp"
-                android:entries="@array/shopping"
                 android:background="@drawable/spinner"
                 android:layout_marginTop="20dp"
                 ></Spinner>
@@ -65,7 +64,6 @@
                 android:layout_height="8dp"
                 android:layout_toRightOf="@+id/tv_sales"
                 android:layout_marginLeft="5dp"
-                android:entries="@array/shopping"
                 android:background="@drawable/spinner"
                 android:layout_marginTop="20dp"
                 ></Spinner>

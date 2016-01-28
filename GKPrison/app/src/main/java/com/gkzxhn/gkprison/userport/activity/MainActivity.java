@@ -294,7 +294,7 @@ public class MainActivity extends BaseActivity {
                     rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
                     setTitle("电子商务");
                     setMenuVisibility(View.GONE);
-                    setActionBarGone(View.GONE);
+                    setActionBarGone(View.VISIBLE);
                     setMessageVisibility(View.GONE);
                 }
             }

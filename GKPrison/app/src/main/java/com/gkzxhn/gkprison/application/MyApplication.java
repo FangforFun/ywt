@@ -58,12 +58,10 @@ import java.util.prefs.Preferences;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
-    private boolean isDownload;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        isDownload = false;
         sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
         NIMClient.init(this, loginInfo(), options());
@@ -83,60 +81,6 @@ public class MyApplication extends Application {
                                     startActivity(intent);
                                     break;
                             }
-//                            if (login_ <= 3) {
-//                                if (status != StatusCode.LOGINED && status != StatusCode.KICKOUT) {
-//                                    // ToDo 调登录代码
-//                                    RequestCallback callback = new RequestCallback() {
-//                                        @Override
-//                                        public void onSuccess(Object o) {
-//                                            Log.i("login success", o.toString() + "application重新登录了");
-//                                            login_ = 0;
-//                                        }
-//
-//                                        @Override
-//                                        public void onFailed(int i) {
-//                                            switch (i) {
-//                                                case 302:
-//                                                    Toast.makeText(getApplicationContext(), "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 503:
-//                                                    Toast.makeText(getApplicationContext(), "服务器繁忙", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 415:
-//                                                    Toast.makeText(getApplicationContext(), "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 408:
-//                                                    Toast.makeText(getApplicationContext(), "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 403:
-//                                                    Toast.makeText(getApplicationContext(), "非法操作或没有权限", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 200:
-//                                                    Toast.makeText(getApplicationContext(), "操作成功", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 422:
-//                                                    Toast.makeText(getApplicationContext(), "您的账号已被禁用", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                case 500:
-//                                                    Toast.makeText(getApplicationContext(), "服务器错误", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                                default:
-//                                                    Toast.makeText(getApplicationContext(), "登录失败", Toast.LENGTH_SHORT).show();
-//                                                    break;
-//                                            }
-//                                        }
-//
-//                                        @Override
-//                                        public void onException(Throwable throwable) {
-//                                            Log.i("login exception", throwable.getMessage());
-//                                        }
-//                                    };
-//                                    LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
-//                                    NIMClient.getService(AuthService.class).login(info)
-//                                            .setCallback(callback);
-//                                    login_++;
-//                                }
-//                            }
                         }
                     }, true);
             NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
@@ -146,14 +90,6 @@ public class MyApplication extends Application {
                 }
             }, true);
         }
-    }
-
-    public boolean isDownload() {
-        return isDownload;
-    }
-
-    public void setDownload(boolean isDownload) {
-        this.isDownload = isDownload;
     }
 
     /**

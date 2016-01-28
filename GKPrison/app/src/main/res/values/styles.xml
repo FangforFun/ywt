@@ -36,4 +36,17 @@
         <item name="android:gravity">center</item>
         <item name="android:textSize">16sp</item>
     </style>
+
+    <declare-styleable name="DownloadProgressView">
+        <attr name="circleRadiu" format="dimension"/>
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="lineWidth" format="dimension"/>
+        <attr name="progressDuration" format="integer"/>
+        <attr name="resultDuration" format="integer"/>
+        <attr name="progressBackgroundColor" format="color"/>
+        <attr name="drawingColor" format="color"/>
+        <attr name="progressColor" format="color"/>
+        <attr name="circleBackgroundColor" format="color"/>
+        <attr name="overshootValue" format="float"/>
+    </declare-styleable>
 </resources>
