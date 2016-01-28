@@ -2,16 +2,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg">
-    <com.gkzxhn.gkprison.userport.view.RefreshableView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <ListView
             android:id="@+id/lv_laws_regulations"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@color/bg"
             android:dividerHeight="5dp"/>
-    </com.gkzxhn.gkprison.userport.view.RefreshableView>
+
 
 
 </RelativeLayout>

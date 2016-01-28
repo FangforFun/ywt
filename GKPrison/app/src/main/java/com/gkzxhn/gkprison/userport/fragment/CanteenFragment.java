@@ -183,6 +183,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+
         ip = getLocalHostIp();
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
@@ -192,6 +193,7 @@ public class CanteenFragment extends BaseFragment {
         times = format.format(date);
         String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
         db.execSQL(sql);
+        Log.d("记录",times);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = db.rawQuery(sql1, null);
         while (cursor.moveToNext()){
@@ -281,6 +283,7 @@ public class CanteenFragment extends BaseFragment {
                         data.putInt("leibie", 0);
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
                         break;
                     case 1:
                         sales = new SalesPriorityFragment();
@@ -456,7 +459,7 @@ public class CanteenFragment extends BaseFragment {
                         sendOrderToServer();
                         String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
                         db.execSQL(sql);
-
+                        int a = getResultcode(result);
                             Intent intent = new Intent(context, PaymentActivity.class);
                             intent.putExtra("totalmoney", send);
                             intent.putExtra("TradeNo", TradeNo);
@@ -474,6 +477,10 @@ public class CanteenFragment extends BaseFragment {
         }
 
 
+    }
+
+    private int getResultcode(String result) {
+        return 0;
     }
 
     @Override

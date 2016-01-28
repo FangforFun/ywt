@@ -38,6 +38,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 投诉建议
+ */
 public class PrisonWardenActivity extends FragmentActivity implements View.OnClickListener{
 
     private TextView tv_title;

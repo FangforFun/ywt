@@ -58,11 +58,12 @@ import java.util.prefs.Preferences;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
-    private int login_ = 0;
+    private boolean isDownload;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        isDownload = false;
         sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
         NIMClient.init(this, loginInfo(), options());
@@ -145,6 +146,14 @@ public class MyApplication extends Application {
                 }
             }, true);
         }
+    }
+
+    public boolean isDownload() {
+        return isDownload;
+    }
+
+    public void setDownload(boolean isDownload) {
+        this.isDownload = isDownload;
     }
 
     /**

@@ -26,6 +26,7 @@ public class SettingActivity extends BaseActivity {
     private ToggleButton tb_pwd_set;
     private RelativeLayout rl_version_update;
     private TextView tv_agreement;
+    private TextView tv_contact_us;// 联系我们
     private AlertDialog agreement_dialog;
     private RelativeLayout rl_opinion_feedback;// 意见反馈
     private SharedPreferences sp;
@@ -41,6 +42,7 @@ public class SettingActivity extends BaseActivity {
         rl_version_update = (RelativeLayout) view.findViewById(R.id.rl_version_update);
         tv_agreement = (TextView) view.findViewById(R.id.tv_agreement);
         rl_opinion_feedback = (RelativeLayout) view.findViewById(R.id.rl_opinion_feedback);
+        tv_contact_us = (TextView) view.findViewById(R.id.tv_contact_us);
         return view;
     }
 
@@ -66,10 +68,10 @@ public class SettingActivity extends BaseActivity {
             @Override
             public void onToggle(boolean on) {
                 SharedPreferences.Editor editor = sp.edit();
-                if(on){
+                if (on) {
                     showToastMsgShort("闹钟提醒已开启");
                     AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
-                    builder.setMessage("        闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。");
+                    builder.setMessage("闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -79,7 +81,7 @@ public class SettingActivity extends BaseActivity {
                     AlertDialog dialog = builder.create();
                     dialog.show();
                     editor.putBoolean("isMsgRemind", true);
-                }else {
+                } else {
                     showToastMsgShort("闹钟提醒已关闭");
                     editor.putBoolean("isMsgRemind", false);
                 }
@@ -103,6 +105,7 @@ public class SettingActivity extends BaseActivity {
         rl_version_update.setOnClickListener(this);
         tv_agreement.setOnClickListener(this);
         rl_opinion_feedback.setOnClickListener(this);
+        tv_contact_us.setOnClickListener(this);
     }
 
     @Override
@@ -167,6 +170,9 @@ public class SettingActivity extends BaseActivity {
                 }else {
                     showToastMsgShort("登录后可用");
                 }
+                break;
+            case R.id.tv_contact_us:
+
                 break;
         }
     }
