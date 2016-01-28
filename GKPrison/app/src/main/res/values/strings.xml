@@ -94,8 +94,8 @@
     <string name="updated_at">上次更新于%1$s前</string>
     <string name="updated_just_now">刚刚更新</string>
     <string name="time_error">时间有问题</string>
-    <string name="pull_to_refresh_pull_label">Pull to refresh...</string>
-    <string name="pull_to_refresh_release_label">Release to refresh...</string>
-    <string name="pull_to_refresh_refreshing_label">Loading...</string>
+    <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
+    <string name="pull_to_refresh_release_label">释放立即刷新</string>
+    <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
 </resources>
