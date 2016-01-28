@@ -54,7 +54,7 @@ import java.io.UnsupportedEncodingException;
  * 个人用户登录界面
  */
 public class PersonLoadingFragment extends BaseFragment {
-//    private String url = "http://www.fushuile.com/api/v1/login";
+
     private String url = Constants.URL_HEAD + "login";
     private Button bt_register;
     private ActionProcessButton btn_login;
@@ -70,7 +70,6 @@ public class PersonLoadingFragment extends BaseFragment {
     private boolean isRunning = false;// 倒计时任务正在执行
     private boolean isOK = false;// 服务器登录返回的是0才变成true
     private int countdown = 60;
-//    private int login_code = 0;// 云信id登录成功加1   短信验证码成功加1  当code==2时判断登录成功
     private Gson gson;
     private int successCode = 0;
     private UserInfo userInfo;

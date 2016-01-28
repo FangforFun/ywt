@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -24,6 +25,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -50,7 +52,9 @@ public class VersionUpdateActivity extends BaseActivity {
     private VersionInfo versionInfo;
     private TextView tv_progress;
     private ProgressBar pb_update;
+    private AlertDialog dialog;//升级对话框
     private boolean has_new_version = false;// 是否有新版本
+    private boolean download_successed = false;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -75,7 +79,7 @@ public class VersionUpdateActivity extends BaseActivity {
         setTitle("版本更新");
         setBackVisibility(View.VISIBLE);
         bt_update.setOnClickListener(this);
-        tv_version_code.setText(getVersionName());
+        tv_version_code.setText(SystemUtil.getVersionName(getApplicationContext()));
     }
 
     private Runnable rotateTask = new Runnable() {
@@ -123,7 +127,7 @@ public class VersionUpdateActivity extends BaseActivity {
         tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
         pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
         builder.setView(update_view);
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
         dialog.show();
         /**
          * Intent intent = new Intent();
@@ -140,6 +144,8 @@ public class VersionUpdateActivity extends BaseActivity {
                 @Override
                 public void onSuccess(ResponseInfo<File> responseInfo) {
                     //2.安装apk
+                    download_successed = true;
+                    Log.i("变啦", "变啦" + download_successed);
                     Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent("android.intent.action.VIEW");
                     intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
@@ -161,7 +167,7 @@ public class VersionUpdateActivity extends BaseActivity {
                     int progress = (int) (current * 100 / total);
                     pb_update.setProgress(progress);
                     tv_progress.setText(progress + "%");
-                    Log.i("下载进度", current + "----" +  progress + "---" + total);
+                    Log.i("下载进度", current + "----" + progress + "---" + total);
                 }
             });
         } else {
@@ -206,7 +212,7 @@ public class VersionUpdateActivity extends BaseActivity {
         Gson gson = new Gson();
         versionInfo = gson.fromJson(result, VersionInfo.class);
         Log.i("版本信息", versionInfo.toString());
-        int current_version_name = getVersionCode();
+        int current_version_name = SystemUtil.getVersionCode(getApplicationContext());
         if(current_version_name < versionInfo.getVersion_code()){
             // 有新版本
             has_new_version = true;
@@ -231,40 +237,6 @@ public class VersionUpdateActivity extends BaseActivity {
             bt_update.setText("检查更新");
             tv_new_function.setText("已经是最新版本!");
             ra.cancel();
-        }
-    }
-
-    /**
-     * 得到versionCode
-     *
-     * @return
-     */
-    public int getVersionCode() {
-        // 包管理器
-        PackageManager pm = getPackageManager();
-        try {
-            PackageInfo packInfo = pm.getPackageInfo(getPackageName(), 0);
-            return packInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return 0;
-        }
-    }
-
-    /**
-     * 得到versionCode
-     *
-     * @return
-     */
-    public String getVersionName() {
-        // 包管理器
-        PackageManager pm = getPackageManager();
-        try {
-            PackageInfo packInfo = pm.getPackageInfo(getPackageName(), 0);
-            return packInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-            return "";
         }
     }
 }

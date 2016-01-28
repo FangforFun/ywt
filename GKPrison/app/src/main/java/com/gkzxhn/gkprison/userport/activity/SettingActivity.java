@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.zcw.togglebutton.ToggleButton;
 
 /**
@@ -33,6 +34,7 @@ public class SettingActivity extends BaseActivity {
     private String token;
     private boolean isLock;
     private boolean isMsgRemind;
+    private TextView tv_version;
 
     @Override
     protected View initView() {
@@ -43,6 +45,7 @@ public class SettingActivity extends BaseActivity {
         tv_agreement = (TextView) view.findViewById(R.id.tv_agreement);
         rl_opinion_feedback = (RelativeLayout) view.findViewById(R.id.rl_opinion_feedback);
         tv_contact_us = (TextView) view.findViewById(R.id.tv_contact_us);
+        tv_version = (TextView) view.findViewById(R.id.tv_version);
         return view;
     }
 
@@ -64,6 +67,7 @@ public class SettingActivity extends BaseActivity {
         }
         setTitle("设置");
         setBackVisibility(View.VISIBLE);
+        tv_version.setText("V " + SystemUtil.getVersionName(getApplicationContext()));
         tb_clock_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
             @Override
             public void onToggle(boolean on) {
