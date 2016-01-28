@@ -21,7 +21,7 @@
             app:tabIndicatorHeight="3dp"
             app:tabBackground="@color/white"
             app:tabSelectedTextColor="@color/theme"
-            app:tabTextColor="@color/tv_mid"/>
+            app:tabTextColor="@color/tv_mid" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

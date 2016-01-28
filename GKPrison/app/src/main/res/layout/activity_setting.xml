@@ -188,19 +188,41 @@
         android:orientation="vertical"
         android:layout_alignParentBottom="true">
 
-        <TextView
-            android:id="@+id/tv_agreement"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="狱务通软件协议使用条款"
-            android:layout_gravity="center"
-            android:textColor="@color/theme"
-            android:textSize="12sp"/>
+            android:layout_gravity="center">
+
+            <TextView
+                android:id="@+id/tv_agreement"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="狱务通软件使用协议"
+                android:textColor="@color/theme"
+                android:textSize="12sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="|"
+                android:textColor="@color/theme"
+                android:textSize="12sp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"/>
+
+            <TextView
+                android:id="@+id/tv_contact_us"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联系我们"
+                android:textColor="@color/theme"
+                android:textSize="12sp"/>
+        </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="国科政信（北京）股份有限公司\ncopyright©2006-2015.All right reserver"
+            android:text="国科政信科技（北京）股份有限公司\ncopyright©2006-2015.All right reserved"
             android:layout_gravity="center"
             android:gravity="center"
             android:layout_marginTop="5dp"

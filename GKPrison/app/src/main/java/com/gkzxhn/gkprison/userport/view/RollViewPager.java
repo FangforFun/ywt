@@ -20,11 +20,11 @@ public class RollViewPager extends ViewPager {
 	private List<View> dot_list;
 	private List<String> titlelist;
 	private TextView top_news_title;
-//	private List<String> imgUrlList;
-	private int imgUrlList;
+	private List<String> imgUrlList;
+//	private int imgUrlList;
 	private BitmapUtils bitmapUtils;
 	private MyPagerAdapter myPagerAdapter;
-	private final int[] CAROUSEL_IVS;
+//	private final int[] CAROUSEL_IVS;
 
 	/**
 	 * 当前viewpager指向的索引
@@ -48,7 +48,7 @@ public class RollViewPager extends ViewPager {
 		@Override
 		public void run() {
 			// 切换指向图片
-			currentPosition = (currentPosition + 1) % imgUrlList;// .size()
+			currentPosition = (currentPosition + 1) % imgUrlList.size();
 			// 发送消息
 			handler.obtainMessage().sendToTarget();
 		}
@@ -119,12 +119,13 @@ public class RollViewPager extends ViewPager {
 		return super.dispatchTouchEvent(ev);
 	}
 
-	public RollViewPager(Context context, final List<View> dot_list,int[] img,
+	public RollViewPager(Context context, final List<View> dot_list,
+//						 int[] img,
 						 OnViewClickListener onViewClickListener) {
 		super(context);
 		this.dot_list = dot_list;
 		this.onViewClickListener = onViewClickListener;
-		this.CAROUSEL_IVS = img;
+//		this.CAROUSEL_IVS = img;
 		//
 		bitmapUtils = new BitmapUtils(context);
 		runnableTask = new RunnableTask();
@@ -173,17 +174,17 @@ public class RollViewPager extends ViewPager {
 		this.top_news_title = top_news_title;
 	}
 
-//	public void initImgUrl(List<String> imgUrlList) {
-//		this.imgUrlList = imgUrlList;
-//	}
-
-	/**
-	 * 此处测试用drawable下的图
-	 * @param imgUrlList
-	 */
-	public void initImgUrl(int imgUrlList) {
+	public void initImgUrl(List<String> imgUrlList) {
 		this.imgUrlList = imgUrlList;
 	}
+
+//	/**
+//	 * 此处测试用drawable下的图
+//	 * @param imgUrlList
+//	 */
+//	public void initImgUrl(int imgUrlList) {
+//		this.imgUrlList = imgUrlList;
+//	}
 
 	public void startRoll() {
 		// 1.给viewpager设置数据适配器
@@ -201,7 +202,7 @@ public class RollViewPager extends ViewPager {
 
 		@Override
 		public int getCount() {
-			return imgUrlList;
+			return imgUrlList.size();
 		}
 
 		@Override
@@ -216,8 +217,8 @@ public class RollViewPager extends ViewPager {
 			ImageView image = (ImageView) view.findViewById(R.id.image);
 			// 给imageview设置网络上获取的图片(三级缓存)
 			// 参数：第一个下载后要在哪个控件显示，第二个下载图片的链接地址
-//			bitmapUtils.display(image, imgUrlList.get(position));
-			image.setImageResource(CAROUSEL_IVS[position]);
+			bitmapUtils.display(image, imgUrlList.get(position));
+//			image.setImageResource(CAROUSEL_IVS[position]);
 			// viewpager和内部view的事件分发的过程
 			// 1.点下操作ACTION_DOWN先传递给viewpager，然后传递给viewpager内部的view，view做响应
 			// 2.滑动触发ACTION_MOVE事件，先传递给viewpager，然后传递给viewpager内部的view，view做响应

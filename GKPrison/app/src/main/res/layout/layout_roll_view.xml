@@ -23,10 +23,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="10dp"
             android:layout_weight="1"
             android:singleLine="true"
             android:text="图片标题"
+            android:ellipsize="end"
             android:textColor="#f6f6f6" />
 
         <LinearLayout
