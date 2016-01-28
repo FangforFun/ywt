@@ -61,6 +61,11 @@ public class InterractiveMailboxFragment extends Fragment {
                         Collections.sort(replies, new Comparator<Reply>() {
                             @Override
                             public int compare(Reply lhs, Reply rhs) {
+                                int heat1 = lhs.getId();
+                                int heat2 = rhs.getId();
+                                if (heat1 < heat2){
+                                    return 1;
+                                }
                                 return -1;
                             }
                         });
@@ -144,6 +149,7 @@ public class InterractiveMailboxFragment extends Fragment {
             for (int i = 0;i < jsonArray.length();i++){
                 Reply reply = new Reply();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
+                reply.setId(jsonObject.getInt("id"));
                 reply.setTitle(jsonObject.getString("title"));
                 reply.setContents(jsonObject.getString("contents"));
                 reply.setReplies(jsonObject.getString("replies"));

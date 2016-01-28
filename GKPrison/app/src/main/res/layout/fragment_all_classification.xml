@@ -11,6 +11,7 @@
         android:divider="#F1F1F1"
         android:dividerHeight="1dp"
         android:scrollbars="none"
+        android:fastScrollEnabled="false"
         ></com.gkzxhn.gkprison.userport.view.PullToRefreshListView>
 
 
