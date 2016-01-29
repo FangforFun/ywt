@@ -113,7 +113,7 @@ public class CanteenFragment extends BaseFragment {
     private ListView lv_buycar;
     private BuyCarAdapter adapter;
     private RelativeLayout clear;
-    private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
+   // private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
     private String[] choosestring = {"全部分类","洗涤日化","食品","服饰鞋帽"};
     private FrameLayout choose;
     private ListView lv_allchoose_items;
@@ -224,12 +224,14 @@ public class CanteenFragment extends BaseFragment {
                 msg1.obj = send;
                 msg1.what = 1;
                 handler1.sendMessage(msg1);
+                /**
                 for (int i = 0;i < commodities.size();i++){
                     eventlist.add(commodities.get(i).getPosition());
                 }
+                 **/
                 commodities.clear();
-                EventBus.getDefault().post(new ClickEven1(1,eventlist));
-                eventlist.clear();
+                EventBus.getDefault().post(new ClickEven1());
+                //eventlist.clear();
                 fl.setVisibility(View.GONE);
             }
         });
@@ -740,10 +742,10 @@ public class CanteenFragment extends BaseFragment {
                     handler2.sendMessage(msg2);
                     commodities.get(position).setQty(j);
                     int d = commodities.get(position).getPosition();
-                    eventlist.add(d);
-                    eventlist.add(qty);
-                    EventBus.getDefault().post(new ClickEven1(0,eventlist));
-                    eventlist.clear();
+                  //  eventlist.add(d);
+                  //  eventlist.add(qty);
+                    EventBus.getDefault().post(new ClickEven1());
+                   // eventlist.clear();
                 }
             });
             viewHolder.reduce.setOnClickListener(new View.OnClickListener() {
@@ -774,10 +776,10 @@ public class CanteenFragment extends BaseFragment {
                         db.execSQL(sql);
                         adapter.notifyDataSetChanged();
                         int d = commodities.get(position).getPosition();
-                        eventlist.add(d);
-                        eventlist.add(0);
-                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
-                        eventlist.clear();
+                      //  eventlist.add(d);
+                     //   eventlist.add(0);
+                        EventBus.getDefault().post(new ClickEven1());
+                       // eventlist.clear();
                         commodities.remove(position);
                     }else {
                         int j = i-1;
@@ -809,10 +811,10 @@ public class CanteenFragment extends BaseFragment {
                         handler2.sendMessage(msg2);
                         commodities.get(position).setQty(j);
                         int d = commodities.get(position).getPosition();
-                        eventlist.add(d);
-                        eventlist.add(qty);
-                        EventBus.getDefault().post(new ClickEven1(0,eventlist));
-                        eventlist.clear();
+                       // eventlist.add(d);
+                       // eventlist.add(qty);
+                        EventBus.getDefault().post(new ClickEven1());
+                       // eventlist.clear();
                     }
 
                     if (commodities.size()==0){
