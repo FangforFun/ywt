@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:dpv="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:padding="20dp"
+    android:background="@color/theme">
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -26,10 +28,26 @@
             android:textSize="18sp"/>
     </LinearLayout>
 
-    <ProgressBar
-        android:id="@+id/pb_update"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        style="@android:style/Widget.ProgressBar.Horizontal"
-        android:layout_marginTop="10dp"/>
+    <!--<ProgressBar-->
+        <!--android:id="@+id/pb_update"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--style="@android:style/Widget.ProgressBar.Horizontal"-->
+        <!--android:layout_marginTop="10dp"/>-->
+    <com.gkzxhn.gkprison.userport.view.DownloadProgressBar
+        android:id="@+id/dpv_update"
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:layout_gravity="center"
+        dpv:circleBackgroundColor="@color/red_light_primary_color"
+        dpv:progressBackgroundColor="@color/red_light_primary_color"
+        dpv:progressColor="@color/red_text_icon_color"
+        dpv:drawingColor="@color/red_text_icon_color"
+        dpv:progressDuration="2000"
+        dpv:resultDuration="5000"
+        dpv:circleRadius="48dp"
+        dpv:lineWidth="3dp"
+        dpv:strokeWidth="3dp"
+        dpv:overshootValue="2.5"
+        />
 </LinearLayout>

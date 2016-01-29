@@ -3,10 +3,6 @@ package com.gkzxhn.gkprison.login;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -24,10 +20,8 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.scan.CaptureActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
-import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NIMClient;
@@ -36,7 +30,6 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -46,15 +39,12 @@ import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-
 /**
  * A simple {@link Fragment} subclass.
  * 个人用户登录界面
  */
 public class PersonLoadingFragment extends BaseFragment {
-//    private String url = "http://www.fushuile.com/api/v1/login";
+
     private String url = Constants.URL_HEAD + "login";
     private Button bt_register;
     private ActionProcessButton btn_login;
@@ -70,7 +60,6 @@ public class PersonLoadingFragment extends BaseFragment {
     private boolean isRunning = false;// 倒计时任务正在执行
     private boolean isOK = false;// 服务器登录返回的是0才变成true
     private int countdown = 60;
-//    private int login_code = 0;// 云信id登录成功加1   短信验证码成功加1  当code==2时判断登录成功
     private Gson gson;
     private int successCode = 0;
     private UserInfo userInfo;

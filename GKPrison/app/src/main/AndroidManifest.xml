@@ -162,12 +162,6 @@
         <activity
             android:name=".userport.activity.AlarmActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".scan.CaptureActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:label="CaptureActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="stateAlwaysHidden" />
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
