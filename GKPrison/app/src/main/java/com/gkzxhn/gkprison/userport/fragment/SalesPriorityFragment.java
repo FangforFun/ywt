@@ -381,7 +381,7 @@ public class SalesPriorityFragment extends BaseFragment {
     }
 
     public void onEvent(ClickEven1 even1){
-        /**
+
         eventint = even1.getDelete();
         eventlist = even1.getList();
         if (eventint == 0) {
@@ -395,8 +395,8 @@ public class SalesPriorityFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
-         **/
 
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
@@ -433,6 +433,6 @@ public class SalesPriorityFragment extends BaseFragment {
             }
         }
         adapter.notifyDataSetChanged();
-
+         **/
     }
 }

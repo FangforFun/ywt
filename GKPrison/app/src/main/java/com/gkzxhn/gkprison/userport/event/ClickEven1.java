@@ -6,9 +6,6 @@ import java.util.List;
  * Created by admin on 2016/1/19.
  */
 public class ClickEven1 {
-    public ClickEven1() {
-    }
-    /**
     private List<Integer> envntlist;
     private int delete;
 
@@ -23,5 +20,4 @@ public class ClickEven1 {
     public int getDelete(){
         return delete;
     }
-     **/
 }

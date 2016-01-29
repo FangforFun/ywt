@@ -375,7 +375,7 @@ private class SalesAdapter extends BaseAdapter{
     }
 
     public void onEvent(ClickEven1 even1){
-        /**
+
         eventint = even1.getDelete();
         eventlist = even1.getList();
         if (eventint == 0) {
@@ -389,8 +389,8 @@ private class SalesAdapter extends BaseAdapter{
             }
         }
         adapter.notifyDataSetChanged();
-         **/
 
+        /**
         commodities.clear();
         Cursor cursor =null;
         if (category_id == 0){
@@ -427,7 +427,7 @@ private class SalesAdapter extends BaseAdapter{
             }
         }
         adapter.notifyDataSetChanged();
-
+         **/
     }
 
 }
