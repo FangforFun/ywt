@@ -11,7 +11,7 @@ public class Constants {
     // 头url
     public static final String URL_HEAD = "http://www.fushuile.com/api/v1/";
     // 监狱端会见列表
-    public static final String PRISON_PORT_MEETING_LIST_URL = "applies?jail_id=1&type=1&date=";
+    public static final String PRISON_PORT_MEETING_LIST_URL = "applies?accid=";
     // 验证码请求
     public static final String REQUEST_SMS_URL = "request_sms";
     // 意见反馈

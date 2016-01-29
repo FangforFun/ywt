@@ -128,10 +128,11 @@ public class CallUserActivity extends BaseActivity {
             String[] img_urls = image_url.split("\\|");
             bitmapUtil.display(iv_id_card_01, Constants.RESOURSE_HEAD + img_urls[0]);
             bitmapUtil.display(iv_id_card_02, Constants.RESOURSE_HEAD + img_urls[1]);
-            Log.i("tupian", Constants.URL_HEAD + img_urls[0] + "---" + Constants.URL_HEAD + img_urls[1]);
+            Log.i("tupian", Constants.RESOURSE_HEAD + img_urls[0] + "---" + Constants.URL_HEAD + img_urls[1]);
             SharedPreferences.Editor editor = sp.edit();
             editor.putString("img_url_01", Constants.RESOURSE_HEAD + img_urls[0]);
             editor.putString("img_url_02", Constants.RESOURSE_HEAD + img_urls[1]);
+            editor.putString("img_url_03", Constants.RESOURSE_HEAD + img_urls[2]);
             editor.commit();
             bt_call.setEnabled(true);
             rl_getting.setVisibility(View.GONE);
@@ -144,8 +145,9 @@ public class CallUserActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_call:
                 AVChatActivity.start(this,
-//                        familyMeetingInfo.getAccid()
-                        "a055d5791afed1baf76ff850c8244fc0", 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                        familyMeetingInfo.getAccid()
+//                        "a055d5791afed1baf76ff850c8244fc0"
+                        , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 break;
         }
     }

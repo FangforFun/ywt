@@ -30,6 +30,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -71,6 +74,15 @@ public class RemoteMeetPager extends BasePager {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送会见申请成功
+                    String result = (String) msg.obj;
+                    int code = 0;
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(result);
+                        code = jsonObject.getInt("code");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     dialog.dismiss();
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setCancelable(false);
@@ -78,7 +90,6 @@ public class RemoteMeetPager extends BasePager {
                     View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
                     view_01.setVisibility(View.GONE);
                     TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
-                    tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
                     TextView tv_cancel = (TextView) commit_success_dialog_view.findViewById(R.id.tv_cancel);
                     tv_cancel.setVisibility(View.GONE);
                     TextView tv_ok = (TextView) commit_success_dialog_view.findViewById(R.id.tv_ok);
@@ -90,12 +101,37 @@ public class RemoteMeetPager extends BasePager {
                             commit_success_dialog.dismiss();
                         }
                     });
-                    commit_success_dialog.show();
-                    bt_commit_request.setEnabled(true);
-                    String committed_meeting_time = sp.getString("committed_meeting_time", "");
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
-                    editor.commit();
+                    if(code == 200) {
+                        tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
+                        commit_success_dialog.show();
+                        bt_commit_request.setEnabled(true);
+                        String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
+                        editor.commit();
+                    }else {
+                        try {
+                            String message = jsonObject.getString("msg");
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("errors");
+                            JSONArray jsonArray = jsonObject1.getJSONArray("apply_create");
+//                            String reason_01 = "";
+//                            String reason_02 = "";
+//                            for (int i = 0; i < jsonArray.length(); i++){
+//
+//                            }
+                            String reason = "";
+                            if(jsonArray.length() == 1) {
+                                reason = jsonArray.getString(0);
+                            }else {
+                                reason = jsonArray.getString(0) + "," + jsonArray.getString(1);
+                            }
+                            tv_msg_dialog.setText("提交失败，原因：" + reason);
+                            commit_success_dialog.show();
+                            bt_commit_request.setEnabled(true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");

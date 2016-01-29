@@ -57,11 +57,11 @@ public class ApplyResultActivity extends BaseActivity {
         reason = getIntent().getStringExtra("reason");
         type_id = getIntent().getIntExtra("type_id", 0);
         tv_request_name.setText(name);
-        tv_request_time.setText(apply_date.substring(0, apply_date.lastIndexOf(" ")));
+        tv_request_time.setText(apply_date.contains(" ") ? apply_date.substring(0, apply_date.lastIndexOf(" ")) : apply_date);
         if(type_id == 2){
             if(result.contains("已通过")) {
                 meeting_date = getIntent().getStringExtra("meeting_date");
-                tv_visit_time.setText(meeting_date);
+                tv_visit_time.setText(meeting_date.contains("UTC") ? meeting_date.replace("UTC", "") : meeting_date);
                 ll_request_pass_notice.setVisibility(View.VISIBLE);
                 tv_request_state.setText(result);
                 tv_request_state.setTextColor(getResources().getColor(R.color.tv_green));
@@ -85,7 +85,7 @@ public class ApplyResultActivity extends BaseActivity {
                 ll_request_not_pass_reason.setVisibility(View.GONE);
                 ll_meeting_request_not_pass_reason.setVisibility(View.GONE);
                 ll_meeting_request_pass_notice.setVisibility(View.VISIBLE);
-                tv_meeting_time.setText(meeting_date);
+                tv_meeting_time.setText(meeting_date.contains("UTC") ? meeting_date.replace("UTC", "") : meeting_date);
             }else {
                 ll_request_pass_notice.setVisibility(View.GONE);
                 tv_request_state.setText("未通过");

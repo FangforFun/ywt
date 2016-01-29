@@ -590,7 +590,7 @@ public class RegisterActivity extends BaseActivity {
                 }
                 if(Utils.isNetworkAvailable()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                    builder.setMessage("        即将提交注册，注册信息将会严格审核，注册信息一旦通过，将不可修改，确定提交？");
+                    builder.setMessage("即将提交注册，注册信息将会严格审核，注册信息一旦通过，将不可修改，确定提交？");
                     builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
