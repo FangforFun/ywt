@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.prisonport;
+package com.gkzxhn.gkprison.prisonport.http;
 
 import org.apache.http.client.methods.HttpPut;
 
