@@ -61,6 +61,9 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      */
     public void sendNotification(Context context, String content, String formId){
         saveToDataBase(content);// 系统通知保存至数据库
+        if(sp.getBoolean("isMsgRemind", false)) {
+            setRemindAlarm(context, content);
+        }
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, SystemMessageActivity.class);
         Log.i("gongju通知", content);
@@ -76,16 +79,13 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
 //        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
-        if(sp.getBoolean("isMsgRemind", false)) {
-            setRemindAlarm(context, content);
-        }
     }
 
     /**
      * 设置闹钟
      */
     private void setRemindAlarm(Context context, String content) {
-        Log.i("消息内容", content);
+//        Log.i("消息内容", content);
         String meeting_date = "";
         long alarm_time = 0;
         try {

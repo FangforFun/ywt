@@ -123,19 +123,15 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     break;
                 case 1: // 取消视频成功
                     String cancel_result = (String) msg.obj;
+                    Log.i("到handler了", cancel_result);
                     try {
                         JSONObject jsonObject = new JSONObject(cancel_result);
                         int result_code = jsonObject.getInt("code");
                         if(result_code == 200){
                             //成功
-                            showToastMsgShort("取消成功");
-                            cancel_meeting_dialog.dismiss();
-                            // 重新刷新数据
-                            long currentDate = System.currentTimeMillis();
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                            Date date = new Date(currentDate);
-                            String formatDate = format.format(date);
-                            requestData(formatDate);// 请求数据
+//                            showToastMsgShort("取消成功");
+                            progressDialog.setMessage("取消成功");
+                            handler.postDelayed(dismissProgressDialogTask, 1500);
                         }else {
                             // 失败 code为500
                             showToastMsgLong("取消失败，请稍后再试");
@@ -151,6 +147,19 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     showToastMsgLong("取消异常，请稍后再试");
                     break;
             }
+        }
+    };
+
+    private Runnable dismissProgressDialogTask = new Runnable() {
+        @Override
+        public void run() {
+            progressDialog.dismiss();
+            // 重新刷新数据
+            long currentDate = System.currentTimeMillis();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            Date date = new Date(currentDate);
+            String formatDate = format.format(date);
+            requestData(formatDate);// 请求数据
         }
     };
 
@@ -177,8 +186,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             e.printStackTrace();
         }
     }
-
-    private Message msg;
 
     @Override
     public void clickDate(CustomDate date) {
@@ -301,7 +308,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 public void run() {
                     SystemClock.sleep(2000);// 休眠2秒  模拟网络环境
                     HttpUtils httpUtils = new HttpUtils();
-                    msg = handler.obtainMessage();
+                    final Message msg = handler.obtainMessage();
                     Log.i("会见列表请求", Constants.URL_HEAD +
                             Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
                     httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD +
@@ -542,15 +549,15 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                             String result = EntityUtils.toString(response.getEntity(), "utf-8");
                             Log.i("取消会见2", result);
                             Message message = handler.obtainMessage();
-                            msg.what = 1;
-                            msg.obj = result;
+                            message.what = 1;
+                            message.obj = result;
                             handler.sendMessage(message);
                         } else {
                             String result = EntityUtils.toString(response.getEntity(), "utf-8");
                             Log.i("取消会见1", result);
                             Message message = handler.obtainMessage();
-                            msg.what = 2;
-                            msg.obj = result;
+                            message.what = 2;
+                            message.obj = result;
                             handler.sendMessage(message);
                         }
                     } catch (IOException e) {

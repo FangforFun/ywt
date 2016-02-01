@@ -209,6 +209,84 @@ public class AVChatSurface {
                 iv_meeting_icon.setVisibility(View.GONE);
                 break;
             case OUTGOING_VIDEO_CALLING:// 去电
+                iv_meeting_ic_card.setVisibility(View.VISIBLE);
+                iv_meeting_icon.setVisibility(View.VISIBLE);
+
+                bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
+                    @Override
+                    public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
+                        Log.i("加载完成", "加载完成了");
+                        imageView.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
+                        iv_meeting_ic_card.setImageResource(R.drawable.ic_card);
+                        Log.i("加载失败", "加载失败了");
+                    }
+                });
+                bitmapUtils.display(iv_meeting_icon, sp.getString("img_url_03", ""), new BitmapLoadCallBack<ImageView>() {
+                    @Override
+                    public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
+                        Log.i("头像加载完成", "加载完成了");
+                        imageView.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
+                        iv_meeting_ic_card.setImageResource(R.drawable.default_icon);
+                        Log.i("头像加载失败", "加载失败了");
+                    }
+                });
+                iv_meeting_icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                        View view = View.inflate(context, R.layout.icon_dialog, null);
+                        ImageView imageView = (ImageView) view.findViewById(R.id.iv_meeting_icon);
+                        bitmapUtils.display(imageView, sp.getString("img_url_03", ""));
+                        dialog.setView(view);
+                        Window dialogWindow = dialog.getWindow();
+                        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
+                        dialogWindow.setAttributes(lp);
+                        dialog.show();
+                        // 点击图片消失
+                        imageView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+                iv_meeting_ic_card.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // ToDo
+                        final AlertDialog dialog = new AlertDialog.Builder(context).create();
+                        ImageView imgView = getView(sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""));
+                        imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT));
+                        dialog.setView(imgView);
+                        Window dialogWindow = dialog.getWindow();
+                        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
+                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
+                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT; // 宽度
+                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
+                        lp.alpha = 0.95f; // 透明度
+                        dialogWindow.setAttributes(lp);
+                        dialog.show();
+                        // 点击图片消失
+                        imgView.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                dialog.dismiss();
+                                current_show = current_show == 1 ? 2 : 1;
+                            }
+                        });
+                    }
+                });
                 break;
             default:
                 break;
@@ -241,84 +319,6 @@ public class AVChatSurface {
         if (surfaceView != null) {
             addIntoLargeSizePreviewLayout(surfaceView);
         }
-
-        iv_meeting_ic_card.setVisibility(View.VISIBLE);
-        iv_meeting_icon.setVisibility(View.VISIBLE);
-        bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
-            @Override
-            public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                Log.i("加载完成", "加载完成了");
-                imageView.setImageBitmap(bitmap);
-            }
-
-            @Override
-            public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
-                iv_meeting_ic_card.setImageResource(R.drawable.ic_card);
-                Log.i("加载失败", "加载失败了");
-            }
-        });
-        bitmapUtils.display(iv_meeting_icon, sp.getString("img_url_03", ""), new BitmapLoadCallBack<ImageView>() {
-            @Override
-            public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                Log.i("头像加载完成", "加载完成了");
-                imageView.setImageBitmap(bitmap);
-            }
-
-            @Override
-            public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
-                iv_meeting_ic_card.setImageResource(R.drawable.default_icon);
-                Log.i("头像加载失败", "加载失败了");
-            }
-        });
-        iv_meeting_icon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                View view = View.inflate(context, R.layout.icon_dialog, null);
-                ImageView imageView = (ImageView) view.findViewById(R.id.iv_meeting_icon);
-                bitmapUtils.display(imageView, sp.getString("img_url_03", ""));
-                dialog.setView(view);
-                Window dialogWindow = dialog.getWindow();
-                WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-                dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
-                dialogWindow.setAttributes(lp);
-                dialog.show();
-                // 点击图片消失
-                imageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-            }
-        });
-        iv_meeting_ic_card.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // ToDo
-                final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                ImageView imgView = getView(sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""));
-                imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT));
-                dialog.setView(imgView);
-                Window dialogWindow = dialog.getWindow();
-                WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-                dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
-                lp.width = WindowManager.LayoutParams.WRAP_CONTENT; // 宽度
-                lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
-                lp.alpha = 0.95f; // 透明度
-                dialogWindow.setAttributes(lp);
-                dialog.show();
-                // 点击图片消失
-                imgView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                        current_show = current_show == 1 ? 2 : 1;
-                    }
-                });
-            }
-        });
     }
 
     /**

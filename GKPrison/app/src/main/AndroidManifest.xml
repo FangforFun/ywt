@@ -45,6 +45,10 @@
         android:largeHeap="true"
         android:theme="@style/AppTheme"
         tools:replace="android:icon, android:theme">
+
+        <meta-data android:value="56a71fa7e0f55a06aa0015db" android:name="UMENG_APPKEY"></meta-data>
+        <meta-data android:value="${UMENG_CHANNEL_VALUE}" android:name="UMENG_CHANNEL"/>
+
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720" />
@@ -79,10 +83,6 @@
         <activity
             android:name=".userport.activity.FamilyServiceActivity"
             android:screenOrientation="portrait" />
-        <!--
-        <activity android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait"/>
-        -->
         <activity
             android:name=".userport.activity.PrisonOpenActivity"
             android:screenOrientation="portrait" />

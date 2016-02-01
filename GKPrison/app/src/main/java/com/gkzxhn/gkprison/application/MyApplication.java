@@ -59,6 +59,14 @@ public class MyApplication extends Application {
 
     private SharedPreferences sp;
 
+    /**
+     *
+     * @return
+     */
+    public static MyApplication getInstance(){
+        return new MyApplication();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
