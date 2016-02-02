@@ -22,6 +22,23 @@
         android:layout_height="match_parent"></include>
 
     <FrameLayout
+        android:id="@+id/fl_examine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/avchat_call_bg2"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_examine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="预警正在审核，请稍后..."
+            android:textSize="20sp"
+            android:textColor="@color/tv_bg"/>
+    </FrameLayout>
+
+    <FrameLayout
         android:id="@+id/small_size_preview_layout"
         android:layout_width="@dimen/av_small_size_width"
         android:layout_height="@dimen/av_small_size_height"
@@ -68,6 +85,17 @@
             android:layout_marginLeft="200dp"
             android:src="@drawable/default_icon"
             android:scaleType="fitXY"
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/bt_through_examine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:text="审核通过"
+            android:background="@drawable/theme_bg_bt_selector"
+            android:textColor="@color/white"
+            android:layout_marginRight="20dp"
             android:visibility="gone"/>
     </FrameLayout>
 </FrameLayout>

@@ -33,9 +33,9 @@ android {
     productFlavors {
 
         wandoujia {}
-        baidu {}
-        c360 {}
-        uc {}
+//        baidu {}
+//        c360 {}
+//        uc {}
         productFlavors.all { flavor ->
             flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
         }

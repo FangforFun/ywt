@@ -18,17 +18,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 
@@ -44,6 +52,8 @@ public class AVChatSurface {
     private AVChatUI manager;
     private View surfaceRoot;
     private Handler uiHandler;
+    private FrameLayout fl_examine;
+    private Button bt_through_examine;
 
     public boolean getIsComing() {
         return isComing;
@@ -110,6 +120,8 @@ public class AVChatSurface {
             smallSizePreviewCoverImg = (ImageView) surfaceRoot.findViewById(R.id.smallSizePreviewCoverImg);
             iv_meeting_ic_card = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_ic_card);
             iv_meeting_icon = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_icon);
+            fl_examine = (FrameLayout) surfaceRoot.findViewById(R.id.fl_examine);
+            bt_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_through_examine);
             smallSizePreviewFrameLayout.setOnTouchListener(touchListener);
 
             largeSizePreviewLayout = (LinearLayout) surfaceRoot.findViewById(R.id.large_size_preview);
@@ -207,11 +219,52 @@ public class AVChatSurface {
             case INCOMING_VIDEO_CALLING:// 来电
                 iv_meeting_ic_card.setVisibility(View.GONE);
                 iv_meeting_icon.setVisibility(View.GONE);
+                bt_through_examine.setVisibility(View.GONE);
+                fl_examine.setVisibility(View.VISIBLE);
+                AVChatManager.getInstance().setMute(true);// 静音
+                String network_type = SystemUtil.GetNetworkType(context);
+                Log.i("当前网络状态", "------------" + network_type);
+                switch (network_type){
+                    case "2G":
+                        Toast.makeText(context, "目前网络处于2G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                    case "3G":
+                        Toast.makeText(context, "目前网络处于3G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                    case "4G":
+                        Toast.makeText(context, "目前网络处于4G状态，请尽快切换到wifi，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                        break;
+                    case "WIFI":
+                        Toast.makeText(context, "目前网络处于wifi状态，请保持网络畅通，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                        break;
+                    default:
+                        Toast.makeText(context, "目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                }
                 break;
             case OUTGOING_VIDEO_CALLING:// 去电
                 iv_meeting_ic_card.setVisibility(View.VISIBLE);
                 iv_meeting_icon.setVisibility(View.VISIBLE);
+                bt_through_examine.setVisibility(View.VISIBLE);
+                bt_through_examine.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        HttpUtils httpUtils = new HttpUtils();
+                        httpUtils.send(HttpRequest.HttpMethod.POST, "", new RequestCallBack<Object>() {
+                            @Override
+                            public void onSuccess(ResponseInfo<Object> responseInfo) {
+                                 // ToDo 请求成功隐藏按钮  开始计时  显示音视频切换按钮
 
+                            }
+
+                            @Override
+                            public void onFailure(HttpException e, String s) {
+                                // ToDo 请求失败不隐藏
+
+                            }
+                        });
+                    }
+                });
                 bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {

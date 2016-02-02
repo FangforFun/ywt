@@ -521,6 +521,12 @@ public class AVChatUI implements AVChatUIListener {
     public void initSurfaceView(String largeAccount) {
         avChatSurface.initLargeSurfaceView(largeAccount);
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
+        if(callingState == CallStateEnum.VIDEO) { // 发起者(狱警方)
+            //
+            avChatSurface.setIsComing(false);
+        }else {
+            avChatSurface.setIsComing(true);
+        }
     }
 
     /**

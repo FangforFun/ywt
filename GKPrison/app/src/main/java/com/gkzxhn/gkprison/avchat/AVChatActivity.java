@@ -87,7 +87,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
 
     /**
      * incoming call
-     *
+     * 接收方收到视频页面
      * @param context
      */
     public static void launch(Context context, AVChatData config, int source) {
