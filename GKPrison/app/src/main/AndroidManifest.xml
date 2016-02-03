@@ -63,10 +63,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".userport.activity.MainActivity"
+            android:name=".login.LoadingActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".login.LoadingActivity"
+            android:name=".userport.activity.MainActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".userport.activity.PrisonIntroductionActivity"

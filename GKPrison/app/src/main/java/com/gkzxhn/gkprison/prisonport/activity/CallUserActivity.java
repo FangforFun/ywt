@@ -148,6 +148,9 @@ public class CallUserActivity extends BaseActivity {
                         familyMeetingInfo.getAccid()
 //                        "a055d5791afed1baf76ff850c8244fc0"
                         , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putString("family_accid", familyMeetingInfo.getAccid());
+                editor.commit();
                 break;
         }
     }

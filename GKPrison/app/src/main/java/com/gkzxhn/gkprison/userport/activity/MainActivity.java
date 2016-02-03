@@ -528,3 +528,4 @@ public class MainActivity extends BaseActivity {
         return commodities;
     }
 }
+

@@ -10,9 +10,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
 import com.gkzxhn.gkprison.utils.StringUtils;
@@ -26,6 +28,8 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+import de.greenrobot.event.EventBus;
 
 public class CustomNotificationReceiver extends BroadcastReceiver {
 
@@ -49,8 +53,29 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
             Log.i("收到通知啦....", "receive custom notification: " + notification.getContent()
                     + " from :" + notification.getSessionId() + "/" + notification.getSessionType());
             notification.getFromAccount();
-            sendNotification(context, notification.getContent(), notification.getSessionId());
+            if(notification.getContent().contains("type_id")) {
+                sendNotification(context, notification.getContent(), notification.getSessionId());
+            }else if(notification.getContent().contains("审核")){
+                doExamineResult(notification.getContent());
+            }
             Log.i("接受者的通知", notification.getContent());
+        }
+    }
+
+    /**
+     * 操作审核结果
+     */
+    private void doExamineResult(String content) {
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            String result = jsonObject.getString("result");
+            if(!TextUtils.isEmpty(result) && result.equals("审核通过")){
+                EventBus.getDefault().post(new ExamineEvent("审核通过"));
+            }else {
+                EventBus.getDefault().post(new ExamineEvent("审核未通过"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 
