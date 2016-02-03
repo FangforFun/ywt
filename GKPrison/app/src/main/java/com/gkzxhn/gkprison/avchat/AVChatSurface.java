@@ -26,6 +26,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.lidroid.xutils.BitmapUtils;
@@ -34,13 +35,20 @@ import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 
+import org.apache.http.entity.StringEntity;
+import org.apache.http.params.DefaultedHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 视频绘制管理
@@ -54,6 +62,7 @@ public class AVChatSurface {
     private Handler uiHandler;
     private FrameLayout fl_examine;
     private Button bt_through_examine;
+    private Button bt_not_through_examine;
 
     public boolean getIsComing() {
         return isComing;
@@ -87,6 +96,10 @@ public class AVChatSurface {
     private boolean localPreviewInSmallSize = true;
     private boolean isPeerVideoOff = false;
     private boolean isLocalVideoOff = false;
+
+    // 审核通话或未通过点击监听
+    private OnThroughExamineLintener onThroughExamineLintener;
+    private OnNotThroughExamineLintener onNotThroughExamineLintener;
 
     // move
     private int lastX, lastY;
@@ -122,6 +135,7 @@ public class AVChatSurface {
             iv_meeting_icon = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_icon);
             fl_examine = (FrameLayout) surfaceRoot.findViewById(R.id.fl_examine);
             bt_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_through_examine);
+            bt_not_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_not_through_examine);
             smallSizePreviewFrameLayout.setOnTouchListener(touchListener);
 
             largeSizePreviewLayout = (LinearLayout) surfaceRoot.findViewById(R.id.large_size_preview);
@@ -133,76 +147,113 @@ public class AVChatSurface {
         }
     }
 
+    /**
+     * 设置审核点击事件
+     * @param onThroughExamineLintener
+     */
+    public void setonThroughExamineClickLintener(OnThroughExamineLintener onThroughExamineLintener){
+        this.onThroughExamineLintener = onThroughExamineLintener;
+    }
+
+    public interface OnThroughExamineLintener{
+        // 点击事件
+        public void onClick();
+    }
+
+    /**
+     * 设置审核未通过点击事件
+     * @param onNotThroughExamineLintener
+     */
+    public void setonNotThroughExamineClickLintener(OnNotThroughExamineLintener onNotThroughExamineLintener){
+        this.onNotThroughExamineLintener = onNotThroughExamineLintener;
+    }
+
+    public interface OnNotThroughExamineLintener{
+        // 点击事件
+        public void onClick();
+    }
+
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
             int x = (int) event.getRawX();
             int y = (int) event.getRawY();
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    lastX = x;
-                    lastY = y;
-                    int[] p = new int[2];
-                    smallSizePreviewFrameLayout.getLocationOnScreen(p);
-                    inX = x - p[0];
-                    inY = y - p[1];
+            if(sp.getBoolean("is_can_video", false)){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = x;
+                        lastY = y;
+                        int[] p = new int[2];
+                        smallSizePreviewFrameLayout.getLocationOnScreen(p);
+                        inX = x - p[0];
+                        inY = y - p[1];
 
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    final int diff = Math.max(Math.abs(lastX - x), Math.abs(lastY - y));
-                    if(diff < TOUCH_SLOP)
                         break;
+                    case MotionEvent.ACTION_MOVE:
+                        final int diff = Math.max(Math.abs(lastX - x), Math.abs(lastY - y));
+                        if (diff < TOUCH_SLOP)
+                            break;
 
-                    if(paddingRect == null) {
-                        paddingRect = new Rect(ScreenUtil.dip2px(10), ScreenUtil.dip2px(20), ScreenUtil.dip2px(10),
-                                ScreenUtil.dip2px(70));
-                    }
-
-                    int destX, destY;
-                    if(x - inX <= paddingRect.left) {
-                        destX = paddingRect.left;
-                    } else if(x - inX + v.getWidth() >= ScreenUtil.screenWidth - paddingRect.right) {
-                        destX = ScreenUtil.screenWidth - v.getWidth() - paddingRect.right;
-                    } else {
-                        destX = x - inX;
-                    }
-
-                    if(y - inY <= paddingRect.top) {
-                        destY = paddingRect.top;
-                    } else if(y - inY + v.getHeight() >= ScreenUtil.screenHeight - paddingRect.bottom){
-                        destY = ScreenUtil.screenHeight - v.getHeight() - paddingRect.bottom;
-                    } else {
-                        destY = y - inY;
-                    }
-
-                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
-                    params.gravity = Gravity.NO_GRAVITY;
-                    params.leftMargin = destX;
-                    params.topMargin = destY;
-                    v.setLayoutParams(params);
-
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if(Math.max(Math.abs(lastX - x), Math.abs(lastY - y)) <= 5){
-                        if (largeAccount == null || smallAccount == null) {
-                            return true;
+                        if (paddingRect == null) {
+                            paddingRect = new Rect(ScreenUtil.dip2px(10), ScreenUtil.dip2px(20), ScreenUtil.dip2px(10),
+                                    ScreenUtil.dip2px(70));
                         }
-                        String temp;
-                        switchRender(smallAccount, largeAccount);
-                        temp = largeAccount;
-                        largeAccount = smallAccount;
-                        smallAccount = temp;
-                        switchAndSetLayout();
-                    } else {
 
-                    }
+                        int destX, destY;
+                        if (x - inX <= paddingRect.left) {
+                            destX = paddingRect.left;
+                        } else if (x - inX + v.getWidth() >= ScreenUtil.screenWidth - paddingRect.right) {
+                            destX = ScreenUtil.screenWidth - v.getWidth() - paddingRect.right;
+                        } else {
+                            destX = x - inX;
+                        }
 
-                    break;
+                        if (y - inY <= paddingRect.top) {
+                            destY = paddingRect.top;
+                        } else if (y - inY + v.getHeight() >= ScreenUtil.screenHeight - paddingRect.bottom) {
+                            destY = ScreenUtil.screenHeight - v.getHeight() - paddingRect.bottom;
+                        } else {
+                            destY = y - inY;
+                        }
+
+                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
+                        params.gravity = Gravity.NO_GRAVITY;
+                        params.leftMargin = destX;
+                        params.topMargin = destY;
+                        v.setLayoutParams(params);
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (Math.max(Math.abs(lastX - x), Math.abs(lastY - y)) <= 5) {
+                            if (largeAccount == null || smallAccount == null) {
+                                return true;
+                            }
+                            String temp;
+                            switchRender(smallAccount, largeAccount);
+                            temp = largeAccount;
+                            largeAccount = smallAccount;
+                            smallAccount = temp;
+                            switchAndSetLayout();
+                        } else {
+
+                        }
+
+                        break;
+                }
+            }else {
+
             }
             return true;
         }
     };
+
+    /**
+     * 设置审核通过
+     */
+    public void setThroughtVisibility(int visibility){
+        fl_examine.setVisibility(visibility);
+    }
 
     public void onCallStateChange(CallStateEnum state) {
         if(CallStateEnum.isVideoMode(state))
@@ -220,6 +271,7 @@ public class AVChatSurface {
                 iv_meeting_ic_card.setVisibility(View.GONE);
                 iv_meeting_icon.setVisibility(View.GONE);
                 bt_through_examine.setVisibility(View.GONE);
+                bt_not_through_examine.setVisibility(View.GONE);
                 fl_examine.setVisibility(View.VISIBLE);
                 AVChatManager.getInstance().setMute(true);// 静音
                 String network_type = SystemUtil.GetNetworkType(context);
@@ -246,49 +298,43 @@ public class AVChatSurface {
                 iv_meeting_ic_card.setVisibility(View.VISIBLE);
                 iv_meeting_icon.setVisibility(View.VISIBLE);
                 bt_through_examine.setVisibility(View.VISIBLE);
+                bt_not_through_examine.setVisibility(View.VISIBLE);
                 bt_through_examine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        HttpUtils httpUtils = new HttpUtils();
-                        httpUtils.send(HttpRequest.HttpMethod.POST, "", new RequestCallBack<Object>() {
-                            @Override
-                            public void onSuccess(ResponseInfo<Object> responseInfo) {
-                                 // ToDo 请求成功隐藏按钮  开始计时  显示音视频切换按钮
-
-                            }
-
-                            @Override
-                            public void onFailure(HttpException e, String s) {
-                                // ToDo 请求失败不隐藏
-
-                            }
-                        });
+                        if(onThroughExamineLintener != null) {
+                            onThroughExamineLintener.onClick();
+                        }
+                    }
+                });
+                bt_not_through_examine.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onNotThroughExamineLintener != null) {
+                            onNotThroughExamineLintener.onClick();
+                        }
                     }
                 });
                 bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                        Log.i("加载完成", "加载完成了");
                         imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
                     public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
                         iv_meeting_ic_card.setImageResource(R.drawable.ic_card);
-                        Log.i("加载失败", "加载失败了");
                     }
                 });
                 bitmapUtils.display(iv_meeting_icon, sp.getString("img_url_03", ""), new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                        Log.i("头像加载完成", "加载完成了");
                         imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
                     public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
                         iv_meeting_ic_card.setImageResource(R.drawable.default_icon);
-                        Log.i("头像加载失败", "加载失败了");
                     }
                 });
                 iv_meeting_icon.setOnClickListener(new View.OnClickListener() {
@@ -345,6 +391,15 @@ public class AVChatSurface {
                 break;
         }
         setSurfaceRoot(CallStateEnum.isVideoMode(state));
+    }
+
+    /**
+     * 设置审核按钮显示/隐藏
+     * @param visibility
+     */
+    public void setExamineButtonVisibility(int visibility){
+        bt_through_examine.setVisibility(visibility);
+        bt_not_through_examine.setVisibility(visibility);
     }
 
     /**

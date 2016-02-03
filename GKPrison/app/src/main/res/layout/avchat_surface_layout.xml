@@ -87,15 +87,32 @@
             android:scaleType="fitXY"
             android:visibility="gone"/>
 
-        <Button
-            android:id="@+id/bt_through_examine"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:text="审核通过"
-            android:background="@drawable/theme_bg_bt_selector"
-            android:textColor="@color/white"
-            android:layout_marginRight="20dp"
-            android:visibility="gone"/>
+            android:orientation="vertical"
+            android:layout_gravity="right|center_vertical">
+
+            <Button
+                android:id="@+id/bt_through_examine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="审核通过"
+                android:background="@drawable/theme_bg_bt_selector"
+                android:textColor="@color/white"
+                android:layout_marginRight="20dp"
+                android:visibility="gone"/>
+
+            <Button
+                android:id="@+id/bt_not_through_examine"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="审核失败"
+                android:background="@drawable/theme_bg_bt_selector"
+                android:textColor="@color/white"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"/>
+        </LinearLayout>
     </FrameLayout>
 </FrameLayout>

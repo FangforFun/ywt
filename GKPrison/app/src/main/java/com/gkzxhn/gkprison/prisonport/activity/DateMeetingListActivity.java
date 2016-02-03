@@ -177,7 +177,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 meetingInfo.setFamily_id(jsonObject.getInt("family_id"));
                 meetingInfo.setMeeting_started(jsonObject.getString("meeting_started"));
                 meetingInfo.setMeeting_finished(jsonObject.getString("meeting_finished"));
-                meetingInfo.setName(jsonObject.getString("prisoner_name"));
+                meetingInfo.setName(jsonObject.getString("name"));
                 meetingInfo.setPrison_area(TextUtils.isEmpty(jsonObject.getString("prison_area")) ? "默认监区" : jsonObject.getString("prison_area"));
                 meetingInfo.setPrisoner_number(jsonObject.getString("prisoner_number"));
                 meetingInfos.add(meetingInfo);

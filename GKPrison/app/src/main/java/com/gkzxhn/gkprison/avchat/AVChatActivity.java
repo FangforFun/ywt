@@ -11,6 +11,8 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
+import com.lidroid.xutils.view.annotation.event.EventBase;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -26,6 +28,8 @@ import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatControlEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatOnlineAckEvent;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 音视频界面
@@ -138,6 +142,10 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         hasOnpause = true;
     }
 
+    public void onEvent(ExamineEvent examineEvent){
+        avChatUI.setExamine(examineEvent.getMsg());
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -161,6 +169,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         registerNetCallObserver(false);
         cancelCallingNotifier();
         needFinish = true;
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
