@@ -52,8 +52,8 @@ public class VersionUpdateActivity extends BaseActivity {
     private SharedPreferences sp;
     private VersionInfo versionInfo;
     private TextView tv_progress;
-//    private ProgressBar pb_update;
-    private DownloadProgressBar dpv_update;
+    private ProgressBar pb_update;
+//    private DownloadProgressBar dpv_update;
     private AlertDialog dialog;//升级对话框
     private boolean has_new_version = false;// 是否有新版本
     private boolean download_successed = false;
@@ -111,7 +111,7 @@ public class VersionUpdateActivity extends BaseActivity {
                     bt_update.setClickable(false);// 不可点
                 }else {
                     // 更新 www.fushuile.com/dist/android/1.0.0/*.apk
-                    showToastMsgShort("正在更新");
+//                    showToastMsgShort("正在更新");
                     bt_update.setClickable(false);
                     showUpdateDialog();
                 }
@@ -127,52 +127,52 @@ public class VersionUpdateActivity extends BaseActivity {
         builder.setCancelable(false);
         View update_view = View.inflate(VersionUpdateActivity.this, R.layout.update_dialog, null);
         tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
-//        pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
-        dpv_update = (DownloadProgressBar) update_view.findViewById(R.id.dpv_update);
-        dpv_update.setOnProgressUpdateListener(new DownloadProgressBar.OnProgressUpdateListener() {
-            @Override
-            public void onProgressUpdate(float currentPlayTime) {
-
-            }
-
-            @Override
-            public void onAnimationStarted() {
-                dpv_update.setEnabled(false);
-            }
-
-            @Override
-            public void onAnimationEnded() {
-
-            }
-
-            @Override
-            public void onAnimationSuccess() {
-            }
-
-            @Override
-            public void onAnimationError() {
-
-            }
-
-            @Override
-            public void onManualProgressStarted() {
-
-            }
-
-            @Override
-            public void onManualProgressEnded() {
-
-            }
-        });
-        dpv_update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dpv_update.playManualProgressAnimation();
-            }
-        });
-        tv_progress.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
+//        dpv_update = (DownloadProgressBar) update_view.findViewById(R.id.dpv_update);
+//        dpv_update.setOnProgressUpdateListener(new DownloadProgressBar.OnProgressUpdateListener() {
+//            @Override
+//            public void onProgressUpdate(float currentPlayTime) {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationStarted() {
+//                dpv_update.setEnabled(false);
+//            }
+//
+//            @Override
+//            public void onAnimationEnded() {
+//
+//            }
+//
+//            @Override
+//            public void onAnimationSuccess() {
+//            }
+//
+//            @Override
+//            public void onAnimationError() {
+//
+//            }
+//
+//            @Override
+//            public void onManualProgressStarted() {
+//
+//            }
+//
+//            @Override
+//            public void onManualProgressEnded() {
+//
+//            }
+//        });
+//        dpv_update.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                dpv_update.playManualProgressAnimation();
+//            }
+//        });
+//        tv_progress.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
                     //sd卡可用，用于存放下载的apk
                     //1.下载
@@ -184,6 +184,8 @@ public class VersionUpdateActivity extends BaseActivity {
                             download_successed = true;
                             Log.i("变啦", "变啦" + download_successed);
                             handler.postDelayed(install_apk_task, 1000);
+                            dialog.dismiss();
+                            bt_update.setClickable(true);
                         }
 
                         @Override
@@ -191,13 +193,16 @@ public class VersionUpdateActivity extends BaseActivity {
                             e.printStackTrace();
                             Log.i("版本更新...", e.getMessage() + "----" + s);
                             Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                            bt_update.setClickable(true);
                         }
 
                         @Override
                         public void onLoading(long total, long current, boolean isUploading) {
                             super.onLoading(total, current, isUploading);
                             int progress = (int) (current * 100 / total);
-                            dpv_update.setProgress(progress);
+                            pb_update.setMax(100);
+                            pb_update.setProgress(progress);
                             tv_progress.setText(progress + "%");
                             Log.i("下载进度", current + "----" + progress + "---" + total);
                         }
@@ -206,8 +211,8 @@ public class VersionUpdateActivity extends BaseActivity {
                     //sd卡不可用
                     Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
+//            }
+//        });
         builder.setView(update_view);
         dialog = builder.create();
         dialog.show();
@@ -250,12 +255,13 @@ public class VersionUpdateActivity extends BaseActivity {
                     public void onSuccess (ResponseInfo < Object > responseInfo) {
                         Log.i("检查更新成功", responseInfo.result.toString());
                         parseVersionInfo(responseInfo.result.toString());
+                        bt_update.setClickable(true);
                     }
 
                     @Override
                     public void onFailure (HttpException e, String s){
                         Log.i("检查更新失败", e.getMessage() + "-----" + s);
-                        bt_update.setEnabled(true);
+                        bt_update.setClickable(true);
                         ra.cancel();
                     }
                 });

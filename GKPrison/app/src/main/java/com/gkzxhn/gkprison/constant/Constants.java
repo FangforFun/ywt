@@ -11,7 +11,7 @@ public class Constants {
     // 头url
     public static final String URL_HEAD = "http://www.fushuile.com/api/v1/";
     // 监狱端会见列表
-    public static final String PRISON_PORT_MEETING_LIST_URL = "applies?jail_id=1&type=1&date=";
+    public static final String PRISON_PORT_MEETING_LIST_URL = "applies?accid=";
     // 验证码请求
     public static final String REQUEST_SMS_URL = "request_sms";
     // 意见反馈
@@ -20,6 +20,8 @@ public class Constants {
     public static final String NEWS_URL = "news?jail_id=1";
     // 写信
     public static final String WRITE_MESSAGE = "mail_boxes?jail_id=1&access_token=";
+    // 视频审核
+    public static final String VIDEO_EXAMIME = "notifications";
 
     // 新版本apk地址
     public static final String NEW_VERSION_APK_URL = "http://www.fushuile.com/dist/android/1.0.0/app-release.apk";

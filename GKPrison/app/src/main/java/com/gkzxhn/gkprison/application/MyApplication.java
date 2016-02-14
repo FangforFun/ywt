@@ -1,28 +1,22 @@
 package com.gkzxhn.gkprison.application;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
-import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
-import com.gkzxhn.gkprison.userport.receiver.CustomNotificationReceiver;
-import com.gkzxhn.gkprison.utils.MD5Utils;
-import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
@@ -32,11 +26,9 @@ import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.contact.ContactProvider;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
-import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.SDKOptions;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
-import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
@@ -50,7 +42,6 @@ import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.prefs.Preferences;
 
 /**
  * Created by zhengneng on 2015/12/23.
@@ -58,6 +49,14 @@ import java.util.prefs.Preferences;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
+
+    /**
+     *
+     * @return
+     */
+    public static MyApplication getInstance(){
+        return new MyApplication();
+    }
 
     @Override
     public void onCreate() {
@@ -76,7 +75,12 @@ public class MyApplication extends Application {
                             Log.i("tag", "User status changed to: " + status);
                             switch (status) {
                                 case KICKOUT:
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent;
+                                    if (sp.getBoolean("isCommonUser", true)) {
+                                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    } else {
+                                        intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                    }
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                     break;

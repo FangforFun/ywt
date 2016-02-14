@@ -2,11 +2,21 @@ package com.gkzxhn.gkprison.avchat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nim.uikit.common.ui.dialog.DialogMaker;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nimlib.sdk.avchat.AVChatCallback;
@@ -15,7 +25,13 @@ import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.VideoChatParam;
 
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
+
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 音视频管理器, 音视频相关功能管理
@@ -39,6 +55,7 @@ public class AVChatUI implements AVChatUIListener {
     private CallStateEnum callingState = CallStateEnum.INVALID;
 
     private long timeBase = 0;
+    private SharedPreferences sp;
 
     // view
     private View root;
@@ -56,6 +73,8 @@ public class AVChatUI implements AVChatUIListener {
         this.context = context;
         this.root = root;
         this.aVChatListener = listener;
+        sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
+        EventBus.getDefault().register(context);
     }
 
     /**
@@ -121,6 +140,10 @@ public class AVChatUI implements AVChatUIListener {
                 Log.d(TAG, "success");
                 avChatData = data;
                 DialogMaker.dismissProgressDialog();
+                avChatSurface.setExamineButtonVisibility(View.VISIBLE);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.putBoolean("is_can_video", true);
+                editor.commit();
             }
 
             @Override
@@ -433,6 +456,23 @@ public class AVChatUI implements AVChatUIListener {
         });
     }
 
+    public void setExamine(String msg) {
+        Log.d("event", msg);
+        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+        if(!TextUtils.isEmpty(msg) && msg.equals("审核通过")) {
+            avChatVideo.setTime(true);// 开始计时
+            avChatVideo.setTopRoot(true);// 设置顶部栏可见
+            avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
+            avChatSurface.setThroughtVisibility(View.GONE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("is_can_video", true);
+            editor.commit();
+        }else {
+            // ToDo 审核未通过  自动挂断  家属端提示审核未通过
+
+        }
+    }
+
     @Override
     public void audioSwitchVideo() {
         onCallStateChange(CallStateEnum.OUTGOING_AUDIO_TO_VIDEO);
@@ -521,6 +561,81 @@ public class AVChatUI implements AVChatUIListener {
     public void initSurfaceView(String largeAccount) {
         avChatSurface.initLargeSurfaceView(largeAccount);
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
+        if(!largeAccount.contains("gkzxhn")) { // 发起者(狱警方)
+            avChatSurface.setIsComing(false);
+            avChatSurface.setonThroughExamineClickLintener(new AVChatSurface.OnThroughExamineLintener() {
+                @Override
+                public void onClick() {
+                    HttpUtils httpUtils = new HttpUtils(5000);
+                    RequestParams params = new RequestParams();
+                    params.setContentType("application/json");
+                    try {
+                        StringEntity entity = new StringEntity("{" +
+                                "    \"notification\": {" +
+                                "        \"code\": 200," +
+                                "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
+                                "        \"sender\": \"" + sp.getString("token", "") + "\"" +
+                                "    }" +
+                                "}", HTTP.UTF_8);
+                        params.setBodyEntity(entity);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    httpUtils.send(HttpRequest.HttpMethod.POST, Constants.URL_HEAD + Constants.VIDEO_EXAMIME, params, new RequestCallBack<Object>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<Object> responseInfo) {
+                            // ToDo 请求成功隐藏按钮  开始计时  显示音视频切换按钮
+                            Log.i("审核通过成功", responseInfo.result.toString());
+                            avChatSurface.setExamineButtonVisibility(View.GONE);
+                            avChatVideo.setTime(true);// 开始计时
+                        }
+
+                        @Override
+                        public void onFailure(HttpException e, String s) {
+                            // ToDo 请求失败不隐藏
+                            Log.i("审核通过失败", s);
+                        }
+                    });
+                }
+            });
+            avChatSurface.setonNotThroughExamineClickLintener(new AVChatSurface.OnNotThroughExamineLintener() {
+                @Override
+                public void onClick() {
+                    HttpUtils httpUtils = new HttpUtils(5000);
+                    RequestParams params = new RequestParams();
+                    params.setContentType("application/json");
+                    try {
+                        StringEntity entity = new StringEntity("{" +
+                                "    \"notification\": {" +
+                                "        \"code\": 401," +
+                                "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
+                                "        \"sender\": \"" + sp.getString("token", "") + "\"" +
+                                "    }" +
+                                "}", HTTP.UTF_8);
+                        params.setBodyEntity(entity);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    httpUtils.send(HttpRequest.HttpMethod.POST, Constants.URL_HEAD + Constants.VIDEO_EXAMIME, params, new RequestCallBack<Object>() {
+                        @Override
+                        public void onSuccess(ResponseInfo<Object> responseInfo) {
+                            Log.i("审核不通过成功", responseInfo.result.toString());
+                            avChatSurface.setExamineButtonVisibility(View.GONE);
+                            // ToDo 挂断
+                        }
+
+                        @Override
+                        public void onFailure(HttpException e, String s) {
+                            // ToDo 请求失败不隐藏
+                            Log.i("审核不通过失败", s);
+                        }
+                    });
+                }
+            });
+        }else {
+            avChatSurface.setIsComing(true);
+            avChatVideo.setTopRoot(false);
+        }
     }
 
     /**

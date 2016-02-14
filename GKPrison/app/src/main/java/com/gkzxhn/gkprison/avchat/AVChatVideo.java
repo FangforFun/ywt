@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.avchat;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.util.Log;
 import android.view.View;
@@ -56,12 +57,14 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     private boolean init = false;
     private boolean shouldEnableToggle = false;
     private boolean isInSwitch = false;
+    private SharedPreferences sp;
 
     public AVChatVideo(Context context, View root, AVChatUIListener listener, AVChatUI manager) {
         this.context = context;
         this.root = root;
         this.listener = listener;
         this.manager = manager;
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 
     private void findViews() {
@@ -106,6 +109,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 showNotify(R.string.avchat_wait_recieve);
                 setRefuseReceive(false);
                 shouldEnableToggle = true;
+                enableToggle();
                 setTopRoot(false);
                 setMiddleRoot(true);
                 setBottomRoot(true);
@@ -121,9 +125,13 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 break;
             case VIDEO:
                 isInSwitch = false;
-                enableToggle();
-                setTime(true);
-                setTopRoot(true);
+//                enableToggle();
+//                setTime(true);
+                if(sp.getBoolean("is_can_video", false)) {
+                    setTopRoot(true);
+                }else {
+                    setTopRoot(false);
+                }
                 setMiddleRoot(false);
                 setBottomRoot(true);
                 break;
@@ -133,8 +141,13 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 break;
             case OUTGOING_AUDIO_TO_VIDEO:
                 isInSwitch = true;
-                setTime(true);
-                setTopRoot(true);
+                if(sp.getBoolean("is_can_video", false)) {
+                    setTopRoot(true);
+                }else {
+                    setTopRoot(false);
+                }
+//                setTime(true);
+//                setTopRoot(true);
                 setMiddleRoot(false);
                 setBottomRoot(true);
                 break;
@@ -166,15 +179,15 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
 
     /************************ 布局显隐设置 ****************************/
 
-    private void setRoot(boolean visible) {
+    public void setRoot(boolean visible) {
         root.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void setRefuseReceive(boolean visible){
+    public void setRefuseReceive(boolean visible){
         refuse_receive.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void setTopRoot(boolean visible){
+    public void setTopRoot(boolean visible){
         topRoot.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(topRootHeight == 0){
             Rect rect = new Rect();
@@ -183,11 +196,11 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         }
     }
 
-    private void setMiddleRoot(boolean visible){
+    public void setMiddleRoot(boolean visible){
         middleRoot.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private void setBottomRoot(boolean visible){
+    public void setBottomRoot(boolean visible){
         bottomRoot.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(bottomRootHeight == 0){
             bottomRootHeight = bottomRoot.getHeight();
@@ -198,13 +211,23 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
      * 设置通话时间  屏幕上方正中间
      * @param visible
      */
-    private void setTime(boolean visible){
+    public void setTime(boolean visible){
         Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
-            time.initTime(1200);
+            time.initTime(900);
             time.start();
+        }
+    }
+
+    /**
+     * 暴露给其它页面操作设置底部控制开关是否可用
+     */
+    public void setVisibilityToggle(boolean visibility){
+        if(visibility) {
+            shouldEnableToggle = true;
+            enableToggle();
         }
     }
 

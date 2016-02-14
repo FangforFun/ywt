@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.pager;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -33,6 +32,9 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by hzn on 2015/12/3.
@@ -60,13 +62,13 @@ public class RemoteMeetPager extends BasePager {
     private RadioButton rb_top_guide_meeting;
     private RadioButton rb_top_guide_visit;
     private boolean isCommonUser;// 普通用户/监狱用户
-    private TextView tv_remotly_num;
-    private TextView bt_recharge;
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[Utils.afterNDay(30).size()]);// 时间选择
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;
+    private TextView tv_remotly_num;
+    private TextView bt_recharge;
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -76,6 +78,15 @@ public class RemoteMeetPager extends BasePager {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0: // 发送会见申请成功
+                    String result = (String) msg.obj;
+                    int code = 0;
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(result);
+                        code = jsonObject.getInt("code");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     dialog.dismiss();
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setCancelable(false);
@@ -83,7 +94,6 @@ public class RemoteMeetPager extends BasePager {
                     View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
                     view_01.setVisibility(View.GONE);
                     TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
-                    tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
                     TextView tv_cancel = (TextView) commit_success_dialog_view.findViewById(R.id.tv_cancel);
                     tv_cancel.setVisibility(View.GONE);
                     TextView tv_ok = (TextView) commit_success_dialog_view.findViewById(R.id.tv_ok);
@@ -95,12 +105,32 @@ public class RemoteMeetPager extends BasePager {
                             commit_success_dialog.dismiss();
                         }
                     });
-                    commit_success_dialog.show();
-                    bt_commit_request.setEnabled(true);
-                    String committed_meeting_time = sp.getString("committed_meeting_time", "");
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
-                    editor.commit();
+                    if(code == 200) {
+                        tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
+                        commit_success_dialog.show();
+                        bt_commit_request.setEnabled(true);
+                        String committed_meeting_time = sp.getString("committed_meeting_time", "");
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
+                        editor.commit();
+                    }else {
+                        try {
+                            String message = jsonObject.getString("msg");
+                            JSONObject jsonObject1 = jsonObject.getJSONObject("errors");
+                            JSONArray jsonArray = jsonObject1.getJSONArray("apply_create");
+                            String reason = "";
+                            if(jsonArray.length() == 1) {
+                                reason = jsonArray.getString(0);
+                            }else {
+                                reason = jsonArray.getString(0) + "," + jsonArray.getString(1);
+                            }
+                            tv_msg_dialog.setText("提交失败，原因：" + reason);
+                            commit_success_dialog.show();
+                            bt_commit_request.setEnabled(true);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     break;
                 case 1: // 发送会见申请失败
                     showToastMsgLong("提交失败，请稍后再试");
@@ -157,8 +187,6 @@ public class RemoteMeetPager extends BasePager {
     @Override
     public View initView() {
         view = View.inflate(context, R.layout.pager_remote_meeting, null);
-        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
-        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
         tv_meeting_request_name = (TextView) view.findViewById(R.id.tv_meeting_request_name);
         tv_meeting_request_id_num = (TextView) view.findViewById(R.id.tv_meeting_request_id_num);
         tv_meeting_request_relationship = (TextView) view.findViewById(R.id.tv_meeting_request_relationship);
@@ -177,6 +205,8 @@ public class RemoteMeetPager extends BasePager {
         rg_top_guide = (RadioGroup) view.findViewById(R.id.rg_top_guide);
         rb_top_guide_meeting = (RadioButton) view.findViewById(R.id.rb_top_guide_meeting);
         rb_top_guide_visit = (RadioButton) view.findViewById(R.id.rb_top_guide_visit);
+        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
+        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
         Drawable[] drawables = rb_top_guide_meeting.getCompoundDrawables();
         drawables[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
         rb_top_guide_meeting.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -195,7 +225,7 @@ public class RemoteMeetPager extends BasePager {
             tv_meeting_request_id_num.setText(sp.getString("password", ""));
             tv_meeting_request_phone.setText(sp.getString("username", ""));
             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
-            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "上次会见时间：暂无会见"));
+            tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
         }
         adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
@@ -217,7 +247,7 @@ public class RemoteMeetPager extends BasePager {
                             tv_meeting_request_id_num.setText(sp.getString("password", ""));
                             tv_meeting_request_phone.setText(sp.getString("username", ""));
                             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
-                            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "暂无会见"));
+                            tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
                         }
                         break;
                     case R.id.rb_top_guide_visit:
@@ -240,6 +270,13 @@ public class RemoteMeetPager extends BasePager {
                 context.startActivity(intent);
             }
         });
+    }
+
+    /**
+     * 设置上次会见时间
+     */
+    public void setLastMeetingTime(){
+        tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
     }
 
     @Override

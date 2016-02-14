@@ -9,6 +9,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -17,20 +18,37 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 
+import org.apache.http.entity.StringEntity;
+import org.apache.http.params.DefaultedHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.HTTP;
+
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * 视频绘制管理
@@ -42,6 +60,9 @@ public class AVChatSurface {
     private AVChatUI manager;
     private View surfaceRoot;
     private Handler uiHandler;
+    private FrameLayout fl_examine;
+    private Button bt_through_examine;
+    private Button bt_not_through_examine;
 
     public boolean getIsComing() {
         return isComing;
@@ -76,6 +97,10 @@ public class AVChatSurface {
     private boolean isPeerVideoOff = false;
     private boolean isLocalVideoOff = false;
 
+    // 审核通话或未通过点击监听
+    private OnThroughExamineLintener onThroughExamineLintener;
+    private OnNotThroughExamineLintener onNotThroughExamineLintener;
+
     // move
     private int lastX, lastY;
     private int inX, inY;
@@ -108,6 +133,9 @@ public class AVChatSurface {
             smallSizePreviewCoverImg = (ImageView) surfaceRoot.findViewById(R.id.smallSizePreviewCoverImg);
             iv_meeting_ic_card = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_ic_card);
             iv_meeting_icon = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_icon);
+            fl_examine = (FrameLayout) surfaceRoot.findViewById(R.id.fl_examine);
+            bt_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_through_examine);
+            bt_not_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_not_through_examine);
             smallSizePreviewFrameLayout.setOnTouchListener(touchListener);
 
             largeSizePreviewLayout = (LinearLayout) surfaceRoot.findViewById(R.id.large_size_preview);
@@ -119,76 +147,113 @@ public class AVChatSurface {
         }
     }
 
+    /**
+     * 设置审核点击事件
+     * @param onThroughExamineLintener
+     */
+    public void setonThroughExamineClickLintener(OnThroughExamineLintener onThroughExamineLintener){
+        this.onThroughExamineLintener = onThroughExamineLintener;
+    }
+
+    public interface OnThroughExamineLintener{
+        // 点击事件
+        public void onClick();
+    }
+
+    /**
+     * 设置审核未通过点击事件
+     * @param onNotThroughExamineLintener
+     */
+    public void setonNotThroughExamineClickLintener(OnNotThroughExamineLintener onNotThroughExamineLintener){
+        this.onNotThroughExamineLintener = onNotThroughExamineLintener;
+    }
+
+    public interface OnNotThroughExamineLintener{
+        // 点击事件
+        public void onClick();
+    }
+
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(final View v, MotionEvent event) {
             int x = (int) event.getRawX();
             int y = (int) event.getRawY();
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    lastX = x;
-                    lastY = y;
-                    int[] p = new int[2];
-                    smallSizePreviewFrameLayout.getLocationOnScreen(p);
-                    inX = x - p[0];
-                    inY = y - p[1];
+            if(sp.getBoolean("is_can_video", false)){
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        lastX = x;
+                        lastY = y;
+                        int[] p = new int[2];
+                        smallSizePreviewFrameLayout.getLocationOnScreen(p);
+                        inX = x - p[0];
+                        inY = y - p[1];
 
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    final int diff = Math.max(Math.abs(lastX - x), Math.abs(lastY - y));
-                    if(diff < TOUCH_SLOP)
                         break;
+                    case MotionEvent.ACTION_MOVE:
+                        final int diff = Math.max(Math.abs(lastX - x), Math.abs(lastY - y));
+                        if (diff < TOUCH_SLOP)
+                            break;
 
-                    if(paddingRect == null) {
-                        paddingRect = new Rect(ScreenUtil.dip2px(10), ScreenUtil.dip2px(20), ScreenUtil.dip2px(10),
-                                ScreenUtil.dip2px(70));
-                    }
-
-                    int destX, destY;
-                    if(x - inX <= paddingRect.left) {
-                        destX = paddingRect.left;
-                    } else if(x - inX + v.getWidth() >= ScreenUtil.screenWidth - paddingRect.right) {
-                        destX = ScreenUtil.screenWidth - v.getWidth() - paddingRect.right;
-                    } else {
-                        destX = x - inX;
-                    }
-
-                    if(y - inY <= paddingRect.top) {
-                        destY = paddingRect.top;
-                    } else if(y - inY + v.getHeight() >= ScreenUtil.screenHeight - paddingRect.bottom){
-                        destY = ScreenUtil.screenHeight - v.getHeight() - paddingRect.bottom;
-                    } else {
-                        destY = y - inY;
-                    }
-
-                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
-                    params.gravity = Gravity.NO_GRAVITY;
-                    params.leftMargin = destX;
-                    params.topMargin = destY;
-                    v.setLayoutParams(params);
-
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if(Math.max(Math.abs(lastX - x), Math.abs(lastY - y)) <= 5){
-                        if (largeAccount == null || smallAccount == null) {
-                            return true;
+                        if (paddingRect == null) {
+                            paddingRect = new Rect(ScreenUtil.dip2px(10), ScreenUtil.dip2px(20), ScreenUtil.dip2px(10),
+                                    ScreenUtil.dip2px(70));
                         }
-                        String temp;
-                        switchRender(smallAccount, largeAccount);
-                        temp = largeAccount;
-                        largeAccount = smallAccount;
-                        smallAccount = temp;
-                        switchAndSetLayout();
-                    } else {
 
-                    }
+                        int destX, destY;
+                        if (x - inX <= paddingRect.left) {
+                            destX = paddingRect.left;
+                        } else if (x - inX + v.getWidth() >= ScreenUtil.screenWidth - paddingRect.right) {
+                            destX = ScreenUtil.screenWidth - v.getWidth() - paddingRect.right;
+                        } else {
+                            destX = x - inX;
+                        }
 
-                    break;
+                        if (y - inY <= paddingRect.top) {
+                            destY = paddingRect.top;
+                        } else if (y - inY + v.getHeight() >= ScreenUtil.screenHeight - paddingRect.bottom) {
+                            destY = ScreenUtil.screenHeight - v.getHeight() - paddingRect.bottom;
+                        } else {
+                            destY = y - inY;
+                        }
+
+                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
+                        params.gravity = Gravity.NO_GRAVITY;
+                        params.leftMargin = destX;
+                        params.topMargin = destY;
+                        v.setLayoutParams(params);
+
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (Math.max(Math.abs(lastX - x), Math.abs(lastY - y)) <= 5) {
+                            if (largeAccount == null || smallAccount == null) {
+                                return true;
+                            }
+                            String temp;
+                            switchRender(smallAccount, largeAccount);
+                            temp = largeAccount;
+                            largeAccount = smallAccount;
+                            smallAccount = temp;
+                            switchAndSetLayout();
+                        } else {
+
+                        }
+
+                        break;
+                }
+            }else {
+
             }
             return true;
         }
     };
+
+    /**
+     * 设置审核通过
+     */
+    public void setThroughtVisibility(int visibility){
+        fl_examine.setVisibility(visibility);
+    }
 
     public void onCallStateChange(CallStateEnum state) {
         if(CallStateEnum.isVideoMode(state))
@@ -205,61 +270,88 @@ public class AVChatSurface {
             case INCOMING_VIDEO_CALLING:// 来电
                 iv_meeting_ic_card.setVisibility(View.GONE);
                 iv_meeting_icon.setVisibility(View.GONE);
+                bt_through_examine.setVisibility(View.GONE);
+                bt_not_through_examine.setVisibility(View.GONE);
+                fl_examine.setVisibility(View.VISIBLE);
+                AVChatManager.getInstance().setMute(true);// 静音
+                String network_type = SystemUtil.GetNetworkType(context);
+                Log.i("当前网络状态", "------------" + network_type);
+                switch (network_type){
+                    case "2G":
+                        Toast.makeText(context, "目前网络处于2G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                    case "3G":
+                        Toast.makeText(context, "目前网络处于3G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                    case "4G":
+                        Toast.makeText(context, "目前网络处于4G状态，请尽快切换到wifi，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                        break;
+                    case "WIFI":
+                        Toast.makeText(context, "目前网络处于wifi状态，请保持网络畅通，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                        break;
+                    default:
+                        Toast.makeText(context, "目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        break;
+                }
                 break;
             case OUTGOING_VIDEO_CALLING:// 去电
                 iv_meeting_ic_card.setVisibility(View.VISIBLE);
                 iv_meeting_icon.setVisibility(View.VISIBLE);
+                bt_through_examine.setVisibility(View.VISIBLE);
+                bt_not_through_examine.setVisibility(View.VISIBLE);
+                bt_through_examine.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onThroughExamineLintener != null) {
+                            onThroughExamineLintener.onClick();
+                        }
+                    }
+                });
+                bt_not_through_examine.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(onNotThroughExamineLintener != null) {
+                            onNotThroughExamineLintener.onClick();
+                        }
+                    }
+                });
                 bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
                     @Override
                     public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                        Log.i("加载完成", "加载完成了");
+                        imageView.setImageBitmap(bitmap);
                     }
 
                     @Override
                     public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
                         iv_meeting_ic_card.setImageResource(R.drawable.ic_card);
-                        Log.i("加载失败", "加载失败了");
+                    }
+                });
+                bitmapUtils.display(iv_meeting_icon, sp.getString("img_url_03", ""), new BitmapLoadCallBack<ImageView>() {
+                    @Override
+                    public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
+                        imageView.setImageBitmap(bitmap);
+                    }
+
+                    @Override
+                    public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
+                        iv_meeting_ic_card.setImageResource(R.drawable.default_icon);
                     }
                 });
                 iv_meeting_icon.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                        ImageView imgView = new ImageView(context);
-                        imgView.setImageResource(R.drawable.default_icon);
-                        dialog.setView(imgView);
+                        View view = View.inflate(context, R.layout.icon_dialog, null);
+                        ImageView imageView = (ImageView) view.findViewById(R.id.iv_meeting_icon);
+                        bitmapUtils.display(imageView, sp.getString("img_url_03", ""));
+                        dialog.setView(view);
                         Window dialogWindow = dialog.getWindow();
                         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
-                        /*
-                         * lp.x与lp.y表示相对于原始位置的偏移.
-                         * 当参数值包含Gravity.LEFT时,对话框出现在左边,所以lp.x就表示相对左边的偏移,负值忽略.
-                         * 当参数值包含Gravity.RIGHT时,对话框出现在右边,所以lp.x就表示相对右边的偏移,负值忽略.
-                         * 当参数值包含Gravity.TOP时,对话框出现在上边,所以lp.y就表示相对上边的偏移,负值忽略.
-                         * 当参数值包含Gravity.BOTTOM时,对话框出现在下边,所以lp.y就表示相对下边的偏移,负值忽略.
-                         * 当参数值包含Gravity.CENTER_HORIZONTAL时
-                         * ,对话框水平居中,所以lp.x就表示在水平居中的位置移动lp.x像素,正值向右移动,负值向左移动.
-                         * 当参数值包含Gravity.CENTER_VERTICAL时
-                         * ,对话框垂直居中,所以lp.y就表示在垂直居中的位置移动lp.y像素,正值向右移动,负值向左移动.
-                         * gravity的默认值为Gravity.CENTER,即Gravity.CENTER_HORIZONTAL |
-                         * Gravity.CENTER_VERTICAL.
-                         *
-                         * 本来setGravity的参数值为Gravity.LEFT | Gravity.TOP时对话框应出现在程序的左上角,但在
-                         * 我手机上测试时发现距左边与上边都有一小段距离,而且垂直坐标把程序标题栏也计算在内了,
-                         * Gravity.LEFT, Gravity.TOP, Gravity.BOTTOM与Gravity.RIGHT都是如此,据边界有一小段距离
-                         */
-//                        lp.x = 100; // 新位置X坐标
-//                        lp.y = 100; // 新位置Y坐标
-                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT; // 宽度
-                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
-                        lp.alpha = 0.95f; // 透明度
-
-                        // 当Window的Attributes改变时系统会调用此函数,可以直接调用以应用上面对窗口参数的更改,也可以用setAttributes
-                        // dialog.onWindowAttributesChanged(lp);
+                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
                         dialogWindow.setAttributes(lp);
                         dialog.show();
                         // 点击图片消失
-                        imgView.setOnClickListener(new View.OnClickListener() {
+                        imageView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
@@ -273,10 +365,12 @@ public class AVChatSurface {
                         // ToDo
                         final AlertDialog dialog = new AlertDialog.Builder(context).create();
                         ImageView imgView = getView(sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""));
+                        imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT));
                         dialog.setView(imgView);
                         Window dialogWindow = dialog.getWindow();
                         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
-                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
+                        dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
                         lp.width = WindowManager.LayoutParams.WRAP_CONTENT; // 宽度
                         lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
                         lp.alpha = 0.95f; // 透明度
@@ -288,17 +382,6 @@ public class AVChatSurface {
                             public void onClick(View v) {
                                 dialog.dismiss();
                                 current_show = current_show == 1 ? 2 : 1;
-                                bitmapUtils.display(iv_meeting_ic_card, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""), new BitmapLoadCallBack<ImageView>() {
-                                    @Override
-                                    public void onLoadCompleted(ImageView imageView, String s, Bitmap bitmap, BitmapDisplayConfig bitmapDisplayConfig, BitmapLoadFrom bitmapLoadFrom) {
-                                        Log.i("加载完成", "加载完成了2");
-                                    }
-
-                                    @Override
-                                    public void onLoadFailed(ImageView imageView, String s, Drawable drawable) {
-                                        iv_meeting_ic_card.setImageResource(R.drawable.ic_card);
-                                    }
-                                });
                             }
                         });
                     }
@@ -311,13 +394,20 @@ public class AVChatSurface {
     }
 
     /**
+     * 设置审核按钮显示/隐藏
+     * @param visibility
+     */
+    public void setExamineButtonVisibility(int visibility){
+        bt_through_examine.setVisibility(visibility);
+        bt_not_through_examine.setVisibility(visibility);
+    }
+
+    /**
      * 获取view
      * @return
      */
     private ImageView getView(String img_url) {
         ImageView imgView = new ImageView(context);
-        imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
         bitmapUtils.display(imgView, img_url);
         return imgView;
     }
