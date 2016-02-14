@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.avchat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -12,6 +13,9 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
+import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
+import com.gkzxhn.gkprison.utils.StringUtils;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.lidroid.xutils.view.annotation.event.EventBase;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
@@ -77,6 +81,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
 
     // notification
     private AVChatNotification notifier;
+    private SharedPreferences sp;
 
     public static void start(Context context, String account, int callType, int source) {
         needFinish = false;
@@ -112,6 +117,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             finish();
             return;
         }
+        sp = getSharedPreferences("config", MODE_PRIVATE);
         View root = View.inflate(this, R.layout.avchat_activity, null);
         setContentView(root);
         mIsInComingCall = getIntent().getBooleanExtra(KEY_IN_CALLING, false);
@@ -170,6 +176,17 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         cancelCallingNotifier();
         needFinish = true;
         EventBus.getDefault().unregister(this);
+        if(sp.getBoolean("isCommonUser", true)){
+            // 如果是普通用户  视频结束恢复未审查状态
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putBoolean("is_can_video", false);
+            // 保存会见时间
+            editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
+            editor.commit();
+
+            //通知RemoteMeetingPager修改上次会见时间文本
+            EventBus.getDefault().post(new MeetingTimeEvent());
+        }
     }
 
     @Override

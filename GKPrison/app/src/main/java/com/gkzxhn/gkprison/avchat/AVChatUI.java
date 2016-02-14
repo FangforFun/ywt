@@ -460,11 +460,15 @@ public class AVChatUI implements AVChatUIListener {
         Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         if(!TextUtils.isEmpty(msg) && msg.equals("审核通过")) {
             avChatVideo.setTime(true);// 开始计时
-            avChatVideo.setTopRoot(true);
+            avChatVideo.setTopRoot(true);// 设置顶部栏可见
+            avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
             avChatSurface.setThroughtVisibility(View.GONE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("is_can_video", true);
             editor.commit();
+        }else {
+            // ToDo 审核未通过  自动挂断  家属端提示审核未通过
+
         }
     }
 
@@ -582,6 +586,7 @@ public class AVChatUI implements AVChatUIListener {
                             // ToDo 请求成功隐藏按钮  开始计时  显示音视频切换按钮
                             Log.i("审核通过成功", responseInfo.result.toString());
                             avChatSurface.setExamineButtonVisibility(View.GONE);
+                            avChatVideo.setTime(true);// 开始计时
                         }
 
                         @Override

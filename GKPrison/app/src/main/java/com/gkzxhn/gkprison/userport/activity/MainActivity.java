@@ -32,6 +32,7 @@ import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
 import com.gkzxhn.gkprison.userport.pager.HomePager;
@@ -134,6 +135,11 @@ public class MainActivity extends BaseActivity {
         return view;
     }
 
+    public void onEvent(MeetingTimeEvent event){
+        RemoteMeetPager remoteMeetPager = (RemoteMeetPager) pagerList.get(1);
+        remoteMeetPager.setLastMeetingTime();
+    }
+
     /**
      * 重新登录任务
      */
@@ -195,7 +201,7 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         StatusCode statusCode = NIMClient.getStatus();
-        showToastMsgShort(statusCode.toString());
+//        showToastMsgShort(statusCode.toString());
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);

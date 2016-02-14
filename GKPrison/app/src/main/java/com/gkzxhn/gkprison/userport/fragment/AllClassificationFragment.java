@@ -54,7 +54,6 @@ public class AllClassificationFragment extends BaseFragment {
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
-
     private float count = 0;
     private int cart_id = 0;
     private String tv_count = "0.0";
@@ -167,9 +166,7 @@ public class AllClassificationFragment extends BaseFragment {
         while (cursor1.moveToNext()){
             cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
         }
-        if (category_id == 0){
-            cursor = db.query("Items",null,null,null,null,null,null);
-        }else if (category_id == 1){
+       if (category_id == 1){
             String sql = "select * from Items where category_id = 1";
             cursor = db.rawQuery(sql,null);
         }else if (category_id == 2){

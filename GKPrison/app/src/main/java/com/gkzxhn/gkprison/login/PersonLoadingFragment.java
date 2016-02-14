@@ -113,7 +113,7 @@ public class PersonLoadingFragment extends BaseFragment {
                         btn_login.setClickable(true);
                         successCode = 0;
                     }
-                    showToastMsgShort("返回码..." + code);
+//                    showToastMsgShort("返回码..." + code);
                     break;
                 case 1:// 云信id登录失败
                     successCode = 0;
