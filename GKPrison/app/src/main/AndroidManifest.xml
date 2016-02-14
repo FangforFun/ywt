@@ -237,7 +237,8 @@
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote" />
 
-        <activity android:name=".userport.activity.ContactUsActivity"></activity>
+        <activity android:name=".userport.activity.ContactUsActivity" />
+        <activity android:name=".userport.activity.ReChargeActivity"></activity>
     </application>
 
 </manifest>

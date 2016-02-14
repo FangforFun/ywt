@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,7 +169,7 @@ public class LawsRegulationsActivity extends BaseActivity {
             }else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            holder.tv_laws_regulations_item.setText(lawses.get(position).getTitle());
+            holder.tv_laws_regulations_item.setText(Html.fromHtml(lawses.get(position).getTitle()));
             return convertView;
         }
     }

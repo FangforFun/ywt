@@ -1,8 +1,10 @@
 package com.gkzxhn.gkprison.userport.pager;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -57,6 +60,8 @@ public class RemoteMeetPager extends BasePager {
     private RadioButton rb_top_guide_meeting;
     private RadioButton rb_top_guide_visit;
     private boolean isCommonUser;// 普通用户/监狱用户
+    private TextView tv_remotly_num;
+    private TextView bt_recharge;
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[Utils.afterNDay(30).size()]);// 时间选择
     private ArrayAdapter<String> adapter;
@@ -152,6 +157,8 @@ public class RemoteMeetPager extends BasePager {
     @Override
     public View initView() {
         view = View.inflate(context, R.layout.pager_remote_meeting, null);
+        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
+        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
         tv_meeting_request_name = (TextView) view.findViewById(R.id.tv_meeting_request_name);
         tv_meeting_request_id_num = (TextView) view.findViewById(R.id.tv_meeting_request_id_num);
         tv_meeting_request_relationship = (TextView) view.findViewById(R.id.tv_meeting_request_relationship);
@@ -224,6 +231,13 @@ public class RemoteMeetPager extends BasePager {
                         }
                         break;
                 }
+            }
+        });
+        bt_recharge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ReChargeActivity.class);
+                context.startActivity(intent);
             }
         });
     }
