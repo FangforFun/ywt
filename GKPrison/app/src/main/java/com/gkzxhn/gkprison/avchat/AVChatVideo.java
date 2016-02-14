@@ -109,6 +109,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 showNotify(R.string.avchat_wait_recieve);
                 setRefuseReceive(false);
                 shouldEnableToggle = true;
+                enableToggle();
                 setTopRoot(false);
                 setMiddleRoot(true);
                 setBottomRoot(true);
@@ -124,8 +125,8 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 break;
             case VIDEO:
                 isInSwitch = false;
-                enableToggle();
-                setTime(true);
+//                enableToggle();
+//                setTime(true);
                 if(sp.getBoolean("is_can_video", false)) {
                     setTopRoot(true);
                 }else {
@@ -140,8 +141,13 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 break;
             case OUTGOING_AUDIO_TO_VIDEO:
                 isInSwitch = true;
-                setTime(true);
-                setTopRoot(true);
+                if(sp.getBoolean("is_can_video", false)) {
+                    setTopRoot(true);
+                }else {
+                    setTopRoot(false);
+                }
+//                setTime(true);
+//                setTopRoot(true);
                 setMiddleRoot(false);
                 setBottomRoot(true);
                 break;
@@ -210,8 +216,18 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
-            time.initTime(960);
+            time.initTime(900);
             time.start();
+        }
+    }
+
+    /**
+     * 暴露给其它页面操作设置底部控制开关是否可用
+     */
+    public void setVisibilityToggle(boolean visibility){
+        if(visibility) {
+            shouldEnableToggle = true;
+            enableToggle();
         }
     }
 

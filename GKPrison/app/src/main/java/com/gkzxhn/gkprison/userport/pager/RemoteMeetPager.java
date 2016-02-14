@@ -114,11 +114,6 @@ public class RemoteMeetPager extends BasePager {
                             String message = jsonObject.getString("msg");
                             JSONObject jsonObject1 = jsonObject.getJSONObject("errors");
                             JSONArray jsonArray = jsonObject1.getJSONArray("apply_create");
-//                            String reason_01 = "";
-//                            String reason_02 = "";
-//                            for (int i = 0; i < jsonArray.length(); i++){
-//
-//                            }
                             String reason = "";
                             if(jsonArray.length() == 1) {
                                 reason = jsonArray.getString(0);
@@ -224,7 +219,7 @@ public class RemoteMeetPager extends BasePager {
             tv_meeting_request_id_num.setText(sp.getString("password", ""));
             tv_meeting_request_phone.setText(sp.getString("username", ""));
             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
-            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "上次会见时间：暂无会见"));
+            tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
         }
         adapter = new ArrayAdapter<>(context,
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
@@ -246,7 +241,7 @@ public class RemoteMeetPager extends BasePager {
                             tv_meeting_request_id_num.setText(sp.getString("password", ""));
                             tv_meeting_request_phone.setText(sp.getString("username", ""));
                             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
-                            tv_meeting_last_time.setText(sp.getString("last_meeting_time", "暂无会见"));
+                            tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
                         }
                         break;
                     case R.id.rb_top_guide_visit:
@@ -262,6 +257,13 @@ public class RemoteMeetPager extends BasePager {
                 }
             }
         });
+    }
+
+    /**
+     * 设置上次会见时间
+     */
+    public void setLastMeetingTime(){
+        tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
     }
 
     @Override

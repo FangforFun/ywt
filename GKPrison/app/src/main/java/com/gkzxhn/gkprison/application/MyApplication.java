@@ -14,6 +14,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -74,7 +75,12 @@ public class MyApplication extends Application {
                             Log.i("tag", "User status changed to: " + status);
                             switch (status) {
                                 case KICKOUT:
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    Intent intent;
+                                    if (sp.getBoolean("isCommonUser", true)) {
+                                        intent = new Intent(getApplicationContext(), MainActivity.class);
+                                    } else {
+                                        intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                    }
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
                                     break;
