@@ -31,6 +31,9 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
         super();
         this.strs = strs;
         this.conx = conx;
+        for (String s : strs){
+            Log.i("sssssssss", s);
+        }
     }
 
     @Override
@@ -120,11 +123,15 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
 
 
     class MyFilter extends Filter {
-        List<String> strsContains;
+        List<String> strsContains = new ArrayList<>();
 
         public MyFilter() {
             super();
-            strsContains = strs;
+            strsContains.clear();
+            strsContains.addAll(strs);
+            for (String s : strsContains) {
+                Log.i("filter 构造content", s);
+            }
         }
 
         @Override
@@ -138,15 +145,12 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
 
             //在这里可以获取autoCompeted中输入的信息
             //把字符串中包含这个关键字的item返回给adapter.
-            if (null != constraint && constraint.length() > 0)
-            {
-                for (int i = 0; i < strsContains.size(); i++)
-                {
+            if (null != constraint && constraint.length() > 0) {
+                for (int i = 0; i < strsContains.size(); i++) {
                     String tempstr = strsContains.get(i);
                     //同一做大小写的处理
                     if (tempstr.toLowerCase().contains(constraint.toString()
-                            .toLowerCase()))//包含关键字的添加进去
-                    {
+                            .toLowerCase())){//包含关键字的添加进去
                         strsTemp.add(tempstr);
                     }
                 }

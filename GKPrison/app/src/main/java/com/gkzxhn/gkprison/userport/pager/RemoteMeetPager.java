@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.userport.pager;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
 
@@ -65,6 +67,8 @@ public class RemoteMeetPager extends BasePager {
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;
+    private TextView tv_remotly_num;
+    private TextView bt_recharge;
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -201,6 +205,8 @@ public class RemoteMeetPager extends BasePager {
         rg_top_guide = (RadioGroup) view.findViewById(R.id.rg_top_guide);
         rb_top_guide_meeting = (RadioButton) view.findViewById(R.id.rb_top_guide_meeting);
         rb_top_guide_visit = (RadioButton) view.findViewById(R.id.rb_top_guide_visit);
+        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
+        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
         Drawable[] drawables = rb_top_guide_meeting.getCompoundDrawables();
         drawables[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
         rb_top_guide_meeting.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -255,6 +261,13 @@ public class RemoteMeetPager extends BasePager {
                         }
                         break;
                 }
+            }
+        });
+        bt_recharge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ReChargeActivity.class);
+                context.startActivity(intent);
             }
         });
     }
