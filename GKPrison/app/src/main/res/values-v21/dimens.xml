@@ -22,4 +22,5 @@
     <dimen name="ok_cancel_title_size">18sp</dimen>
     <dimen name="tv_cancel_size">16sp</dimen>
     <dimen name="ok_cancel_title_padding">20dp</dimen>
+    <dimen name="main_body_text">14sp</dimen>
 </resources>
