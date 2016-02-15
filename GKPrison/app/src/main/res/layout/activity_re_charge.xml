@@ -6,52 +6,178 @@
     tools:context="com.gkzxhn.gkprison.userport.activity.ReChargeActivity">
     <TextView
         android:id="@+id/tv_charge"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="请选择充值金额"
         android:textSize="@dimen/tv_cancel_size"
         android:textColor="@color/tv_mid"
         android:gravity="center_vertical"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:background="@color/white"/>
     <View
         android:id="@+id/fengge"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#dadada"
         android:layout_below="@+id/tv_charge"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:background="@android:color/white"
+        android:layout_below="@+id/fengge"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <View
+                android:layout_width="1dp"
+                android:layout_height="70dp"
+                android:background="#dadada"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <View
+                android:layout_width="1dp"
+                android:layout_height="70dp"
+                android:background="#dadada"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <View
+                android:layout_width="1dp"
+                android:layout_height="70dp"
+                android:background="#dadada"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <View
+                android:layout_width="1dp"
+                android:layout_height="70dp"
+                android:background="#dadada"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
     <RadioGroup
+        android:id="@+id/rg_recharge"
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:layout_below="@+id/fengge"
         android:orientation="horizontal"
         >
         <RadioButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/main_tab_style"
+            style="@style/main_tab_style1"
             android:text="5元"
-            android:textColor="#6495ed"
-            android:textSize="@dimen/ok_cancel_title_size"/>
+            android:layout_marginRight="1dp"
+            />
         <RadioButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/main_tab_style"
+            style="@style/main_tab_style1"
             android:text="20元"
-            android:textColor="#6495ed"
-            android:textSize="@dimen/ok_cancel_title_padding"/>
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="1dp"
+            android:layout_gravity="center"
+            />
         <RadioButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/main_tab_style"
+            style="@style/main_tab_style1"
             android:text="50元"
-            android:textColor="#6495ed"
-            android:textSize="@dimen/ok_cancel_title_padding"/>
+            android:layout_marginRight="1dp"
+            android:layout_marginLeft="1dp"
+            />
         <RadioButton
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            style="@style/main_tab_style"
+            style="@style/main_tab_style1"
             android:text="100元"
-            android:textColor="#6495ed"
-            android:textSize="@dimen/ok_cancel_title_padding"/>
+            android:layout_marginLeft="1dp"
+            />
     </RadioGroup>
+    <View
+        android:id="@+id/fengge2"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#dadada"
+        android:layout_below="@+id/rg_recharge"/>
+    <Button
+        android:id="@+id/btn_recharge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fengge2"
+        android:background="@color/theme"
+        android:text="充值"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:textSize="@dimen/ok_cancel_title_padding"
+        android:textColor="@color/white"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
+    <TextView
+        android:id="@+id/tv_biaoti"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/main_body_text"
+        android:text="充值说明:"
+        android:paddingLeft="10dp"
+        android:textColor="@color/tv_mid"
+        android:layout_below="@+id/btn_recharge"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        />
+    <TextView
+        android:id="@+id/tv_text1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="1、狱务通为用户免费提供远程探监业务,但用户需承担租赁服务器以及视频通话业务的相关费用。"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/tv_mid"
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/tv_biaoti"/>
+    <TextView
+        android:id="@+id/tv_text2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="2、用户充值后,可点击“申请远程探监”按钮进行申请,系统审核通过后方扣费,系统审核不通过不扣费。"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:textColor="@color/tv_mid"
+        android:textSize="@dimen/main_body_text"
+        android:layout_marginTop="2dp"
+        android:layout_below="@+id/tv_text1"/>
+    <TextView
+        android:id="@+id/tv_text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/main_body_text"
+        android:textColor="@color/tv_mid"
+        android:text="3、审核通过后,无论您是否接听视频通话,都将扣除一定费用,费用不返还,不累计到下一次使用。"
+        android:layout_below="@+id/tv_text2"
+        android:layout_marginTop="2dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"/>
+    <TextView
+        android:id="@+id/tv_text4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/tv_mid"
+        android:textSize="@dimen/main_body_text"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:layout_below="@+id/tv_text3"
+        android:text="4、当可用次数为“0”时,狱务通远程探监申请将不可点击,请您及时续费。"
+        />
 </RelativeLayout>
