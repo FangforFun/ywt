@@ -175,7 +175,6 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         registerNetCallObserver(false);
         cancelCallingNotifier();
         needFinish = true;
-        EventBus.getDefault().unregister(this);
         if(sp.getBoolean("isCommonUser", true)){
             // 如果是普通用户  视频结束恢复未审查状态
             SharedPreferences.Editor editor = sp.edit();
@@ -184,9 +183,15 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
             editor.commit();
 
-            //通知RemoteMeetingPager修改上次会见时间文本
-            EventBus.getDefault().post(new MeetingTimeEvent());
+            new Thread(){
+                @Override
+                public void run() {
+                    //通知RemoteMeetingPager修改上次会见时间文本
+                    EventBus.getDefault().post(new MeetingTimeEvent());
+                }
+            }.start();
         }
+        EventBus.getDefault().unregister(this);
     }
 
     @Override

@@ -90,7 +90,7 @@ public class SplashActivity extends BaseActivity {
      */
     private void checkNewVersion() {
         HttpUtils httpUtils = new HttpUtils();
-        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "versions/last?access_token=" + sp.getString("token", ""), new RequestCallBack<Object>() {
+        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "versions/last", new RequestCallBack<Object>() {
             @Override
             public void onSuccess(ResponseInfo<Object> responseInfo) {
                 Log.i("检查更新成功", responseInfo.result.toString());

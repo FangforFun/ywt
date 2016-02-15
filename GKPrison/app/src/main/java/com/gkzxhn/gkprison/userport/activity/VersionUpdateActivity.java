@@ -128,91 +128,44 @@ public class VersionUpdateActivity extends BaseActivity {
         View update_view = View.inflate(VersionUpdateActivity.this, R.layout.update_dialog, null);
         tv_progress = (TextView) update_view.findViewById(R.id.tv_progress);
         pb_update = (ProgressBar) update_view.findViewById(R.id.pb_update);
-//        dpv_update = (DownloadProgressBar) update_view.findViewById(R.id.dpv_update);
-//        dpv_update.setOnProgressUpdateListener(new DownloadProgressBar.OnProgressUpdateListener() {
-//            @Override
-//            public void onProgressUpdate(float currentPlayTime) {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationStarted() {
-//                dpv_update.setEnabled(false);
-//            }
-//
-//            @Override
-//            public void onAnimationEnded() {
-//
-//            }
-//
-//            @Override
-//            public void onAnimationSuccess() {
-//            }
-//
-//            @Override
-//            public void onAnimationError() {
-//
-//            }
-//
-//            @Override
-//            public void onManualProgressStarted() {
-//
-//            }
-//
-//            @Override
-//            public void onManualProgressEnded() {
-//
-//            }
-//        });
-//        dpv_update.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dpv_update.playManualProgressAnimation();
-//            }
-//        });
-//        tv_progress.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                    //sd卡可用，用于存放下载的apk
-                    //1.下载
-                    HttpUtils httpUtils = new HttpUtils();
-                    httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
-                        @Override
-                        public void onSuccess(ResponseInfo<File> responseInfo) {
-                            //2.安装apk
-                            download_successed = true;
-                            Log.i("变啦", "变啦" + download_successed);
-                            handler.postDelayed(install_apk_task, 1000);
-                            dialog.dismiss();
-                            bt_update.setClickable(true);
-                        }
-
-                        @Override
-                        public void onFailure(HttpException e, String s) {
-                            e.printStackTrace();
-                            Log.i("版本更新...", e.getMessage() + "----" + s);
-                            Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                            bt_update.setClickable(true);
-                        }
-
-                        @Override
-                        public void onLoading(long total, long current, boolean isUploading) {
-                            super.onLoading(total, current, isUploading);
-                            int progress = (int) (current * 100 / total);
-                            pb_update.setMax(100);
-                            pb_update.setProgress(progress);
-                            tv_progress.setText(progress + "%");
-                            Log.i("下载进度", current + "----" + progress + "---" + total);
-                        }
-                    });
-                } else {
-                    //sd卡不可用
-                    Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            //sd卡可用，用于存放下载的apk
+            //1.下载
+            HttpUtils httpUtils = new HttpUtils();
+            httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
+                @Override
+                public void onSuccess(ResponseInfo<File> responseInfo) {
+                    //2.安装apk
+                    download_successed = true;
+                    Log.i("变啦", "变啦" + download_successed);
+                    handler.postDelayed(install_apk_task, 1000);
+                    dialog.dismiss();
+                    bt_update.setClickable(true);
                 }
-//            }
-//        });
+
+                @Override
+                public void onFailure(HttpException e, String s) {
+                    e.printStackTrace();
+                    Log.i("版本更新...", e.getMessage() + "----" + s);
+                    Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    bt_update.setClickable(true);
+                }
+
+                @Override
+                public void onLoading(long total, long current, boolean isUploading) {
+                    super.onLoading(total, current, isUploading);
+                    int progress = (int) (current * 100 / total);
+                    pb_update.setMax(100);
+                    pb_update.setProgress(progress);
+                    tv_progress.setText(progress + "%");
+                    Log.i("下载进度", current + "----" + progress + "---" + total);
+                }
+            });
+        } else {
+            //sd卡不可用
+            Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
+        }
         builder.setView(update_view);
         dialog = builder.create();
         dialog.show();
@@ -232,11 +185,10 @@ public class VersionUpdateActivity extends BaseActivity {
     private Runnable install_apk_task = new Runnable() {
         @Override
         public void run() {
-//            Toast.makeText(VersionUpdateActivity.this, "下载成功...", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent("android.intent.action.VIEW");
-            intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
-                    "application/vnd.android.package-archive");
-            startActivity(intent);
+        Intent intent = new Intent("android.intent.action.VIEW");
+        intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
+                "application/vnd.android.package-archive");
+        startActivity(intent);
         }
     };
 
@@ -250,7 +202,7 @@ public class VersionUpdateActivity extends BaseActivity {
             @Override
             public void run() {
                 SystemClock.sleep(2000);
-                httpUtils.send(HttpRequest.HttpMethod.GET,Constants.URL_HEAD+"versions/last?access_token="+sp.getString("token",""),new RequestCallBack<Object>() {
+                httpUtils.send(HttpRequest.HttpMethod.GET,Constants.URL_HEAD+"versions/last",new RequestCallBack<Object>() {
                     @Override
                     public void onSuccess (ResponseInfo < Object > responseInfo) {
                         Log.i("检查更新成功", responseInfo.result.toString());

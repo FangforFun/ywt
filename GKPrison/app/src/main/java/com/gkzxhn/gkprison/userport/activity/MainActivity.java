@@ -149,7 +149,7 @@ public class MainActivity extends BaseActivity {
             RequestCallback callback = new RequestCallback() {
                 @Override
                 public void onSuccess(Object o) {
-                    showToastMsgShort("重新登录成功");
+//                    showToastMsgShort("重新登录成功");
                     Log.i("MainActivity", "MainActivity重新登录了");
                 }
 
@@ -201,7 +201,6 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void initData() {
         StatusCode statusCode = NIMClient.getStatus();
-//        showToastMsgShort(statusCode.toString());
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);

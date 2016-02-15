@@ -132,6 +132,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 //                            showToastMsgShort("取消成功");
                             progressDialog.setMessage("取消成功");
                             handler.postDelayed(dismissProgressDialogTask, 1500);
+                            meetingListAdapter.notifyDataSetChanged();
                         }else {
                             // 失败 code为500
                             showToastMsgLong("取消失败，请稍后再试");
@@ -168,6 +169,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      */
     private void parseResult(String result) {
         meetingInfos = new ArrayList<>();
+        meetingInfos.clear();
         try {
             JSONArray jsonArray = new JSONArray(result);
             for (int i = 0; i < jsonArray.length(); i++){
@@ -504,7 +506,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         public void onClick(View v) {
                             String reason = et_cancel_reason.getText().toString().trim();
                             if (!TextUtils.isEmpty(reason)) {
-                                sendCancelMeetingToServer(meetingInfos.get(position).getId(), reason);
+                                sendCancelMeetingToServer(position, meetingInfos.get(position).getId(), reason);
                                 cancel_meeting_dialog.dismiss();
                             } else {
                                 showToastMsgShort("请输入理由");
@@ -527,7 +529,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     /**
      * 发送取消会见至服务器
      */
-    private void sendCancelMeetingToServer(final int id, final String reason) {
+    private void sendCancelMeetingToServer(final int position, final int id, final String reason) {
         if (Utils.isNetworkAvailable()) {
             progressDialog = new ProgressDialog(this);
             progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -545,9 +547,11 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         entity.setContentType("application/json");
                         httpPatch.setEntity(entity);
                         HttpResponse response = httpClient.execute(httpPatch);
+                        Log.i("取消会见", "{\"accept_apply\":{\"status\":\"cancel\",\"reason\":\"" + reason + "\"}}");
                         if (response.getStatusLine().getStatusCode() == 200) {
                             String result = EntityUtils.toString(response.getEntity(), "utf-8");
                             Log.i("取消会见2", result);
+                            meetingInfos.remove(meetingInfos.get(position));
                             Message message = handler.obtainMessage();
                             message.what = 1;
                             message.obj = result;
