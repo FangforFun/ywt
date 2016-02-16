@@ -469,7 +469,7 @@ public class AVChatUI implements AVChatUIListener {
             editor.commit();
         }else {
             // ToDo 审核未通过  自动挂断  家属端提示审核未通过
-
+            hangUp(AVChatExitCode.HANGUP);
         }
     }
 

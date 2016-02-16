@@ -162,8 +162,11 @@
         <activity
             android:name=".userport.activity.AlarmActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".userport.activity.ReChargeActivity"
+        <activity android:name=".userport.activity.ContactUsActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".userport.activity.ReChargeActivity"
+            android:screenOrientation="portrait" />
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -238,9 +241,5 @@
         <receiver
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote" />
-
-        <activity android:name=".userport.activity.ContactUsActivity"
-            android:screenOrientation="portrait"></activity>
     </application>
-
 </manifest>

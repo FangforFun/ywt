@@ -32,6 +32,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     private View topRoot;
     private View switchAudio;
     private Anticlockwise time;
+    private TextView tv_shengyu_time;// 剩余时间
     private TextView netUnstableTV;
     //中间控制按钮
     private View middleRoot;
@@ -74,6 +75,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         switchAudio = topRoot.findViewById(R.id.avchat_video_switch_audio);
         switchAudio.setOnClickListener(this);
         time = (Anticlockwise) topRoot.findViewById(R.id.avchat_video_time);
+        tv_shengyu_time = (TextView) topRoot.findViewById(R.id.tv_shengyu_time);
         netUnstableTV = (TextView) topRoot.findViewById(R.id.avchat_video_netunstable);
 
         middleRoot = root.findViewById(R.id.avchat_video_middle_control);
@@ -214,6 +216,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     public void setTime(boolean visible){
         Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
+        tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
             time.initTime(900);
@@ -328,7 +331,9 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
 
     @Override
     public void onTimeChanged(long s) {
-        if(s <= 180) //剩余会话时间小于3分钟时间颜色报红
+        if(s <= 180) { //剩余会话时间小于3分钟时间颜色报红
             time.setTextColor(context.getResources().getColor(R.color.tv_red));
+            tv_shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));
+        }
     }
 }
