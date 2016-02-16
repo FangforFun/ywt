@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -44,6 +45,7 @@ import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.userport.bean.Register;
 import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
 import com.gkzxhn.gkprison.utils.Base64;
+import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.ImageTools;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
@@ -276,6 +278,12 @@ public class RegisterActivity extends BaseActivity {
         rb_male = (RadioButton) view.findViewById(R.id.rb_male);
         rb_female = (RadioButton) view.findViewById(R.id.rb_female);
         iv_user_icon = (ImageView) view.findViewById(R.id.iv_user_icon);
+        Drawable[] drawables = rb_male.getCompoundDrawables();
+        drawables[0].setBounds(0, 0, DensityUtil.dip2px(getApplicationContext(), 30), DensityUtil.dip2px(getApplicationContext(), 30));
+        rb_male.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+        Drawable[] drawables2 = rb_female.getCompoundDrawables();
+        drawables2[0].setBounds(0, 0, DensityUtil.dip2px(getApplicationContext(), 30), DensityUtil.dip2px(getApplicationContext(), 30));
+        rb_female.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
         return view;
     }
 

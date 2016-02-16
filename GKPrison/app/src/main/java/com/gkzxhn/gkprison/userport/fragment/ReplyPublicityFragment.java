@@ -25,6 +25,7 @@ import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nim.uikit.common.media.picker.adapter.PickerAlbumAdapter;
+import com.umeng.analytics.MobclickAgent;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -106,11 +107,23 @@ public class ReplyPublicityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int i = replys.get(position).getId();
                 Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
-                intent.putExtra("id",i);
+                intent.putExtra("id", i);
                 startActivity(intent);
             }
         });
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("ReplyPublicityFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("ReplyPublicityFragment");
     }
 
     private void getNews() {

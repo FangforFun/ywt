@@ -18,7 +18,6 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
-import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
 import com.gkzxhn.gkprison.utils.SystemUtil;
@@ -28,6 +27,7 @@ import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
+import com.umeng.analytics.MobclickAgent;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,6 +46,7 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        MobclickAgent.openActivityDurationTrack(false);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         new Handler().postDelayed(new Runnable() {
             @Override

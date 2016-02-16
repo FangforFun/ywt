@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.login.view.NiceSpinner;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * activity基类
@@ -66,6 +67,18 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         rl_content.addView(view);
         initData();
         rl_back.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);// 统计时长
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 
     /**

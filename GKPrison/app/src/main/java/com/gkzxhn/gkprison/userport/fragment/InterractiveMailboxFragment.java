@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Reply;
+import com.umeng.analytics.MobclickAgent;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -89,6 +90,17 @@ public class InterractiveMailboxFragment extends Fragment {
         }
     };
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        MobclickAgent.onPageStart("InterractiveMailboxFragment"); //统计页面，"MainScreen"为页面名称，可自定义
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        MobclickAgent.onPageEnd("InterractiveMailboxFragment");
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
