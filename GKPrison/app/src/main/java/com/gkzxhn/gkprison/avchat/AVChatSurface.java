@@ -43,6 +43,7 @@ public class AVChatSurface {
     private View surfaceRoot;
     private Handler uiHandler;
     private FrameLayout fl_examine;
+    private TextView tv_examine;
     private Button bt_through_examine;
     private Button bt_not_through_examine;
 
@@ -116,6 +117,7 @@ public class AVChatSurface {
             iv_meeting_ic_card = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_ic_card);
             iv_meeting_icon = (ImageView) surfaceRoot.findViewById(R.id.iv_meeting_icon);
             fl_examine = (FrameLayout) surfaceRoot.findViewById(R.id.fl_examine);
+            tv_examine = (TextView) surfaceRoot.findViewById(R.id.tv_examine);
             bt_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_through_examine);
             bt_not_through_examine = (Button) surfaceRoot.findViewById(R.id.bt_not_through_examine);
             smallSizePreviewFrameLayout.setOnTouchListener(touchListener);
@@ -235,6 +237,7 @@ public class AVChatSurface {
      */
     public void setThroughtVisibility(int visibility){
         fl_examine.setVisibility(visibility);
+        tv_examine.setVisibility(visibility);
     }
 
     public void onCallStateChange(CallStateEnum state) {
@@ -254,7 +257,6 @@ public class AVChatSurface {
                 iv_meeting_icon.setVisibility(View.GONE);
                 bt_through_examine.setVisibility(View.GONE);
                 bt_not_through_examine.setVisibility(View.GONE);
-                fl_examine.setVisibility(View.VISIBLE);
                 AVChatManager.getInstance().setMute(true);// 静音
                 String network_type = SystemUtil.GetNetworkType(context);
                 Log.i("当前网络状态", "------------" + network_type);
@@ -408,6 +410,10 @@ public class AVChatSurface {
         SurfaceView surfaceView = AVChatManager.getInstance().getSurfaceRender(account);
         if (surfaceView != null) {
             addIntoLargeSizePreviewLayout(surfaceView);
+        }
+        if(sp.getBoolean("isCommonUser", false)){
+            fl_examine.setVisibility(View.VISIBLE);
+            tv_examine.setVisibility(View.VISIBLE);
         }
     }
 

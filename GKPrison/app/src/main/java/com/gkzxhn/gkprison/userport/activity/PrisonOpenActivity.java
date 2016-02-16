@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Html;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -277,8 +278,8 @@ public class PrisonOpenActivity extends BaseActivity {
             }
             String t = Constants.RESOURSE_HEAD+newsList.get(position).getImage_url();
             Picasso.with(holder.iv_home_news_icon.getContext()).load(t).into(holder.iv_home_news_icon);
-            holder.tv_home_news_title.setText(newsList.get(position).getTitle());
-            holder.tv_home_news_content.setText(newsList.get(position).getContents());
+            holder.tv_home_news_title.setText(Html.fromHtml(newsList.get(position).getTitle()));
+            holder.tv_home_news_content.setText(Html.fromHtml(newsList.get(position).getContents()));
             return convertView;
         }
     }

@@ -83,6 +83,8 @@ public class AllClassificationFragment extends BaseFragment {
                                 db.execSQL(sql1);
                             }
                         }
+                        commodities.clear();
+                        getDate();
                     }else if (m.equals("error")){
                         Toast.makeText(context, "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
@@ -92,7 +94,6 @@ public class AllClassificationFragment extends BaseFragment {
     };
     @Override
     protected View initView() {
-
         view = View.inflate(context,R.layout.fragment_all_classification,null);
         lv_allclass = (PullToRefreshListView)view.findViewById(R.id.lv_allclassification);
         return view;
@@ -110,7 +111,6 @@ public class AllClassificationFragment extends BaseFragment {
         getDate();
         adapter = new SalesAdapter();
         lv_allclass.setAdapter(adapter);
-
     }
     private class GetDateTask extends AsyncTask<Void,Void,List<Commodity>>{
 
@@ -153,13 +153,10 @@ public class AllClassificationFragment extends BaseFragment {
         }
     }
 
-
-
-
     private void getDate(){
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
-        category_id = bundle.getInt("leibie", 0);
+        category_id = bundle.getInt("leibie", 1);
         String sql1 = "select id from Cart where time = '"+times+"'";
         Cursor cursor = null;
         Cursor cursor1 = db.rawQuery(sql1, null);

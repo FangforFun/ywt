@@ -44,6 +44,7 @@
             android:paddingBottom="3dp">
 
             <TextView
+                android:id="@+id/tv_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="申请时间："
@@ -152,27 +153,27 @@
             android:paddingBottom="3dp"
             android:visibility="gone">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="3dp"
-                android:paddingBottom="3dp">
+            <!--<LinearLayout-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:paddingTop="3dp"-->
+                <!--android:paddingBottom="3dp">-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="探监时间："
-                    android:textSize="16sp"
-                    android:textColor="@color/tv_bg"/>
+                <!--<TextView-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="探监时间："-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:textColor="@color/tv_bg"/>-->
 
-                <TextView
-                    android:id="@+id/tv_visit_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="2015年10月11日"
-                    android:textSize="16sp"
-                    android:textColor="@color/tv_bg"/>
-            </LinearLayout>
+                <!--<TextView-->
+                    <!--android:id="@+id/tv_visit_time"-->
+                    <!--android:layout_width="wrap_content"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:text="2015年10月11日"-->
+                    <!--android:textSize="16sp"-->
+                    <!--android:textColor="@color/tv_bg"/>-->
+            <!--</LinearLayout>-->
 
             <TextView
                 android:layout_width="wrap_content"
