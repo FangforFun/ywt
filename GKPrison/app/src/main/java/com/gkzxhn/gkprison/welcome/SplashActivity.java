@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
@@ -37,10 +38,12 @@ public class SplashActivity extends BaseActivity {
 
     private SharedPreferences sp;
     private VersionInfo versionInfo;
+    private TextView tv_version;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_splash,null);
+        tv_version = (TextView) view.findViewById(R.id.tv_version);
         return view;
     }
 
@@ -48,13 +51,14 @@ public class SplashActivity extends BaseActivity {
     protected void initData() {
         MobclickAgent.openActivityDurationTrack(false);
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        tv_version.setText("V " + SystemUtil.getVersionName(this));
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 boolean isFirst = sp.getBoolean("is_first", true);
                 Intent intent;
-                if (!sp.getBoolean("isLock", false)) {
-                    if (isFirst) {
+                if (!sp.getBoolean("isLock", false)) { // 是否加锁
+                    if (isFirst) { // 是否是第一次进入应用
                         intent = new Intent(SplashActivity.this, WelcomeActivity.class);
                         startActivity(intent);
                     } else {
@@ -62,7 +66,6 @@ public class SplashActivity extends BaseActivity {
                             intent = new Intent(SplashActivity.this, LoadingActivity.class);
                             startActivity(intent);
                         } else {
-
                             if (sp.getBoolean("isCommonUser", true)) {
                                 intent = new Intent(SplashActivity.this, MainActivity.class);
                                 startActivity(intent);

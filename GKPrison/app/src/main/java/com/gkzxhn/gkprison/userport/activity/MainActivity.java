@@ -10,17 +10,23 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -31,6 +37,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
+import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
@@ -54,7 +61,9 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -64,6 +73,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 主activity
@@ -85,6 +95,11 @@ public class MainActivity extends BaseActivity {
     private boolean isRegisteredUser;
     private MyPagerAdapter adapter;
     private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
+    private AutoCompleteTextView actv_prison_choose;
+    private AutoTextAdapater autoTextAdapater;
+    private String data; // 监狱选择访问服务器返回的字符串
+    private List<String> suggest;// 自动提示的集合
+    private Map<String, Integer> prison_map;
 
     private Handler handler = new Handler(){
         @Override
@@ -232,10 +247,20 @@ public class MainActivity extends BaseActivity {
             pagerList.add(new HomePager(this));
             pagerList.add(new RemoteMeetPager(this));
             pagerList.add(new CanteenPager(this));
+            layoutMain();
         }else {
             pagerList.add(new HomePager(this));
+            showPrisonDialog();// 弹出监狱选择框
         }
 
+        rl_home_menu.setOnClickListener(this);
+        rl_message.setOnClickListener(this);
+    }
+
+    /**
+     * 布局
+     */
+    private void layoutMain() {
         adapter = new MyPagerAdapter();
         home_viewPager.setAdapter(adapter);
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -309,8 +334,95 @@ public class MainActivity extends BaseActivity {
 
             }
         });
-        rl_home_menu.setOnClickListener(this);
-        rl_message.setOnClickListener(this);
+    }
+
+    /**
+     * 无账号快捷登录进入首页弹出对话框选择监狱
+     *   不能不选
+     */
+    private void showPrisonDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setCancelable(false);
+        View prison_choose = View.inflate(this, R.layout.prison_choose_dialog, null);
+        builder.setView(prison_choose);
+        Button bt_ok = (Button) prison_choose.findViewById(R.id.bt_ok);
+        actv_prison_choose = (AutoCompleteTextView) prison_choose.findViewById(R.id.actv_prison_choose);
+        actv_prison_choose.setThreshold(1);
+        actv_prison_choose.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                String newText = s.toString();
+                new GetSuggestData().execute(newText);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+        final AlertDialog dialog = builder.create();
+        bt_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String content = actv_prison_choose.getText().toString().trim();
+                if (TextUtils.isEmpty(content)) {
+                    showToastMsgShort("请输入监狱名称");
+                    return;
+                } else {
+//                    showToastMsgShort("选择完成...测试");
+                    dialog.dismiss();
+                    layoutMain();// 布局
+                }
+            }
+        });
+        dialog.show();
+    }
+
+    /**
+     * 监狱提示任务
+     */
+    private class GetSuggestData extends AsyncTask<String,String,String> {
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            autoTextAdapater = new AutoTextAdapater(suggest, MainActivity.this);
+            actv_prison_choose.setAdapter(autoTextAdapater);
+        }
+
+        @Override
+        protected String doInBackground(String... key) {
+            String newText = key[0];
+            newText = newText.trim();
+            newText = newText.replace(" ", "+");
+            if(Utils.isNetworkAvailable()) {
+                try {
+                    HttpClient hClient = new DefaultHttpClient();
+                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
+                    ResponseHandler<String> rHandler = new BasicResponseHandler();
+                    data = hClient.execute(hGet, rHandler);
+                    suggest = new ArrayList<>();
+                    prison_map.clear();
+                    JSONObject jsonObject = new JSONObject(data);
+                    JSONArray jArray = jsonObject.getJSONArray("jails");
+                    for (int i = 0; i < jArray.length(); i++) {
+                        JSONObject jsonObject1 = jArray.getJSONObject(i);
+                        String suggestKey = jsonObject1.getString("title");
+                        int id = jsonObject1.getInt("id");
+                        suggest.add(suggestKey);
+                        prison_map.put(suggestKey, id);
+                    }
+                } catch (Exception e) {
+                    Log.w("Error", e.getMessage());
+                }
+            }
+            return null;
+        }
     }
 
     /**

@@ -100,8 +100,7 @@ public class RegisterActivity extends BaseActivity {
     private ImageView iv_user_icon;// 头像
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
-    private ArrayAdapter<String> aAdapter; // actv_prison_choose适配器
-    private AutoTextAdapater autoTextAdapater;
+    private AutoTextAdapater autoTextAdapater; // actv_prison_choose适配器
     private String data; // 监狱选择访问服务器返回的字符串
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
