@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.userport.bean.AA;
@@ -147,7 +149,35 @@ public class CanteenFragment extends BaseFragment {
             }
         }
     };
-
+    private Handler handlerbilling = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
+                    db.execSQL(sql);
+                    String s = (String)msg.obj;
+                    int a = getResultcode(s);
+                    if (a == 200) {
+                        Intent intent = new Intent(context, PaymentActivity.class);
+                        intent.putExtra("totalmoney", send);
+                        intent.putExtra("TradeNo", TradeNo);
+                        intent.putExtra("times", times);
+                        intent.putExtra("cart_id", cart_id);
+                        context.startActivity(intent);
+                    }else {
+                      showToastMsgShort("连接服务器失败");
+                    }
+                    break;
+                case 2:
+                    showToastMsgShort("连接服务器失败");
+                    break;
+                case 3:
+                    showToastMsgShort("连接服务器失败");
+                    break;
+            }
+        }
+    };
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -446,16 +476,6 @@ public class CanteenFragment extends BaseFragment {
                 public void onClick(View v) {
                     if (allcount != 0) {
                         sendOrderToServer();
-                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
-                        db.execSQL(sql);
-                        int a = getResultcode(result);
-                            Intent intent = new Intent(context, PaymentActivity.class);
-                            intent.putExtra("totalmoney", send);
-                            intent.putExtra("TradeNo", TradeNo);
-                            intent.putExtra("times", times);
-                            intent.putExtra("cart_id",cart_id);
-                            context.startActivity(intent);
-
                     } else {
                         Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
                     }
@@ -575,6 +595,8 @@ public class CanteenFragment extends BaseFragment {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpPost post = new HttpPost(url+token);
                 String s = url+token;
+                Looper.prepare();
+                Message msg = handlerbilling.obtainMessage();
                 try {
                     StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
@@ -584,17 +606,18 @@ public class CanteenFragment extends BaseFragment {
                     if (response.getStatusLine().getStatusCode() == 200){
                          result = EntityUtils.toString(response.getEntity(), "UTF-8");
                          Log.d("成功",result);
-
+                         msg.what = 1;
+                         msg.obj = result;
+                         handlerbilling.sendMessage(msg);
+                    }else {
+                       handlerbilling.sendEmptyMessage(2);
                     }
-                }  catch (UnsupportedEncodingException e) {
+                }  catch (Exception e) {
+                    handlerbilling.sendEmptyMessage(3);
                     e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                } finally {
+                    Looper.loop();
                 }
-
-
             }
 
         }.start();

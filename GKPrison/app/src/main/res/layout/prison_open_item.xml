@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="昭通市食药监局到昭通监狱开展警示教育"
-                android:maxLines="2"
+                android:maxLines="1"
                 android:gravity="center_vertical"
                 android:textColor="@color/tv_bg"
                 android:layout_marginTop="10dp"
@@ -48,13 +48,5 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/iv_home_news_go"
-            android:layout_width="0dp"
-            android:layout_height="20dp"
-            android:layout_weight="0.2"
-            android:src="@drawable/toright"
-            android:layout_gravity="center_vertical"
-            android:layout_marginRight="5dp"/>
     </LinearLayout>
 </RelativeLayout>
