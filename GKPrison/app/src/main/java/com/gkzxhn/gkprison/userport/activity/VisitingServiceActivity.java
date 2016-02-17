@@ -1,21 +1,15 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
-import android.util.Log;
+import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -24,22 +18,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,9 +44,6 @@ import java.util.List;
  * 工作动态
  */
 public class VisitingServiceActivity extends BaseActivity {
-    private final int[] CAROUSEL_IVS = {R.drawable.img1, R.drawable.img2, R.drawable.img3, R.drawable.img3};
-    private final String[] NEWS_TITLES = {"【刑罚执行】昭通市食药监局到昭通监狱开展警示教育", "【狱政管理】第二届换届选举张全蛋公选为监狱长", "【教育改造】第二届换届选举张全蛋公选为监狱长", "【劳动改造】第二届换届选举张全蛋公选为监狱长"};
-    private final String[] NEWS_CONTENTS = {"    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政...", "2015年12月15日，广东监狱举办第二届换届选举，张全蛋以最多票数被选为监狱长。", "2015年12月15日，广东监狱举办第二届换届选举，张全蛋以最多票数被选为监狱长。", "2015年12月15日，广东监狱举办第二届换届选举，张全蛋以最多票数被选为监狱长。"};
     private ListView lv_prison_open;
     private RelativeLayout rl_carousel;
     private RollViewPager vp_carousel;
@@ -288,8 +274,8 @@ public class VisitingServiceActivity extends BaseActivity {
             }
             String t = Constants.RESOURSE_HEAD+newsList.get(position).getImage_url();
             Picasso.with(holder.iv_home_news_icon.getContext()).load(t).into(holder.iv_home_news_icon);
-            holder.tv_home_news_title.setText(newsList.get(position).getTitle());
-            holder.tv_home_news_content.setText(newsList.get(position).getContents());
+            holder.tv_home_news_title.setText(Html.fromHtml(newsList.get(position).getTitle()));
+            holder.tv_home_news_content.setText(Html.fromHtml(newsList.get(position).getContents()));
             return convertView;
         }
     }

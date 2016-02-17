@@ -98,4 +98,5 @@
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
+    <string name="enable_logined">注册后可用</string>
 </resources>
