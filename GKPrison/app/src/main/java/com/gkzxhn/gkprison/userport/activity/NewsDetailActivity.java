@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -32,7 +33,12 @@ public class NewsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         int id = getIntent().getIntExtra("id",2);
-        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/news/"+ id);
+//        Log.i("详情页收到的id", id + "");
+        WebSettings webSettings = wv_news_detail.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
+        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/news/" + id);
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
@@ -41,8 +47,6 @@ public class NewsDetailActivity extends BaseActivity {
                 super.onPageFinished(view, url);
             }
         });
-        WebSettings webSettings = wv_news_detail.getSettings();
-        webSettings.setJavaScriptEnabled(true);
     }
 
     @Override

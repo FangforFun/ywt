@@ -3,10 +3,8 @@ package com.gkzxhn.gkprison.userport.fragment;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +23,6 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
-import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
 import com.lidroid.xutils.BitmapUtils;
 import com.netease.nimlib.sdk.NIMClient;
@@ -89,7 +85,7 @@ public class MenuFragment extends BaseFragment{
                             intent = new Intent(context, UserInfoActivity.class);
                             startActivity(intent);
                         } else {
-                            showToastMsgShort("注册后可用");
+                            showToastMsgShort(context.getString(R.string.enable_logined));
                         }
                         break;
                     case 1:
@@ -97,7 +93,7 @@ public class MenuFragment extends BaseFragment{
                             intent = new Intent(context, RemittanceRecordActivity.class);
                             context.startActivity(intent);
                         } else {
-                            showToastMsgShort("注册后可用");
+                            showToastMsgShort(context.getString(R.string.enable_logined));
                         }
                         break;
                     case 2:
@@ -105,7 +101,7 @@ public class MenuFragment extends BaseFragment{
                             intent = new Intent(context, ShoppingRecoderActivity.class);
                             context.startActivity(intent);
                         } else {
-                            showToastMsgShort("注册后可用");
+                            showToastMsgShort(context.getString(R.string.enable_logined));
                         }
                         break;
                     case 3:

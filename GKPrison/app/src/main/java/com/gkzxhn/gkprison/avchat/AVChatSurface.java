@@ -348,20 +348,17 @@ public class AVChatSurface {
                     public void onClick(View v) {
                         // ToDo
                         final AlertDialog dialog = new AlertDialog.Builder(context).create();
-                        ImageView imgView = getView(sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""));
-                        imgView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT));
-                        dialog.setView(imgView);
                         Window dialogWindow = dialog.getWindow();
                         WindowManager.LayoutParams lp = dialogWindow.getAttributes();
                         dialogWindow.setGravity(Gravity.BOTTOM | Gravity.LEFT);
-                        lp.width = WindowManager.LayoutParams.WRAP_CONTENT; // 宽度
-                        lp.height = WindowManager.LayoutParams.WRAP_CONTENT; // 高度
-                        lp.alpha = 0.95f; // 透明度
                         dialogWindow.setAttributes(lp);
+                        View view = View.inflate(context, R.layout.icon_dialog, null);
+                        ImageView imageView = (ImageView) view.findViewById(R.id.iv_meeting_icon);
+                        bitmapUtils.display(imageView, sp.getString(current_show == 1 ? "img_url_01" : "img_url_02", ""));
+                        dialog.setView(view);
                         dialog.show();
                         // 点击图片消失
-                        imgView.setOnClickListener(new View.OnClickListener() {
+                        imageView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
                                 dialog.dismiss();
