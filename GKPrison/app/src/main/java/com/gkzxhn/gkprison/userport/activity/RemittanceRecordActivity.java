@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -24,7 +25,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     private SharedPreferences sp;
     private String prisonernum = "";
     private List<Remittance> remittances = new ArrayList<Remittance>();
-    private TextView noonerecode;
+    private ImageView iv_recode;
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
 
 
@@ -32,7 +33,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_remittance,null);
         lv_remittance = (ListView)view.findViewById(R.id.lv_remittance);
-        noonerecode = (TextView)view.findViewById(R.id.tv_recode);
+        iv_recode = (ImageView) view.findViewById(R.id.iv_recode);
         return view;
     }
 
@@ -44,9 +45,9 @@ public class RemittanceRecordActivity extends BaseActivity {
         prisonernum = sp.getString("prisoner_number","1");
         getDate();
         if (remittances.size() == 0){
-            noonerecode.setVisibility(View.VISIBLE);
+            iv_recode.setVisibility(View.VISIBLE);
         }else {
-            noonerecode.setVisibility(View.GONE);
+            iv_recode.setVisibility(View.GONE);
         }
         adapter = new RemittanceAdapter();
         lv_remittance.setAdapter(adapter);

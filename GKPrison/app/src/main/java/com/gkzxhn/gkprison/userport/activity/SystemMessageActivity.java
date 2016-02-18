@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,14 +34,14 @@ public class SystemMessageActivity extends BaseActivity {
     private List<SystemMessage> messageList = new ArrayList<>();
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private SystemMsgAdapter msgAdapter;
-    private TextView tv_no_system_message;
+    private ImageView iv_no_system_message;
     private SharedPreferences sp;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_system_message, null);
         lv_system_msg = (ListView) view.findViewById(R.id.lv_system_msg);
-        tv_no_system_message = (TextView) view.findViewById(R.id.tv_no_system_message);
+        iv_no_system_message = (ImageView) view.findViewById(R.id.iv_no_system_message);
         return view;
     }
 
@@ -54,22 +55,22 @@ public class SystemMessageActivity extends BaseActivity {
         setTitle("系统消息");
         setBackVisibility(View.VISIBLE);
         getMessageList();
-        for (SystemMessage systemMessage : messageList){
+        for (SystemMessage systemMessage : messageList) {
             Log.i("消息数据。。。", systemMessage.toString());
         }
-        if(messageList.size() > 0) {
+        if (messageList.size() > 0) {
             Collections.reverse(messageList);
         }
-        if(msgAdapter == null) {
+        if (msgAdapter == null) {
             msgAdapter = new SystemMsgAdapter();
             lv_system_msg.setAdapter(msgAdapter);
-        }else {
+        } else {
             msgAdapter.notifyDataSetChanged();
         }
-        if(messageList.size() == 0){
-            tv_no_system_message.setVisibility(View.VISIBLE);
-        }else {
-            tv_no_system_message.setVisibility(View.GONE);
+        if (messageList.size() == 0) {
+            iv_no_system_message.setVisibility(View.VISIBLE);
+        } else {
+            iv_no_system_message.setVisibility(View.GONE);
         }
     }
 
@@ -78,7 +79,7 @@ public class SystemMessageActivity extends BaseActivity {
      */
     private void getMessageList() {
         Cursor cursor = db.query("sysmsg", null, null, null, null, null, null);
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
             SystemMessage systemMessage = new SystemMessage();
             String name = cursor.getString(cursor.getColumnIndex("name"));
             String apply_date = cursor.getString(cursor.getColumnIndex("apply_date"));
@@ -89,7 +90,7 @@ public class SystemMessageActivity extends BaseActivity {
             String reason = cursor.getString(cursor.getColumnIndex("reason"));
             String receive_time = cursor.getString(cursor.getColumnIndex("receive_time"));
             String user_id = cursor.getString(cursor.getColumnIndex("user_id"));
-            if(user_id.equals(sp.getString("username", ""))) {
+            if (user_id.equals(sp.getString("username", ""))) {
                 systemMessage.setMsg_receive_time(receive_time);
                 systemMessage.setReason(reason);
                 systemMessage.setName(name);
@@ -105,10 +106,10 @@ public class SystemMessageActivity extends BaseActivity {
             }
         }
         cursor.close();
-        if(msgAdapter == null) {
+        if (msgAdapter == null) {
             msgAdapter = new SystemMsgAdapter();
             lv_system_msg.setAdapter(msgAdapter);
-        }else {
+        } else {
             msgAdapter.notifyDataSetChanged();
         }
     }
@@ -116,20 +117,20 @@ public class SystemMessageActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(messageList.size() == 0){
-            tv_no_system_message.setVisibility(View.VISIBLE);
-        }else {
-            tv_no_system_message.setVisibility(View.GONE);
+        if (messageList.size() == 0) {
+            iv_no_system_message.setVisibility(View.VISIBLE);
+        } else {
+            iv_no_system_message.setVisibility(View.GONE);
         }
-        if(msgAdapter == null) {
+        if (msgAdapter == null) {
             msgAdapter = new SystemMsgAdapter();
             lv_system_msg.setAdapter(msgAdapter);
-        }else {
+        } else {
             msgAdapter.notifyDataSetChanged();
         }
     }
 
-    private class SystemMsgAdapter extends BaseAdapter{
+    private class SystemMsgAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -149,14 +150,14 @@ public class SystemMessageActivity extends BaseActivity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             SystemMsgViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.system_msg_item, null);
                 holder = new SystemMsgViewHolder();
                 holder.tv_system_msg_left = (TextView) convertView.findViewById(R.id.tv_system_msg_left);
                 holder.tv_system_msg_right = (TextView) convertView.findViewById(R.id.tv_system_msg_right);
                 holder.tv_system_msg_time = (TextView) convertView.findViewById(R.id.tv_system_msg_time);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (SystemMsgViewHolder) convertView.getTag();
             }
             String msg_time = messageList.get(position).getMsg_receive_time();
@@ -166,34 +167,33 @@ public class SystemMessageActivity extends BaseActivity {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            if(StringUtils.isCurrentYear(msg_mills)) {// 是否是今年的消息
+            if (StringUtils.isCurrentYear(msg_mills)) {// 是否是今年的消息
                 if (StringUtils.isToday(msg_mills)) {// 是否是今天的消息
                     holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "HH:mm"));
                 } else {// 不是今天的精确到某月某日
                     holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "MM-dd HH:mm"));
                 }
-            }else {// 不是今年的时间显示精确到年份
+            } else {// 不是今年的时间显示精确到年份
                 holder.tv_system_msg_time.setText(StringUtils.formatTime(msg_mills, "yyyy-MM-dd HH:mm"));
             }
-            if(messageList.get(position).getType_id() == 1) {// 会见
-                if(messageList.get(position).getResult().contains("已通过")){
+            if (messageList.get(position).getType_id() == 1) {// 会见
+                if (messageList.get(position).getResult().contains("已通过")) {
                     holder.tv_system_msg_left.setText(LEFT_TVS[2]);
-                }else {
+                } else {
                     holder.tv_system_msg_left.setText(LEFT_TVS[3]);
                 }
-            }else if(messageList.get(position).getType_id() == 2){// 探监
-                if(messageList.get(position).getResult().contains("已通过")){
+            } else if (messageList.get(position).getType_id() == 2) {// 探监
+                if (messageList.get(position).getResult().contains("已通过")) {
                     holder.tv_system_msg_left.setText(LEFT_TVS[0]);
-                }else {
+                } else {
                     holder.tv_system_msg_left.setText(LEFT_TVS[1]);
                 }
-            }else {
-                // ToDo
+            } else {
             }
-            if(!messageList.get(position).is_read()){
+            if (!messageList.get(position).is_read()) {
                 holder.tv_system_msg_right.setText("点击查看详情");
                 holder.tv_system_msg_right.setTextColor(getResources().getColor(R.color.theme));
-            }else {
+            } else {
                 holder.tv_system_msg_right.setText("已查看");
                 holder.tv_system_msg_right.setTextColor(getResources().getColor(R.color.tv_mid));
             }
@@ -223,7 +223,7 @@ public class SystemMessageActivity extends BaseActivity {
         }
     }
 
-    private static class SystemMsgViewHolder{
+    private static class SystemMsgViewHolder {
         TextView tv_system_msg_left;
         TextView tv_system_msg_right;
         TextView tv_system_msg_time;
@@ -232,7 +232,7 @@ public class SystemMessageActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(db != null && db.isOpen()){
+        if (db != null && db.isOpen()) {
             db.close();
         }
     }
