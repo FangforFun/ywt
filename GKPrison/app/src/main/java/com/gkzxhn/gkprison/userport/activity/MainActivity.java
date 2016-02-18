@@ -72,6 +72,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -250,9 +251,9 @@ public class MainActivity extends BaseActivity {
             layoutMain();
         }else {
             pagerList.add(new HomePager(this));
+            prison_map = new HashMap<>();
             showPrisonDialog();// 弹出监狱选择框
         }
-
         rl_home_menu.setOnClickListener(this);
         rl_message.setOnClickListener(this);
     }
@@ -282,7 +283,7 @@ public class MainActivity extends BaseActivity {
                             setActionBarGone(View.VISIBLE);
                             setMessageVisibility(View.GONE);
                         } else {
-                            showToastMsgShort("注册后可用");
+                            showToastMsgShort(getString(R.string.enable_logined));
                         }
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
@@ -293,7 +294,7 @@ public class MainActivity extends BaseActivity {
                             setActionBarGone(View.VISIBLE);
                             setMessageVisibility(View.GONE);
                         } else {
-                            showToastMsgShort("注册后可用");
+                            showToastMsgShort(getString(R.string.enable_logined));
                         }
                         break;
                 }
