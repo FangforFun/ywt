@@ -67,6 +67,7 @@ public class RemoteMeetPager extends BasePager {
     private ArrayAdapter<String> adapter;
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;
+    private String id_num;// 身份证号
 //    private TextView tv_remotly_num;
 //    private TextView bt_recharge;
 
@@ -106,7 +107,7 @@ public class RemoteMeetPager extends BasePager {
                         }
                     });
                     if(code == 200) {
-                        tv_msg_dialog.setText("提交成功，提交结果将会以短信方式发送至您的手机，请注意查收。");
+                        tv_msg_dialog.setText("申请提交成功，系统将以短信和系统消息形式通知您申请结果，请注意查收。");
                         commit_success_dialog.show();
                         bt_commit_request.setEnabled(true);
                         String committed_meeting_time = sp.getString("committed_meeting_time", "");
@@ -151,7 +152,7 @@ public class RemoteMeetPager extends BasePager {
                     View view_01_ = visit_success_dialog_view.findViewById(R.id.view_01);
                     view_01_.setVisibility(View.GONE);
                     TextView tv_msg_dialog_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
-                    tv_msg_dialog_.setText("提交成功，提交结果会以短信方式发送至您的手机，请注意查收。");
+                    tv_msg_dialog_.setText("申请提交成功，系统将以短信和系统消息形式通知您申请结果，请注意查收。");
                     TextView tv_cancel_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_cancel);
                     tv_cancel_.setVisibility(View.GONE);
                     TextView tv_ok_ = (TextView) visit_success_dialog_view.findViewById(R.id.tv_ok);
@@ -219,10 +220,13 @@ public class RemoteMeetPager extends BasePager {
     @Override
     public void initData() {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        id_num = sp.getString("password", "");
         isCommonUser = sp.getBoolean("isCommonUser", false);
         if(isCommonUser){
             tv_meeting_request_name.setText(sp.getString("name", ""));
-            tv_meeting_request_id_num.setText(sp.getString("password", ""));
+            String start_ = id_num.substring(0, 5);
+            String end_ = id_num.substring(id_num.length() - 4, id_num.length());
+            tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
             tv_meeting_request_phone.setText(sp.getString("username", ""));
             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
             tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
@@ -244,7 +248,9 @@ public class RemoteMeetPager extends BasePager {
                         rl_visit.setVisibility(View.GONE);
                         if (isCommonUser) {
                             tv_meeting_request_name.setText(sp.getString("name", ""));
-                            tv_meeting_request_id_num.setText(sp.getString("password", ""));
+                            String start_ = id_num.substring(0, 5);
+                            String end_ = id_num.substring(id_num.length() - 4, id_num.length());
+                            tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
                             tv_meeting_request_phone.setText(sp.getString("username", ""));
                             tv_meeting_request_relationship.setText(sp.getString("relationship", ""));
                             tv_meeting_last_time.setText("上次会见时间：" + sp.getString("last_meeting_time", "暂无会见"));
@@ -255,7 +261,9 @@ public class RemoteMeetPager extends BasePager {
                         rl_visit.setVisibility(View.VISIBLE);
                         if (isCommonUser) {
                             tv_visit_request_name.setText(sp.getString("name", ""));
-                            tv_visit_request_id_num.setText(sp.getString("password", ""));
+                            String start_ = id_num.substring(0, 5);
+                            String end_ = id_num.substring(id_num.length() - 4, id_num.length());
+                            tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
                             tv_visit_request_phone.setText(sp.getString("username", ""));
                             tv_visit_request_relationship.setText(sp.getString("relationship", ""));
                         }
@@ -291,7 +299,7 @@ public class RemoteMeetPager extends BasePager {
                     if(!TextUtils.isEmpty(bs_meeting_request_time.getText().toString())) {
                         String committed_meeting_time = sp.getString("committed_meeting_time", "");
                         if(committed_meeting_time.contains(bs_meeting_request_time.getText().toString())){
-                            showToastMsgLong("您已经申请过" + bs_meeting_request_time.getText().toString() + "的会见，请勿重复申请!");
+                            showToastMsgLong("您已申请过当日远程探监，请选择其他日期。");
                             return;
                         }else {
                             sendMeetingRequestToServer();
@@ -312,7 +320,7 @@ public class RemoteMeetPager extends BasePager {
                     if(!TextUtils.isEmpty(bs_visit_request_time.getText().toString())) {
                         String committed_time = sp.getString("committed_time", "");
                         if(committed_time.contains(bs_visit_request_time.getText().toString())){
-                            showToastMsgLong("您已经申请过" + bs_visit_request_time.getText().toString() + "的实地探监，请勿重复申请!");
+                            showToastMsgLong("您已申请过当日实地探监，请选择其他日期。");
                             return;
                         }else {
                             sendVisitRequestToServer();

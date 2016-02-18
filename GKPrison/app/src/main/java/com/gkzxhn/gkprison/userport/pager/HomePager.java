@@ -224,8 +224,8 @@ public class HomePager extends BasePager {
         int focus_news_1_id = sp.getInt("focus_news_1_id", 0);
         if(!TextUtils.isEmpty(focus_news_1_title) && !TextUtils.isEmpty(focus_news_1_content) && !TextUtils.isEmpty(focus_news_1_img_url) && focus_news_1_id != 0){
             // 有第一条缓存新闻
-            tv_home_news_title1.setText(focus_news_1_title);
-            tv_home_news_content1.setText(focus_news_1_content);
+            tv_home_news_title1.setText(Html.fromHtml(focus_news_1_title));
+            tv_home_news_content1.setText(Html.fromHtml(focus_news_1_content));
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon1, Constants.RESOURSE_HEAD + focus_news_1_img_url);
         }
@@ -236,8 +236,8 @@ public class HomePager extends BasePager {
         int focus_news_2_id = sp.getInt("focus_news_2_id", 0);
         if(!TextUtils.isEmpty(focus_news_2_title) && !TextUtils.isEmpty(focus_news_2_content) && !TextUtils.isEmpty(focus_news_2_img_url) && focus_news_2_id != 0){
             // 有第二条缓存新闻
-            tv_home_news_title2.setText(focus_news_2_title);
-            tv_home_news_content2.setText(focus_news_2_content);
+            tv_home_news_title2.setText(Html.fromHtml(focus_news_2_title));
+            tv_home_news_content2.setText(Html.fromHtml(focus_news_2_content));
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon2, Constants.RESOURSE_HEAD + focus_news_2_img_url);
         }
@@ -248,8 +248,8 @@ public class HomePager extends BasePager {
         int focus_news_3_id = sp.getInt("focus_news_3_id", 0);
         if(!TextUtils.isEmpty(focus_news_3_title) && !TextUtils.isEmpty(focus_news_3_content) && !TextUtils.isEmpty(focus_news_3_img_url) && focus_news_3_id != 0){
             // 有第三条缓存新闻
-            tv_home_news_title3.setText(focus_news_3_title);
-            tv_home_news_content3.setText(focus_news_3_content);
+            tv_home_news_title3.setText(Html.fromHtml(focus_news_3_title));
+            tv_home_news_content3.setText(Html.fromHtml(focus_news_3_content));
             bitmapUtils = new BitmapUtils(context);
             bitmapUtils.display(iv_home_news_icon3, Constants.RESOURSE_HEAD + focus_news_3_img_url);
         }

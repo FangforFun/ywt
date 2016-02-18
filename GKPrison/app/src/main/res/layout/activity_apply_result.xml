@@ -178,14 +178,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="路线指引："
+                android:text="注意事项："
                 android:textSize="16sp"
                 android:textColor="@color/tv_mid"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="一、自驾车路线指引：\n1、湖南高速汝湖高速路口——德山监狱：从出口向右方向出发，进入惠民大道，经中信大桥转入三环北路，直行进入三环东路，往常德方向走，进入G324国道，后在第一个红绿灯路口左转进入新乐路，行驶约2公里后到达德山监狱。\n\n二、市区搭乘公交车路线指引：\n1、常德汽车总站——德山监狱：在常德汽车总站对面马路乘坐3路公交车可直达德山监狱（终点）。\n2、常德南高铁站——德山监狱：可搭乘常德汽车站——常德南站交通大巴到常德市汽车总站，走过常德汽车总站对面转乘3路公交车直达德山监狱。"
+                android:text="&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;请在预约当天，携带个人身份证前往监狱进行探监。"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/tv_bg"
@@ -235,7 +235,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1、除开近亲属外，其余人士请勿参与远程会见，若有违反，监狱管理人员有权切断远程会见页，并且从严控制犯人探监和远程会见机会。\n2、您的通话或者会见可能会被监控，请谅解。\n3、其余未尽事宜，我们将以短信形式通知到您，请留意您的手机信息。"
+                android:text="&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1、远程探监申请只允许申请人单独视频，其余人等不可视频也不可通话，否则狱警有权切断视频页，并将对帐号进行封号处理。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2、视频中请勿使用外语、隐语或暗号，请勿谈论违法、违规问题，违者封号处理。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;3、视频开始前，狱警将会对您的资料进行审核，请不要挂断视频。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;4、您的通话可能会被录音，敬请谅解。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;5、临时变动或其余未尽事宜，我们将以短信形式通知您，敬请留意。"
                 android:textSize="16sp"
                 android:layout_marginTop="5dp"
                 android:textColor="@color/tv_bg"

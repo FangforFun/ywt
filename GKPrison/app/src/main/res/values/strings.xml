@@ -28,7 +28,7 @@
     <string name="title_activity_splash">SplashActivity</string>
     <string name="title_activity_agreement">AgreementActivity</string>
     <string name="title_activity_apply_barcode">ApplyBarcodeActivity</string>
-    <string name="tanjian_notice">探监须知：\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供方便快捷的探监申请服务，申请通过后，您即可在约定的时间内前往监狱探监。\n1、根据规定，服刑人员每月只能接受两次及以内的探视服务。\n2、部分服刑人员不提供探视服务。\n3、狱务通探监服务暂时只对直系近亲属开放，请谅解。\n4、本服务端每月只能提交3次探监申请，请勿无故提交，以免浪费机会。</string>
+    <string name="tanjian_notice">实地探监须知：\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1、狱务通APP注册用户可在APP端申请实地探监，通过后可凭身份证在约定日期前往监狱探监。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2、同一ID可同时申请不同日期，但同一日期只可申请一次。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;3、服刑人员每月最多只接受两次探视。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;4、请留意您的手机短信和系统消息，提前规划好行程，若因申请人问题导致实地探监失败，狱务通软件和监狱方不承担任何责任。</string>
     <string name="title_activity_apply_result">ApplyResultActivity</string>
 
     <string name="sunday">日</string>
@@ -82,7 +82,7 @@
     <string name="avchat_in_switch">请耐心等待！</string>
     <string name="avchat_device_no_ready">音视频设备未准备好</string>
     <string name="title_activity_laws_detail">LawsDetailActivity</string>
-    <string name="meeting_note">会见须知： \n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供远程探监服务，您可以通过狱务通申请探监，并通过手机视频和服刑人员进行远程探视。 在申请远程探监前，请您详细阅读以下注意事项：\n1、服刑人员每月可远程探监次数不限。 \n2、部分服刑人员不提供探视服务。 \n3、狱务通软件暂时只提供直系亲属远程探视，请谅解。 \n4、根据安全要求，您的会见信息可能会被记录。 \n5、每次会见需缴纳一定费用，请勿无故提交远程探监申请。</string>
+    <string name="meeting_note">远程探监须知： \n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;1、狱务通为您提供免费的远程探监服务，但您需支付租赁服务器和音视频通话服务的租赁费用。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;2、同一ID只可申请同一日期一次，但可同时申请不同日期。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;3、服刑人员可接受多次远程探监，重刑犯等人员除外。\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;4、请留意您的手机短信和系统消息，视频当天请提前上线等候，若因申请人问题导致远程探监失败，狱务通软件和监狱方不承担任何责任，探监费用不返还、不推至下一次使用。</string>
     <string name="alarm_remind"><![CDATA[        温馨提示：您与德山监狱的远程视频会见即将开始，请连接好网络做好准备。]]></string>
 
 
@@ -98,5 +98,7 @@
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
     <string name="pull_to_refresh_tap_label">Tap to refresh...</string>
-    <string name="enable_logined">注册后可用</string>
+
+
+    <string name="enable_logined">登录后可用</string>
 </resources>

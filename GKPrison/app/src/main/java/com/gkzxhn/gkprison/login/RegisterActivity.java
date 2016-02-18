@@ -200,7 +200,6 @@ public class RegisterActivity extends BaseActivity {
                     try {
                         JSONObject jsonObject = new JSONObject(register_result);
                         int register_back_code = jsonObject.getInt("code");
-                        Log.i("呵呵呵呵", register_back_code + "");
                         if(register_back_code == 200){
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                             builder.setCancelable(false);
@@ -334,7 +333,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     /**
-     *
+     * 监狱查找任务
      */
     private class GetSuggestData extends AsyncTask<String,String,String> {
 
@@ -408,7 +407,6 @@ public class RegisterActivity extends BaseActivity {
                 register.setName(name);
                 register.setUuid(ic_card);
                 register.setPhone(phone_num);
-//                register.setPhoto(user_icon.getImage_data());
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
                 register.setGender(rg_sex.getCheckedRadioButtonId() == R.id.rb_male ? "男" : "女");

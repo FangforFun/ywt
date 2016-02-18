@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -33,7 +32,6 @@ public class NewsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         int id = getIntent().getIntExtra("id",2);
-//        Log.i("详情页收到的id", id + "");
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);

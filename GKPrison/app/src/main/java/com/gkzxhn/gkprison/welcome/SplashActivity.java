@@ -29,6 +29,8 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UpdateStatus;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -49,6 +51,11 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        UmengUpdateAgent.setUpdateOnlyWifi(false);// 任意网络模式下都提示
+        UmengUpdateAgent.setUpdateUIStyle(UpdateStatus.STYLE_NOTIFICATION);// 通知栏提示形式(默认是dialog)
+        UmengUpdateAgent.setDeltaUpdate(true);// 增量更新
+        UmengUpdateAgent.setUpdateAutoPopup(true);// 更新提示开关(默认为true)
+        UmengUpdateAgent.update(this);// 友盟更新
         MobclickAgent.openActivityDurationTrack(false);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         tv_version.setText("V " + SystemUtil.getVersionName(this));
@@ -83,9 +90,9 @@ public class SplashActivity extends BaseActivity {
             }
         }, 1500);
         setActionBarGone(View.GONE);
-        if(sp.getBoolean("isRegisteredUser", false)) {
-            checkNewVersion();
-        }
+//        if(sp.getBoolean("isRegisteredUser", false)) {
+//            checkNewVersion();
+//        }
         copyDB("chaoshi.db");
     }
 
