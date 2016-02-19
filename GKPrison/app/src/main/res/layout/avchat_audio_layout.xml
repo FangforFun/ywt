@@ -20,6 +20,7 @@
             android:layout_height="wrap_content">
 
             <Button
+                android:id="@+id/avchat_video_switch_audio"
                 android:clickable="false"
                 android:layout_centerInParent="true"
                 android:background="@color/transparent"
@@ -35,8 +36,39 @@
                 android:textColor="@color/white"
                 android:textSize="13sp"
                 android:visibility="visible" />
-            <!--</FrameLayout>-->
         </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="5dp">
+
+            <TextView
+                android:id="@+id/tv_shengyu_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="剩余时间："
+                android:layout_below="@+id/avchat_video_switch_audio"
+                android:textColor="@color/white"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:textSize="13sp"
+                android:visibility="visible"/>
+
+            <com.gkzxhn.gkprison.avchat.Anticlockwise
+                android:id="@+id/avchat_video_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/avchat_video_switch_audio"
+                android:textColor="@color/white"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/tv_shengyu_time"
+                android:textSize="13sp"
+                android:visibility="visible" />
+
+        </LinearLayout>
 
         <com.netease.nim.uikit.common.ui.imageview.HeadImageView
             android:id="@+id/avchat_audio_head"

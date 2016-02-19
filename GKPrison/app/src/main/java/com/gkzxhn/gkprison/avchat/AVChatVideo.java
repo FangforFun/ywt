@@ -219,7 +219,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
-            time.initTime(900);
+            time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "")));
             time.start();
         }
     }
@@ -331,6 +331,9 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
 
     @Override
     public void onTimeChanged(long s) {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("current_ms", s + "");
+        editor.commit();// 保存当前剩余时间
         if(s <= 180) { //剩余会话时间小于3分钟时间颜色报红
             time.setTextColor(context.getResources().getColor(R.color.tv_red));
             tv_shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));

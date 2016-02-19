@@ -442,6 +442,7 @@ public class AVChatUI implements AVChatUIListener {
                 // 界面布局切换。
                 onCallStateChange(CallStateEnum.AUDIO);
                 onVideoToAudio();
+                avChatAudio.setSTime(true);
             }
 
             @Override
@@ -466,6 +467,7 @@ public class AVChatUI implements AVChatUIListener {
             avChatSurface.setThroughtVisibility(View.GONE);
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("is_can_video", true);
+            editor.putString("current_ms", 900 + "");
             editor.commit();
         }else {
             // 审核未通过  自动挂断  家属端提示审核未通过
@@ -485,6 +487,7 @@ public class AVChatUI implements AVChatUIListener {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "requestSwitchToVideo onSuccess");
+
             }
 
             @Override
@@ -539,6 +542,12 @@ public class AVChatUI implements AVChatUIListener {
             public void onSuccess(Void aVoid) {
                 onAudioToVideo();
                 initSurfaceView(videoAccount);
+                if(sp.getBoolean("is_can_video", true)){
+                    avChatSurface.setThroughtVisibility(View.GONE);
+                }
+                avChatVideo.setTime(true);// 开始计时
+                avChatVideo.setTopRoot(true);// 设置顶部栏可见
+                avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
             }
 
             @Override

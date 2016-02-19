@@ -123,7 +123,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     break;
                 case 1: // 取消视频成功
                     String cancel_result = (String) msg.obj;
-                    Log.i("到handler了", cancel_result);
                     try {
                         JSONObject jsonObject = new JSONObject(cancel_result);
                         int result_code = jsonObject.getInt("code");
