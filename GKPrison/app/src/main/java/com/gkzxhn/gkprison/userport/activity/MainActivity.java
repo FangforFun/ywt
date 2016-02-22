@@ -124,6 +124,9 @@ public class MainActivity extends BaseActivity {
                         Toast.makeText(getApplicationContext(),"同步数据失败",Toast.LENGTH_SHORT).show();
                     }
                     break;
+                case 2:// 无账号快捷登录监狱选择没有网络
+                    showToastMsgShort("没有网络,请检查网络设置");
+                    break;
             }
         }
     };
@@ -401,13 +404,13 @@ public class MainActivity extends BaseActivity {
             String newText = key[0];
             newText = newText.trim();
             newText = newText.replace(" ", "+");
+            suggest = new ArrayList<>();
             if(Utils.isNetworkAvailable()) {
                 try {
                     HttpClient hClient = new DefaultHttpClient();
                     HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
                     ResponseHandler<String> rHandler = new BasicResponseHandler();
                     data = hClient.execute(hGet, rHandler);
-                    suggest = new ArrayList<>();
                     prison_map.clear();
                     JSONObject jsonObject = new JSONObject(data);
                     JSONArray jArray = jsonObject.getJSONArray("jails");
@@ -421,8 +424,11 @@ public class MainActivity extends BaseActivity {
                 } catch (Exception e) {
                     Log.w("Error", e.getMessage());
                 }
+                return null;
+            } else {
+                handler.sendEmptyMessage(2);
+                return "";
             }
-            return null;
         }
     }
 
