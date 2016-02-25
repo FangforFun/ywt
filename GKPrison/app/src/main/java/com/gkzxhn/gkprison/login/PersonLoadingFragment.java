@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -205,6 +206,7 @@ public class PersonLoadingFragment extends BaseFragment {
 
     @Override
     protected void initData() {
+        HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         bt_register.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -219,11 +221,11 @@ public class PersonLoadingFragment extends BaseFragment {
                 username = et_login_username.getText().toString().trim();
                 ic_card_num = et_login_ic_card_num.getText().toString().trim();
                 identifying_code = et_identifying_code.getText().toString().trim();
-                if(TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)){
+                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                     return;
-                }else {
-                    if(Utils.isNetworkAvailable()) {
+                } else {
+                    if (Utils.isNetworkAvailable()) {
                         btn_login.setEnabled(false);
                         btn_login.setClickable(false);
                         btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
@@ -283,36 +285,47 @@ public class PersonLoadingFragment extends BaseFragment {
                             @Override
                             public void run() {
                                 String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\"" + ic_card_num + "\", \"code\":\"" + identifying_code + "\"}}";
-                                HttpClient httpClient = new DefaultHttpClient();
-                                HttpPost post = new HttpPost(url);
-                                Looper.prepare();
+//                                HttpClient httpClient = new DefaultHttpClient();
+//                                HttpPost post = new HttpPost(url);
+//                                Looper.prepare();
                                 Message msg = handler.obtainMessage();
                                 try {
-                                    StringEntity entity = new StringEntity(str, HTTP.UTF_8);
-                                    entity.setContentType("application/json");
-                                    post.setEntity(entity);
-                                    HttpResponse httpResponse = httpClient.execute(post);
-                                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                                    StringEntity entity = new StringEntity(str, HTTP.UTF_8);
+//                                    entity.setContentType("application/json");
+//                                    post.setEntity(entity);
+//                                    HttpResponse httpResponse = httpClient.execute(post);
+//                                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
+//                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                                        Log.d("登录信息发送成功", result);
+//                                        msg.obj = result;
+//                                        msg.what = 2;
+//                                        handler.sendMessage(msg);
+//                                    } else {
+//                                        handler.sendEmptyMessage(3);
+//                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                                        Log.d("登录信息发送失败", result);
+//                                    }
+                                    String result = HttpRequestUtil.doHttpsPost(url, str);
+                                    if (result.contains("StatusCode is ")) {
+                                        handler.sendEmptyMessage(3);
+                                        Log.d("登录信息发送失败", result);
+                                    } else {
                                         Log.d("登录信息发送成功", result);
                                         msg.obj = result;
                                         msg.what = 2;
                                         handler.sendMessage(msg);
-                                    } else {
-                                        handler.sendEmptyMessage(3);
-                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                                        Log.d("登录信息发送失败", result);
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                     handler.sendEmptyMessage(4);
                                     Log.d("登录信息发送异常", e.getMessage());
-                                } finally {
-                                    Looper.loop();
                                 }
+//                                finally {
+//                                    Looper.loop();
+//                                }
                             }
                         }.start();
-                    }else {
+                    } else {
                         showToastMsgLong("没有网络");
                     }
                 }
@@ -351,34 +364,45 @@ public class PersonLoadingFragment extends BaseFragment {
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    HttpClient httpClient = new DefaultHttpClient();
-                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
-                                    Looper.prepare();
+//                                    HttpClient httpClient = new DefaultHttpClient();
+//                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
+//                                    Looper.prepare();
                                     Message msg = handler.obtainMessage();
                                     try {
-                                        Log.i("已发送", phone_str);
-                                        StringEntity entity = new StringEntity(phone_str);
-                                        entity.setContentType("application/json");
-                                        entity.setContentEncoding("UTF-8");
-                                        post.setEntity(entity);
-                                        HttpResponse response = httpClient.execute(post);
-                                        if (response.getStatusLine().getStatusCode() == 200) {
-                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                                        Log.i("已发送", phone_str);
+//                                        StringEntity entity = new StringEntity(phone_str);
+//                                        entity.setContentType("application/json");
+//                                        entity.setContentEncoding("UTF-8");
+//                                        post.setEntity(entity);
+//                                        HttpResponse response = httpClient.execute(post);
+//                                        if (response.getStatusLine().getStatusCode() == 200) {
+//                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                                            Log.d("发送成功", result);
+//                                            msg.obj = result;
+//                                            msg.what = 7;
+//                                            handler.sendMessage(msg);
+//                                        } else {
+//                                            handler.sendEmptyMessage(8);
+//                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                                            Log.d("发送失败", result);
+//                                        }
+                                        String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL, phone_str);
+                                        if (result.contains("StatusCode is ")) {
+                                            handler.sendEmptyMessage(8);
+                                            Log.d("发送失败", result);
+                                        } else {
                                             Log.d("发送成功", result);
                                             msg.obj = result;
                                             msg.what = 7;
                                             handler.sendMessage(msg);
-                                        } else {
-                                            handler.sendEmptyMessage(8);
-                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                                            Log.d("发送失败", result);
                                         }
                                     } catch (Exception e) {
                                         handler.sendEmptyMessage(9);
                                         Log.i("发送验证码异常", e.getMessage());
-                                    } finally {
-                                        Looper.loop();
                                     }
+//                                    finally {
+//                                        Looper.loop();
+//                                    }
                                 }
                             }.start();
                         } else {

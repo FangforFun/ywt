@@ -7,9 +7,9 @@ package com.gkzxhn.gkprison.constant;
 public class Constants {
 
     // 资源头url
-    public static final String RESOURSE_HEAD = "http://www.fushuile.com"; //10.93.1.10:3000   www.fushuile.com
+    public static final String RESOURSE_HEAD = "https://www.fushuile.com"; //10.93.1.10:3000   www.fushuile.com
     // 头url
-    public static final String URL_HEAD = "http://www.fushuile.com/api/v1/";
+    public static final String URL_HEAD = "https://www.fushuile.com/api/v1/";
     // 监狱端会见列表
     public static final String PRISON_PORT_MEETING_LIST_URL = "applies?accid=";
     // 验证码请求
