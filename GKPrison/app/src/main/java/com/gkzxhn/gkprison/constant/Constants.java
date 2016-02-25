@@ -24,6 +24,6 @@ public class Constants {
     public static final String VIDEO_EXAMIME = "notifications";
 
     // 新版本apk地址
-    public static final String NEW_VERSION_APK_URL = "http://www.fushuile.com/dist/android/1.0.0/app-release.apk";
+    public static final String NEW_VERSION_APK_URL = "https://www.fushuile.com/dist/android/1.0.0/app-release.apk";
 }
 
