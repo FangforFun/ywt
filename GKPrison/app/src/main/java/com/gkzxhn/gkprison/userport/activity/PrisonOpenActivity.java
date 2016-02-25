@@ -91,17 +91,17 @@ public class PrisonOpenActivity extends BaseActivity {
                         lv_prison_open.setAdapter(new MyAdapter());
 
                         List<String> imgurl_list = new ArrayList<>();
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(3).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
                         vp_carousel.initImgUrl(imgurl_list);
 
                         list_news_title.clear();
-                        list_news_title.add(allnews.get(0).getTitle());
-                        list_news_title.add(allnews.get(1).getTitle());
-                        list_news_title.add(allnews.get(2).getTitle());
-                        list_news_title.add(allnews.get(3).getTitle());
+                        list_news_title.add(newsList.get(0).getTitle());
+                        list_news_title.add(newsList.get(1).getTitle());
+                        list_news_title.add(newsList.get(2).getTitle());
+                        list_news_title.add(newsList.get(3).getTitle());
                         vp_carousel.initTitle(list_news_title, top_news_title);
                         vp_carousel.startRoll();
                         top_news_viewpager.removeAllViews();
