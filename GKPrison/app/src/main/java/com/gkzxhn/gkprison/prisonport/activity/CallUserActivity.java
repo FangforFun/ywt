@@ -15,6 +15,7 @@ import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
@@ -23,6 +24,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
+import org.apache.http.client.HttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +43,7 @@ public class CallUserActivity extends BaseActivity {
     private SharedPreferences sp;
     private int family_id;
     private FamilyMeetingInfo familyMeetingInfo;
+    private HttpClient httpClient;
 
     @Override
     protected View initView() {
@@ -58,6 +61,7 @@ public class CallUserActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
@@ -74,21 +78,33 @@ public class CallUserActivity extends BaseActivity {
      */
     private void getMeetingDetailInfo(int family_id) {
         rl_getting.setVisibility(View.VISIBLE);
-        HttpUtils httpUtils = new HttpUtils();
-        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "families/" + family_id
-//                + "?access_token=" + sp.getString("token", "")
-                , new RequestCallBack<Object>() {
-            @Override
-            public void onSuccess(ResponseInfo<Object> responseInfo) {
-                Log.i("会见详细请求成功", responseInfo.result.toString());
-                parseMeetingInfo(responseInfo.result.toString());
+//        HttpUtils httpUtils = new HttpUtils();
+//        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "families/" + family_id
+////                + "?access_token=" + sp.getString("token", "")
+//                , new RequestCallBack<Object>() {
+//            @Override
+//            public void onSuccess(ResponseInfo<Object> responseInfo) {
+//                Log.i("会见详细请求成功", responseInfo.result.toString());
+//                parseMeetingInfo(responseInfo.result.toString());
+//            }
+//
+//            @Override
+//            public void onFailure(HttpException e, String s) {
+//                Log.i("会见详细请求失败", e.getMessage() + "---" + s);
+//            }
+//        });
+        try {
+            String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "families/" + family_id
+                    + "?access_token=" + sp.getString("token", ""));
+            if(result.contains("StatusCode is ")){
+                Log.i("会见详细请求失败", result);
+            }else {
+                Log.i("会见详细请求成功", result);
+                parseMeetingInfo(result);
             }
-
-            @Override
-            public void onFailure(HttpException e, String s) {
-                Log.i("会见详细请求失败", e.getMessage() + "---" + s);
-            }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

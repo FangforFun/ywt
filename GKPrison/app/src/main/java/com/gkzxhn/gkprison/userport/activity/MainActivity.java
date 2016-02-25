@@ -38,6 +38,7 @@ import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
@@ -101,6 +102,7 @@ public class MainActivity extends BaseActivity {
     private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
+    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
         @Override
@@ -219,6 +221,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        httpClient = HttpRequestUtil.initHttpClient(null);
         StatusCode statusCode = NIMClient.getStatus();
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
@@ -407,10 +410,11 @@ public class MainActivity extends BaseActivity {
             suggest = new ArrayList<>();
             if(Utils.isNetworkAvailable()) {
                 try {
-                    HttpClient hClient = new DefaultHttpClient();
-                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
-                    ResponseHandler<String> rHandler = new BasicResponseHandler();
-                    data = hClient.execute(hGet, rHandler);
+//                    HttpClient hClient = new DefaultHttpClient();
+//                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
+//                    ResponseHandler<String> rHandler = new BasicResponseHandler();
+//                    data = hClient.execute(hGet, rHandler);
+                    data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
                     prison_map.clear();
                     JSONObject jsonObject = new JSONObject(data);
                     JSONArray jArray = jsonObject.getJSONArray("jails");
@@ -464,20 +468,31 @@ public class MainActivity extends BaseActivity {
             new Thread() {
                 @Override
                 public void run() {
-                    HttpUtils httpUtils = new HttpUtils();
-                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
-                        @Override
-                        public void onSuccess(ResponseInfo<Object> responseInfo) {
-                            Log.i("请求成功", responseInfo.result.toString());
-                            parseUserInfoResult(responseInfo.result.toString());
+//                    HttpUtils httpUtils = new HttpUtils();
+//                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
+//                        @Override
+//                        public void onSuccess(ResponseInfo<Object> responseInfo) {
+//                            Log.i("请求成功", responseInfo.result.toString());
+//                            parseUserInfoResult(responseInfo.result.toString());
+//                        }
+//
+//                        @Override
+//                        public void onFailure(HttpException e, String s) {
+//                            Log.i("请求失败", s + "---" + e.getMessage());
+//                            showToastMsgShort("请求失败");
+//                        }
+//                    });
+                    try {
+                        String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""));
+                        if(result.contains("StatusCode is ")){
+                            Log.i("请求失败", result);
+                        }else {
+                            Log.i("请求成功", result);
+                            parseUserInfoResult(result);
                         }
-
-                        @Override
-                        public void onFailure(HttpException e, String s) {
-                            Log.i("请求失败", s + "---" + e.getMessage());
-                            showToastMsgShort("请求失败");
-                        }
-                    });
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             }.start();
         }else {
@@ -594,25 +609,38 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpClient httpClient = new DefaultHttpClient();
                     String token = sp.getString("token", "");
-                    HttpGet httpGet = new HttpGet(url + token);
+//                    HttpGet httpGet = new HttpGet(url + token);
                     try {
-                        HttpResponse response = httpClient.execute(httpGet);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+//                        HttpResponse response = httpClient.execute(httpGet);
+//                        if (response.getStatusLine().getStatusCode() == 200) {
+//                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
+//                            msg.obj = "success";
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("result", result);
+//                            msg.setData(bundle);
+//                            msg.what = 1;
+//                            handler.sendMessage(msg);
+//                        } else {
+//                            msg.obj = "error";
+//                            msg.what = 1;
+//                            handler.sendMessage(msg);
+//                        }
+                        String result = HttpRequestUtil.doHttpsGet(url + token);
+                        if(result.contains("StatusCode is ")){
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
                             msg.obj = "success";
                             Bundle bundle = new Bundle();
                             bundle.putString("result", result);
                             msg.setData(bundle);
                             msg.what = 1;
                             handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                         msg.obj = "error";
                         msg.what = 1;

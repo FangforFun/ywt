@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.weiwangcn.betterspinner.library.BetterSpinner;
@@ -68,8 +69,9 @@ public class RemoteMeetPager extends BasePager {
     private ArrayAdapter<String> visit_adapter;
     private ProgressDialog dialog;
     private String id_num;// 身份证号
-//    private TextView tv_remotly_num;
-//    private TextView bt_recharge;
+    private TextView tv_remotly_num;
+    private TextView bt_recharge;
+    private HttpClient httpClient;
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -206,8 +208,8 @@ public class RemoteMeetPager extends BasePager {
         rg_top_guide = (RadioGroup) view.findViewById(R.id.rg_top_guide);
         rb_top_guide_meeting = (RadioButton) view.findViewById(R.id.rb_top_guide_meeting);
         rb_top_guide_visit = (RadioButton) view.findViewById(R.id.rb_top_guide_visit);
-//        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
-//        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
+        tv_remotly_num = (TextView)view.findViewById(R.id.tv_remotely_visit_num);
+        bt_recharge = (TextView)view.findViewById(R.id.bt_remotely);
         Drawable[] drawables = rb_top_guide_meeting.getCompoundDrawables();
         drawables[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
         rb_top_guide_meeting.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -219,6 +221,7 @@ public class RemoteMeetPager extends BasePager {
 
     @Override
     public void initData() {
+        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         id_num = sp.getString("password", "");
         isCommonUser = sp.getBoolean("isCommonUser", false);
@@ -271,13 +274,13 @@ public class RemoteMeetPager extends BasePager {
                 }
             }
         });
-//        bt_recharge.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(context, ReChargeActivity.class);
-//                context.startActivity(intent);
-//            }
-//        });
+        bt_recharge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, ReChargeActivity.class);
+                context.startActivity(intent);
+            }
+        });
     }
 
     /**
@@ -353,28 +356,41 @@ public class RemoteMeetPager extends BasePager {
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
                     String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                     try {
-                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-                        entity.setContentType("application/json");
-                        post.setEntity(entity);
-                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-                        HttpResponse httpResponse = httpClient.execute(post);
-                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            Message msg = handler.obtainMessage();
-                            msg.obj = result;
-                            msg.what = 3;
-                            handler.sendMessage(msg);
-                            Log.d("发送成功", result);
-                        } else {
-                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            Message msg = handler.obtainMessage();
+//                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
+//                        entity.setContentType("application/json");
+//                        post.setEntity(entity);
+//                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
+//                        HttpResponse httpResponse = httpClient.execute(post);
+//                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                            Message msg = handler.obtainMessage();
+//                            msg.obj = result;
+//                            msg.what = 3;
+//                            handler.sendMessage(msg);
+//                            Log.d("发送成功", result);
+//                        } else {
+//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                            Message msg = handler.obtainMessage();
+//                            msg.obj = result;
+//                            msg.what = 4;
+//                            handler.sendMessage(msg);
+//                            Log.d("发送失败", result);
+//                        }
+                        String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
+                        Message msg = handler.obtainMessage();
+                        if(result.contains("StatusCode is ")){
                             msg.obj = result;
                             msg.what = 4;
                             handler.sendMessage(msg);
                             Log.d("发送失败", result);
+                        }else {
+                            msg.obj = result;
+                            msg.what = 3;
+                            handler.sendMessage(msg);
+                            Log.d("发送成功", result);
                         }
                     } catch (Exception e) {
                         Log.d("发送异常", e.getMessage());
@@ -408,28 +424,41 @@ public class RemoteMeetPager extends BasePager {
                             + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
                             + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\""
                             + prisoner_number + "\",\"type_id\":1}}";
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                     try {
-                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-                        entity.setContentType("application/json");
-                        post.setEntity(entity);
-                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-                        HttpResponse httpResponse = httpClient.execute(post);
-                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            Message msg = handler.obtainMessage();
-                            msg.obj = result;
-                            msg.what = 0;
-                            handler.sendMessage(msg);
-                            Log.d("发送成功", result);
-                        } else {
-                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-                            Message msg = handler.obtainMessage();
+//                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
+//                        entity.setContentType("application/json");
+//                        post.setEntity(entity);
+//                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
+//                        HttpResponse httpResponse = httpClient.execute(post);
+//                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
+//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                            Message msg = handler.obtainMessage();
+//                            msg.obj = result;
+//                            msg.what = 0;
+//                            handler.sendMessage(msg);
+//                            Log.d("发送成功", result);
+//                        } else {
+//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
+//                            Message msg = handler.obtainMessage();
+//                            msg.obj = result;
+//                            msg.what = 1;
+//                            handler.sendMessage(msg);
+//                            Log.d("发送失败", result);
+//                        }
+                        String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
+                        Message msg = handler.obtainMessage();
+                        if(result.contains("StatusCode is ")){
                             msg.obj = result;
                             msg.what = 1;
                             handler.sendMessage(msg);
                             Log.d("发送失败", result);
+                        }else {
+                            msg.obj = result;
+                            msg.what = 0;
+                            handler.sendMessage(msg);
+                            Log.d("发送成功", result);
                         }
                     } catch (Exception e) {
                         Log.d("发送异常", e.getMessage());

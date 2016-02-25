@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 
 import org.apache.http.HttpResponse;
@@ -162,22 +163,30 @@ public class OpinionFeedbackActivity extends BaseActivity {
             public void run() {
                 String opinion = "{\"feedback\":{\"contents\":\"" + mopinion_content + "\"}}";
                 Log.i("反馈内容", opinion);
-                HttpClient hc = new DefaultHttpClient();
-                HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.FEEDBACK + token);
-                StringEntity entity = null;
+//                HttpClient hc = new DefaultHttpClient();
+//                HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.FEEDBACK + token);
+//                StringEntity entity = null;
                 try {
-                    entity = new StringEntity(opinion, HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    HttpResponse response = hc.execute(post);
-                    if(response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.i("意见反馈返回", result);
-                        handler.sendEmptyMessage(0);
-                    }else {
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.i("意见反馈返回", result);
+//                    entity = new StringEntity(opinion, HTTP.UTF_8);
+//                    entity.setContentType("application/json");
+//                    post.setEntity(entity);
+//                    HttpResponse response = hc.execute(post);
+//                    if(response.getStatusLine().getStatusCode() == 200){
+//                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+//                        Log.i("意见反馈返回", result);
+//                        handler.sendEmptyMessage(0);
+//                    }else {
+//                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+//                        Log.i("意见反馈返回", result);
+//                        handler.sendEmptyMessage(1);
+//                    }
+                    String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.FEEDBACK + token, opinion);
+                    if(result.contains("StatusCode is ")){
+                        Log.i("意见反馈失败", result);
                         handler.sendEmptyMessage(1);
+                    }else {
+                        Log.i("意见反馈返回成功", result);
+                        handler.sendEmptyMessage(0);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

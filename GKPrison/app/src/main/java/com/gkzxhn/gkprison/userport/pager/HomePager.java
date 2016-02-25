@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +23,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
@@ -37,6 +40,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
+import org.apache.http.client.HttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -97,6 +101,28 @@ public class HomePager extends BasePager {
      * 轮播图导航点集合
      */
     private List<View> dotList = new ArrayList<>();
+    private HttpClient httpClient;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    dialog.dismiss();
+                    setCacheNews();// 若请求失败  则显示缓存新闻
+                    is_request_foucs_news_successed = false;
+                    break;
+                case 1:
+                    String result = (String) msg.obj;
+                    parseFocusNews(result);// 解析焦点新闻
+                    setRoll();
+                    dialog.dismiss();
+                    fillNewsData();// 填充新闻数据
+                    is_request_foucs_news_successed = true;
+                    Log.i("获取焦点新闻成功", result);
+                    break;
+            }
+        }
+    };
 
     public HomePager(Context context) {
         super(context);
@@ -132,6 +158,7 @@ public class HomePager extends BasePager {
 
     @Override
     public void initData() {
+        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
         getFocusNews();// 获取焦点新闻
@@ -172,27 +199,47 @@ public class HomePager extends BasePager {
      */
     private void getFocusNews() {
         showLoadingDialog();
-        HttpUtils httpUtils = new HttpUtils();
+//        HttpUtils httpUtils = new HttpUtils();
         Log.i("获取焦点新闻url", Constants.URL_HEAD + Constants.NEWS_URL);
-        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.NEWS_URL, new RequestCallBack<Object>() {
+//        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.NEWS_URL, new RequestCallBack<Object>() {
+//            @Override
+//            public void onSuccess(ResponseInfo<Object> responseInfo) {
+//                parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
+//                setRoll();
+//                dialog.dismiss();
+//                fillNewsData();// 填充新闻数据
+//                is_request_foucs_news_successed = true;
+//                Log.i("获取焦点新闻成功", responseInfo.result.toString());
+//            }
+//
+//            @Override
+//            public void onFailure(HttpException e, String s) {
+//                dialog.dismiss();
+//                Log.i("获取焦点新闻失败", e.getMessage() + "---" + s);
+//                setCacheNews();// 若请求失败  则显示缓存新闻
+//                is_request_foucs_news_successed = false;
+//            }
+//        });
+        new Thread(){
             @Override
-            public void onSuccess(ResponseInfo<Object> responseInfo) {
-                parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
-                setRoll();
-                dialog.dismiss();
-                fillNewsData();// 填充新闻数据
-                is_request_foucs_news_successed = true;
-                Log.i("获取焦点新闻成功", responseInfo.result.toString());
+            public void run() {
+                try {
+                    String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + Constants.NEWS_URL);
+                    Message msg = handler.obtainMessage();
+                    if(result.contains("StatusCode is ")){
+//                        msg.what = 0;
+                        handler.sendEmptyMessage(0);
+                        Log.i("获取焦点新闻失败", result);
+                    }else {
+                        msg.what = 1;
+                        msg.obj = result;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            @Override
-            public void onFailure(HttpException e, String s) {
-                dialog.dismiss();
-                Log.i("获取焦点新闻失败", e.getMessage() + "---" + s);
-                setCacheNews();// 若请求失败  则显示缓存新闻
-                is_request_foucs_news_successed = false;
-            }
-        });
+        }.start();
     }
 
     /**

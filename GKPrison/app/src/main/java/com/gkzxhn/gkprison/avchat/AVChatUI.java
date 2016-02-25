@@ -593,7 +593,6 @@ public class AVChatUI implements AVChatUIListener {
                     httpUtils.send(HttpRequest.HttpMethod.POST, Constants.URL_HEAD + Constants.VIDEO_EXAMIME, params, new RequestCallBack<Object>() {
                         @Override
                         public void onSuccess(ResponseInfo<Object> responseInfo) {
-                            // ToDo 请求成功隐藏按钮  开始计时  显示音视频切换按钮
                             Log.i("审核通过成功", responseInfo.result.toString());
                             avChatSurface.setExamineButtonVisibility(View.GONE);
                             avChatVideo.setTime(true);// 开始计时
@@ -601,7 +600,6 @@ public class AVChatUI implements AVChatUIListener {
 
                         @Override
                         public void onFailure(HttpException e, String s) {
-                            // ToDo 请求失败不隐藏
                             Log.i("审核通过失败", s);
                         }
                     });
@@ -630,12 +628,12 @@ public class AVChatUI implements AVChatUIListener {
                         public void onSuccess(ResponseInfo<Object> responseInfo) {
                             Log.i("审核不通过成功", responseInfo.result.toString());
                             avChatSurface.setExamineButtonVisibility(View.GONE);
-                            // ToDo 挂断
+                            //  挂断
+                            hangUp(AVChatExitCode.HANGUP);
                         }
 
                         @Override
                         public void onFailure(HttpException e, String s) {
-                            // ToDo 请求失败不隐藏
                             Log.i("审核不通过失败", s);
                         }
                     });
