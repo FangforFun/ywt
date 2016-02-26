@@ -165,16 +165,6 @@ public class HomePager extends BasePager {
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
         tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-        initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-                int i = allnews.get(position).getId();
-                Intent intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                context.startActivity(intent);
-            }
-        });
         gv_home_options.setAdapter(new MyOptionsAdapter());
         ll_home_news1.setOnClickListener(this);
         ll_home_news2.setOnClickListener(this);
@@ -247,20 +237,38 @@ public class HomePager extends BasePager {
      */
     private void setRoll() {
         list_news_title.clear();
-        if (allnews.size() > 0) {
-        list_news_title.add(allnews.get(0).getTitle());
-        list_news_title.add(allnews.get(1).getTitle());
-        list_news_title.add(allnews.get(2).getTitle());
-        vp_carousel.initTitle(list_news_title, top_news_title);
-            List<String> imgurl_list = new ArrayList<>();
+        List<String> imgurl_list = new ArrayList<>();
+        if (allnews.size() > 2) {
+            list_news_title.add(allnews.get(0).getTitle());
+            list_news_title.add(allnews.get(1).getTitle());
+            list_news_title.add(allnews.get(2).getTitle());
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
-            vp_carousel.initImgUrl(imgurl_list);
-            vp_carousel.startRoll();
-            top_news_viewpager.removeAllViews();
-            top_news_viewpager.addView(vp_carousel);
+        } else if(allnews.size() == 1){
+            list_news_title.add(allnews.get(0).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+        } else if(allnews.size() == 2){
+            list_news_title.add(allnews.get(0).getTitle());
+            list_news_title.add(allnews.get(1).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
         }
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+                int i = allnews.get(position).getId();
+                Intent intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("id", i);
+                context.startActivity(intent);
+            }
+        });
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        vp_carousel.initImgUrl(imgurl_list);
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
     }
 
     /**
@@ -443,7 +451,7 @@ public class HomePager extends BasePager {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < list_news_title.size(); i++) {
             View view = new View(context);
             if (i == 0) {
                 view.setBackgroundResource(R.drawable.rb_shape_blue);

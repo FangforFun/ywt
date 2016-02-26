@@ -85,30 +85,7 @@ public class VisitingServiceActivity extends BaseActivity {
                             }
                         });
                         lv_prison_open.setAdapter(new MyAdapter());
-                        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
-                            @Override
-                            public void viewClick(int position) {
-                                int i = allnews.get(position).getId();
-                                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
-                                intent.putExtra("id", i);
-                                VisitingServiceActivity.this.startActivity(intent);
-                            }
-                        });
-                        list_news_title.clear();
-                        list_news_title.add(newsList.get(0).getTitle());
-                        list_news_title.add(newsList.get(1).getTitle());
-                        list_news_title.add(newsList.get(2).getTitle());
-                        list_news_title.add(newsList.get(3).getTitle());
-                        vp_carousel.initTitle(list_news_title, top_news_title);
-                        List<String> imgurl_list = new ArrayList<>();
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
-                        vp_carousel.initImgUrl(imgurl_list);
-                        vp_carousel.startRoll();
-                        top_news_viewpager.removeAllViews();
-                        top_news_viewpager.addView(vp_carousel);
+                        setCarousel();
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
@@ -116,6 +93,53 @@ public class VisitingServiceActivity extends BaseActivity {
             }
         }
     };
+
+    /**
+     * 设置轮播图
+     */
+    private void setCarousel() {
+        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+                int i = allnews.get(position).getId();
+                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
+                intent.putExtra("id", i);
+                VisitingServiceActivity.this.startActivity(intent);
+            }
+        });
+        List<String> imgurl_list = new ArrayList<>();
+        list_news_title.clear();
+        if(newsList.size() > 3) {
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+            list_news_title.add(newsList.get(2).getTitle());
+            list_news_title.add(newsList.get(3).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
+        }else if(newsList.size() == 3){
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+            list_news_title.add(newsList.get(2).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+        }else if(newsList.size() == 2){
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+        }else if(newsList.size() == 1){
+            list_news_title.add(newsList.get(0).getTitle());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+        }
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        vp_carousel.initImgUrl(imgurl_list);
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
+    }
 
     /**
      * 轮播图导航点集合
