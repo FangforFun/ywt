@@ -101,10 +101,11 @@ public class FamilyServiceActivity extends BaseActivity {
                         String code = bundle.getString("result");
                         int passcode = getResultcode(code);
                         if (passcode == 200){
-                            Intent intent = new Intent(FamilyServiceActivity.this, RemittanceWaysActivity.class);
-                            intent.putExtra("money", money);
+                            Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
+                            intent.putExtra("totalmoney", money);
                             intent.putExtra("times",times);
                             intent.putExtra("TradeNo",TradeNo);
+                            intent.putExtra("saletype","汇款");
                             startActivity(intent);
                         }
                     }

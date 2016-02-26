@@ -69,6 +69,8 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     private String countmoney = "";
     private String getOutTradeNo = "";
     private TextView  totalmoney;
+    private String saletype;
+    private TextView tv_saletype;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private Handler handler = new Handler(){
         @Override
@@ -132,7 +134,10 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         lv_commidty = (ListView)findViewById(R.id.lv_commidty);
         getOutTradeNo = getIntent().getStringExtra("outorderno");
         times = getIntent().getStringExtra("times");
-        cart_id = getIntent().getIntExtra("cart_id",0);
+        cart_id = getIntent().getIntExtra("cart_id", 0);
+        saletype = getIntent().getStringExtra("saletype");
+        tv_saletype = (TextView)findViewById(R.id.tv_sales_type);
+        tv_saletype.setText(saletype);
         totalmoney.setText(countmoney);
         initDate();
         adapter = new PayAdapter();
