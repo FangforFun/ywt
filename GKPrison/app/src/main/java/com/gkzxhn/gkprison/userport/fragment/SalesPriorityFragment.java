@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
@@ -126,9 +127,10 @@ public class SalesPriorityFragment extends BaseFragment {
         protected List<Commodity> doInBackground(Void... params) {
             sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
             Message msg = handler.obtainMessage();
-            HttpClient httpClient = new DefaultHttpClient();
+          //  HttpClient httpClient = new DefaultHttpClient();
             String token = sp.getString("token", "");
-            HttpGet httpGet = new HttpGet(url + token);
+            //HttpGet httpGet = new HttpGet(url + token);
+            /**
             try {
                 HttpResponse response = httpClient.execute(httpGet);
                 if (response.getStatusLine().getStatusCode() == 200) {
@@ -150,7 +152,28 @@ public class SalesPriorityFragment extends BaseFragment {
                 msg.what = 1;
                 handler.sendMessage(msg);
             }
+            **/
+            try {
+                String result = HttpRequestUtil.doHttpsGet(url + token);
+                if (result.contains("StatusCode is")){
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }else {
+                    msg.obj = "success";
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", result);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
 
+            }
             return commodities;
         }
 

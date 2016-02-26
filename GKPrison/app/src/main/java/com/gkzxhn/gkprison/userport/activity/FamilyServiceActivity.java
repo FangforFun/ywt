@@ -1,11 +1,14 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,10 +26,13 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.bean.Order;
+import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.http.HttpResponse;
@@ -37,6 +43,8 @@ import org.apache.http.conn.util.InetAddressUtils;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -63,56 +71,59 @@ public class FamilyServiceActivity extends BaseActivity {
     private String money = "";
     private Gson gson;
     private String apply;
+    private Prison prison = new Prison();
+    private TextView prison_num;
+    private TextView prison_gender;
+    private TextView prison_crimes;
+    private TextView prison_start_time;
+    private TextView prison_end_time;
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
-    private List<String> sentence_time = new ArrayList<String>(){
-        {
-            add("2014年2月11日");
-            add("2014年4月11日");
-            add("2014年6月11日");
-            add("2014年8月11日");
+    private String url1 = Constants.URL_HEAD +"services?access_token=";
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    String information = (String)msg.obj;
+                    if (information.equals("error")){
+                        showToastMsgShort("同步数据有误");
+                    }else if (information.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String prison_information = bundle.getString("result");
+                        prison = analysisprison(prison_information);
+                        prison_num.setText(prison.getPrisoner_number());
+                        if (prison.getGender().equals("m")){
+                            prison_gender.setText("男");
+                        }else {
+                            prison_gender.setText("女");
+                        }
+                        prison_crimes.setText(prison.getCrimes());
+                        prison_start_time.setText(prison.getPrison_term_started_at());
+                        prison_end_time.setText(prison.getPrison_term_ended_at());
+                    }
+                    break;
+                case 2:
+                    String ording = (String)msg.obj;
+                    if (ording.equals("error")){
+                        showToastMsgShort("上传数据失败，请检查网络");
+                    }else if (ording.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String code = bundle.getString("result");
+                        int passcode = getResultcode(code);
+                        if (passcode == 200){
+                            Intent intent = new Intent(FamilyServiceActivity.this, RemittanceWaysActivity.class);
+                            intent.putExtra("money", money);
+                            intent.putExtra("times",times);
+                            intent.putExtra("TradeNo",TradeNo);
+                            startActivity(intent);
+                        }
+                    }
+                    break;
+            }
         }
     };
-    private List<String> sentence_cause = new ArrayList<String>(){
-        {
-            add("制止狱内暴力");
-            add("做事认真勤快");
-            add("表现良好");
-            add("后台很硬");
-        }
-    };
-    private List<String> sentence_time_add = new ArrayList<String>(){
-        {
-            add("减刑3个月");
-            add("减刑3个月");
-            add("减刑3个月");
-            add("加刑3个月");
-        }
-    };
-    private List<String> commodity = new ArrayList<String>(){
-        {
-            add("杯子");
-            add("零食");
-            add("热水瓶");
-            add("笔记本");
-        }
-    };
-    private List<String> money1 = new ArrayList<String>(){
-        {
-            add("20元");
-            add("10元");
-            add("40元");
-            add("5元");
-        }
-    };
-    private List<String> buyer_id = new ArrayList<String>(){
-        {
-            add("18609018373");
-            add("13909018386");
-            add("18209648389");
-            add("13909018373");
-        }
-    };
+
     private List<Integer> image_messge = new ArrayList<Integer>(){
         {
             add(R.drawable.sentence);
@@ -134,6 +145,11 @@ public class FamilyServiceActivity extends BaseActivity {
         View view = View.inflate(getApplicationContext(),R.layout.activity_family_service,null);
         el_messge = (ExpandableListView)view.findViewById(R.id.el_messge);
         el_messge.setGroupIndicator(null);
+        prison_num = (TextView)view.findViewById(R.id.tv_prison_num);
+        prison_gender = (TextView)view.findViewById(R.id.tv_mail_sex);
+        prison_crimes = (TextView)view.findViewById(R.id.tv_crime_accent);
+        prison_start_time = (TextView)view.findViewById(R.id.tv_sentence_time);
+        prison_end_time = (TextView)view.findViewById(R.id.tv_sentence_time_end);
         return view;
     }
 
@@ -147,6 +163,60 @@ public class FamilyServiceActivity extends BaseActivity {
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
+        getPrisonIformation();
+    }
+
+    private void getPrisonIformation() {
+        if (Utils.isNetworkAvailable()){
+            new Thread(){
+                String token = sp.getString("token","");
+                Message msg = handler.obtainMessage();
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    try {
+                        String result = HttpRequestUtil.doHttpsGet(url1 + token);
+                        if (result.contains("StatusCode is ")){
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result",result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (Exception e) {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                        e.printStackTrace();
+                    }finally {
+                        Looper.loop();
+                    }
+                }
+            }.start();
+        }else {
+            showToastMsgShort("没有网络");
+        }
+    }
+
+    private Prison analysisprison(String t){
+        Prison prison = new Prison();
+        try {
+            JSONObject jsonObject = new JSONObject(t);
+            prison.setPrisoner_number(jsonObject.getString("prisoner_number"));
+            prison.setGender(jsonObject.getString("gender"));
+            prison.setCrimes(jsonObject.getString("crimes"));
+            prison.setPrison_term_started_at(jsonObject.getString("prison_term_started_at"));
+            prison.setPrison_term_ended_at(jsonObject.getString("prison_term_ended_at"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return prison;
     }
 
     @Override
@@ -187,6 +257,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 tv_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (Utils.isFastClick()){return;}
                         money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
                             Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
@@ -213,11 +284,6 @@ public class FamilyServiceActivity extends BaseActivity {
                             }
                             String sql2 = "insert into line_items(Items_id,cart_id) values (9999,"+cart_id+")";
                             db.execSQL(sql2);
-                            Intent intent = new Intent(FamilyServiceActivity.this, RemittanceWaysActivity.class);
-                            intent.putExtra("money", money);
-                            intent.putExtra("times",times);
-                            intent.putExtra("TradeNo",TradeNo);
-                            startActivity(intent);
                         }
                     }
                 });
@@ -253,11 +319,12 @@ public class FamilyServiceActivity extends BaseActivity {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url+token);
+         //       HttpClient httpClient = new DefaultHttpClient();
+         //       HttpPost post = new HttpPost(url+token);
                 String s = url+token;
                 Log.d("订单号成功", s);
-                try {
+
+                    /**
                     StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
                     entity.setContentEncoding("UTF-8");
@@ -273,8 +340,44 @@ public class FamilyServiceActivity extends BaseActivity {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            }
-        }.start();
+                **/
+                Looper.prepare();
+                Message msg = handler.obtainMessage();
+                try {
+                    String result = HttpRequestUtil.doHttpsPost(url+token,str);
+                    if (result.contains("StatusCode is ")){
+                        msg.obj = "error";
+                        msg.what = 2;
+                        handler.sendMessage(msg);
+                    }else {
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 2;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    msg.obj = "error";
+                    msg.what = 2;
+                    handler.sendMessage(msg);
+                    e.printStackTrace();
+                }finally {
+                    Looper.loop();
+                }
+
+            }}.start();
+    }
+
+    private int getResultcode(String result) {
+        int a = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            a = jsonObject.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return a;
     }
 
     public String getLocalHostIp() {
@@ -376,22 +479,22 @@ public class FamilyServiceActivity extends BaseActivity {
 
                 if (groupPosition == 0){
                     convertView = View.inflate(getApplicationContext(),R.layout.sentence_change,null);
-                    ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
+                    //ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
                     SentenceAdapter adapter = new SentenceAdapter();
-                    lv_sentence.setAdapter(adapter);
-                    ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
+                   // lv_sentence.setAdapter(adapter);
+                    //ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
                 }else if (groupPosition == 1){
                     convertView = View.inflate(getApplicationContext(),R.layout.consumption,null);
-                    ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
+                  //  ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
                     ConsumptionAdapter adapter = new ConsumptionAdapter();
-                    lv_consumption.setAdapter(adapter);
-                    ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
+                 //   lv_consumption.setAdapter(adapter);
+                   // ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
                 }else if (groupPosition == 2){
                     convertView = View.inflate(getApplicationContext(),R.layout.shoppingreceipt,null);
-                    ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
+                  //  ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
                     ReceiptAdapter adapter = new ReceiptAdapter();
-                    lv_shopping.setAdapter(adapter);
-                    ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
+                  //  lv_shopping.setAdapter(adapter);
+                 //   ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
                 }
             return convertView;
         }
@@ -413,7 +516,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return sentence_time.size()+1;
+            return 1;
         }
 
         @Override
@@ -444,9 +547,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.tv_sentence_case.setText("原因");
                 viewHolder.tv_sentence_add.setText("加/减刑");
             }else {
-                viewHolder.tv_sentence_time.setText(sentence_time.get(position-1));
-                viewHolder.tv_sentence_case.setText(sentence_cause.get(position-1));
-                viewHolder.tv_sentence_add.setText(sentence_time_add.get(position-1));
+                //viewHolder.tv_sentence_time.setText(sentence_time.get(position-1));
+                //viewHolder.tv_sentence_case.setText(sentence_cause.get(position-1));
+                //viewHolder.tv_sentence_add.setText(sentence_time_add.get(position-1));
             }
             return convertView;
         }
@@ -461,7 +564,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return sentence_time.size()+1;
+            return 1;
         }
 
         @Override
@@ -492,9 +595,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.buy_commodity.setText("商品");
                 viewHolder.buy_money.setText("金额");
             }else {
-                viewHolder.buy_time.setText(sentence_time.get(position-1));
-                viewHolder.buy_commodity.setText(commodity.get(position-1));
-                viewHolder.buy_money.setText(money1.get(position-1));
+                //viewHolder.buy_time.setText(sentence_time.get(position-1));
+                //viewHolder.buy_commodity.setText(commodity.get(position-1));
+                //viewHolder.buy_money.setText(money1.get(position-1));
             }
             return convertView;
         }
@@ -509,7 +612,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return money1.size()+1;
+            return 1;
         }
 
         @Override
@@ -545,9 +648,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.receipt.setVisibility(View.GONE);
             }else {
                 viewHolder.receipt.setVisibility(View.VISIBLE);
-                viewHolder.qianshou_time.setText(sentence_time.get(position-1));
-                viewHolder.qianshou_id.setText(buyer_id.get(position-1));
-                viewHolder.qianshou_money.setText(money1.get(position-1));
+                //viewHolder.qianshou_time.setText(sentence_time.get(position-1));
+                //viewHolder.qianshou_id.setText(buyer_id.get(position-1));
+                //viewHolder.qianshou_money.setText(money1.get(position-1));
             }
             return convertView;
         }

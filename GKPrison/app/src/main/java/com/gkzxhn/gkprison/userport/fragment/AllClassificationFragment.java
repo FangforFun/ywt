@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
@@ -118,9 +119,10 @@ public class AllClassificationFragment extends BaseFragment {
         protected List<Commodity> doInBackground(Void... params) {
             sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
             Message msg = handler.obtainMessage();
-            HttpClient httpClient = new DefaultHttpClient();
+            //HttpClient httpClient = new DefaultHttpClient();
             String token = sp.getString("token", "");
-            HttpGet httpGet = new HttpGet(url + token);
+            //HttpGet httpGet = new HttpGet(url + token);
+            /**
             try {
                 HttpResponse response = httpClient.execute(httpGet);
                 if (response.getStatusLine().getStatusCode() == 200) {
@@ -142,6 +144,29 @@ public class AllClassificationFragment extends BaseFragment {
                 msg.what = 1;
                 handler.sendMessage(msg);
             }
+             **/
+            try {
+                String result = HttpRequestUtil.doHttpsGet(url + token);
+                if (result.contains("StatusCode is")){
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }else {
+                    msg.obj = "success";
+                    Bundle bundle = new Bundle();
+                    bundle.putString("result", result);
+                    msg.setData(bundle);
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
+
+                }
+
             return commodities;
         }
 
@@ -342,7 +367,6 @@ private class SalesAdapter extends BaseAdapter{
             });
             String t = Constants.RESOURSE_HEAD+commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
-
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
             viewHolder.tv_description.setText(commodities.get(position).getDescription());

@@ -49,13 +49,6 @@
         </LinearLayout>
 
         <View
-            android:layout_width="1dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="5dp"
-            android:layout_centerHorizontal="true"
-            android:background="@color/et_hint"/>
-
-        <View
             android:id="@+id/view_line_horizontal"
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -138,7 +131,8 @@
                 android:paddingRight="10dp"
                 android:paddingTop="5dp"
                 android:textColor="@color/tv_mid"
-                android:background="@color/white"/>
+                android:background="@color/white"
+                android:layout_below="@+id/remotely_fenge"/>
 
             <TextView
                 android:id="@+id/tv_meeting_notes"
