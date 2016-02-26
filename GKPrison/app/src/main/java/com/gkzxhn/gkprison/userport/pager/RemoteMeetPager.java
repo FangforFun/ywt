@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.util.Log;
@@ -72,6 +74,8 @@ public class RemoteMeetPager extends BasePager {
     private TextView tv_remotly_num;
     private TextView bt_recharge;
     private HttpClient httpClient;
+    private int family_id = 0;
+    private String url = Constants.URL_HEAD + "families/";
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -183,9 +187,25 @@ public class RemoteMeetPager extends BasePager {
                     showToastMsgLong("提交异常，请稍后再试");
                     bt_commit_request_visit.setEnabled(true);
                     break;
+                case 6:
+                    String str = (String)msg.obj;
+                    if (str.equals("error")){
+                        showToastMsgShort("网络连接失败请稍后申请");
+                    }else if (str.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String balance = bundle.getString("result");
+                        String num = analysisNum(balance);
+                        float a = Float.parseFloat(num);
+                        int n = (int)a;
+                        int c = n/5;
+                        tv_remotly_num.setText(c+"");
+                    }
+                    break;
             }
         }
     };
+
+
 
     @Override
     public View initView() {
@@ -224,7 +244,9 @@ public class RemoteMeetPager extends BasePager {
         httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         id_num = sp.getString("password", "");
+        family_id = sp.getInt("family_id", 1);
         isCommonUser = sp.getBoolean("isCommonUser", false);
+        getBalance();
         if(isCommonUser){
             tv_meeting_request_name.setText(sp.getString("name", ""));
             String start_ = id_num.substring(0, 5);
@@ -281,6 +303,57 @@ public class RemoteMeetPager extends BasePager {
                 context.startActivity(intent);
             }
         });
+    }
+
+    /**
+     * 解析余额
+     * @return
+     */
+    private String analysisNum(String t) {
+        String balance = "";
+        try {
+            JSONObject jsonobject = new JSONObject(t);
+            JSONObject family = jsonobject.getJSONObject("family");
+            balance = family.getString("balance");
+            Log.d("family",balance);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return balance;
+    }
+    /**
+     * 获取申请会见可用余额
+     */
+    private void getBalance() {
+        new Thread(){
+            @Override
+            public void run() {
+                Message msg = handler.obtainMessage();
+                Looper.prepare();
+                try {
+                    String result = HttpRequestUtil.doHttpsGet(url + family_id);
+                    if (result.contains("StatusCode is")){
+                        msg.obj = "error";
+                        msg.what = 6;
+                        handler.sendMessage(msg);
+                    }else {
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 6;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    msg.obj = "error";
+                    msg.what = 6;
+                    handler.sendMessage(msg);
+                    e.printStackTrace();
+                }finally {
+                    Looper.loop();
+                }
+            }
+        }.start();
     }
 
     /**
