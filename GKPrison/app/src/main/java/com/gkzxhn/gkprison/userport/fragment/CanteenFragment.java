@@ -29,6 +29,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
@@ -154,26 +155,30 @@ public class CanteenFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
-                    String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
-                    db.execSQL(sql);
+                    /**
+
                     String s = (String)msg.obj;
-                    int a = getResultcode(s);
-                    if (a == 200) {
-                        Intent intent = new Intent(context, PaymentActivity.class);
-                        intent.putExtra("totalmoney", send);
-                        intent.putExtra("TradeNo", TradeNo);
-                        intent.putExtra("times", times);
-                        intent.putExtra("cart_id", cart_id);
-                        context.startActivity(intent);
-                    }else {
-                      showToastMsgShort("连接服务器失败");
+
+
+                     **/
+                    String billing = (String)msg.obj;
+                    if (billing.equals("error")){
+                        showToastMsgShort("上传数据失败");
+                    }else if (billing.equals("success")){
+                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
+                        db.execSQL(sql);
+                        Bundle bundle = msg.getData();
+                        String s = bundle.getString("result");
+                        int a = getResultcode(s);
+                        if (a == 200) {
+                            Intent intent = new Intent(context, PaymentActivity.class);
+                            intent.putExtra("totalmoney", send);
+                            intent.putExtra("TradeNo", TradeNo);
+                            intent.putExtra("times", times);
+                            intent.putExtra("cart_id", cart_id);
+                            context.startActivity(intent);
+                        }
                     }
-                    break;
-                case 2:
-                    showToastMsgShort("连接服务器失败");
-                    break;
-                case 3:
-                    showToastMsgShort("连接服务器失败");
                     break;
             }
         }
@@ -474,6 +479,9 @@ public class CanteenFragment extends BaseFragment {
             settlement.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    if (Utils.isFastClick()){
+                        return;
+                    }
                     if (allcount != 0) {
                         sendOrderToServer();
                     } else {
@@ -592,11 +600,12 @@ public class CanteenFragment extends BaseFragment {
             @Override
           public void run() {
                 String token = sp.getString("token", "");
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url+token);
+               // HttpClient httpClient = new DefaultHttpClient();
+                //HttpPost post = new HttpPost(url+token);
                 String s = url+token;
                 Looper.prepare();
                 Message msg = handlerbilling.obtainMessage();
+                /**
                 try {
                     StringEntity entity = new StringEntity(str);
                     entity.setContentType("application/json");
@@ -616,6 +625,29 @@ public class CanteenFragment extends BaseFragment {
                     handlerbilling.sendEmptyMessage(3);
                     e.printStackTrace();
                 } finally {
+                    Looper.loop();
+                }
+                **/
+                try {
+                    String result = HttpRequestUtil.doHttpsPost(s,str);
+                    if (result.contains("StatusCode is")){
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handlerbilling.sendMessage(msg);
+                    }else {
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handlerbilling.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handlerbilling.sendMessage(msg);
+                    e.printStackTrace();
+                }finally {
                     Looper.loop();
                 }
             }

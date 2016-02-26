@@ -269,7 +269,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
 
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/payment"
+        orderInfo += "&notify_url=" + "\"" + "https://www.fushuile.com/api/v1/payment"
                 + "\"";
 
         // 服务接口名称， 固定值
