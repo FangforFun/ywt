@@ -86,6 +86,10 @@ public class AllClassificationFragment extends BaseFragment {
                         }
                         commodities.clear();
                         getDate();
+                        for (int i = 0;i < commodities.size();i++){
+                            commodities.get(i).setQty(0);
+                        }
+                        lv_allclass.setAdapter(adapter);
                     }else if (m.equals("error")){
                         Toast.makeText(context, "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
