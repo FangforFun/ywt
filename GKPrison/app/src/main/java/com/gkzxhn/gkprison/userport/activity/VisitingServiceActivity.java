@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -57,6 +58,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private String token;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
+    private HttpClient httpClient;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -163,6 +165,7 @@ public class VisitingServiceActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        httpClient = HttpRequestUtil.initHttpClient(null);
         setTitle("工作动态");
         setBackVisibility(View.VISIBLE);
         initDot();// 初始化轮播图底部小圆圈
@@ -191,24 +194,37 @@ public class VisitingServiceActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet Get = new HttpGet(url);
+//                    HttpClient httpClient = new DefaultHttpClient();
+//                    HttpGet Get = new HttpGet(url);
                     try {
-                        HttpResponse response = httpClient.execute(Get);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                        HttpResponse response = httpClient.execute(Get);
+//                        if (response.getStatusLine().getStatusCode() == 200) {
+//                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                            msg.obj = "success";
+//                            Bundle bundle = new Bundle();
+//                            bundle.putString("result", result);
+//                            msg.setData(bundle);
+//                            msg.what = 1;
+//                            handler.sendMessage(msg);
+//                        } else {
+//                            msg.obj = "error";
+//                            msg.what = 1;
+//                            handler.sendMessage(msg);
+//                        }
+                        String result = HttpRequestUtil.doHttpsGet(url);
+                        if(result.contains("StatusCode is ")){
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
                             msg.obj = "success";
                             Bundle bundle = new Bundle();
                             bundle.putString("result", result);
                             msg.setData(bundle);
                             msg.what = 1;
                             handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
@@ -225,7 +241,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < newsList.size(); i++) {
             View view = new View(getApplicationContext());
             if (i == 0) {
                 view.setBackgroundResource(R.drawable.rb_shape_blue);
