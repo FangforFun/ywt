@@ -19,7 +19,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,26 +27,16 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
+import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.bean.Order;
-import com.gkzxhn.gkprison.userport.bean.Prison;
-import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.util.InetAddressUtils;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;

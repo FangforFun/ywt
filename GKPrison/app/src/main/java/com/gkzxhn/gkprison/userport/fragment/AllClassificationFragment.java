@@ -174,7 +174,9 @@ public class AllClassificationFragment extends BaseFragment {
         protected void onPostExecute(List<Commodity> commodities) {
             ((PullToRefreshListView)lv_allclass).onRefreshComplete();
             super.onPostExecute(commodities);
-
+            String sql = "delete from line_items where cart_id =" + cart_id;
+            db.execSQL(sql);
+            EventBus.getDefault().post(new ClickEvent());
         }
     }
 

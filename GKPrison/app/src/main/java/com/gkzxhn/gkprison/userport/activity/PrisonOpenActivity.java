@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
@@ -91,21 +92,23 @@ public class PrisonOpenActivity extends BaseActivity {
                         lv_prison_open.setAdapter(new MyAdapter());
 
                         List<String> imgurl_list = new ArrayList<>();
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
-                        vp_carousel.initImgUrl(imgurl_list);
+                        if (newsList.size() > 0) {
+                            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+                            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+                            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+                            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
+                            vp_carousel.initImgUrl(imgurl_list);
 
-                        list_news_title.clear();
-                        list_news_title.add(newsList.get(0).getTitle());
-                        list_news_title.add(newsList.get(1).getTitle());
-                        list_news_title.add(newsList.get(2).getTitle());
-                        list_news_title.add(newsList.get(3).getTitle());
-                        vp_carousel.initTitle(list_news_title, top_news_title);
-                        vp_carousel.startRoll();
-                        top_news_viewpager.removeAllViews();
-                        top_news_viewpager.addView(vp_carousel);
+                            list_news_title.clear();
+                            list_news_title.add(newsList.get(0).getTitle());
+                            list_news_title.add(newsList.get(1).getTitle());
+                            list_news_title.add(newsList.get(2).getTitle());
+                            list_news_title.add(newsList.get(3).getTitle());
+                            vp_carousel.initTitle(list_news_title, top_news_title);
+                            vp_carousel.startRoll();
+                            top_news_viewpager.removeAllViews();
+                            top_news_viewpager.addView(vp_carousel);
+                        }
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
@@ -169,8 +172,9 @@ public class PrisonOpenActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet Get = new HttpGet(url);
+                   // HttpClient httpClient = new DefaultHttpClient();
+                    //HttpGet Get = new HttpGet(url);
+                    /**
                     try {
                         HttpResponse response = httpClient.execute(Get);
                         if (response.getStatusLine().getStatusCode() == 200) {
@@ -187,6 +191,27 @@ public class PrisonOpenActivity extends BaseActivity {
                             handler.sendMessage(msg);
                         }
                     } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                     **/
+                    try {
+                        String result = HttpRequestUtil.doHttpsGet(url);
+                        if (result.contains("StatusCode is")){
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
+                            msg.obj = "success";
+                            Bundle bundle = new Bundle();
+                            bundle.putString("result", result);
+                            msg.setData(bundle);
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (Exception e) {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
                         e.printStackTrace();
                     }
                 }
