@@ -81,6 +81,12 @@ public class SalesPriorityFragment extends BaseFragment {
                                 db.execSQL(sql1);
                             }
                         }
+                        commodities.clear();
+                        getDate();
+                        for (int i = 0;i < commodities.size();i++){
+                            commodities.get(i).setQty(0);
+                        }
+                        lv_sale.setAdapter(adapter);
                     }else if (m.equals("error")){
                         Toast.makeText(context,"同步数据失败",Toast.LENGTH_SHORT).show();
                     }
@@ -181,6 +187,9 @@ public class SalesPriorityFragment extends BaseFragment {
         protected void onPostExecute(List<Commodity> commodities) {
             ((PullToRefreshListView)lv_sale).onRefreshComplete();
             super.onPostExecute(commodities);
+            String sql = "delete from line_items where cart_id =" + cart_id;
+            db.execSQL(sql);
+            EventBus.getDefault().post(new ClickEvent());
         }
     }
 
