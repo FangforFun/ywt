@@ -68,6 +68,7 @@ public class ReChargeActivity extends BaseActivity {
                             intent.putExtra("totalmoney", money);
                             intent.putExtra("times",times);
                             intent.putExtra("TradeNo",TradeNo);
+                            intent.putExtra("saletype","视频充值");
                             startActivity(intent);
                         }
                     }

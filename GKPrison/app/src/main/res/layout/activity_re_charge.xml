@@ -90,7 +90,7 @@
             android:layout_height="wrap_content"
             style="@style/main_tab_style1"
             android:text="20元"
-            android:layout_marginLeft="1dp"
+            android:layout_marginLeft="2dp"
             android:layout_marginRight="1dp"
             android:layout_gravity="center"
             />
