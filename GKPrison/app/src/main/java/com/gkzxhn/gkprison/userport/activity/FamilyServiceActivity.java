@@ -197,12 +197,12 @@ public class FamilyServiceActivity extends BaseActivity {
         Prison prison = new Prison();
         try {
             JSONObject jsonObject = new JSONObject(t);
-            prison.setPrisoner_number(jsonObject.getString("prisoner_number"));
-            prison.setGender(jsonObject.getString("gender"));
-            prison.setCrimes(jsonObject.getString("crimes"));
-            prison.setPrison_term_started_at(jsonObject.getString("prison_term_started_at"));
-            prison.setPrison_term_ended_at(jsonObject.getString("prison_term_ended_at"));
-
+            JSONObject jsonObject1 = jsonObject.getJSONObject("prisoner");
+            prison.setGender(jsonObject1.getString("gender"));
+            prison.setCrimes(jsonObject1.getString("crimes"));
+            prison.setPrison_term_ended_at(jsonObject1.getString("prison_term_ended_at"));
+            prison.setPrison_term_started_at(jsonObject1.getString("prison_term_started_at"));
+            prison.setPrisoner_number(jsonObject1.getString("prisoner_number"));
         } catch (JSONException e) {
             e.printStackTrace();
         }
