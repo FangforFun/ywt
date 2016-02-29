@@ -101,7 +101,7 @@ public class HomePager extends BasePager {
      * 轮播图导航点集合
      */
     private List<View> dotList = new ArrayList<>();
-    private HttpClient httpClient;
+//    private HttpClient httpClient;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -156,7 +156,7 @@ public class HomePager extends BasePager {
 
     @Override
     public void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
+//        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
         getFocusNews();// 获取焦点新闻
