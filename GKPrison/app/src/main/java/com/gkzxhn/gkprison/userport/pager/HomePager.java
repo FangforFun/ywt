@@ -115,10 +115,8 @@ public class HomePager extends BasePager {
                     String result = (String) msg.obj;
                     parseFocusNews(result);// 解析焦点新闻
                     setRoll();
-                    dialog.dismiss();
                     fillNewsData();// 填充新闻数据
                     is_request_foucs_news_successed = true;
-                    Log.i("获取焦点新闻成功", result);
                     break;
             }
         }
@@ -410,6 +408,7 @@ public class HomePager extends BasePager {
             editor.putInt("focus_news_3_id", focus_news_3.getId());
             editor.commit();
         }
+        dialog.dismiss();// 消掉加载对话框进度条
     }
 
     /**

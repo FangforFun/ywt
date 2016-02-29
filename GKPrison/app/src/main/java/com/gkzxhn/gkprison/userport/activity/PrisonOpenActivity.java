@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -62,6 +63,7 @@ public class PrisonOpenActivity extends BaseActivity {
     private String token;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
+    private ProgressDialog getNews_Dialog;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -94,6 +96,7 @@ public class PrisonOpenActivity extends BaseActivity {
                         setCarousel(imgurl_list);
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                        getNews_Dialog.dismiss();
                     }
                     break;
             }
@@ -149,6 +152,7 @@ public class PrisonOpenActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
+        getNews_Dialog.dismiss();
     }
 
     /**
@@ -193,32 +197,16 @@ public class PrisonOpenActivity extends BaseActivity {
      */
     private void getNews(){
         if(Utils.isNetworkAvailable()) {
+            getNews_Dialog = new ProgressDialog(this);
+            getNews_Dialog.setMessage("正在加载...");
+            getNews_Dialog.setCanceledOnTouchOutside(false);
+            getNews_Dialog.setCancelable(false);
+            getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            getNews_Dialog.show();
             new Thread() {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-                   // HttpClient httpClient = new DefaultHttpClient();
-                    //HttpGet Get = new HttpGet(url);
-                    /**
-                    try {
-                        HttpResponse response = httpClient.execute(Get);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                     **/
                     try {
                         String result = HttpRequestUtil.doHttpsGet(url);
                         if (result.contains("StatusCode is")){

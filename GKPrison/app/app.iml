@@ -85,8 +85,6 @@
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/java" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/jni" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/androidTest/rs" isTestSource="true" />
-      <excludeFolder url="file://$MODULE_DIR$/build/.DS_Store" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/.DS_Store" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/assets" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/classes-proguard" />
@@ -141,7 +139,6 @@
     <orderEntry type="library" exported="" name="json-simple-1.1.1" level="project" />
     <orderEntry type="library" exported="" name="core" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.0" level="project" />
-    <orderEntry type="library" exported="" name="okhttp-2.7.0" level="project" />
     <orderEntry type="library" exported="" name="gridPasswordView-0.3" level="project" />
     <orderEntry type="library" exported="" name="gson-2.5" level="project" />
     <orderEntry type="module" module-name="uikit" exported="" />

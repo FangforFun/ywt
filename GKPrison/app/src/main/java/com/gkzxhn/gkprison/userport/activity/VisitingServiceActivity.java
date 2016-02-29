@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -59,6 +60,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private HttpClient httpClient;
+    private ProgressDialog getNews_dialog;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -90,6 +92,7 @@ public class VisitingServiceActivity extends BaseActivity {
                         setCarousel();
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                        getNews_dialog.dismiss();
                     }
                     break;
             }
@@ -100,15 +103,6 @@ public class VisitingServiceActivity extends BaseActivity {
      * 设置轮播图
      */
     private void setCarousel() {
-        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-                int i = allnews.get(position).getId();
-                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                VisitingServiceActivity.this.startActivity(intent);
-            }
-        });
         List<String> imgurl_list = new ArrayList<>();
         list_news_title.clear();
         if(newsList.size() > 3) {
@@ -136,11 +130,22 @@ public class VisitingServiceActivity extends BaseActivity {
             list_news_title.add(newsList.get(0).getTitle());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
         }
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+                int i = allnews.get(position).getId();
+                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
+                intent.putExtra("id", i);
+                VisitingServiceActivity.this.startActivity(intent);
+            }
+        });
         vp_carousel.initTitle(list_news_title, top_news_title);
         vp_carousel.initImgUrl(imgurl_list);
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
+        getNews_dialog.dismiss();
     }
 
     /**
@@ -168,7 +173,6 @@ public class VisitingServiceActivity extends BaseActivity {
         httpClient = HttpRequestUtil.initHttpClient(null);
         setTitle("工作动态");
         setBackVisibility(View.VISIBLE);
-        initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         url = Constants.URL_HEAD + "news?jail_id=1" ;
@@ -190,27 +194,17 @@ public class VisitingServiceActivity extends BaseActivity {
      */
     private void getNews(){
         if(Utils.isNetworkAvailable()) {
+            getNews_dialog = new ProgressDialog(this);
+            getNews_dialog.setMessage("正在加载...");
+            getNews_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            getNews_dialog.setCancelable(false);
+            getNews_dialog.setCanceledOnTouchOutside(false);
+            getNews_dialog.show();
             new Thread() {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpGet Get = new HttpGet(url);
                     try {
-//                        HttpResponse response = httpClient.execute(Get);
-//                        if (response.getStatusLine().getStatusCode() == 200) {
-//                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-//                            msg.obj = "success";
-//                            Bundle bundle = new Bundle();
-//                            bundle.putString("result", result);
-//                            msg.setData(bundle);
-//                            msg.what = 1;
-//                            handler.sendMessage(msg);
-//                        } else {
-//                            msg.obj = "error";
-//                            msg.what = 1;
-//                            handler.sendMessage(msg);
-//                        }
                         String result = HttpRequestUtil.doHttpsGet(url);
                         if(result.contains("StatusCode is ")){
                             msg.obj = "error";
