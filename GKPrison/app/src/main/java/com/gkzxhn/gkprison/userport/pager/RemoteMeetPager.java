@@ -76,6 +76,7 @@ public class RemoteMeetPager extends BasePager {
     private HttpClient httpClient;
     private int family_id = 0;
     private String url = Constants.URL_HEAD + "families/";
+    private int vedionum;
 
     public RemoteMeetPager(Context context) {
         super(context);
@@ -197,8 +198,8 @@ public class RemoteMeetPager extends BasePager {
                         String num = analysisNum(balance);
                         float a = Float.parseFloat(num);
                         int n = (int)a;
-                        int c = n/5;
-                        tv_remotly_num.setText(c+"");
+                        vedionum = n/5;
+                        tv_remotly_num.setText(vedionum+"");
                     }
                     break;
             }
@@ -376,6 +377,9 @@ public class RemoteMeetPager extends BasePager {
                         String committed_meeting_time = sp.getString("committed_meeting_time", "");
                         if(committed_meeting_time.contains(bs_meeting_request_time.getText().toString())){
                             showToastMsgLong("您已申请过当日远程探监，请选择其他日期。");
+                            return;
+                        }else if (vedionum == 0){
+                            showToastMsgShort("您的余额不足，请充值");
                             return;
                         }else {
                             sendMeetingRequestToServer();
