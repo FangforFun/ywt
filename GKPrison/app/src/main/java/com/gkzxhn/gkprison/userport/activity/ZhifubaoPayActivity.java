@@ -71,6 +71,8 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     private TextView  totalmoney;
     private String saletype;
     private TextView tv_saletype;
+    private String bussinesstype;
+    private TextView tv_wuliu;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private Handler handler = new Handler(){
         @Override
@@ -136,6 +138,9 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         times = getIntent().getStringExtra("times");
         cart_id = getIntent().getIntExtra("cart_id", 0);
         saletype = getIntent().getStringExtra("saletype");
+        bussinesstype = getIntent().getStringExtra("bussiness");
+        tv_wuliu = (TextView)findViewById(R.id.tv_wuliu);
+        tv_wuliu.setText(bussinesstype);
         tv_saletype = (TextView)findViewById(R.id.tv_sales_type);
         tv_saletype.setText(saletype);
         totalmoney.setText(countmoney);

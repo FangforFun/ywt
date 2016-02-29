@@ -15,6 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@color/transparent"
+
             >
 
         </ListView>
@@ -68,9 +69,9 @@
                 android:layout_toRightOf="@+id/tv_count"
                 android:layout_alignBaseline="@+id/count"/>
             <TextView
+                android:id="@+id/tv_wuliu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="（含配送费2元）"
                 android:layout_below="@+id/count"
                 android:textSize="14sp"
                 android:textColor="#999999"/>

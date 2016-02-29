@@ -484,7 +484,7 @@ public class RegisterActivity extends BaseActivity {
 //                    entity.setContentType("application/json");
 //                    post.setEntity(entity);
 //                    HttpResponse response = httpClient.execute(post);
-//                    if (response.getStatusLine().getStatusCode()==200){
+//                       if (response.getStatusLine().getStatusCode()==200){
 //                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
 //                        Log.i("注册验证码", result);
 //                        msg.obj = result;
@@ -619,6 +619,10 @@ public class RegisterActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             sendRegisterToServer(); // 发送注册信息至服务器
+                            String prisonname = actv_prison_choose.getText().toString();
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putString("prisonname",prisonname);
+                            editor.commit();
                             dialog.dismiss();
                         }
                     });

@@ -176,6 +176,7 @@ public class CanteenFragment extends BaseFragment {
                             intent.putExtra("TradeNo", TradeNo);
                             intent.putExtra("times", times);
                             intent.putExtra("cart_id", cart_id);
+                            intent.putExtra("bussiness","(含配送费2元)");
                             context.startActivity(intent);
                         }
                     }

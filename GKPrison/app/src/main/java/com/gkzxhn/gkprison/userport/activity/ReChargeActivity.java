@@ -97,7 +97,6 @@ public class ReChargeActivity extends BaseActivity {
         btn_recharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**
                 if (five.isChecked()){
                     money = "5";
                 }else if (twenty.isChecked()){
@@ -106,9 +105,10 @@ public class ReChargeActivity extends BaseActivity {
                     money = "50";
                 }else if (hundred.isChecked()){
                     money = "100";
+                }else {
+                    showToastMsgShort("请选择充值金额");
+                    return;
                 }
-                 **/
-                money = "0.02";
                 long time = System.currentTimeMillis();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date = new Date(time);
