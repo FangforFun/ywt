@@ -168,7 +168,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"
                 android:textColor="@color/white"
-                android:textSize="20sp"
+                android:textSize="@dimen/logout_tv_size"
                 android:visibility="gone"
                 android:background="@drawable/red_bg_bt_selector"/>
         </RelativeLayout>

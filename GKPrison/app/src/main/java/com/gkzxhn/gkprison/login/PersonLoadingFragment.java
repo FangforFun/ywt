@@ -206,7 +206,7 @@ public class PersonLoadingFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        HttpRequestUtil.initHttpClient(null);
+//        HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         bt_register.setOnClickListener(new View.OnClickListener() {
             @Override

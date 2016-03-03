@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
-    private HttpClient httpClient;
+//    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
         @Override
@@ -221,7 +221,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
+//        httpClient = HttpRequestUtil.initHttpClient(null);
         StatusCode statusCode = NIMClient.getStatus();
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);
