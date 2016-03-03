@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -37,11 +39,12 @@ import java.util.Random;
 
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
+    private String url = Constants.URL_HEAD +"orders?jail_id=1&access_token=";
     private Button bt_pay;
     private TextView tv_count_money;
     private String countmoney;
-    private String[] pay_ways = { "支付宝支付"};
-    private int[] pay_way_icons = {R.drawable.pay_way_zhifubao};
+    private String[] pay_ways = {"银联支付", "支付宝支付","微信支付"};
+    private int[] pay_way_icons = {R.drawable.pay_way_bank_card,R.drawable.pay_way_zhifubao,R.drawable.pay_way_weixin};
     private boolean[] ischeckeds = {true, false, false};
     private MyAdapter adapter;
     private String TradeNo;
@@ -50,6 +53,8 @@ public class PaymentActivity extends BaseActivity {
     private String apply = "";
     private String saletype;
     private String bussinesstype;
+    private SharedPreferences sp;
+    private String token;
 
     @Override
     protected View initView() {
@@ -70,6 +75,8 @@ public class PaymentActivity extends BaseActivity {
         cart_id = getIntent().getIntExtra("cart_id", 0);
         saletype = getIntent().getStringExtra("saletype");
         bussinesstype = getIntent().getStringExtra("bussiness");
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        token =sp.getString("token","");
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
@@ -89,12 +96,12 @@ public class PaymentActivity extends BaseActivity {
         bt_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 if (ischeckeds[1] == true){
+                 if (ischeckeds[0] == true){
 
                      Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
                      intent.putExtra("price",countmoney);
                      PaymentActivity.this.startActivity(intent);
-                 }else if (ischeckeds[0] == true){
+                 }else if (ischeckeds[1] == true){
 
                      Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
                      intent.putExtra("price",countmoney);
@@ -117,7 +124,7 @@ public class PaymentActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            return 3;
         }
 
         @Override

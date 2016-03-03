@@ -92,7 +92,7 @@ public class CanteenFragment extends BaseFragment {
     private Gson gson;
 
 
-    private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
+    private String url = Constants.URL_HEAD + "prepay?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -554,7 +554,7 @@ public class CanteenFragment extends BaseFragment {
             count = n;
             lcount.add(count);
         }
-      //  total += 2;
+        total += 2;
         for (int i = 0;i < lcount.size();i++){
             allcount += lcount.get(i);
         }
@@ -570,7 +570,7 @@ public class CanteenFragment extends BaseFragment {
             msg.what = 1;
             handler1.sendMessage(msg);
         }else if (allcount == 0){
-           // total -= 2;
+            total -= 2;
             DecimalFormat fnum = new DecimalFormat("####0.00");
             send = fnum.format(total);
             Message msg = handler1.obtainMessage();
@@ -584,14 +584,12 @@ public class CanteenFragment extends BaseFragment {
         int family_id = sp.getInt("family_id",1);
         final Order order = new Order();
         order.setFamily_id(family_id);
-        order.setIp(ip);
         order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(1);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
         order.setAmount(f);
         gson = new Gson();
-        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
         Log.d("结算发送",apply);
         final AA aa = new AA();
