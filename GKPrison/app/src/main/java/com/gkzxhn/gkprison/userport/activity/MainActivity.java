@@ -103,7 +103,6 @@ public class MainActivity extends BaseActivity {
     private Map<String, Integer> prison_map;
     private int jail_id;
     private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
-//    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
         @Override
@@ -229,7 +228,6 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-//        httpClient = HttpRequestUtil.initHttpClient(null);
         StatusCode statusCode = NIMClient.getStatus();
         Log.i("云信id状态...", statusCode.toString());
         sp = getSharedPreferences("config", MODE_PRIVATE);

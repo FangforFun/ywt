@@ -47,10 +47,12 @@ public class RollViewPager extends ViewPager {
 
 		@Override
 		public void run() {
-			// 切换指向图片
-			currentPosition = (currentPosition + 1) % imgUrlList.size();
-			// 发送消息
-			handler.obtainMessage().sendToTarget();
+			if(imgUrlList != null && imgUrlList.size() > 0) {
+				// 切换指向图片
+				currentPosition = (currentPosition + 1) % imgUrlList.size();
+				// 发送消息
+				handler.obtainMessage().sendToTarget();
+			}
 		}
 	}
 
@@ -194,7 +196,7 @@ public class RollViewPager extends ViewPager {
 
 		@Override
 		public int getCount() {
-			return imgUrlList.size();
+			return imgUrlList == null ? 1 : imgUrlList.size();
 		}
 
 		@Override
@@ -210,7 +212,7 @@ public class RollViewPager extends ViewPager {
 			// 给imageview设置网络上获取的图片(三级缓存)
 			// 参数：第一个下载后要在哪个控件显示，第二个下载图片的链接地址
 //			bitmapUtils.display(image, imgUrlList.get(position));
-			if(imgUrlList.size() == 3){
+			if(imgUrlList != null && imgUrlList.size() == 3){
 				switch (position){
 					case 0:
 						image.setImageResource(R.drawable.banner);

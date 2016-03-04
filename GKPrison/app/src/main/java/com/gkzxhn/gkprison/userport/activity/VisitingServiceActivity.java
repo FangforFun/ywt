@@ -59,7 +59,6 @@ public class VisitingServiceActivity extends BaseActivity {
     private String token;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
-    private HttpClient httpClient;
     private ProgressDialog getNews_dialog;
     private Handler handler = new Handler(){
         @Override
@@ -170,12 +169,11 @@ public class VisitingServiceActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
         setTitle("工作动态");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD + "news?jail_id=1" ;
+        url = Constants.URL_HEAD + "news?jail_id=" + sp.getInt("jail_id", 0) ;
         getNews();
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

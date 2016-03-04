@@ -164,7 +164,7 @@ public class HomePager extends BasePager {
 //        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
-        jail_id = sp.getInt("jail_id",0);
+        jail_id = sp.getInt("jail_id", 0);
         getFocusNews();// 获取焦点新闻
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
@@ -193,7 +193,7 @@ public class HomePager extends BasePager {
      */
     private void getFocusNews() {
         showLoadingDialog();
-        Log.i("获取焦点新闻url", Constants.URL_HEAD + "news?jail_id="+jail_id);
+        Log.i("获取焦点新闻url", Constants.URL_HEAD + "news?jail_id=" + jail_id);
         new Thread(){
             @Override
             public void run() {
@@ -222,9 +222,6 @@ public class HomePager extends BasePager {
         list_news_title.clear();
         List<String> imgurl_list = new ArrayList<>();
         if (allnews.size() > 2) {
-//            list_news_title.add(allnews.get(0).getTitle());
-//            list_news_title.add(allnews.get(1).getTitle());
-//            list_news_title.add(allnews.get(2).getTitle());
             list_news_title.add("");
             list_news_title.add("");
             list_news_title.add("");
@@ -232,12 +229,9 @@ public class HomePager extends BasePager {
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
         } else if(allnews.size() == 1){
-//            list_news_title.add(allnews.get(0).getTitle());
             list_news_title.add("");
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
         } else if(allnews.size() == 2){
-//            list_news_title.add(allnews.get(0).getTitle());
-//            list_news_title.add(allnews.get(1).getTitle());
             list_news_title.add("");
             list_news_title.add("");
             imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
@@ -247,14 +241,22 @@ public class HomePager extends BasePager {
         vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                int i = allnews.get(position).getId();
-                Intent intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                context.startActivity(intent);
+                if(allnews.size() > 0) {
+                    int i = allnews.get(position).getId();
+                    Intent intent = new Intent(context, NewsDetailActivity.class);
+                    intent.putExtra("id", i);
+                    context.startActivity(intent);
+                }else {
+                    showToastMsgShort("抱歉，没有数据...");
+                }
             }
         });
-        vp_carousel.initTitle(list_news_title, top_news_title);
-        vp_carousel.initImgUrl(imgurl_list);
+        if(allnews.size() > 0 && list_news_title.size() > 0) {
+            vp_carousel.initTitle(list_news_title, top_news_title);
+            vp_carousel.initImgUrl(imgurl_list);
+        }else {
+            showToastMsgShort("抱歉,没有数据...");
+        }
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
@@ -441,20 +443,22 @@ public class HomePager extends BasePager {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        for (int i = 0; i < list_news_title.size(); i++) {
-            View view = new View(context);
-            if (i == 0) {
-                view.setBackgroundResource(R.drawable.rb_shape_blue);
-            } else {
-                view.setBackgroundResource(R.drawable.rb_shape_gray);
+        if(list_news_title.size() > 0){
+            for (int i = 0; i < list_news_title.size(); i++) {
+                View view = new View(context);
+                if (i == 0) {
+                    view.setBackgroundResource(R.drawable.rb_shape_blue);
+                } else {
+                    view.setBackgroundResource(R.drawable.rb_shape_gray);
+                }
+                // 指定点的大小
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        context.getResources().getDimensionPixelSize(R.dimen.dot_radius), context.getResources().getDimensionPixelSize(R.dimen.dot_radius));
+                // 间距
+                layoutParams.setMargins(10, 0, 10, 0);
+                dots_ll.addView(view, layoutParams);
+                dotList.add(view);
             }
-            // 指定点的大小
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    context.getResources().getDimensionPixelSize(R.dimen.dot_radius), context.getResources().getDimensionPixelSize(R.dimen.dot_radius));
-            // 间距
-            layoutParams.setMargins(10, 0, 10, 0);
-            dots_ll.addView(view, layoutParams);
-            dotList.add(view);
         }
         ll_title_dot.setGravity(Gravity.CENTER);
         ll_title_dot.setBackgroundColor(Color.TRANSPARENT);
