@@ -45,7 +45,6 @@ public class CallUserActivity extends BaseActivity {
     private SharedPreferences sp;
     private int family_id;
     private FamilyMeetingInfo familyMeetingInfo;
-    private HttpClient httpClient;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -82,7 +81,6 @@ public class CallUserActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
@@ -99,21 +97,6 @@ public class CallUserActivity extends BaseActivity {
      */
     private void getMeetingDetailInfo(final int family_id) {
         rl_getting.setVisibility(View.VISIBLE);
-//        HttpUtils httpUtils = new HttpUtils();
-//        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "families/" + family_id
-////                + "?access_token=" + sp.getString("token", "")
-//                , new RequestCallBack<Object>() {
-//            @Override
-//            public void onSuccess(ResponseInfo<Object> responseInfo) {
-//                Log.i("会见详细请求成功", responseInfo.result.toString());
-//                parseMeetingInfo(responseInfo.result.toString());
-//            }
-//
-//            @Override
-//            public void onFailure(HttpException e, String s) {
-//                Log.i("会见详细请求失败", e.getMessage() + "---" + s);
-//            }
-//        });
         new Thread(){
             @Override
             public void run() {
@@ -193,7 +176,6 @@ public class CallUserActivity extends BaseActivity {
             case R.id.bt_call:
                 AVChatActivity.start(this,
                         familyMeetingInfo.getAccid()
-//                        "a055d5791afed1baf76ff850c8244fc0"
                         , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("family_accid", familyMeetingInfo.getAccid());

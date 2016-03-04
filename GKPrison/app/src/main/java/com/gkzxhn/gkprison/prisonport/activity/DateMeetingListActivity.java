@@ -92,7 +92,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private RotateAnimation ra;
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
-    private HttpClient httpClient;
     private AlertDialog cancel_meeting_dialog;// 取消会见对话框
     private Handler handler = new Handler() {
         @Override
@@ -234,7 +233,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     protected void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("is_first", false);
@@ -242,7 +240,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         setRefreshVisibility(View.VISIBLE);
         StatusCode code = NIMClient.getStatus();
         showToastMsgShort("" + code);
-        Log.i("监狱端进主页啦", code + sp.getString("password", "") + "---" + sp.getString("token", ""));
         setTitle("会见列表");
         setLogoutVisibility(View.VISIBLE);
         preImgBtn.setOnClickListener(this);
@@ -311,55 +308,25 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 @Override
                 public void run() {
                     SystemClock.sleep(2000);// 休眠2秒  模拟网络环境
-//                    HttpUtils httpUtils = new HttpUtils();
                     Message msg = handler.obtainMessage();
-//                    Log.i("会见列表请求", Constants.URL_HEAD +
-//                            Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
-//                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD +
-//                            Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date
-//                            , new RequestCallBack<Object>() {
-//                        @Override
-//                        public void onSuccess(ResponseInfo<Object> responseInfo) {
-//                            Log.i("请求成功", responseInfo.result.toString());
-//                            msg.obj = responseInfo.result.toString();
-//                            msg.what = 0;
-//                            handler.sendMessage(msg);
-//                        }
-//
-//                        @Override
-//                        public void onFailure(HttpException e, String s) {
-//                            Log.i("请求失败", s + "---" + e.getMessage());
-//                            showToastMsgShort("刷新数据失败");
-//                            tv_loading.setText("点击刷新");
-//                            pb_loading.setVisibility(View.GONE);
-//                            ll_loading.setOnClickListener(DateMeetingListActivity.this);
-//                            for (int i = 0; i < 3; i++) {
-//                                views[i].setEnabled(true);
-//                            }
-//                            ra.cancel();
-//                        }
-//                    });
                     try {
                         String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD +
                                 Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
-                        if(result.contains("StatusCode is ")){
-                            Log.i("请求失败", result);
-                            showToastMsgShort("刷新数据失败");
-                            tv_loading.setText("点击刷新");
-                            pb_loading.setVisibility(View.GONE);
-                            ll_loading.setOnClickListener(DateMeetingListActivity.this);
-                            for (int i = 0; i < 3; i++) {
-                                views[i].setEnabled(true);
-                            }
-                            ra.cancel();
-                        }else {
-                            Log.i("请求成功", result);
-                            msg.obj = result;
-                            msg.what = 0;
-                            handler.sendMessage(msg);
-                        }
+                        Log.i("请求成功", result);
+                        msg.obj = result;
+                        msg.what = 0;
+                        handler.sendMessage(msg);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Log.i("请求失败", e.getMessage().toString());
+                        showToastMsgShort("刷新数据失败");
+                        tv_loading.setText("点击刷新");
+                        pb_loading.setVisibility(View.GONE);
+                        ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                        for (int i = 0; i < 3; i++) {
+                            views[i].setEnabled(true);
+                        }
+                        ra.cancel();
                     }
                 }
             }.start();
@@ -564,7 +531,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             new Thread() {
                 @Override
                 public void run() {
-//                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpClient httpClient = new DefaultHttpClient();
                     HttpPatch httpPatch = new HttpPatch(Constants.URL_HEAD + "applies/" + id);
                     try {
                         StringEntity entity = new StringEntity("{\"accept_apply\":{\"status\":\"cancel\",\"reason\":\"" + reason + "\"}}", HTTP.UTF_8);

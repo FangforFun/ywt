@@ -11,6 +11,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -25,6 +26,7 @@ import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.VideoChatParam;
 
+import org.apache.http.client.HttpClient;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 
@@ -74,7 +76,6 @@ public class AVChatUI implements AVChatUIListener {
         this.root = root;
         this.aVChatListener = listener;
         sp = context.getSharedPreferences("config",Context.MODE_PRIVATE);
-        EventBus.getDefault().register(context);
     }
 
     /**
@@ -459,8 +460,8 @@ public class AVChatUI implements AVChatUIListener {
 
     public void setExamine(String msg) {
         Log.d("event", msg);
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
         if(!TextUtils.isEmpty(msg) && msg.equals("审核通过")) {
+//            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             avChatVideo.setTime(true);// 开始计时
             avChatVideo.setTopRoot(true);// 设置顶部栏可见
             avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
@@ -469,10 +470,14 @@ public class AVChatUI implements AVChatUIListener {
             editor.putBoolean("is_can_video", true);
             editor.putString("current_ms", 900 + "");
             editor.commit();
-        }else {
+        }else if(!TextUtils.isEmpty(msg) && msg.equals("审核未通过")){
             // 审核未通过  自动挂断  家属端提示审核未通过
+//            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             hangUp(AVChatExitCode.HANGUP);
         }
+//        else {
+//            Toast.makeText(context, "服务器异常", Toast.LENGTH_LONG).show();
+//        }
     }
 
     @Override
@@ -542,7 +547,7 @@ public class AVChatUI implements AVChatUIListener {
             public void onSuccess(Void aVoid) {
                 onAudioToVideo();
                 initSurfaceView(videoAccount);
-                if(sp.getBoolean("is_can_video", true)){
+                if (sp.getBoolean("is_can_video", true)) {
                     avChatSurface.setThroughtVisibility(View.GONE);
                 }
                 avChatVideo.setTime(true);// 开始计时
@@ -601,8 +606,31 @@ public class AVChatUI implements AVChatUIListener {
                         @Override
                         public void onFailure(HttpException e, String s) {
                             Log.i("审核通过失败", s);
+                            EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
                         }
                     });
+//                    new Thread(){
+//                        @Override
+//                        public void run() {
+//                            String content = "{" +
+//                                    "    \"notification\": {" +
+//                                    "        \"code\": 200," +
+//                                    "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
+//                                    "        \"sender\": \"" + sp.getString("token", "") + "\"" +
+//                                    "    }" +
+//                                    "}";
+//                            try {
+//                                String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.VIDEO_EXAMIME, content);
+//                                Log.i("审核通过成功", result);
+//                                avChatSurface.setExamineButtonVisibility(View.GONE);
+//                                avChatVideo.setTime(true);// 开始计时
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                                Log.i("审核通过失败", e.getMessage().toString());
+//                                EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
+//                            }
+//                        }
+//                    }.start();
                 }
             });
             avChatSurface.setonNotThroughExamineClickLintener(new AVChatSurface.OnNotThroughExamineLintener() {
@@ -635,8 +663,32 @@ public class AVChatUI implements AVChatUIListener {
                         @Override
                         public void onFailure(HttpException e, String s) {
                             Log.i("审核不通过失败", s);
+                            EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
                         }
                     });
+//                    new Thread(){
+//                        @Override
+//                        public void run() {
+//                            String content = "{" +
+//                                    "    \"notification\": {" +
+//                                    "        \"code\": 401," +
+//                                    "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
+//                                    "        \"sender\": \"" + sp.getString("token", "") + "\"" +
+//                                    "    }" +
+//                                    "}";
+//                            try {
+//                                String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.VIDEO_EXAMIME, content);
+//                                Log.i("审核不通过成功", result);
+//                                avChatSurface.setExamineButtonVisibility(View.GONE);
+//                                //  挂断
+//                                hangUp(AVChatExitCode.HANGUP);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                                Log.i("审核不通过失败", e.getMessage().toString());
+//                                EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
+//                            }
+//                        }
+//                    }.start();
                 }
             });
         }else {

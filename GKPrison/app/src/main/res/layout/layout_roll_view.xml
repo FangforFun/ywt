@@ -11,6 +11,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/ll_title_dot"
         android:layout_width="fill_parent"
         android:layout_height="30dp"
         android:layout_alignParentBottom="true"
