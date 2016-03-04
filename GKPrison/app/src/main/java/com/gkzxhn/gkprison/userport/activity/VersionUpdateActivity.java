@@ -3,15 +3,12 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -25,7 +22,6 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
-import com.gkzxhn.gkprison.userport.view.DownloadProgressBar;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -110,8 +106,6 @@ public class VersionUpdateActivity extends BaseActivity {
                     checkNewVersion();
                     bt_update.setClickable(false);// 不可点
                 }else {
-                    // 更新 www.fushuile.com/dist/android/1.0.0/*.apk
-//                    showToastMsgShort("正在更新");
                     bt_update.setClickable(false);
                     showUpdateDialog();
                 }

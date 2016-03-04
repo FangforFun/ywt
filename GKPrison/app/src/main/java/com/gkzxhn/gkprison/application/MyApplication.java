@@ -63,7 +63,7 @@ public class MyApplication extends Application {
         super.onCreate();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
-        NIMClient.init(this, loginInfo(), options());
+        NIMClient.init(this, loginInfo(), options()); // 初始化
         if (inMainProcess()) {
             // 初始化UIKit模块
             initUIKit();

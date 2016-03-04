@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +35,7 @@ import java.util.List;
  * 购物记录
  */
 public class ShoppingRecoderActivity extends BaseActivity {
-    private TextView nothing;
+    private ImageView iv_nothing;
     private ListView lv_shoppingrecoder;
     private ShoppingAdapter adapter;
     private List<Cart> carts = new ArrayList<Cart>();
@@ -44,7 +45,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_shopping_recoder,null);
         lv_shoppingrecoder = (ListView)view.findViewById(R.id.lv_shopping_recode);
-        nothing = (TextView)view.findViewById(R.id.tv_nothing);
+        iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);
         return view;
     }
 
@@ -77,9 +78,9 @@ public class ShoppingRecoderActivity extends BaseActivity {
            }
        });
        if (cursor.getCount() == 0){
-            nothing.setVisibility(View.VISIBLE);
+           iv_nothing.setVisibility(View.VISIBLE);
        }else {
-           nothing.setVisibility(View.GONE);
+           iv_nothing.setVisibility(View.GONE);
        }
 
        for (int i = 0; i < carts.size();i++){

@@ -5,11 +5,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -97,10 +94,8 @@ public class SettingActivity extends BaseActivity {
             public void onToggle(boolean on) {
                 Intent intent = new Intent(SettingActivity.this, SettingPasswordActivity.class);
                 if(on){
-//                    showToastMsgShort("独立密码设置已开启");
                     intent.putExtra("type", "open");
                 }else {
-//                    showToastMsgShort("独立密码设置已关闭");
                     intent.putExtra("type", "close");
                 }
                 startActivity(intent);
@@ -135,8 +130,9 @@ public class SettingActivity extends BaseActivity {
         Intent intent;
         switch (v.getId()){
             case R.id.rl_version_update:
-                intent = new Intent(this, VersionUpdateActivity.class);
-                startActivity(intent);
+//                intent = new Intent(this, VersionUpdateActivity.class);
+//                startActivity(intent);
+                showToastMsgShort("当前版本：" + SystemUtil.getVersionName(this));
                 break;
             case R.id.tv_agreement:
                 AlertDialog.Builder agreement_builder = new AlertDialog.Builder(this);
