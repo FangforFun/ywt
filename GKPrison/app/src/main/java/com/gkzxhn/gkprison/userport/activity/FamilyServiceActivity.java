@@ -287,7 +287,6 @@ public class FamilyServiceActivity extends BaseActivity {
         int family_id = sp.getInt("family_id",1);
         final Order order = new Order();
         order.setFamily_id(family_id);
-        order.setIp(ip);
         line_items_attributes lineitemsattributes = new line_items_attributes();
         lineitemsattributes.setItem_id(9999);
         lineitemsattributes.setQuantity(1);
@@ -298,7 +297,6 @@ public class FamilyServiceActivity extends BaseActivity {
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
-        order.setTrade_no(TradeNo);
         apply = gson.toJson(order);
         Log.d("成功",apply);
         final AA aa = new AA();

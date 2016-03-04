@@ -22,7 +22,6 @@ public class Constants {
     public static final String WRITE_MESSAGE = "mail_boxes?jail_id=1&access_token=";
     // 视频审核
     public static final String VIDEO_EXAMIME = "notifications";
-
     // 新版本apk地址
     public static final String NEW_VERSION_APK_URL = "https://www.fushuile.com/dist/android/1.0.0/app-release.apk";
 }
