@@ -16,10 +16,6 @@ public class Constants {
     public static final String REQUEST_SMS_URL = "request_sms";
     // 意见反馈
     public static final String FEEDBACK = "feedback?access_token=";
-    // 新闻
-    public static final String NEWS_URL = "news?jail_id=1";
-    // 写信
-    public static final String WRITE_MESSAGE = "mail_boxes?jail_id=1&access_token=";
     // 视频审核
     public static final String VIDEO_EXAMIME = "notifications";
     // 新版本apk地址

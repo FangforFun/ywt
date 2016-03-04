@@ -61,6 +61,7 @@ public class PrisonOpenActivity extends BaseActivity {
     private String url = "";
     private SharedPreferences sp;
     private String token;
+    private int jail_id;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private ProgressDialog getNews_Dialog;
@@ -179,7 +180,8 @@ public class PrisonOpenActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD + "news?jail_id=1" ;
+        jail_id = sp.getInt("jail_id",0);
+        url = Constants.URL_HEAD + "news?jail_id="+jail_id ;
         getNews();
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

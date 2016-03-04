@@ -2,6 +2,9 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +19,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -39,7 +43,6 @@ import java.util.Random;
 
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
-    private String url = Constants.URL_HEAD +"orders?jail_id=1&access_token=";
     private Button bt_pay;
     private TextView tv_count_money;
     private String countmoney;
@@ -50,11 +53,23 @@ public class PaymentActivity extends BaseActivity {
     private String TradeNo;
     private String times;
     private int cart_id;
+    private int jail_id;
     private String apply = "";
     private String saletype;
     private String bussinesstype;
     private SharedPreferences sp;
     private String token;
+    private String payment_type = "";
+    private String prepay_id = "";
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 1:
+                    break;
+            }
+        }
+    };
 
     @Override
     protected View initView() {
@@ -76,7 +91,8 @@ public class PaymentActivity extends BaseActivity {
         saletype = getIntent().getStringExtra("saletype");
         bussinesstype = getIntent().getStringExtra("bussiness");
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        token =sp.getString("token","");
+        token =sp.getString("token", "");
+        jail_id = sp.getInt("jail_id",0);
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
@@ -97,12 +113,14 @@ public class PaymentActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                  if (ischeckeds[0] == true){
-
+                     payment_type = "unionpay";
+                     send_payment_type(payment_type);
                      Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
                      intent.putExtra("price",countmoney);
                      PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[1] == true){
-
+                     payment_type = "alipay";
+                     send_payment_type(payment_type);
                      Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
                      intent.putExtra("price",countmoney);
                      intent.putExtra("outorderno",TradeNo);
@@ -112,7 +130,8 @@ public class PaymentActivity extends BaseActivity {
                      intent.putExtra("bussiness",bussinesstype);
                      PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[2] == true){
-
+                     payment_type = "wechatpay";
+                     send_payment_type(payment_type);
                      Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
                      intent.putExtra("price",countmoney);
                      PaymentActivity.this.startActivity(intent);
@@ -120,6 +139,39 @@ public class PaymentActivity extends BaseActivity {
             }
         });
     }
+
+    private void send_payment_type(String payment_type) {
+        final String str = "{\"payment_type\":\"" + payment_type + "\"}";
+        final String url = Constants.URL_HEAD +"orders?jail_id="+jail_id+"&access_token=";
+        new Thread(){
+            @Override
+            public void run() {
+                Message msg = handler.obtainMessage();
+                try {
+                    String result = HttpRequestUtil.doHttpsPost(url + token,str);
+                    Log.d("支付类型",result);
+                    if (result.contains("StatusCode is")){
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }else {
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result",result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handler.sendMessage(msg);
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
     private class MyAdapter extends BaseAdapter {
 
         @Override

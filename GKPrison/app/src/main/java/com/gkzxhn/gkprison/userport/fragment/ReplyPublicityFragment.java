@@ -1,7 +1,9 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.content.SharedPreferences;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
@@ -48,6 +51,8 @@ public class ReplyPublicityFragment extends Fragment {
     private ListView reply_list;
     private MyAdapter adapter;
     private String url = "";
+    private int jail_id;
+    private SharedPreferences sp;
     private TextView nonotice;
     private List<News> allnews = new ArrayList<>();
     private List<News> replys = new ArrayList<News>();
@@ -92,7 +97,9 @@ public class ReplyPublicityFragment extends Fragment {
         reply_list = (ListView)view.findViewById(R.id.reply_list);
         nonotice = (TextView)view.findViewById(R.id.tv_nothing);
         adapter = new MyAdapter();
-        url = Constants.URL_HEAD + "news?jail_id=1";
+        sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",0);
+        url = Constants.URL_HEAD + "news?jail_id="+jail_id;
         getNews();
         initdate();
         return view;

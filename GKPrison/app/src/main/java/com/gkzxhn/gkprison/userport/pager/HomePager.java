@@ -79,6 +79,7 @@ public class HomePager extends BasePager {
     private News focus_news_1;
     private News focus_news_2;
     private News focus_news_3;
+    private int jail_id;
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press,
             R.drawable.laws_press, R.drawable.prison_open_press,
             R.drawable.visit_service_press, R.drawable.family_service_press,
@@ -163,6 +164,7 @@ public class HomePager extends BasePager {
 //        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        jail_id = sp.getInt("jail_id",0);
         getFocusNews();// 获取焦点新闻
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
@@ -191,12 +193,12 @@ public class HomePager extends BasePager {
      */
     private void getFocusNews() {
         showLoadingDialog();
-        Log.i("获取焦点新闻url", Constants.URL_HEAD + Constants.NEWS_URL);
+        Log.i("获取焦点新闻url", Constants.URL_HEAD + "news?jail_id="+jail_id);
         new Thread(){
             @Override
             public void run() {
                 try {
-                    String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + Constants.NEWS_URL);
+                    String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "news?jail_id="+jail_id);
                     Message msg = handler.obtainMessage();
                     if(result.contains("StatusCode is ")){
                         handler.sendEmptyMessage(0);

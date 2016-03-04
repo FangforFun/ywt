@@ -45,9 +45,10 @@ public class WriteMessageActivity extends BaseActivity {
     private String theme;
     private String contents;
     private Gson gson;
-    private String token;
-    private String url = Constants.URL_HEAD + Constants.WRITE_MESSAGE;
     private SharedPreferences sp;
+    private int jail_id;
+    private String token;
+    private String url = Constants.URL_HEAD + "mail_boxes?jail_id="+jail_id+"&access_token=";
     private int family_id = 0;
     private SweetAlertDialog pDialog;
     private Handler handler = new Handler(){
@@ -110,6 +111,7 @@ public class WriteMessageActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         bt_commit_write_message.setOnClickListener(this);
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",1);
         family_id = sp.getInt("family_id", 1);
         token = sp.getString("token", "");
         rl_back.setOnClickListener(this);
