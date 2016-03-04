@@ -45,6 +45,7 @@ public class LawsRegulationsActivity extends BaseActivity {
     private SharedPreferences sp;
     private String token = "";
     private String url = "";
+    private int jail_id;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -77,7 +78,8 @@ public class LawsRegulationsActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token","00");
-        url = Constants.URL_HEAD + "laws?jail_id=1&access_token=" + token;
+        jail_id = sp.getInt("jail_id",0);
+        url = Constants.URL_HEAD + "laws?jail_id="+jail_id+"&access_token=" + token;
         getLaws();
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

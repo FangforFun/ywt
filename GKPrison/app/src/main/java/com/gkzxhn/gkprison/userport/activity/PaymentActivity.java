@@ -43,7 +43,6 @@ import java.util.Random;
 
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
-    private String url = Constants.URL_HEAD +"orders?jail_id=1&access_token=";
     private Button bt_pay;
     private TextView tv_count_money;
     private String countmoney;
@@ -54,6 +53,7 @@ public class PaymentActivity extends BaseActivity {
     private String TradeNo;
     private String times;
     private int cart_id;
+    private int jail_id;
     private String apply = "";
     private String saletype;
     private String bussinesstype;
@@ -91,7 +91,8 @@ public class PaymentActivity extends BaseActivity {
         saletype = getIntent().getStringExtra("saletype");
         bussinesstype = getIntent().getStringExtra("bussiness");
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        token =sp.getString("token","");
+        token =sp.getString("token", "");
+        jail_id = sp.getInt("jail_id",0);
         tv_count_money.setText(countmoney+"");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
@@ -141,6 +142,7 @@ public class PaymentActivity extends BaseActivity {
 
     private void send_payment_type(String payment_type) {
         final String str = "{\"payment_type\":\"" + payment_type + "\"}";
+        final String url = Constants.URL_HEAD +"orders?jail_id="+jail_id+"&access_token=";
         new Thread(){
             @Override
             public void run() {

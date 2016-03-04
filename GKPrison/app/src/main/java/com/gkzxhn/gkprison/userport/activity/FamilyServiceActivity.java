@@ -67,7 +67,8 @@ public class FamilyServiceActivity extends BaseActivity {
     private TextView prison_start_time;
     private TextView prison_end_time;
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
-    private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
+    private int jail_id;
+    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
     private String url1 = Constants.URL_HEAD +"services?access_token=";
     private Handler handler = new Handler(){
         @Override
@@ -149,6 +150,7 @@ public class FamilyServiceActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         setRemittanceVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",0);
         ip = getLocalHostIp();
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);

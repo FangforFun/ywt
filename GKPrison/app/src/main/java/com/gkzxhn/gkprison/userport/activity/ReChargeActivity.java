@@ -50,7 +50,8 @@ public class ReChargeActivity extends BaseActivity {
     private String times ="";
     private Gson gson;
     private String apply;
-    private String url = Constants.URL_HEAD + "orders?jail_id=1&access_token=";
+    private int jail_id;
+    private String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -92,6 +93,7 @@ public class ReChargeActivity extends BaseActivity {
         setTitle("充值");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",0);
         ip = getLocalHostIp();
         TradeNo = getOutTradeNo();
         btn_recharge.setOnClickListener(new View.OnClickListener() {

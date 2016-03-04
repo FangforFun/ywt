@@ -96,12 +96,13 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sp;
     private boolean isRegisteredUser;
     private MyPagerAdapter adapter;
-    private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
     private AutoCompleteTextView actv_prison_choose;
     private AutoTextAdapater autoTextAdapater;
     private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
+    private int jail_id;
+    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
 //    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
@@ -232,6 +233,7 @@ public class MainActivity extends BaseActivity {
         }
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
+            jail_id = sp.getInt("jail_id",0);
             getCommodity();// 获取商品
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
