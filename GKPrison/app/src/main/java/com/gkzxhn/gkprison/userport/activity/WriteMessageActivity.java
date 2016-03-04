@@ -48,7 +48,6 @@ public class WriteMessageActivity extends BaseActivity {
     private SharedPreferences sp;
     private int jail_id;
     private String token;
-    private String url = Constants.URL_HEAD + "mail_boxes?jail_id="+jail_id+"&access_token=";
     private int family_id = 0;
     private SweetAlertDialog pDialog;
     private Handler handler = new Handler(){
@@ -187,6 +186,7 @@ public class WriteMessageActivity extends BaseActivity {
 //                HttpClient httpClient = new DefaultHttpClient();
 //                HttpPost post = new HttpPost(url + token);
                 try {
+                    String url = Constants.URL_HEAD + "mail_boxes?jail_id="+jail_id+"&access_token=";
 //                    StringEntity entity = new StringEntity(sendmessage,HTTP.UTF_8);
 //                    entity.setContentType("application/json");
 //                    post.setEntity(entity);

@@ -51,7 +51,6 @@ public class ReChargeActivity extends BaseActivity {
     private Gson gson;
     private String apply;
     private int jail_id;
-    private String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -146,6 +145,7 @@ public class ReChargeActivity extends BaseActivity {
                 String token = sp.getString("token", "");
                 //       HttpClient httpClient = new DefaultHttpClient();
                 //       HttpPost post = new HttpPost(url+token);
+                String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
                 String s = url+token;
                 Log.d("订单号成功", s);
 

@@ -28,6 +28,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -66,10 +67,50 @@ public class PaymentActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
+                    String result = (String)msg.obj;
+                    if (result.equals("error")){
+                        showToastMsgShort("选择支付类型失败");
+                    }else if (result.equals("success")){
+                        Bundle bundle = msg.getData();
+                        String type = bundle.getString("result");
+                        int code = getResultcode(type);
+                        if (code == 200){
+                            if (payment_type.equals("alipay")){
+                                Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
+                                intent.putExtra("price",countmoney);
+                                intent.putExtra("outorderno",TradeNo);
+                                intent.putExtra("times",times);
+                                intent.putExtra("cart_id",cart_id);
+                                intent.putExtra("saletype",saletype);
+                                intent.putExtra("bussiness",bussinesstype);
+                                PaymentActivity.this.startActivity(intent);
+                            }else if (payment_type.equals("weixin")){
+                                Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
+                                intent.putExtra("price",countmoney);
+                                PaymentActivity.this.startActivity(intent);
+                            }else if (payment_type.equals("unionpay")){
+                                Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
+                                intent.putExtra("price",countmoney);
+                                PaymentActivity.this.startActivity(intent);
+                            }
+                        }
+
+                    }
                     break;
             }
         }
     };
+
+    private int getResultcode(String type) {
+        int a = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            a = jsonObject.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return a;
+    }
 
     @Override
     protected View initView() {
@@ -115,41 +156,26 @@ public class PaymentActivity extends BaseActivity {
                  if (ischeckeds[0] == true){
                      payment_type = "unionpay";
                      send_payment_type(payment_type);
-                     Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
-                     intent.putExtra("price",countmoney);
-                     PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[1] == true){
                      payment_type = "alipay";
                      send_payment_type(payment_type);
-                     Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
-                     intent.putExtra("price",countmoney);
-                     intent.putExtra("outorderno",TradeNo);
-                     intent.putExtra("times",times);
-                     intent.putExtra("cart_id",cart_id);
-                     intent.putExtra("saletype",saletype);
-                     intent.putExtra("bussiness",bussinesstype);
-                     PaymentActivity.this.startActivity(intent);
                  }else if (ischeckeds[2] == true){
-                     payment_type = "wechatpay";
+                     payment_type = "weixin";
                      send_payment_type(payment_type);
-                     Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
-                     intent.putExtra("price",countmoney);
-                     PaymentActivity.this.startActivity(intent);
                  }
             }
         });
     }
 
     private void send_payment_type(String payment_type) {
-        final String str = "{\"payment_type\":\"" + payment_type + "\"}";
-        final String url = Constants.URL_HEAD +"orders?jail_id="+jail_id+"&access_token=";
+        final String str = "{\"trade_no\":\""+TradeNo+"\",\"payment_type\":\"" + payment_type + "\"}";
+        final String url = Constants.URL_HEAD +"prepay?jail_id="+jail_id+"&access_token=";
         new Thread(){
             @Override
             public void run() {
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url + token,str);
-                    Log.d("支付类型",result);
                     if (result.contains("StatusCode is")){
                         msg.obj = "error";
                         msg.what = 1;

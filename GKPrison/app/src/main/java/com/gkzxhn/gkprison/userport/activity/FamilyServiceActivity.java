@@ -68,7 +68,6 @@ public class FamilyServiceActivity extends BaseActivity {
     private TextView prison_end_time;
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private int jail_id;
-    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
     private String url1 = Constants.URL_HEAD +"services?access_token=";
     private Handler handler = new Handler(){
         @Override
@@ -309,6 +308,7 @@ public class FamilyServiceActivity extends BaseActivity {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
+                String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
          //       HttpClient httpClient = new DefaultHttpClient();
          //       HttpPost post = new HttpPost(url+token);
                 String s = url+token;
