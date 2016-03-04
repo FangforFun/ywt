@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
     private int jail_id;
-    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
+
 //    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
@@ -233,8 +233,7 @@ public class MainActivity extends BaseActivity {
         }
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
-            jail_id = sp.getInt("jail_id",0);
-            getCommodity();// 获取商品
+
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
             }
@@ -519,6 +518,7 @@ public class MainActivity extends BaseActivity {
                 editor.putInt("jail_id", jsonObject1.getInt("jail_id"));
                 editor.putString("prisoner_number", jsonObject1.getString("prisoner_number"));
                 editor.commit();
+                getCommodity();// 获取商品
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -613,6 +613,7 @@ public class MainActivity extends BaseActivity {
                     Message msg = handler.obtainMessage();
 //                    HttpClient httpClient = new DefaultHttpClient();
                     String token = sp.getString("token", "");
+                    jail_id = sp.getInt("jail_id",0);
 //                    HttpGet httpGet = new HttpGet(url + token);
                     try {
 //                        HttpResponse response = httpClient.execute(httpGet);
@@ -629,6 +630,7 @@ public class MainActivity extends BaseActivity {
 //                            msg.what = 1;
 //                            handler.sendMessage(msg);
 //                        }
+                        String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
                         String result = HttpRequestUtil.doHttpsGet(url + token);
                         if(result.contains("StatusCode is ")){
                             msg.obj = "error";

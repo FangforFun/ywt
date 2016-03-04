@@ -90,9 +90,6 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_zhineng;
     private Spinner sp_allclass;
     private Gson gson;
-
-
-    private String url = Constants.URL_HEAD + "prepay?jail_id=1&access_token=";
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -126,6 +123,7 @@ public class CanteenFragment extends BaseFragment {
     private ListView lv_salsechoose_items;
     private int click = 1;
     private int clicksalse = 1;
+    private int jail_id;
     private FrameLayout salsechoose;
     private AllchooseAdapter allchooseAdapter;
     private Handler handler = new Handler(){
@@ -165,11 +163,14 @@ public class CanteenFragment extends BaseFragment {
                     if (billing.equals("error")){
                         showToastMsgShort("上传数据失败");
                     }else if (billing.equals("success")){
-                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+"  where time = '"+times+"'";
-                        db.execSQL(sql);
                         Bundle bundle = msg.getData();
                         String s = bundle.getString("result");
+                        TradeNo = getResultTradeno(s);
+                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+",out_trade_no=" +TradeNo+ "   where time = '"+times+"'";
+                        db.execSQL(sql);
+                        Log.d("订单号",TradeNo);
                         int a = getResultcode(s);
+                        Log.d("订单号",a+"");
                         if (a == 200) {
                             Intent intent = new Intent(context, PaymentActivity.class);
                             intent.putExtra("totalmoney", send);
@@ -184,6 +185,18 @@ public class CanteenFragment extends BaseFragment {
             }
         }
     };
+
+    private String getResultTradeno(String s) {
+        String str = "";
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            JSONObject jsonObject1 = jsonObject.getJSONObject("order");
+            str = jsonObject1.getString("trade_no");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
 
     @Override
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
@@ -226,11 +239,12 @@ public class CanteenFragment extends BaseFragment {
         ip = getLocalHostIp();
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",0);
         long time = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         final Date date = new Date(time);
         times = format.format(date);
-        String sql = "insert into Cart (time,out_trade_no,isfinish,remittance) values ('"+times+"','"+TradeNo+"',0,0)";
+        String sql = "insert into Cart (time,isfinish,remittance) values ('"+times+"',0,0)";
         db.execSQL(sql);
         Log.d("记录",times);
         String sql1 = "select id from Cart where time = '"+times+"'";
@@ -595,6 +609,7 @@ public class CanteenFragment extends BaseFragment {
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
+        final String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
        new Thread(){
             @Override
           public void run() {
@@ -629,6 +644,7 @@ public class CanteenFragment extends BaseFragment {
                 **/
                 try {
                     String result = HttpRequestUtil.doHttpsPost(s,str);
+                    Log.d("返回订单号",result);
                     if (result.contains("StatusCode is")){
                         msg.obj = "error";
                         msg.what = 1;
