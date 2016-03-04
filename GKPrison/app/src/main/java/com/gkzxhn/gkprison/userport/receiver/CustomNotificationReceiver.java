@@ -110,7 +110,6 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * 设置闹钟
      */
     private void setRemindAlarm(Context context, String content) {
-//        Log.i("消息内容", content);
         String meeting_date = "";
         long alarm_time = 0;
         try {
@@ -118,9 +117,12 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
             meeting_date = jsonObject.getString("meeting_date");
             String meeting_time = meeting_date.substring(0, meeting_date.lastIndexOf("-"));
             Log.i("meeting_time", meeting_time);
+            String start_time = meeting_time.substring(0, meeting_time.indexOf(" ") + 9);
+            Log.i("start_time", start_time);
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            long pre_alarm_time = format.parse(meeting_time).getTime();
+            long pre_alarm_time = format.parse(start_time).getTime();
             alarm_time = pre_alarm_time - 1800000;
+            Log.i("alarm_time", alarm_time + "---" + StringUtils.formatTime(alarm_time, "yyyy-MM-dd HH:mm:ss"));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -135,7 +137,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
         PendingIntent sender = PendingIntent.getBroadcast(
                 context, 0, intent, 0);
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-        am.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 60000, sender);
+        am.set(AlarmManager.RTC_WAKEUP, alarm_time, sender);
     }
 
     /**

@@ -409,7 +409,12 @@ public class RegisterActivity extends BaseActivity {
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
                 register.setGender(rg_sex.getCheckedRadioButtonId() == R.id.rb_male ? "男" : "女");
-                register.setJail_id(1);
+                if(prison_map.containsKey(prison_chooes)) {
+                    int jail_id = prison_map.get(prison_chooes);
+                    register.setJail_id(jail_id);
+                }else {
+                    showToastMsgShort("抱歉，暂未开通此监狱");
+                }
                 register.setType_id(3);
                 register.setUuid_images_attributes(uuid_images);
 
@@ -551,10 +556,8 @@ public class RegisterActivity extends BaseActivity {
                 }
                 //判断监狱选择
                 if(TextUtils.isEmpty(prison_chooes)){
-                    showToastMsgShort("");
+                    showToastMsgShort("请输入监狱名称");
                     return;
-                }else {
-                    // ToDo
                 }
                 // 判断验证码是否正确
                 if(TextUtils.isEmpty(identifying_code)){

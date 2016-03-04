@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
     private int jail_id;
-
+    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
 //    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
@@ -129,6 +129,13 @@ public class MainActivity extends BaseActivity {
                     break;
                 case 2:// 无账号快捷登录监狱选择没有网络
                     showToastMsgShort("没有网络,请检查网络设置");
+                    break;
+                case 3:
+                    pagerList.clear();
+                    pagerList.add(new HomePager(MainActivity.this));
+                    pagerList.add(new RemoteMeetPager(MainActivity.this));
+                    pagerList.add(new CanteenPager(MainActivity.this));
+                    layoutMain();
                     break;
             }
         }
@@ -231,12 +238,17 @@ public class MainActivity extends BaseActivity {
             // 如果是注册用户并且不是被其他端踢掉的未上线就重新登录
             handler.post(reLoginTask);
         }
+        pagerList = new ArrayList<>();
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
-
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
             }
+        }else {
+            pagerList.clear();
+            pagerList.add(new HomePager(this));
+            prison_map = new HashMap<>();
+            showPrisonDialog();// 弹出监狱选择框
         }
         if(statusCode == StatusCode.KICKOUT){
             showKickoutDialog();// 其他设备登录
@@ -249,18 +261,6 @@ public class MainActivity extends BaseActivity {
         MenuFragment menuFragment = new MenuFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_drawer, menuFragment, "MENU").commit();
-        pagerList = new ArrayList<>();
-        pagerList.clear();
-        if(isRegisteredUser) {
-            pagerList.add(new HomePager(this));
-            pagerList.add(new RemoteMeetPager(this));
-            pagerList.add(new CanteenPager(this));
-            layoutMain();
-        }else {
-            pagerList.add(new HomePager(this));
-            prison_map = new HashMap<>();
-            showPrisonDialog();// 弹出监狱选择框
-        }
         rl_home_menu.setOnClickListener(this);
         rl_message.setOnClickListener(this);
     }
@@ -351,7 +351,7 @@ public class MainActivity extends BaseActivity {
     private void showPrisonDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
-        View prison_choose = View.inflate(this, R.layout.prison_choose_dialog, null);
+        final View prison_choose = View.inflate(this, R.layout.prison_choose_dialog, null);
         builder.setView(prison_choose);
         Button bt_ok = (Button) prison_choose.findViewById(R.id.bt_ok);
         actv_prison_choose = (AutoCompleteTextView) prison_choose.findViewById(R.id.actv_prison_choose);
@@ -382,9 +382,17 @@ public class MainActivity extends BaseActivity {
                     showToastMsgShort("请输入监狱名称");
                     return;
                 } else {
-//                    showToastMsgShort("选择完成...测试");
-                    dialog.dismiss();
-                    layoutMain();// 布局
+                    if (prison_map.containsKey(content)) {
+                        int jail_id = prison_map.get(content);
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("jail_id", jail_id);
+                        editor.commit();
+                        dialog.dismiss();
+                        layoutMain();// 布局
+                    } else {
+                        showToastMsgShort("抱歉，暂未开通此监狱");
+                        return;
+                    }
                 }
             }
         });
@@ -411,11 +419,8 @@ public class MainActivity extends BaseActivity {
             suggest = new ArrayList<>();
             if(Utils.isNetworkAvailable()) {
                 try {
-//                    HttpClient hClient = new DefaultHttpClient();
-//                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
-//                    ResponseHandler<String> rHandler = new BasicResponseHandler();
-//                    data = hClient.execute(hGet, rHandler);
                     data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
+                    Log.i("监狱。。。。", data);
                     prison_map.clear();
                     JSONObject jsonObject = new JSONObject(data);
                     JSONArray jArray = jsonObject.getJSONArray("jails");
@@ -469,20 +474,6 @@ public class MainActivity extends BaseActivity {
             new Thread() {
                 @Override
                 public void run() {
-//                    HttpUtils httpUtils = new HttpUtils();
-//                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""), new RequestCallBack<Object>() {
-//                        @Override
-//                        public void onSuccess(ResponseInfo<Object> responseInfo) {
-//                            Log.i("请求成功", responseInfo.result.toString());
-//                            parseUserInfoResult(responseInfo.result.toString());
-//                        }
-//
-//                        @Override
-//                        public void onFailure(HttpException e, String s) {
-//                            Log.i("请求失败", s + "---" + e.getMessage());
-//                            showToastMsgShort("请求失败");
-//                        }
-//                    });
                     try {
                         String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""));
                         if(result.contains("StatusCode is ")){
@@ -518,7 +509,9 @@ public class MainActivity extends BaseActivity {
                 editor.putInt("jail_id", jsonObject1.getInt("jail_id"));
                 editor.putString("prisoner_number", jsonObject1.getString("prisoner_number"));
                 editor.commit();
+                jail_id = sp.getInt("jail_id",0);
                 getCommodity();// 获取商品
+                handler.sendEmptyMessage(3);
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -611,26 +604,8 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-//                    HttpClient httpClient = new DefaultHttpClient();
                     String token = sp.getString("token", "");
-                    jail_id = sp.getInt("jail_id",0);
-//                    HttpGet httpGet = new HttpGet(url + token);
                     try {
-//                        HttpResponse response = httpClient.execute(httpGet);
-//                        if (response.getStatusLine().getStatusCode() == 200) {
-//                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
-//                            msg.obj = "success";
-//                            Bundle bundle = new Bundle();
-//                            bundle.putString("result", result);
-//                            msg.setData(bundle);
-//                            msg.what = 1;
-//                            handler.sendMessage(msg);
-//                        } else {
-//                            msg.obj = "error";
-//                            msg.what = 1;
-//                            handler.sendMessage(msg);
-//                        }
-                        String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
                         String result = HttpRequestUtil.doHttpsGet(url + token);
                         if(result.contains("StatusCode is ")){
                             msg.obj = "error";

@@ -285,26 +285,8 @@ public class PersonLoadingFragment extends BaseFragment {
                             @Override
                             public void run() {
                                 String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\"" + ic_card_num + "\", \"code\":\"" + identifying_code + "\"}}";
-//                                HttpClient httpClient = new DefaultHttpClient();
-//                                HttpPost post = new HttpPost(url);
-//                                Looper.prepare();
                                 Message msg = handler.obtainMessage();
                                 try {
-//                                    StringEntity entity = new StringEntity(str, HTTP.UTF_8);
-//                                    entity.setContentType("application/json");
-//                                    post.setEntity(entity);
-//                                    HttpResponse httpResponse = httpClient.execute(post);
-//                                    if (httpResponse.getStatusLine().getStatusCode() == 200) {
-//                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                                        Log.d("登录信息发送成功", result);
-//                                        msg.obj = result;
-//                                        msg.what = 2;
-//                                        handler.sendMessage(msg);
-//                                    } else {
-//                                        handler.sendEmptyMessage(3);
-//                                        String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                                        Log.d("登录信息发送失败", result);
-//                                    }
                                     String result = HttpRequestUtil.doHttpsPost(url, str);
                                     if (result.contains("StatusCode is ")) {
                                         handler.sendEmptyMessage(3);
@@ -320,9 +302,6 @@ public class PersonLoadingFragment extends BaseFragment {
                                     handler.sendEmptyMessage(4);
                                     Log.d("登录信息发送异常", e.getMessage());
                                 }
-//                                finally {
-//                                    Looper.loop();
-//                                }
                             }
                         }.start();
                     } else {
