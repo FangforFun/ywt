@@ -599,7 +599,7 @@ public class CanteenFragment extends BaseFragment {
         final Order order = new Order();
         order.setFamily_id(family_id);
         order.setLine_items_attributes(line_items_attributes);
-        order.setJail_id(1);
+        order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
         order.setAmount(f);

@@ -63,7 +63,6 @@ public class AllClassificationFragment extends BaseFragment {
     private int Items_id = 0;
     private int category_id;
     private SharedPreferences sp;
-    private String url = Constants.URL_HEAD + "items?jail_id=1&access_token=";
     private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
     private Handler handler = new Handler(){
@@ -125,6 +124,7 @@ public class AllClassificationFragment extends BaseFragment {
             Message msg = handler.obtainMessage();
             //HttpClient httpClient = new DefaultHttpClient();
             String token = sp.getString("token", "");
+            int jail_id = sp.getInt("jail_id",0);
             //HttpGet httpGet = new HttpGet(url + token);
             /**
             try {
@@ -149,6 +149,7 @@ public class AllClassificationFragment extends BaseFragment {
                 handler.sendMessage(msg);
             }
              **/
+            String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
             try {
                 String result = HttpRequestUtil.doHttpsGet(url + token);
                 if (result.contains("StatusCode is")){

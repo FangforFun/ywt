@@ -293,7 +293,7 @@ public class FamilyServiceActivity extends BaseActivity {
         lineitemsattributes.setQuantity(1);
         line_items_attributes.add(lineitemsattributes);
         order.setLine_items_attributes(line_items_attributes);
-        order.setJail_id(1);
+        order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
         order.setAmount(f);
