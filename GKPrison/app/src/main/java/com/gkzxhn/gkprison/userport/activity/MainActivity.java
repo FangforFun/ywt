@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map;
     private int jail_id;
-    private String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
+    private String url;
 
     private Handler handler = new Handler(){
         @Override
@@ -604,6 +604,7 @@ public class MainActivity extends BaseActivity {
                     Message msg = handler.obtainMessage();
                     String token = sp.getString("token", "");
                     try {
+                        url = Constants.URL_HEAD + "items?jail_id=" + jail_id + "&access_token=";
                         String result = HttpRequestUtil.doHttpsGet(url + token);
                         if(result.contains("StatusCode is ")){
                             msg.obj = "error";

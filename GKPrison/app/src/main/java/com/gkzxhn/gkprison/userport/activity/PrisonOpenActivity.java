@@ -170,7 +170,7 @@ public class PrisonOpenActivity extends BaseActivity {
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                int i = allnews.get(position).getId();
+                int i = newsList.get(position).getId();
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
                 intent.putExtra("id", i);
                 startActivity(intent);

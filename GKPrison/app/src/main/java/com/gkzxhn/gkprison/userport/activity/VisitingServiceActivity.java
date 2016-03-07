@@ -106,7 +106,9 @@ public class VisitingServiceActivity extends BaseActivity {
                         setCarousel();
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                        getNews_dialog.dismiss();
+                        if(getNews_dialog.isShowing()) {
+                            getNews_dialog.dismiss();
+                        }
                     }
                     if(mRefreshLayout.isRefreshing()){
                         mRefreshLayout.setRefreshing(false);
@@ -158,7 +160,7 @@ public class VisitingServiceActivity extends BaseActivity {
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                int i = allnews.get(position).getId();
+                int i = newsList.get(position).getId();
                 Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
                 intent.putExtra("id", i);
                 VisitingServiceActivity.this.startActivity(intent);
@@ -169,7 +171,9 @@ public class VisitingServiceActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        getNews_dialog.dismiss();
+        if(getNews_dialog.isShowing()) {
+            getNews_dialog.dismiss();
+        }
     }
 
     /**
