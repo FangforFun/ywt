@@ -412,6 +412,7 @@ public class RegisterActivity extends BaseActivity {
                 if(prison_map.containsKey(prison_chooes)) {
                     int jail_id = prison_map.get(prison_chooes);
                     register.setJail_id(jail_id);
+                    Log.d("注册信息", jail_id + "");
                 }else {
                     showToastMsgShort("抱歉，暂未开通此监狱");
                 }

@@ -31,7 +31,7 @@ public class NewsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        int id = getIntent().getIntExtra("id",2);
+        int id = getIntent().getIntExtra("id",-1);
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);

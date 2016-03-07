@@ -73,7 +73,6 @@ public class RemoteMeetPager extends BasePager {
     private String id_num;// 身份证号
     private TextView tv_remotly_num;
     private TextView bt_recharge;
-    private HttpClient httpClient;
     private int family_id = 0;
     private String url = Constants.URL_HEAD + "families/";
     private int vedionum;
@@ -242,7 +241,6 @@ public class RemoteMeetPager extends BasePager {
 
     @Override
     public void initData() {
-        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         id_num = sp.getString("password", "");
         family_id = sp.getInt("family_id", 1);
@@ -432,30 +430,8 @@ public class RemoteMeetPager extends BasePager {
                 @Override
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
                     try {
-//                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-//                        entity.setContentType("application/json");
-//                        post.setEntity(entity);
-//                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-//                        HttpResponse httpResponse = httpClient.execute(post);
-//                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                            Message msg = handler.obtainMessage();
-//                            msg.obj = result;
-//                            msg.what = 3;
-//                            handler.sendMessage(msg);
-//                            Log.d("发送成功", result);
-//                        } else {
-//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                            Message msg = handler.obtainMessage();
-//                            msg.obj = result;
-//                            msg.what = 4;
-//                            handler.sendMessage(msg);
-//                            Log.d("发送失败", result);
-//                        }
                         String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
                         Message msg = handler.obtainMessage();
                         if(result.contains("StatusCode is ")){
@@ -499,31 +475,9 @@ public class RemoteMeetPager extends BasePager {
                     String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
                             sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString()
                             + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
-                            + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":1,\"prisoner_number\":\""
+                            + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\""
                             + prisoner_number + "\",\"type_id\":1}}";
-//                    HttpClient httpClient = new DefaultHttpClient();
-//                    HttpPost post = new HttpPost(MEETING_REQUEST_URL + sp.getString("token", ""));
                     try {
-//                        StringEntity entity = new StringEntity(body, HTTP.UTF_8);
-//                        entity.setContentType("application/json");
-//                        post.setEntity(entity);
-//                        Log.d("开始发送", body + "---" + MEETING_REQUEST_URL + sp.getString("token", ""));
-//                        HttpResponse httpResponse = httpClient.execute(post);
-//                        if (httpResponse.getStatusLine().getStatusCode() == 200) {
-//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                            Message msg = handler.obtainMessage();
-//                            msg.obj = result;
-//                            msg.what = 0;
-//                            handler.sendMessage(msg);
-//                            Log.d("发送成功", result);
-//                        } else {
-//                            String result = EntityUtils.toString(httpResponse.getEntity(), "utf-8");
-//                            Message msg = handler.obtainMessage();
-//                            msg.obj = result;
-//                            msg.what = 1;
-//                            handler.sendMessage(msg);
-//                            Log.d("发送失败", result);
-//                        }
                         String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
                         Message msg = handler.obtainMessage();
                         if(result.contains("StatusCode is ")){
