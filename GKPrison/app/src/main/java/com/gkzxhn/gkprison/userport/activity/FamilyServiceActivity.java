@@ -299,7 +299,6 @@ public class FamilyServiceActivity extends BaseActivity {
         order.setAmount(f);
         gson = new Gson();
         apply = gson.toJson(order);
-        Log.d("成功",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
@@ -308,11 +307,10 @@ public class FamilyServiceActivity extends BaseActivity {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
-                String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
+                String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
          //       HttpClient httpClient = new DefaultHttpClient();
          //       HttpPost post = new HttpPost(url+token);
                 String s = url+token;
-                Log.d("订单号成功", s);
 
                     /**
                     StringEntity entity = new StringEntity(str);
@@ -335,6 +333,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url+token,str);
+                    Log.d("订单号",result);
                     if (result.contains("StatusCode is ")){
                         msg.obj = "error";
                         msg.what = 2;
