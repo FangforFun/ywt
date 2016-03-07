@@ -74,6 +74,7 @@ public class PaymentActivity extends BaseActivity {
                         Bundle bundle = msg.getData();
                         String type = bundle.getString("result");
                         int code = getResultcode(type);
+                        Log.d("订单类型",payment_type);
                         if (code == 200){
                             if (payment_type.equals("alipay")){
                                 Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
@@ -126,6 +127,7 @@ public class PaymentActivity extends BaseActivity {
         setTitle("支付");
         setBackVisibility(View.VISIBLE);
         TradeNo = getIntent().getStringExtra("TradeNo");
+        Log.d("订单号",TradeNo);
         countmoney = getIntent().getStringExtra("totalmoney");
         times = getIntent().getStringExtra("times");
         cart_id = getIntent().getIntExtra("cart_id", 0);
