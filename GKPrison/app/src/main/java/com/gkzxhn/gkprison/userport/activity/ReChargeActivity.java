@@ -62,6 +62,7 @@ public class ReChargeActivity extends BaseActivity {
                     }else if (recharge.equals("success")){
                         Bundle bundle = msg.getData();
                         String code = bundle.getString("result");
+                        TradeNo = getResultTradeno(code);
                         int a = getResultcode(code);
                         if (a == 200){
                             Intent intent = new Intent(ReChargeActivity.this,PaymentActivity.class);
@@ -94,7 +95,6 @@ public class ReChargeActivity extends BaseActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         jail_id = sp.getInt("jail_id",0);
         ip = getLocalHostIp();
-        TradeNo = getOutTradeNo();
         btn_recharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,12 +147,11 @@ public class ReChargeActivity extends BaseActivity {
                 //       HttpPost post = new HttpPost(url+token);
                 String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
                 String s = url+token;
-                Log.d("订单号成功", s);
-
                 Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url + token, str);
+                    Log.d("订单号",result);
                     if (result.contains("StatusCode is ")){
                         msg.obj = "error";
                         msg.what = 1;
@@ -211,15 +210,16 @@ public class ReChargeActivity extends BaseActivity {
 
     }
 
-    public String getOutTradeNo() {
-        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
-                Locale.getDefault());
-        Date date = new Date();
-        String key = format.format(date);
-        Random r = new Random();
-        key = key + r.nextInt();
-        key = key.substring(0, 15);
-        return key;
+    private String getResultTradeno(String s) {
+        String str = "";
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            JSONObject jsonObject1 = jsonObject.getJSONObject("order");
+            str = jsonObject1.getString("trade_no");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 
     private int getResultcode(String result) {
