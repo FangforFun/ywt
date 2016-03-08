@@ -178,6 +178,7 @@ public class PaymentActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url + token,str);
+                    Log.d("支付类型返回",result);
                     if (result.contains("StatusCode is")){
                         msg.obj = "error";
                         msg.what = 1;
