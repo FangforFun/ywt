@@ -19,6 +19,7 @@ import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
 import org.apache.http.conn.util.InetAddressUtils;
@@ -98,6 +99,9 @@ public class ReChargeActivity extends BaseActivity {
         btn_recharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isFastClick()){
+                    return;
+                }
                 if (five.isChecked()){
                     money = "5";
                 }else if (twenty.isChecked()){
