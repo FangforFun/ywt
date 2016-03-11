@@ -139,7 +139,6 @@ public class RegisterActivity extends BaseActivity {
     private int countdown = 60;
     private boolean isRunning = false;
     private SharedPreferences sp;
-    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
         @Override
@@ -288,7 +287,6 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-//        httpClient = HttpRequestUtil.initHttpClient(new BasicHttpParams());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("注册");
         setBackVisibility(View.VISIBLE);
