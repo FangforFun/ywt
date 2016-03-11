@@ -74,6 +74,8 @@ public class PrisonOpenActivity extends BaseActivity {
     private TextView textMore;
     private ProgressBar progressBar;
 
+
+    
     private boolean isLoadingMore = false;
     private Handler handler = new Handler(){
         @Override
