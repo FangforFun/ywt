@@ -104,8 +104,7 @@
                         android:textSize="@dimen/tv_cancel_size"
                         android:textColor="@color/tv_bg"
                         android:layout_toRightOf="@+id/tv_remotely_visit_num"
-                        android:layout_alignBaseline="@+id/tv_remotely_visit"
-                        />
+                        android:layout_alignBaseline="@+id/tv_remotely_visit" />
                 </RelativeLayout>
                 <TextView
                     android:id="@+id/bt_remotely"

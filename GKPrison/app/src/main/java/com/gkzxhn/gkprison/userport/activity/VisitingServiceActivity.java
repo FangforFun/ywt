@@ -14,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +24,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.News;
+import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
@@ -60,6 +62,13 @@ public class VisitingServiceActivity extends BaseActivity {
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private ProgressDialog getNews_dialog;
+    private MyAdapter myAdapter;// 新闻列表适配器
+    private RefreshLayout mRefreshLayout;
+    private View footerLayout;
+    private TextView textMore;
+    private ProgressBar progressBar;
+
+    private boolean isLoadingMore = false;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -70,6 +79,7 @@ public class VisitingServiceActivity extends BaseActivity {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         allnews = analysisNews(result);
+                        newsList.clear();
                         for (int i = 0;i < allnews.size();i++){
                             News news = allnews.get(i);
                             if (news.getType_id() == 2){
@@ -87,11 +97,28 @@ public class VisitingServiceActivity extends BaseActivity {
                                 return -1;
                             }
                         });
-                        lv_prison_open.setAdapter(new MyAdapter());
+                        if(myAdapter == null) {
+                            myAdapter = new MyAdapter();
+                            lv_prison_open.setAdapter(myAdapter);
+                        }else {
+                            myAdapter.notifyDataSetChanged();
+                        }
                         setCarousel();
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                        getNews_dialog.dismiss();
+                        if(getNews_dialog.isShowing()) {
+                            getNews_dialog.dismiss();
+                        }
+                    }
+                    if(mRefreshLayout.isRefreshing()){
+                        mRefreshLayout.setRefreshing(false);
+                    }
+                    if(isLoadingMore){
+                        mRefreshLayout.setLoading(false);
+                        textMore.setVisibility(View.GONE);
+                        progressBar.setVisibility(View.GONE);
+                        Toast.makeText(VisitingServiceActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
+                        isLoadingMore = false;
                     }
                     break;
             }
@@ -133,7 +160,7 @@ public class VisitingServiceActivity extends BaseActivity {
         vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
-                int i = allnews.get(position).getId();
+                int i = newsList.get(position).getId();
                 Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
                 intent.putExtra("id", i);
                 VisitingServiceActivity.this.startActivity(intent);
@@ -144,7 +171,9 @@ public class VisitingServiceActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        getNews_dialog.dismiss();
+        if(getNews_dialog.isShowing()) {
+            getNews_dialog.dismiss();
+        }
     }
 
     /**
@@ -158,12 +187,26 @@ public class VisitingServiceActivity extends BaseActivity {
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
-        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
+        mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
+//        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
         layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
         top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
-        rl_carousel.addView(layout_roll_view);
+//        rl_carousel.addView(layout_roll_view);
+        lv_prison_open.addHeaderView(layout_roll_view);
+
+        footerLayout = getLayoutInflater().inflate(R.layout.listview_footer, null);
+        textMore = (TextView) footerLayout.findViewById(R.id.text_more);
+        progressBar = (ProgressBar) footerLayout.findViewById(R.id.load_progress_bar);
+
+        lv_prison_open.addFooterView(footerLayout);
+        mRefreshLayout.setChildView(lv_prison_open);
+
+        mRefreshLayout.setColorSchemeResources(R.color.theme,
+                R.color.theme,
+                R.color.theme,
+                R.color.theme);
         return view;
     }
 
@@ -174,48 +217,69 @@ public class VisitingServiceActivity extends BaseActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         url = Constants.URL_HEAD + "news?jail_id=" + sp.getInt("jail_id", 0) ;
-        getNews();
+        getNews(0);
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                int i = newsList.get(position).getId();
-                Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                startActivity(intent);
+                if(position > 0) {
+                    int i = newsList.get(position - 1).getId();
+                    Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
+                    intent.putExtra("id", i);
+                    startActivity(intent);
+                }
             }
         });
-
+        mRefreshLayout.setOnRefreshListener(new RefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getNews(1);
+            }
+        });
+        mRefreshLayout.setOnLoadListener(new RefreshLayout.OnLoadListener() {
+            @Override
+            public void onLoad() {
+                getNews(2);
+            }
+        });
+        textMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getNews(2);
+            }
+        });
     }
 
     /**
      * 获取新闻
      */
-    private void getNews(){
+    private void getNews(int getType){
         if(Utils.isNetworkAvailable()) {
-            getNews_dialog = new ProgressDialog(this);
-            getNews_dialog.setMessage("正在加载...");
-            getNews_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            getNews_dialog.setCancelable(false);
-            getNews_dialog.setCanceledOnTouchOutside(false);
-            getNews_dialog.show();
+            if(getType == 0) {// 进入页面
+                getNews_dialog = new ProgressDialog(this);
+                getNews_dialog.setMessage("正在加载...");
+                getNews_dialog.setCanceledOnTouchOutside(false);
+                getNews_dialog.setCancelable(false);
+                getNews_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                getNews_dialog.show();
+            }else if(getType == 1){  // 下拉刷新
+
+            }else if(getType == 2){// 上拉加载
+                textMore.setVisibility(View.GONE);
+                progressBar.setVisibility(View.VISIBLE);
+                isLoadingMore = true;
+            }
             new Thread() {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
                     try {
                         String result = HttpRequestUtil.doHttpsGet(url);
-                        if(result.contains("StatusCode is ")){
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }else {
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result", result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handler.sendMessage(msg);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -271,8 +335,6 @@ public class VisitingServiceActivity extends BaseActivity {
         }
         return newses;
     }
-
-
 
     private class MyAdapter extends BaseAdapter {
 

@@ -99,6 +99,7 @@ public class FamilyServiceActivity extends BaseActivity {
                     }else if (ording.equals("success")){
                         Bundle bundle = msg.getData();
                         String code = bundle.getString("result");
+                        TradeNo = getResultTradeno(code);
                         int passcode = getResultcode(code);
                         if (passcode == 200){
                             Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
@@ -222,7 +223,6 @@ public class FamilyServiceActivity extends BaseActivity {
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date = new Date(time);
                 times = format.format(date);
-                TradeNo = getOutTradeNo();
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
                 View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
                 final EditText et_money = (EditText)view.findViewById(R.id.et_money);
@@ -293,13 +293,12 @@ public class FamilyServiceActivity extends BaseActivity {
         lineitemsattributes.setQuantity(1);
         line_items_attributes.add(lineitemsattributes);
         order.setLine_items_attributes(line_items_attributes);
-        order.setJail_id(1);
+        order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
         apply = gson.toJson(order);
-        Log.d("成功",apply);
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
@@ -308,11 +307,10 @@ public class FamilyServiceActivity extends BaseActivity {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
-                String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
+                String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
          //       HttpClient httpClient = new DefaultHttpClient();
          //       HttpPost post = new HttpPost(url+token);
                 String s = url+token;
-                Log.d("订单号成功", s);
 
                     /**
                     StringEntity entity = new StringEntity(str);
@@ -335,6 +333,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url+token,str);
+                    Log.d("订单号",result);
                     if (result.contains("StatusCode is ")){
                         msg.obj = "error";
                         msg.what = 2;
@@ -652,14 +651,15 @@ public class FamilyServiceActivity extends BaseActivity {
             ImageView receipt;
         }
     }
-    public String getOutTradeNo() {
-        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
-                Locale.getDefault());
-        Date date = new Date();
-        String key = format.format(date);
-        Random r = new Random();
-        key = key + r.nextInt();
-        key = key.substring(0, 15);
-        return key;
+    private String getResultTradeno(String s) {
+        String str = "";
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            JSONObject jsonObject1 = jsonObject.getJSONObject("order");
+            str = jsonObject1.getString("trade_no");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return str;
     }
 }

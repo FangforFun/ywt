@@ -19,6 +19,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -82,6 +83,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private TextView monthText;
     private long mExitTime;//add by hzn 退出按键时间间隔
     private LinearLayout ll_loading;// 刷新
+    private FrameLayout fl_transparent;// 防暴力点击帧布局
     private ProgressBar pb_loading;
     private TextView tv_loading;
     private CalendarCard[] views;
@@ -121,6 +123,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         }
                     }
                     ra.cancel();
+                    fl_transparent.setVisibility(View.GONE); // 刷新完数据隐藏
                     break;
                 case 1: // 取消视频成功
                     String cancel_result = (String) msg.obj;
@@ -146,6 +149,17 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     break;
                 case 3:// 视频取消异常
                     showToastMsgLong("取消异常，请稍后再试");
+                    break;
+                case 4:// 刷新数据失败
+                    showToastMsgShort("刷新数据失败");
+                    tv_loading.setText("点击刷新");
+                    pb_loading.setVisibility(View.GONE);
+                    ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                    fl_transparent.setVisibility(View.GONE);
+                    for (int i = 0; i < 3; i++) {
+                        views[i].setEnabled(true);
+                    }
+                    ra.cancel(); // 取消刷新图标的旋转任务
                     break;
             }
         }
@@ -228,6 +242,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         tv_loading = (TextView) view.findViewById(R.id.tv_loading);
         scrollView = (ScrollView) view.findViewById(R.id.scrollView);
         tv_no_list = (TextView) view.findViewById(R.id.tv_no_list);
+        fl_transparent = (FrameLayout) view.findViewById(R.id.fl_transparent);
         return view;
     }
 
@@ -262,9 +277,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mDate != null) {
 //                    if ((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))) {
-                        Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
-                        intent.putExtra("family_id", meetingInfos.get(position).getFamily_id());
-                        startActivity(intent);
+                    Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
+                    intent.putExtra("family_id", meetingInfos.get(position).getFamily_id());
+                    startActivity(intent);
 //                        showToastMsgShort(mDate.getDay() + "" + formatDate.substring(formatDate.length() - 3, formatDate.length()));
 //                    } else {
 //                        showToastMsgShort(mDate.getYear() + "-" + mDate.getMonth() + "-" + mDate.getDay() + "才能会见哦");
@@ -275,6 +290,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         });
         rl_refresh.setOnClickListener(this);
         bt_logout.setOnClickListener(this);
+        fl_transparent.setOnClickListener(this);
     }
 
     /**
@@ -301,13 +317,14 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             ll_loading.setVisibility(View.VISIBLE);
             tv_loading.setText("正在刷新...");
             pb_loading.setVisibility(View.VISIBLE);
+            fl_transparent.setVisibility(View.VISIBLE);
             for (int i = 0; i < 3; i++) {
                 views[i].setEnabled(false);
             }
             new Thread() {
                 @Override
                 public void run() {
-                    SystemClock.sleep(2000);// 休眠2秒  模拟网络环境
+                    SystemClock.sleep(1000);// 休眠1秒  模拟网络环境
                     Message msg = handler.obtainMessage();
                     try {
                         String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD +
@@ -319,14 +336,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.i("请求失败", e.getMessage().toString());
-                        showToastMsgShort("刷新数据失败");
-                        tv_loading.setText("点击刷新");
-                        pb_loading.setVisibility(View.GONE);
-                        ll_loading.setOnClickListener(DateMeetingListActivity.this);
-                        for (int i = 0; i < 3; i++) {
-                            views[i].setEnabled(true);
-                        }
-                        ra.cancel();
+                        handler.sendEmptyMessage(4);// 刷新数据失败
                     }
                 }
             }.start();
@@ -410,6 +420,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     }
                 });
                 dialog.show();
+                break;
+            case R.id.fl_transparent:
+
                 break;
             default:
                 break;

@@ -343,28 +343,8 @@ public class PersonLoadingFragment extends BaseFragment {
                             new Thread() {
                                 @Override
                                 public void run() {
-//                                    HttpClient httpClient = new DefaultHttpClient();
-//                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
-//                                    Looper.prepare();
                                     Message msg = handler.obtainMessage();
                                     try {
-//                                        Log.i("已发送", phone_str);
-//                                        StringEntity entity = new StringEntity(phone_str);
-//                                        entity.setContentType("application/json");
-//                                        entity.setContentEncoding("UTF-8");
-//                                        post.setEntity(entity);
-//                                        HttpResponse response = httpClient.execute(post);
-//                                        if (response.getStatusLine().getStatusCode() == 200) {
-//                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-//                                            Log.d("发送成功", result);
-//                                            msg.obj = result;
-//                                            msg.what = 7;
-//                                            handler.sendMessage(msg);
-//                                        } else {
-//                                            handler.sendEmptyMessage(8);
-//                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-//                                            Log.d("发送失败", result);
-//                                        }
                                         String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL, phone_str);
                                         if (result.contains("StatusCode is ")) {
                                             handler.sendEmptyMessage(8);
@@ -379,9 +359,6 @@ public class PersonLoadingFragment extends BaseFragment {
                                         handler.sendEmptyMessage(9);
                                         Log.i("发送验证码异常", e.getMessage());
                                     }
-//                                    finally {
-//                                        Looper.loop();
-//                                    }
                                 }
                             }.start();
                         } else {
@@ -404,7 +381,6 @@ public class PersonLoadingFragment extends BaseFragment {
         super.onDestroy();
         if(handler != null && isRunning){
             removeCodeTask();
-//            handler = null;
         }
     }
 
