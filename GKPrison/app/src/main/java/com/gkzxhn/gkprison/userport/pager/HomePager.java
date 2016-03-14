@@ -4,10 +4,14 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
+import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +25,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.FamilyServiceActivity;
 import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
@@ -37,6 +42,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
+import org.apache.http.client.HttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -54,6 +60,7 @@ public class HomePager extends BasePager {
     private RollViewPager vp_carousel;
     private View layout_roll_view;
     private LinearLayout dots_ll;
+    private LinearLayout ll_title_dot;
     private TextView top_news_title;
     private LinearLayout top_news_viewpager;
     private GridView gv_home_options;
@@ -72,6 +79,7 @@ public class HomePager extends BasePager {
     private News focus_news_1;
     private News focus_news_2;
     private News focus_news_3;
+    private int jail_id;
     private final int[] OPTIONS_IVS_PRESS = {R.drawable.prison_introduction_press,
             R.drawable.laws_press, R.drawable.prison_open_press,
             R.drawable.visit_service_press, R.drawable.family_service_press,
@@ -97,6 +105,26 @@ public class HomePager extends BasePager {
      * 轮播图导航点集合
      */
     private List<View> dotList = new ArrayList<>();
+//    private HttpClient httpClient;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    dialog.dismiss();
+                    setCacheNews();// 若请求失败  则显示缓存新闻
+                    is_request_foucs_news_successed = false;
+                    break;
+                case 1:
+                    String result = (String) msg.obj;
+                    parseFocusNews(result);// 解析焦点新闻
+                    setRoll();
+                    fillNewsData();// 填充新闻数据
+                    is_request_foucs_news_successed = true;
+                    break;
+            }
+        }
+    };
 
     public HomePager(Context context) {
         super(context);
@@ -121,6 +149,7 @@ public class HomePager extends BasePager {
         tv_home_news_content3 = (TextView) view.findViewById(R.id.tv_home_news_content3);
         layout_roll_view = View.inflate(context, R.layout.layout_roll_view, null);
         dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
+        ll_title_dot = (LinearLayout) layout_roll_view.findViewById(R.id.ll_title_dot);
         top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
         top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
         rl_carousel.addView(layout_roll_view);
@@ -132,22 +161,14 @@ public class HomePager extends BasePager {
 
     @Override
     public void initData() {
+//        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        jail_id = sp.getInt("jail_id", 0);
         getFocusNews();// 获取焦点新闻
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
         tv_focus_attention.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-        initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-                int i = allnews.get(position).getId();
-                Intent intent = new Intent(context, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                context.startActivity(intent);
-            }
-        });
         gv_home_options.setAdapter(new MyOptionsAdapter());
         ll_home_news1.setOnClickListener(this);
         ll_home_news2.setOnClickListener(this);
@@ -172,27 +193,26 @@ public class HomePager extends BasePager {
      */
     private void getFocusNews() {
         showLoadingDialog();
-        HttpUtils httpUtils = new HttpUtils();
-        Log.i("获取焦点新闻url", Constants.URL_HEAD + Constants.NEWS_URL);
-        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + Constants.NEWS_URL, new RequestCallBack<Object>() {
+        Log.i("获取焦点新闻url", Constants.URL_HEAD + "news?jail_id=" + jail_id);
+        new Thread(){
             @Override
-            public void onSuccess(ResponseInfo<Object> responseInfo) {
-                parseFocusNews(responseInfo.result.toString());// 解析焦点新闻
-                setRoll();
-                dialog.dismiss();
-                fillNewsData();// 填充新闻数据
-                is_request_foucs_news_successed = true;
-                Log.i("获取焦点新闻成功", responseInfo.result.toString());
+            public void run() {
+                try {
+                    String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "news?jail_id="+jail_id);
+                    Message msg = handler.obtainMessage();
+                    if(result.contains("StatusCode is ")){
+                        handler.sendEmptyMessage(0);
+                        Log.i("获取焦点新闻失败", result);
+                    }else {
+                        msg.what = 1;
+                        msg.obj = result;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-            @Override
-            public void onFailure(HttpException e, String s) {
-                dialog.dismiss();
-                Log.i("获取焦点新闻失败", e.getMessage() + "---" + s);
-                setCacheNews();// 若请求失败  则显示缓存新闻
-                is_request_foucs_news_successed = false;
-            }
-        });
+        }.start();
     }
 
     /**
@@ -200,15 +220,43 @@ public class HomePager extends BasePager {
      */
     private void setRoll() {
         list_news_title.clear();
-        list_news_title.add(allnews.get(0).getTitle());
-        list_news_title.add(allnews.get(1).getTitle());
-        list_news_title.add(allnews.get(2).getTitle());
-        vp_carousel.initTitle(list_news_title, top_news_title);
         List<String> imgurl_list = new ArrayList<>();
-        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
-        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
-        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
-        vp_carousel.initImgUrl(imgurl_list);
+        if (allnews.size() > 2) {
+            list_news_title.add("");
+            list_news_title.add("");
+            list_news_title.add("");
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
+        } else if(allnews.size() == 1){
+            list_news_title.add("");
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+        } else if(allnews.size() == 2){
+            list_news_title.add("");
+            list_news_title.add("");
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+        }
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+                if(allnews.size() > 0) {
+                    int i = allnews.get(position).getId();
+                    Intent intent = new Intent(context, NewsDetailActivity.class);
+                    intent.putExtra("id", i);
+                    context.startActivity(intent);
+                }else {
+                    showToastMsgShort("抱歉，没有数据...");
+                }
+            }
+        });
+        if(allnews.size() > 0 && list_news_title.size() > 0) {
+            vp_carousel.initTitle(list_news_title, top_news_title);
+            vp_carousel.initImgUrl(imgurl_list);
+        }else {
+            showToastMsgShort("抱歉,没有数据...");
+        }
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
@@ -353,6 +401,7 @@ public class HomePager extends BasePager {
             editor.putInt("focus_news_3_id", focus_news_3.getId());
             editor.commit();
         }
+        dialog.dismiss();// 消掉加载对话框进度条
     }
 
     /**
@@ -377,7 +426,7 @@ public class HomePager extends BasePager {
                 news.setIsFocus(jsonObject.getBoolean("isFocus"));
                 news.setJail_id(jsonObject.getInt("jail_id"));
                 news.setTitle(jsonObject.getString("title"));
-                news.setType_id(TextUtils.isEmpty(jsonObject.getInt("type_id") + "") ? 1 : 1);
+                news.setType_id(jsonObject.getInt("type_id"));
                 news.setUpdated_at(jsonObject.getString("updated_at"));
                 if(news.getIsFocus()) {
                     focus_news_list.add(news);
@@ -394,22 +443,25 @@ public class HomePager extends BasePager {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        for (int i = 0; i < 3; i++) {
-            View view = new View(context);
-            if (i == 0) {
-                view.setBackgroundResource(R.drawable.rb_shape_blue);
-            } else {
-                view.setBackgroundResource(R.drawable.rb_shape_gray);
+        if(list_news_title.size() > 0){
+            for (int i = 0; i < list_news_title.size(); i++) {
+                View view = new View(context);
+                if (i == 0) {
+                    view.setBackgroundResource(R.drawable.rb_shape_blue);
+                } else {
+                    view.setBackgroundResource(R.drawable.rb_shape_gray);
+                }
+                // 指定点的大小
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                        context.getResources().getDimensionPixelSize(R.dimen.dot_radius), context.getResources().getDimensionPixelSize(R.dimen.dot_radius));
+                // 间距
+                layoutParams.setMargins(10, 0, 10, 0);
+                dots_ll.addView(view, layoutParams);
+                dotList.add(view);
             }
-            // 指定点的大小
-            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                    context.getResources().getDimensionPixelSize(R.dimen.dot_radius), context.getResources().getDimensionPixelSize(R.dimen.dot_radius));
-            // 间距
-            layoutParams.setMargins(10, 0, 10, 0);
-            dots_ll.addView(view, layoutParams);
-
-            dotList.add(view);
         }
+        ll_title_dot.setGravity(Gravity.CENTER);
+        ll_title_dot.setBackgroundColor(Color.TRANSPARENT);
     }
 
     private class MyOptionsAdapter extends BaseAdapter{

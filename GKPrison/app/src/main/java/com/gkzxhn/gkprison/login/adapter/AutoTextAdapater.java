@@ -31,9 +31,9 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
         super();
         this.strs = strs;
         this.conx = conx;
-        for (String s : strs){
-            Log.i("sssssssss", s);
-        }
+//        for (String s : strs){
+//            Log.i("sssssssss", s);
+//        }
     }
 
     @Override
@@ -129,9 +129,6 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
             super();
             strsContains.clear();
             strsContains.addAll(strs);
-            for (String s : strsContains) {
-                Log.i("filter 构造content", s);
-            }
         }
 
         @Override

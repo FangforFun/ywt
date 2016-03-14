@@ -47,7 +47,6 @@ android {
             def oldFile = output.outputFile
             def newName = '';
             if(variant.buildType.name.equals('release')){
-//                println(variant.productFlavors[0].name)
                 def releaseApkName = 'ywt-android-v' + defaultConfig.versionName + '-1.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }

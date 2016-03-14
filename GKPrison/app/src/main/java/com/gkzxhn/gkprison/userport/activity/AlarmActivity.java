@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Vibrator;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -76,6 +77,17 @@ public class AlarmActivity extends BaseActivity {
                 handler.removeCallbacks(alarm_Task);
                 AlarmActivity.this.finish();
                 break;
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK && player.isPlaying()){
+            return false;
+        }else if(keyCode == KeyEvent.KEYCODE_BACK && !player.isPlaying()){
+            return true;
+        }else {
+            return super.onKeyDown(keyCode, event);
         }
     }
 }

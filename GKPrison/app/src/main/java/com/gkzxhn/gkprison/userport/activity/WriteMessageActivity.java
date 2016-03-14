@@ -18,6 +18,7 @@ import android.widget.EditText;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Letter;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
@@ -44,9 +45,9 @@ public class WriteMessageActivity extends BaseActivity {
     private String theme;
     private String contents;
     private Gson gson;
-    private String token;
-    private String url = Constants.URL_HEAD + Constants.WRITE_MESSAGE;
     private SharedPreferences sp;
+    private int jail_id;
+    private String token;
     private int family_id = 0;
     private SweetAlertDialog pDialog;
     private Handler handler = new Handler(){
@@ -109,6 +110,7 @@ public class WriteMessageActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         bt_commit_write_message.setOnClickListener(this);
         sp = getSharedPreferences("config", MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id",1);
         family_id = sp.getInt("family_id", 1);
         token = sp.getString("token", "");
         rl_back.setOnClickListener(this);
@@ -181,46 +183,66 @@ public class WriteMessageActivity extends BaseActivity {
         new Thread(){
             @Override
             public void run() {
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url + token);
+//                HttpClient httpClient = new DefaultHttpClient();
+//                HttpPost post = new HttpPost(url + token);
                 try {
-                    StringEntity entity = new StringEntity(sendmessage,HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    HttpResponse response = httpClient.execute(post);
-                    if (response.getStatusLine().getStatusCode()==200){
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        Log.d("写信成功", result);
-                        Message msg = handler.obtainMessage();
-                        msg.what = 0;
-                        msg.obj = result;
-                        handler.sendMessage(msg);
-                        SystemClock.sleep(500);// 模拟网络差的情景
-                    }else {
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                    String url = Constants.URL_HEAD + "mail_boxes?jail_id="+jail_id+"&access_token=";
+//                    StringEntity entity = new StringEntity(sendmessage,HTTP.UTF_8);
+//                    entity.setContentType("application/json");
+//                    post.setEntity(entity);
+//                    HttpResponse response = httpClient.execute(post);
+//                    if (response.getStatusLine().getStatusCode()==200){
+//                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                        Log.d("写信成功", result);
+//                        Message msg = handler.obtainMessage();
+//                        msg.what = 0;
+//                        msg.obj = result;
+//                        handler.sendMessage(msg);
+//                        SystemClock.sleep(500);// 模拟网络差的情景
+//                    }else {
+//                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+//                        Log.d("写信失败", result);
+//                        Message msg = handler.obtainMessage();
+//                        msg.what = 1;
+//                        msg.obj = result;
+//                        handler.sendMessage(msg);
+//                        SystemClock.sleep(500);// 模拟网络差的情景
+//                    }
+                    String result = HttpRequestUtil.doHttpsPost(url + token, sendmessage);
+                    if(result.contains("StatusCode is ")){
                         Log.d("写信失败", result);
                         Message msg = handler.obtainMessage();
                         msg.what = 1;
                         msg.obj = result;
                         handler.sendMessage(msg);
                         SystemClock.sleep(500);// 模拟网络差的情景
+                    }else {
+                        Log.d("写信成功", result);
+                        Message msg = handler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = result;
+                        handler.sendMessage(msg);
+                        SystemClock.sleep(500);// 模拟网络差的情景
                     }
-                } catch (UnsupportedEncodingException e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                     SystemClock.sleep(500);// 模拟网络差的情景
                     handler.sendEmptyMessage(2);
                     Log.i("写信异常","异常1");
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    SystemClock.sleep(500);// 模拟网络差的情景
-                    handler.sendEmptyMessage(3);
-                    Log.i("写信异常", "异常2");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    SystemClock.sleep(500);// 模拟网络差的情景
-                    handler.sendEmptyMessage(4);
-                    Log.i("写信异常", "异常3");
                 }
+//                catch (ClientProtocolException e) {
+//                    e.printStackTrace();
+//                    SystemClock.sleep(500);// 模拟网络差的情景
+//                    handler.sendEmptyMessage(3);
+//                    Log.i("写信异常", "异常2");
+//                }
+//                catch (IOException e) {
+//                    e.printStackTrace();
+//                    SystemClock.sleep(500);// 模拟网络差的情景
+//                    handler.sendEmptyMessage(4);
+//                    Log.i("写信异常", "异常3");
+//                }
             }
         }.start();
     }

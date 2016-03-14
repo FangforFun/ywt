@@ -1,9 +1,13 @@
 package com.gkzxhn.gkprison.avchat;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.View;
 import android.widget.Chronometer;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleListener;
@@ -17,7 +21,7 @@ import com.netease.nim.uikit.common.util.sys.NetworkUtil;
  * 音频管理器， 音频界面初始化和管理
  * Created by hzxuwen on 2015/4/24.
  */
-public class AVChatAudio implements View.OnClickListener, ToggleListener {
+public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticlockwise.OnTimeCompleteListener {
     // constant
     private static final int[] NETWORK_GRADE_DRAWABLE = new int[]{R.drawable.network_grade_0,R.drawable.network_grade_1,R.drawable.network_grade_2,R.drawable.network_grade_3};
     private static final int[] NETWORK_GRADE_LABEL = new int[]{R.string.avchat_network_grade_0,R.string.avchat_network_grade_1,R.string.avchat_network_grade_2,R.string.avchat_network_grade_3};
@@ -47,11 +51,18 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener {
 
     // state
     private boolean init = false;
+    private Context context;
+    private SharedPreferences sp;
+
+    private Anticlockwise shengyu_time;
+    private TextView tv_shengyu_time;// 剩余时间
 
     public AVChatAudio(View root, AVChatUIListener listener, AVChatUI manager) {
         this.rootView = root;
         this.listener = listener;
         this.manager = manager;
+        context = DemoCache.getContext();
+        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 
     /**
@@ -85,6 +96,7 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener {
                 setSwitchVideo(true);
                 setTime(true);
                 hideNotify();
+                setSTime(true);
                 setMuteSpeakerHangupControl(true);
                 setRefuseReceive(false);
                 break;
@@ -111,6 +123,8 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener {
             return;
         }
         switchVideo = rootView.findViewById(R.id.avchat_audio_switch_video);
+        shengyu_time = (Anticlockwise) rootView.findViewById(R.id.avchat_video_time);
+        tv_shengyu_time = (TextView) rootView.findViewById(R.id.tv_shengyu_time);
         switchVideo.setOnClickListener(this);
 
         headImg = (HeadImageView) rootView.findViewById(R.id.avchat_audio_head);
@@ -299,5 +313,38 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener {
     @Override
     public void toggleDisable(View v) {
 
+    }
+
+    @Override
+    public void onTimeComplete() {
+        Toast.makeText(DemoCache.getContext(), "会话结束", Toast.LENGTH_SHORT).show();
+        listener.onHangUp();// 时间到自动挂断
+    }
+
+    @Override
+    public void onTimeChanged(long ms) {
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("current_ms", ms + "");
+        editor.commit();// 保存当前剩余时间
+        if(ms <= 180) { //剩余会话时间小于3分钟时间颜色报红
+            shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));
+            tv_shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));
+        }
+    }
+
+    /**
+     * 设置通话时间  屏幕上方正中间
+     * @param visible
+     */
+    public void setSTime(boolean visible){
+//        Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
+        shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
+        tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
+        if(visible){
+            shengyu_time.setOnTimeCompleteListener(this);
+            shengyu_time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "")));
+            Log.i("切换语音了", sp.getString("current_ms", 900 + ""));
+            shengyu_time.start();
+        }
     }
 }

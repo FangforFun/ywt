@@ -42,6 +42,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Register;
 import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
 import com.gkzxhn.gkprison.utils.Base64;
@@ -59,6 +60,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
@@ -137,7 +139,7 @@ public class RegisterActivity extends BaseActivity {
     private int countdown = 60;
     private boolean isRunning = false;
     private SharedPreferences sp;
-
+    private HttpClient httpClient;
 
     private Handler handler = new Handler(){
         @Override
@@ -185,7 +187,6 @@ public class RegisterActivity extends BaseActivity {
                             apb_register.setProgress(0);
                             apb_register.setText("注册");
                         }
-//                        showToastMsgLong("注册返回码-----" + back_code);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         showToastMsgShort("异常");
@@ -287,6 +288,7 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+//        httpClient = HttpRequestUtil.initHttpClient(new BasicHttpParams());
         sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("注册");
         setBackVisibility(View.VISIBLE);
@@ -351,10 +353,7 @@ public class RegisterActivity extends BaseActivity {
             newText = newText.replace(" ", "+");
             if(Utils.isNetworkAvailable()) {
                 try {
-                    HttpClient hClient = new DefaultHttpClient();
-                    HttpGet hGet = new HttpGet(Constants.URL_HEAD + "jails/" + newText);
-                    ResponseHandler<String> rHandler = new BasicResponseHandler();
-                    data = hClient.execute(hGet, rHandler);
+                    data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
                     suggest = new ArrayList<>();
                     prison_map.clear();
                     JSONObject jsonObject = new JSONObject(data);
@@ -410,7 +409,12 @@ public class RegisterActivity extends BaseActivity {
                 register.setRelationship(relationship_with_prisoner);
                 register.setPrisoner_number(prisoner_number);
                 register.setGender(rg_sex.getCheckedRadioButtonId() == R.id.rb_male ? "男" : "女");
-                register.setJail_id(1);
+                if(prison_map.containsKey(prison_chooes)) {
+                    int jail_id = prison_map.get(prison_chooes);
+                    register.setJail_id(jail_id);
+                }else {
+                    showToastMsgShort("抱歉，暂未开通此监狱");
+                }
                 register.setType_id(3);
                 register.setUuid_images_attributes(uuid_images);
 
@@ -418,31 +422,22 @@ public class RegisterActivity extends BaseActivity {
                 String str = gson.toJson(register);
                 apply = "{\"apply\":" + str + "}";
                 Log.d("注册信息",apply);
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url);
-                Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
-                    StringEntity entity = new StringEntity(apply,HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    HttpResponse response = httpClient.execute(post);
-                    if (response.getStatusLine().getStatusCode()==200){
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    String result = HttpRequestUtil.doHttpsPost(url, apply, 6000);
+                    if(result.contains("StatusCode is ")){
+                        handler.sendEmptyMessage(5);
+                        Log.d("注册请求失败", result);
+                    }else {
                         Log.d("注册请求成功",result);
                         msg.obj = result;
                         msg.what = 4;
                         handler.sendMessage(msg);
-                    }else {
-                        handler.sendEmptyMessage(5);
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.d("注册请求失败", result);
                     }
                 } catch (Exception e) {
+
                     handler.sendEmptyMessage(6);
                     Log.i("注册请求异常", e.getMessage());
-                } finally {
-                    Looper.loop();
                 }
             }
         }.start();
@@ -461,37 +456,21 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void run() {
                 String phoneandcode = "{\"session\":{\"phone\":\""+phone_num+"\",\"code\":\""+identifying_code+"\"}}";
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpPost post = new HttpPost(url1);
-                Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
-                    StringEntity entity = new StringEntity(phoneandcode,HTTP.UTF_8);
-                    entity.setContentType("application/json");
-                    post.setEntity(entity);
-                    HttpResponse response = httpClient.execute(post);
-                    if (response.getStatusLine().getStatusCode()==200){
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
+                    String result = HttpRequestUtil.doHttpsPost(url1, phoneandcode);
+                    if(result.contains("StatusCode is ")){
+                        Log.i("注册验证码", result);
+                        handler.sendEmptyMessage(1);
+                    }else{
                         Log.i("注册验证码", result);
                         msg.obj = result;
                         msg.what = 3;
                         handler.sendMessage(msg);
-                    }else {
-                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                        Log.i("注册验证码", result);
-                        handler.sendEmptyMessage(1);
                     }
-                } catch (UnsupportedEncodingException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     handler.sendEmptyMessage(2);
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                    handler.sendEmptyMessage(2);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    handler.sendEmptyMessage(2);
-                } finally {
-                    Looper.loop();
                 }
             }
         }.start();
@@ -499,7 +478,6 @@ public class RegisterActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-//        super.onClick(v);
         switch (v.getId()){
             case R.id.apb_register:
                 name = et_name.getText().toString().trim();
@@ -578,10 +556,8 @@ public class RegisterActivity extends BaseActivity {
                 }
                 //判断监狱选择
                 if(TextUtils.isEmpty(prison_chooes)){
-                    showToastMsgShort("");
+                    showToastMsgShort("请输入监狱名称");
                     return;
-                }else {
-                    // ToDo
                 }
                 // 判断验证码是否正确
                 if(TextUtils.isEmpty(identifying_code)){
@@ -600,6 +576,10 @@ public class RegisterActivity extends BaseActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             sendRegisterToServer(); // 发送注册信息至服务器
+                            String prisonname = actv_prison_choose.getText().toString();
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putString("prisonname",prisonname);
+                            editor.commit();
                             dialog.dismiss();
                         }
                     });
@@ -687,33 +667,21 @@ public class RegisterActivity extends BaseActivity {
                             new Thread() {
                                 @Override
                                 public void run() {
-                                    HttpClient httpClient = new DefaultHttpClient();
-                                    HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL);
-                                    Looper.prepare();
                                     Message msg = handler.obtainMessage();
                                     try {
-                                        Log.i("已发送", phone_str);
-                                        StringEntity entity = new StringEntity(phone_str);
-                                        entity.setContentType("application/json");
-                                        entity.setContentEncoding("UTF-8");
-                                        post.setEntity(entity);
-                                        HttpResponse response = httpClient.execute(post);
-                                        if (response.getStatusLine().getStatusCode() == 200) {
-                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                                        String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.REQUEST_SMS_URL, phone_str);
+                                        if(result.contains("StatusCode is ")){
+                                            handler.sendEmptyMessage(1);
+                                            Log.d("发送失败", result);
+                                        }else {
                                             Log.d("发送成功", result);
                                             msg.obj = result;
                                             msg.what = 0;
                                             handler.sendMessage(msg);
-                                        } else {
-                                            handler.sendEmptyMessage(1);
-                                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                                            Log.d("发送失败", result);
                                         }
                                     } catch (Exception e) {
                                         Log.i("发送验证码出异常啦：", e.getMessage());
                                         handler.sendEmptyMessage(2);
-                                    } finally {
-                                        Looper.loop();
                                     }
                                 }
                             }.start();

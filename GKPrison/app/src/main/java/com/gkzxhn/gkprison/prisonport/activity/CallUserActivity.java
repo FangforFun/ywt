@@ -1,6 +1,8 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.HttpUtils;
@@ -23,6 +26,7 @@ import com.lidroid.xutils.http.ResponseInfo;
 import com.lidroid.xutils.http.callback.RequestCallBack;
 import com.lidroid.xutils.http.client.HttpRequest;
 
+import org.apache.http.client.HttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,6 +45,25 @@ public class CallUserActivity extends BaseActivity {
     private SharedPreferences sp;
     private int family_id;
     private FamilyMeetingInfo familyMeetingInfo;
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what){
+                case 0:
+                    String result = (String) msg.obj;
+                    parseMeetingInfo(result);
+                    break;
+                case 1: // 失败
+                    rl_getting.setVisibility(View.GONE);
+                    showToastMsgShort("获取身份证照片失败");
+                    break;
+                case 2:// 异常
+                    rl_getting.setVisibility(View.GONE);
+                    showToastMsgShort("获取身份证照片异常");
+                    break;
+            }
+        }
+    };
 
     @Override
     protected View initView() {
@@ -72,23 +95,30 @@ public class CallUserActivity extends BaseActivity {
      * 获取会见的详细信息
      * @param family_id  家属idtr
      */
-    private void getMeetingDetailInfo(int family_id) {
+    private void getMeetingDetailInfo(final int family_id) {
         rl_getting.setVisibility(View.VISIBLE);
-        HttpUtils httpUtils = new HttpUtils();
-        httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD + "families/" + family_id
-//                + "?access_token=" + sp.getString("token", "")
-                , new RequestCallBack<Object>() {
+        new Thread(){
             @Override
-            public void onSuccess(ResponseInfo<Object> responseInfo) {
-                Log.i("会见详细请求成功", responseInfo.result.toString());
-                parseMeetingInfo(responseInfo.result.toString());
+            public void run() {
+                try {
+                    String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "families/" + family_id
+                            + "?access_token=" + sp.getString("token", ""));
+                    if(result.contains("StatusCode is ")){
+                        Log.i("会见详细请求失败", result);
+                        handler.sendEmptyMessage(1);
+                    }else {
+                        Log.i("会见详细请求成功", result);
+                        Message msg = handler.obtainMessage();
+                        msg.what = 0;
+                        msg.obj = result;
+                        handler.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    handler.sendEmptyMessage(2);
+                }
             }
-
-            @Override
-            public void onFailure(HttpException e, String s) {
-                Log.i("会见详细请求失败", e.getMessage() + "---" + s);
-            }
-        });
+        }.start();
     }
 
     /**
@@ -146,7 +176,6 @@ public class CallUserActivity extends BaseActivity {
             case R.id.bt_call:
                 AVChatActivity.start(this,
                         familyMeetingInfo.getAccid()
-//                        "a055d5791afed1baf76ff850c8244fc0"
                         , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putString("family_accid", familyMeetingInfo.getAccid());

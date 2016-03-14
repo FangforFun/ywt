@@ -14,7 +14,9 @@
             android:background="@color/white"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:divider="@color/transparent">
+            android:divider="@color/transparent"
+
+            >
 
         </ListView>
         <View
@@ -23,11 +25,25 @@
             android:layout_height="1dp"
             android:background="#dadada"/>
 
+
         <RelativeLayout
             android:layout_marginTop="5dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="right">
+            >
+            <TextView
+                android:id="@+id/tv_sales_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:textSize="18sp"
+                android:textColor="#666666"
+                android:layout_marginLeft="10dp"
+               />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true">
             <TextView
                 android:id="@+id/count"
                 android:layout_width="wrap_content"
@@ -53,12 +69,13 @@
                 android:layout_toRightOf="@+id/tv_count"
                 android:layout_alignBaseline="@+id/count"/>
             <TextView
+                android:id="@+id/tv_wuliu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="（含配送费2元）"
                 android:layout_below="@+id/count"
                 android:textSize="14sp"
                 android:textColor="#999999"/>
+            </RelativeLayout>
         </RelativeLayout>
 
         <Button

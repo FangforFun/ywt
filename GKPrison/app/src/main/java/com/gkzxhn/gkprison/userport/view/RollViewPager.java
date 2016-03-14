@@ -47,10 +47,12 @@ public class RollViewPager extends ViewPager {
 
 		@Override
 		public void run() {
-			// 切换指向图片
-			currentPosition = (currentPosition + 1) % imgUrlList.size();
-			// 发送消息
-			handler.obtainMessage().sendToTarget();
+			if(imgUrlList != null && imgUrlList.size() > 0) {
+				// 切换指向图片
+				currentPosition = (currentPosition + 1) % imgUrlList.size();
+				// 发送消息
+				handler.obtainMessage().sendToTarget();
+			}
 		}
 	}
 
@@ -178,14 +180,6 @@ public class RollViewPager extends ViewPager {
 		this.imgUrlList = imgUrlList;
 	}
 
-//	/**
-//	 * 此处测试用drawable下的图
-//	 * @param imgUrlList
-//	 */
-//	public void initImgUrl(int imgUrlList) {
-//		this.imgUrlList = imgUrlList;
-//	}
-
 	public void startRoll() {
 		// 1.给viewpager设置数据适配器
 		if (myPagerAdapter == null) {
@@ -202,7 +196,7 @@ public class RollViewPager extends ViewPager {
 
 		@Override
 		public int getCount() {
-			return imgUrlList.size();
+			return imgUrlList == null ? 1 : imgUrlList.size();
 		}
 
 		@Override
@@ -217,8 +211,22 @@ public class RollViewPager extends ViewPager {
 			ImageView image = (ImageView) view.findViewById(R.id.image);
 			// 给imageview设置网络上获取的图片(三级缓存)
 			// 参数：第一个下载后要在哪个控件显示，第二个下载图片的链接地址
-			bitmapUtils.display(image, imgUrlList.get(position));
-//			image.setImageResource(CAROUSEL_IVS[position]);
+//			bitmapUtils.display(image, imgUrlList.get(position));
+			if(imgUrlList != null && imgUrlList.size() == 3){
+				switch (position){
+					case 0:
+						image.setImageResource(R.drawable.banner);
+						break;
+					case 1:
+						image.setImageResource(R.drawable.banner2);
+						break;
+					case 2:
+						image.setImageResource(R.drawable.banner3);
+						break;
+				}
+			}else {
+				image.setImageResource(R.drawable.banner);
+			}
 			// viewpager和内部view的事件分发的过程
 			// 1.点下操作ACTION_DOWN先传递给viewpager，然后传递给viewpager内部的view，view做响应
 			// 2.滑动触发ACTION_MOVE事件，先传递给viewpager，然后传递给viewpager内部的view，view做响应
@@ -265,5 +273,4 @@ public class RollViewPager extends ViewPager {
 			container.removeView((View) object);
 		}
 	}
-
 }

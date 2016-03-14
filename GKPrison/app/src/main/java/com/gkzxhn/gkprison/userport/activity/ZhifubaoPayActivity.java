@@ -69,6 +69,10 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     private String countmoney = "";
     private String getOutTradeNo = "";
     private TextView  totalmoney;
+    private String saletype;
+    private TextView tv_saletype;
+    private String bussinesstype;
+    private TextView tv_wuliu;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private Handler handler = new Handler(){
         @Override
@@ -89,8 +93,13 @@ public class ZhifubaoPayActivity extends FragmentActivity {
                         Toast.makeText(ZhifubaoPayActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(ZhifubaoPayActivity.this,MainActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         ZhifubaoPayActivity.this.startActivity(intent);
                         finish();
+                   ;
+
+
+
                     } else {
                         // 判断resultStatus 为非“9000”则代表可能支付失败
                         // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
@@ -127,7 +136,13 @@ public class ZhifubaoPayActivity extends FragmentActivity {
         lv_commidty = (ListView)findViewById(R.id.lv_commidty);
         getOutTradeNo = getIntent().getStringExtra("outorderno");
         times = getIntent().getStringExtra("times");
-        cart_id = getIntent().getIntExtra("cart_id",0);
+        cart_id = getIntent().getIntExtra("cart_id", 0);
+        saletype = getIntent().getStringExtra("saletype");
+        bussinesstype = getIntent().getStringExtra("bussiness");
+        tv_wuliu = (TextView)findViewById(R.id.tv_wuliu);
+        tv_wuliu.setText(bussinesstype);
+        tv_saletype = (TextView)findViewById(R.id.tv_sales_type);
+        tv_saletype.setText(saletype);
         totalmoney.setText(countmoney);
         initDate();
         adapter = new PayAdapter();
@@ -269,7 +284,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
 
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://www.fushuile.com/api/v1/payment"
+        orderInfo += "&notify_url=" + "\"" + "https://www.fushuile.com/api/v1/payment"
                 + "\"";
 
         // 服务接口名称， 固定值

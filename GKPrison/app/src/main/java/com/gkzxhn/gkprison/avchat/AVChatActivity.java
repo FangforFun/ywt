@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -128,7 +129,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             this.finish();
             return;
         }
-
+        EventBus.getDefault().register(this);
         if (mIsInComingCall) {
             inComingCalling();
         } else {
@@ -148,8 +149,24 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         hasOnpause = true;
     }
 
-    public void onEvent(ExamineEvent examineEvent){
+    public void onEvent(final ExamineEvent examineEvent){
         avChatUI.setExamine(examineEvent.getMsg());
+        Handler handler = new Handler(getMainLooper());
+        if(examineEvent.getMsg().contains("发送审核状态异常")){
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(AVChatActivity.this, "服务器异常", Toast.LENGTH_LONG).show();
+                }
+            });
+        }else {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(AVChatActivity.this, examineEvent.getMsg(), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     @Override
@@ -179,6 +196,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             // 如果是普通用户  视频结束恢复未审查状态
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("is_can_video", false);
+            editor.putString("current_ms", 900 + "");// 保存会见时长
             // 保存会见时间
             editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
             editor.commit();

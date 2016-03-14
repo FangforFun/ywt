@@ -86,9 +86,27 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="#333333"
-            android:text="2011年10月10日-2016年3月3日"
+            android:text="2011"
             android:layout_alignBaseline="@+id/tv_sentence"
             android:layout_toRightOf="@+id/tv_sentence"/>
+        <TextView
+            android:id="@+id/tv_zhi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/tv_bg"
+            android:textSize="16sp"
+            android:text="至"
+            android:layout_toRightOf="@+id/tv_sentence_time"
+            android:layout_alignBaseline="@+id/tv_sentence_time"/>
+        <TextView
+            android:id="@+id/tv_sentence_time_end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/tv_bg"
+            android:text="2012"
+            android:layout_toRightOf="@+id/tv_zhi"
+            android:layout_alignBaseline="@+id/tv_sentence_time"/>
         <TextView
             android:id="@+id/tv_balance"
             android:layout_width="wrap_content"
@@ -107,12 +125,12 @@
             android:textSize="16sp"
             android:layout_toRightOf="@+id/tv_balance"
             android:layout_alignBaseline="@+id/tv_balance"
-            android:textColor="#FF3503"
+            android:textColor="#1f9300"
             android:text="10000"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FF3503"
+            android:textColor="#1f9300"
             android:textSize="14sp"
             android:text="元"
             android:layout_toRightOf="@+id/tv_balance_money"
@@ -122,7 +140,7 @@
             android:id="@+id/tv_danwei"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#FF3503"
+            android:textColor="#1f9300"
             android:textSize="14sp"
             android:text="元"
             android:layout_alignParentRight="true"
@@ -135,7 +153,7 @@
             android:textSize="16sp"
             android:layout_toLeftOf="@+id/tv_danwei"
             android:layout_alignBaseline="@+id/tv_balance"
-            android:textColor="#FF3503"
+            android:textColor="#1f9300"
             android:text="400"/>
         <TextView
             android:id="@+id/tv_keyong"

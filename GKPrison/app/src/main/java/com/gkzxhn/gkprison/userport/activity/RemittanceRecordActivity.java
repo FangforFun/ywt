@@ -26,6 +26,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     private String prisonernum = "";
     private List<Remittance> remittances = new ArrayList<Remittance>();
     private ImageView iv_recode;
+    private  String prisonname;
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
 
 
@@ -42,7 +43,8 @@ public class RemittanceRecordActivity extends BaseActivity {
         setTitle("汇款记录");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        prisonernum = sp.getString("prisoner_number","1");
+        prisonernum = sp.getString("prisoner_number", "1");
+        prisonname = sp.getString("prisonname","德山监狱");
         getDate();
         if (remittances.size() == 0){
             iv_recode.setVisibility(View.VISIBLE);
@@ -104,6 +106,7 @@ public class RemittanceRecordActivity extends BaseActivity {
                 viewHolder.tv_payment = (TextView)convertView.findViewById(R.id.tv_transtype_name);
                 viewHolder.tv_money = (TextView)convertView.findViewById(R.id.tv_pay_money);
                 viewHolder.tv_prisonnernum = (TextView)convertView.findViewById(R.id.tv_prisonnernum);
+                viewHolder.tv_prisonname = (TextView)convertView.findViewById(R.id.tv_prison_name);
                 convertView.setTag(viewHolder);
             }else {
                 viewHolder = (ViewHolder)convertView.getTag();
@@ -112,6 +115,7 @@ public class RemittanceRecordActivity extends BaseActivity {
             viewHolder.tv_payment.setText("支付宝");
             viewHolder.tv_money.setText(remittances.get(position).getPrice());
             viewHolder.tv_prisonnernum.setText(prisonernum);
+            viewHolder.tv_prisonname.setText(prisonname);
             return convertView;
         }
     }
@@ -120,5 +124,6 @@ public class RemittanceRecordActivity extends BaseActivity {
         TextView tv_payment;
         TextView tv_money;
         TextView tv_prisonnernum;
+        TextView tv_prisonname;
     }
 }

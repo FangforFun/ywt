@@ -35,6 +35,7 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -123,7 +124,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     break;
                 case 1: // 取消视频成功
                     String cancel_result = (String) msg.obj;
-                    Log.i("到handler了", cancel_result);
                     try {
                         JSONObject jsonObject = new JSONObject(cancel_result);
                         int result_code = jsonObject.getInt("code");
@@ -240,7 +240,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         setRefreshVisibility(View.VISIBLE);
         StatusCode code = NIMClient.getStatus();
         showToastMsgShort("" + code);
-        Log.i("监狱端进主页啦", code + sp.getString("password", "") + "---" + sp.getString("token", ""));
         setTitle("会见列表");
         setLogoutVisibility(View.VISIBLE);
         preImgBtn.setOnClickListener(this);
@@ -309,34 +308,26 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 @Override
                 public void run() {
                     SystemClock.sleep(2000);// 休眠2秒  模拟网络环境
-                    HttpUtils httpUtils = new HttpUtils();
-                    final Message msg = handler.obtainMessage();
-                    Log.i("会见列表请求", Constants.URL_HEAD +
-                            Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
-                    httpUtils.send(HttpRequest.HttpMethod.GET, Constants.URL_HEAD +
-                            Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date
-                            , new RequestCallBack<Object>() {
-                        @Override
-                        public void onSuccess(ResponseInfo<Object> responseInfo) {
-                            Log.i("请求成功", responseInfo.result.toString());
-                            msg.obj = responseInfo.result.toString();
-                            msg.what = 0;
-                            handler.sendMessage(msg);
+                    Message msg = handler.obtainMessage();
+                    try {
+                        String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD +
+                                Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
+                        Log.i("请求成功", result);
+                        msg.obj = result;
+                        msg.what = 0;
+                        handler.sendMessage(msg);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.i("请求失败", e.getMessage().toString());
+                        showToastMsgShort("刷新数据失败");
+                        tv_loading.setText("点击刷新");
+                        pb_loading.setVisibility(View.GONE);
+                        ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                        for (int i = 0; i < 3; i++) {
+                            views[i].setEnabled(true);
                         }
-
-                        @Override
-                        public void onFailure(HttpException e, String s) {
-                            Log.i("请求失败", s + "---" + e.getMessage());
-                            showToastMsgShort("刷新数据失败");
-                            tv_loading.setText("点击刷新");
-                            pb_loading.setVisibility(View.GONE);
-                            ll_loading.setOnClickListener(DateMeetingListActivity.this);
-                            for (int i = 0; i < 3; i++) {
-                                views[i].setEnabled(true);
-                            }
-                            ra.cancel();
-                        }
-                    });
+                        ra.cancel();
+                    }
                 }
             }.start();
         } else {

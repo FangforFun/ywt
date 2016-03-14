@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
@@ -59,8 +61,10 @@ public class PrisonOpenActivity extends BaseActivity {
     private String url = "";
     private SharedPreferences sp;
     private String token;
+    private int jail_id;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
+    private ProgressDialog getNews_Dialog;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -89,30 +93,69 @@ public class PrisonOpenActivity extends BaseActivity {
                             }
                         });
                         lv_prison_open.setAdapter(new MyAdapter());
-
                         List<String> imgurl_list = new ArrayList<>();
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
-                        imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(3).getImage_url());
-                        vp_carousel.initImgUrl(imgurl_list);
-
-                        list_news_title.clear();
-                        list_news_title.add(allnews.get(0).getTitle());
-                        list_news_title.add(allnews.get(1).getTitle());
-                        list_news_title.add(allnews.get(2).getTitle());
-                        list_news_title.add(allnews.get(3).getTitle());
-                        vp_carousel.initTitle(list_news_title, top_news_title);
-                        vp_carousel.startRoll();
-                        top_news_viewpager.removeAllViews();
-                        top_news_viewpager.addView(vp_carousel);
+                        setCarousel(imgurl_list);
                     }else if (tag.equals("error")){
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                        getNews_Dialog.dismiss();
                     }
                     break;
             }
         }
     };
+
+    /**
+     * 设置轮播图
+     * @param imgurl_list
+     */
+    private void setCarousel(List<String> imgurl_list) {
+        if (newsList.size() > 3) {
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
+            list_news_title.clear();
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+            list_news_title.add(newsList.get(2).getTitle());
+            list_news_title.add(newsList.get(3).getTitle());
+        }else if(newsList.size() == 3){
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
+            list_news_title.clear();
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+            list_news_title.add(newsList.get(2).getTitle());
+        }else if(newsList.size() == 2){
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
+            list_news_title.clear();
+            list_news_title.add(newsList.get(0).getTitle());
+            list_news_title.add(newsList.get(1).getTitle());
+        }else if(newsList.size() == 1){
+            imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
+            list_news_title.clear();
+            list_news_title.add(newsList.get(0).getTitle());
+        }
+        initDot();// 初始化轮播图底部小圆圈
+        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
+            @Override
+            public void viewClick(int position) {
+                int i = allnews.get(position).getId();
+                Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                intent.putExtra("id", i);
+                startActivity(intent);
+            }
+        });
+        vp_carousel.initImgUrl(imgurl_list);
+        vp_carousel.initTitle(list_news_title, top_news_title);
+        vp_carousel.startRoll();
+        top_news_viewpager.removeAllViews();
+        top_news_viewpager.addView(vp_carousel);
+        getNews_Dialog.dismiss();
+    }
+
     /**
      * 轮播图导航点集合
      */
@@ -135,20 +178,11 @@ public class PrisonOpenActivity extends BaseActivity {
     protected void initData() {
         setTitle("狱务公开");
         setBackVisibility(View.VISIBLE);
-        initDot();// 初始化轮播图底部小圆圈
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD + "news?jail_id=1" ;
+        jail_id = sp.getInt("jail_id",0);
+        url = Constants.URL_HEAD + "news?jail_id="+jail_id ;
         getNews();
-        vp_carousel = new RollViewPager(getApplicationContext(), dotList, new RollViewPager.OnViewClickListener() {
-            @Override
-            public void viewClick(int position) {
-                int i = allnews.get(position).getId();
-                Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
-                intent.putExtra("id", i);
-                startActivity(intent);
-            }
-        });
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -165,28 +199,34 @@ public class PrisonOpenActivity extends BaseActivity {
      */
     private void getNews(){
         if(Utils.isNetworkAvailable()) {
+            getNews_Dialog = new ProgressDialog(this);
+            getNews_Dialog.setMessage("正在加载...");
+            getNews_Dialog.setCanceledOnTouchOutside(false);
+            getNews_Dialog.setCancelable(false);
+            getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            getNews_Dialog.show();
             new Thread() {
                 @Override
                 public void run() {
                     Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet Get = new HttpGet(url);
                     try {
-                        HttpResponse response = httpClient.execute(Get);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                        String result = HttpRequestUtil.doHttpsGet(url);
+                        if (result.contains("StatusCode is")){
+                            msg.obj = "error";
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }else {
                             msg.obj = "success";
                             Bundle bundle = new Bundle();
                             bundle.putString("result", result);
                             msg.setData(bundle);
                             msg.what = 1;
                             handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
                         }
-                    } catch (IOException e) {
+                    } catch (Exception e) {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handler.sendMessage(msg);
                         e.printStackTrace();
                     }
                 }
@@ -224,7 +264,7 @@ public class PrisonOpenActivity extends BaseActivity {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < list_news_title.size(); i++) {
             View view = new View(getApplicationContext());
             if (i == 0) {
                 view.setBackgroundResource(R.drawable.rb_shape_blue);
