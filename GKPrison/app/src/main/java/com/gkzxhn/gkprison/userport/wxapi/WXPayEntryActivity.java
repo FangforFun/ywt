@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.userport.wxapi;
 
 
 import android.app.Activity;

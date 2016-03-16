@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,6 +10,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nim.uikit.common.util.string.MD5;
@@ -68,37 +68,37 @@ public class WeixinPayActivity extends BaseActivity {
         app_id = getIntent().getStringExtra("app_id");
         mch_id = getIntent().getStringExtra("mch_id");
         nonce_str = getIntent().getStringExtra("nonce_str");
+        sign = getIntent().getStringExtra("sign");
         api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID, false);
         api.registerApp(WeixinConstants.APP_ID);
-        String str = "appId="+app_id+"&nonceStr="+nonce_str+"&package="+packge+"&partnerId="+mch_id+"&prepayId="+prepay_id+"&timeStamp="+timeStamp+"";
+        /**
+        String str = "appid="+app_id+"&noncestr="+nonce_str+"&package="+packge+"&partnerid="+mch_id+"&prepayid="+prepay_id+"&timestamp="+timeStamp+"";
         Log.d("sign",str);
         String key = "d75699d893882dea526ea05e9c7a4090";
         String pass = str+"&key="+key;
-        sign = MD5Utils.ecoder(pass);
+        String bb = MD5.getStringMD5(pass);
+        sign = bb.toUpperCase();
+         **/
+
         Log.d("sign",sign);
         btn_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-                    PayReq req = new PayReq();
-
-
-                            //req.appId = "wxf8b4f85f3a794e77";  // 测试用appId
-                            req.appId			= app_id;
-                            req.partnerId		= mch_id;
-                            req.prepayId		= prepay_id;
-                            req.nonceStr		= nonce_str;
-                            req.timeStamp		= timeStamp;
-                            req.packageValue	= packge;
-                            req.sign			= sign;
-                            //req.extData			= "app data"; // optiona
-                            // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
-                            api.sendReq(req);
-
-
-
-
+                PayReq req = new PayReq();
+                //req.appId = "wxf8b4f85f3a794e77";  // 测试用appId
+                req.appId			= app_id;
+                req.partnerId		= mch_id;
+                req.prepayId		= prepay_id;
+                req.nonceStr		= nonce_str;
+                req.timeStamp		= timeStamp;
+                req.packageValue	= packge;
+                req.sign			= sign;
+                req.extData			= "app data"; // optiona
+                // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
+                api.sendReq(req);
+                Log.i("zhifu", "-----=");
             }
         });
     }

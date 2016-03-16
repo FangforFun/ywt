@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.lidroid.xutils.HttpUtils;
