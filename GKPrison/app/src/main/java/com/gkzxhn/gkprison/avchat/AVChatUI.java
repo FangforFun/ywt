@@ -9,7 +9,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.lidroid.xutils.HttpUtils;
@@ -577,7 +576,7 @@ public class AVChatUI implements AVChatUIListener {
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
         if(!largeAccount.contains("gkzxhn")) { // 发起者(狱警方)
             avChatSurface.setIsComing(false);
-            avChatSurface.setonThroughExamineClickLintener(new AVChatSurface.OnThroughExamineLintener() {
+            avChatSurface.setonThroughExamineClickListener(new AVChatSurface.OnThroughExamineListener() {
                 @Override
                 public void onClick() {
                     HttpUtils httpUtils = new HttpUtils(5000);
@@ -633,7 +632,7 @@ public class AVChatUI implements AVChatUIListener {
 //                    }.start();
                 }
             });
-            avChatSurface.setonNotThroughExamineClickLintener(new AVChatSurface.OnNotThroughExamineLintener() {
+            avChatSurface.setonNotThroughExamineClickListener(new AVChatSurface.OnNotThroughExamineListener() {
                 @Override
                 public void onClick() {
                     HttpUtils httpUtils = new HttpUtils(5000);
