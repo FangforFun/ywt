@@ -13,17 +13,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -33,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,21 +44,10 @@ import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
 import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.ImageTools;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -71,7 +56,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -81,8 +65,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * created by hzn 2015/12/15
- * 申请二维码页面
+ * created by huangzhengneng 2015/12/15
+ * 注册页面
  */
 public class RegisterActivity extends BaseActivity {
 
@@ -115,8 +99,6 @@ public class RegisterActivity extends BaseActivity {
     private TextView tv_software_protocol;// 蓝色软件协议
     private String name = "";
     private String apply = "";
-    private int jail_id = 1;
-    private int type_id = 3;
     private String ic_card = "";
     private String phone_num = "";
     private String relationship_with_prisoner = "";

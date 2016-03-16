@@ -11,9 +11,10 @@ import android.view.ViewConfiguration;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.utils.DateUtil;
-import com.gkzxhn.gkprison.utils.DensityUtil;
 
 /**
+ *
+ * created by huangzhengneng on 2016/1/18
  * 自定义日历卡
  */
 public class CalendarCard extends View {
