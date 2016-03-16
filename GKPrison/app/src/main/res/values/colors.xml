@@ -28,7 +28,7 @@
     <color name="color_f5455e">#F5455E</color>
     <color name="light_gray">#fff5f5f5</color>
     <color name="ripple">#F06292</color>
-
+    <color name="navpage">#FFE1E8EB</color>
     <integer-array name="my_colors">
         <item>@color/gplus_color_1</item>
         <item>@color/gplus_color_2</item>
