@@ -9,7 +9,6 @@ import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,19 +32,15 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
-import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
+import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -68,6 +63,7 @@ import java.util.List;
 
 /**
  * created by hzn 2015.12.22
+ * 平板端会见列表页面
  */
 public class DateMeetingListActivity extends BaseActivity implements CalendarCard.OnCellClickListener {
 

@@ -24,6 +24,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * created by huangzhengneng on 2015/12/15
  * 登录页面
  */
 public class LoadingActivity extends BaseActivity {

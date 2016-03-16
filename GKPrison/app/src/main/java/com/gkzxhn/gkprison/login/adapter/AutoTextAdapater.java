@@ -2,8 +2,6 @@ package com.gkzxhn.gkprison.login.adapter;
 
 import android.content.Context;
 import android.database.DataSetObserver;
-import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
@@ -12,6 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -4,9 +4,11 @@ import com.gkzxhn.gkprison.utils.DateUtil;
 
 import java.io.Serializable;
 
-
+/**
+ * created by huangzhengneng on 2016/1/18
+ * 日期类
+ */
 public class CustomDate implements Serializable{
-
 
     private static final long serialVersionUID = 1L;
     public int year;

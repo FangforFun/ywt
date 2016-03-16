@@ -8,7 +8,6 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,6 +18,10 @@ import com.gkzxhn.gkprison.R;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * created by huangzhengneng on 2016/2/2
+ *
+ */
 public class RefreshListView extends ListView implements OnScrollListener {
 
 	private LinearLayout refresh_header_root;

@@ -5,6 +5,11 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 
+/**
+ * created by huangzhengneng on 2016/1/18
+ * 日历控件适配器
+ * @param <V>
+ */
 public class CalendarViewAdapter<V extends View> extends PagerAdapter {
     public static final String TAG = "CalendarViewAdapter";
     private V[] views;

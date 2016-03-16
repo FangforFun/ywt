@@ -36,7 +36,8 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 /**
- * Created by Administrator on 2016/2/25.
+ * Created by huangzhengneng on 2016/2/25.
+ * http请求工具
  */
 public class HttpRequestUtil {
 
