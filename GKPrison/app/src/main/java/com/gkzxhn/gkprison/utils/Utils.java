@@ -5,9 +5,37 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.util.Log;
 
 import com.gkzxhn.gkprison.avchat.DemoCache;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.UnrecoverableKeyException;
+import java.security.cert.X509Certificate;
 import java.text.ParseException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,12 +48,17 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
 /**
  * Created by zhengneng on 2015/12/17.
  */
 public class Utils {
 
     private static long lastClickTime;
+    private static final String TAG = "SDK_Sample.Util";
 
     public static final boolean isChineseCharacter(String chineseStr) {
         char[] charArray = chineseStr.toCharArray();
@@ -382,5 +415,96 @@ public class Utils {
         Pattern p = Pattern.compile("^((13[0-9])|(15[0-3,5-9])|(14[5,7])|(17[0,6-8])|(18[0-9]))\\d{8}$");
         Matcher m = p.matcher(mobiles);
         return m.matches();
+    }
+
+    /**
+     * 微信支付调用的SSL GET方法
+     * @param url
+     * @return
+     */
+
+    public static byte[] httpGet(final String url) {
+        if (url == null || url.length() == 0) {
+            Log.e(TAG, "httpGet, url is null");
+            return null;
+        }
+
+        HttpClient httpClient = getNewHttpClient();
+        HttpGet httpGet = new HttpGet(url);
+
+        try {
+            HttpResponse resp = httpClient.execute(httpGet);
+            if (resp.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                Log.e(TAG, "httpGet fail, status code = " + resp.getStatusLine().getStatusCode());
+                return null;
+            }
+
+            return EntityUtils.toByteArray(resp.getEntity());
+
+        } catch (Exception e) {
+            Log.e(TAG, "httpGet exception, e = " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static HttpClient getNewHttpClient() {
+        try {
+            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            trustStore.load(null, null);
+
+            SSLSocketFactory sf = new SSLSocketFactoryEx(trustStore);
+            sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+            HttpParams params = new BasicHttpParams();
+            HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+            HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+
+            SchemeRegistry registry = new SchemeRegistry();
+            registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+            registry.register(new Scheme("https", sf, 443));
+
+            ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+
+            return new DefaultHttpClient(ccm, params);
+        } catch (Exception e) {
+            return new DefaultHttpClient();
+        }
+    }
+
+    private static class SSLSocketFactoryEx extends SSLSocketFactory {
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+
+        public SSLSocketFactoryEx(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+            super(truststore);
+
+            TrustManager tm = new X509TrustManager() {
+
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
+
+                @Override
+                public void checkClientTrusted(X509Certificate[] chain, String authType) throws java.security.cert.CertificateException {
+                }
+
+                @Override
+                public void checkServerTrusted(X509Certificate[] chain,	String authType) throws java.security.cert.CertificateException {
+                }
+            };
+
+            sslContext.init(null, new TrustManager[] { tm }, null);
+        }
+
+        @Override
+        public Socket createSocket(Socket socket, String host, int port, boolean autoClose) throws IOException, UnknownHostException {
+            return sslContext.getSocketFactory().createSocket(socket, host,	port, autoClose);
+        }
+
+        @Override
+        public Socket createSocket() throws IOException {
+            return sslContext.getSocketFactory().createSocket();
+        }
     }
 }

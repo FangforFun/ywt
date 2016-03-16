@@ -83,6 +83,7 @@
             android:layout_marginRight="12dp"/>
     </RelativeLayout>
     <Button
+        android:id="@+id/btn_pay"
         android:layout_width="329dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_receviable"

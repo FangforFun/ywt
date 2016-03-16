@@ -5,6 +5,7 @@
 
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
@@ -131,7 +132,13 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".userport.activity.WeixinPayActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx4973a8b575999262"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".prisonport.activity.DateMeetingListActivity"
             android:screenOrientation="portrait" />
@@ -167,6 +174,11 @@
 
         <activity android:name=".userport.activity.ReChargeActivity"
             android:screenOrientation="portrait" />
+        <!--微信回调该activity 显示错误代码-->
+        <activity
+            android:name=".userport.activity.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"/>
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -249,5 +261,12 @@
             android:name="com.umeng.update.UpdateDialogActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
+        <receiver
+            android:name=".broadcast.AppRegister">
+            <intent-filter>
+                <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
+            </intent-filter>
+        </receiver>
+
     </application>
 </manifest>

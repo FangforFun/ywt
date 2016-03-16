@@ -62,6 +62,7 @@ public class PaymentActivity extends BaseActivity {
     private String token;
     private String payment_type = "";
     private String prepay_id = "";
+    private long sytemtim = 0;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -87,7 +88,19 @@ public class PaymentActivity extends BaseActivity {
                                 PaymentActivity.this.startActivity(intent);
                             }else if (payment_type.equals("weixin")){
                                 Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
-                                intent.putExtra("price",countmoney);
+                                String prepay_id = getPrepay_id(type);
+                                intent.putExtra("prepay_id",prepay_id);
+                                String app_id = getapp_id(type);
+                                intent.putExtra("app_id",app_id);
+                                String mch_id = getmch_id(type);
+                                intent.putExtra("mch_id",mch_id);
+                                String nonce_str = getnonce_str(type);
+                                intent.putExtra("nonce_str", nonce_str);
+                                String sign = getsign(type);
+                                intent.putExtra("sign",sign);
+                                intent.putExtra("price", countmoney);
+                                String t = sytemtim+"";
+                                intent.putExtra("timeStamp",t);
                                 PaymentActivity.this.startActivity(intent);
                             }else if (payment_type.equals("unionpay")){
                                 Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
@@ -113,6 +126,60 @@ public class PaymentActivity extends BaseActivity {
         return a;
     }
 
+    private String getPrepay_id(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("prepay_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
+    private  String getapp_id(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("app_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
+    private String getmch_id(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("mch_id");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
+    private String getnonce_str(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("nonce_str");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+
+    private String getsign(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("sign");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
     @Override
     protected View initView() {
         View view =View.inflate(this,R.layout.activity_payment,null);
@@ -185,6 +252,8 @@ public class PaymentActivity extends BaseActivity {
                         handler.sendMessage(msg);
                     }else {
                         msg.obj = "success";
+                        long t = System.currentTimeMillis();
+                        sytemtim = t/1000;
                         Bundle bundle = new Bundle();
                         bundle.putString("result",result);
                         msg.setData(bundle);
