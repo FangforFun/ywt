@@ -30,6 +30,12 @@ android {
         }
     }
 
+    allprojects {
+        repositories {
+            mavenCentral()
+        }
+    }
+
     productFlavors {
 
         wandoujia {}

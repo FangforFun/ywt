@@ -78,31 +78,32 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * created by huangzhengneng on 2015/12/22
  * 主activity
  */
 public class MainActivity extends BaseActivity {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
     private LazyViewPager home_viewPager;
-    private RadioGroup rg_bottom_guide;
+    private RadioGroup rg_bottom_guide; // 底部导航栏组
     private List<BasePager> pagerList;
-    private RadioButton rb_bottom_guide_home;
-    private RadioButton rb_bottom_guide_visit;
-    private RadioButton rb_bottom_guide_canteen;
+    private RadioButton rb_bottom_guide_home; // 首页
+    private RadioButton rb_bottom_guide_visit; // 探监
+    private RadioButton rb_bottom_guide_canteen; // 电子商务
     private long mExitTime;//add by hzn 退出按键时间间隔
-    private CustomDrawerLayout drawerLayout;
+    private CustomDrawerLayout drawerLayout; // 侧拉菜单
     private ActionBarDrawerToggle toggle;
-    private FrameLayout fl_drawer;
+    private FrameLayout fl_drawer; // 侧拉菜单底层帧布局
     private SharedPreferences sp;
-    private boolean isRegisteredUser;
+    private boolean isRegisteredUser; // 是否注册登录用户
     private MyPagerAdapter adapter;
-    private AutoCompleteTextView actv_prison_choose;
+    private AutoCompleteTextView actv_prison_choose; // 监狱选择
     private AutoTextAdapater autoTextAdapater;
     private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
-    private Map<String, Integer> prison_map;
-    private int jail_id;
-    private String url;
+    private Map<String, Integer> prison_map; // 服务器返回的监狱列表存储需要的集合
+    private int jail_id;  // 监狱id
+    private String url; // 商品列表url
 
     private Handler handler = new Handler(){
         @Override
@@ -135,6 +136,31 @@ public class MainActivity extends BaseActivity {
                     pagerList.add(new RemoteMeetPager(MainActivity.this));
                     pagerList.add(new CanteenPager(MainActivity.this));
                     layoutMain();
+                    break;
+                case 4: // 获取用户信息失败   提示重新登录
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setTitle("提示");
+                    builder.setMessage("获取用户信息失败，请重新登录");
+                    builder.setCancelable(false);
+                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if(isRegisteredUser) {
+                                Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                SharedPreferences.Editor editor = sp.edit();
+                                editor.clear();
+                                editor.commit();
+                                startActivity(intent);
+                                NIMClient.getService(AuthService.class).logout();
+                            }else {
+                                Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+                    builder.create().show();
                     break;
             }
         }
@@ -474,14 +500,11 @@ public class MainActivity extends BaseActivity {
                 public void run() {
                     try {
                         String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""));
-                        if(result.contains("StatusCode is ")){
-                            Log.i("请求失败", result);
-                        }else {
-                            Log.i("请求成功", result);
-                            parseUserInfoResult(result);
-                        }
+                        Log.i("请求成功", result);
+                        parseUserInfoResult(result);
                     } catch (Exception e) {
                         e.printStackTrace();
+                        handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
                     }
                 }
             }.start();
