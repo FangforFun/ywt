@@ -123,7 +123,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         }
                     }
                     ra.cancel();
-                    fl_transparent.setVisibility(View.GONE);
+                    fl_transparent.setVisibility(View.GONE); // 刷新完数据隐藏
                     break;
                 case 1: // 取消视频成功
                     String cancel_result = (String) msg.obj;
@@ -149,6 +149,17 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     break;
                 case 3:// 视频取消异常
                     showToastMsgLong("取消异常，请稍后再试");
+                    break;
+                case 4:// 刷新数据失败
+                    showToastMsgShort("刷新数据失败");
+                    tv_loading.setText("点击刷新");
+                    pb_loading.setVisibility(View.GONE);
+                    ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                    fl_transparent.setVisibility(View.GONE);
+                    for (int i = 0; i < 3; i++) {
+                        views[i].setEnabled(true);
+                    }
+                    ra.cancel(); // 取消刷新图标的旋转任务
                     break;
             }
         }
@@ -325,15 +336,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     } catch (Exception e) {
                         e.printStackTrace();
                         Log.i("请求失败", e.getMessage().toString());
-                        showToastMsgShort("刷新数据失败");
-                        tv_loading.setText("点击刷新");
-                        pb_loading.setVisibility(View.GONE);
-                        ll_loading.setOnClickListener(DateMeetingListActivity.this);
-                        fl_transparent.setVisibility(View.GONE);
-                        for (int i = 0; i < 3; i++) {
-                            views[i].setEnabled(true);
-                        }
-                        ra.cancel(); // 取消刷新图标的旋转任务
+                        handler.sendEmptyMessage(4);// 刷新数据失败
                     }
                 }
             }.start();

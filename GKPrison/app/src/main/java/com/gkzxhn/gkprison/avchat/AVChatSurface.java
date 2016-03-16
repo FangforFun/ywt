@@ -5,11 +5,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.Log;
-import android.view.Display;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -26,29 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.RequestParams;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
-
-import org.apache.http.entity.StringEntity;
-import org.apache.http.params.DefaultedHttpParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.HTTP;
-
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 
 /**
  * 视频绘制管理
@@ -99,8 +81,8 @@ public class AVChatSurface {
     private boolean isLocalVideoOff = false;
 
     // 审核通话或未通过点击监听
-    private OnThroughExamineLintener onThroughExamineLintener;
-    private OnNotThroughExamineLintener onNotThroughExamineLintener;
+    private OnThroughExamineListener onThroughExamineListener;
+    private OnNotThroughExamineListener onNotThroughExamineListener;
 
     // move
     private int lastX, lastY;
@@ -151,26 +133,26 @@ public class AVChatSurface {
 
     /**
      * 设置审核点击事件
-     * @param onThroughExamineLintener
+     * @param onThroughExamineListener
      */
-    public void setonThroughExamineClickLintener(OnThroughExamineLintener onThroughExamineLintener){
-        this.onThroughExamineLintener = onThroughExamineLintener;
+    public void setonThroughExamineClickListener(OnThroughExamineListener onThroughExamineListener){
+        this.onThroughExamineListener = onThroughExamineListener;
     }
 
-    public interface OnThroughExamineLintener{
+    public interface OnThroughExamineListener {
         // 点击事件
         public void onClick();
     }
 
     /**
      * 设置审核未通过点击事件
-     * @param onNotThroughExamineLintener
+     * @param onNotThroughExamineListener
      */
-    public void setonNotThroughExamineClickLintener(OnNotThroughExamineLintener onNotThroughExamineLintener){
-        this.onNotThroughExamineLintener = onNotThroughExamineLintener;
+    public void setonNotThroughExamineClickListener(OnNotThroughExamineListener onNotThroughExamineListener){
+        this.onNotThroughExamineListener = onNotThroughExamineListener;
     }
 
-    public interface OnNotThroughExamineLintener{
+    public interface OnNotThroughExamineListener {
         // 点击事件
         public void onClick();
     }
@@ -304,16 +286,16 @@ public class AVChatSurface {
                 bt_through_examine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(onThroughExamineLintener != null) {
-                            onThroughExamineLintener.onClick();
+                        if(onThroughExamineListener != null) {
+                            onThroughExamineListener.onClick();
                         }
                     }
                 });
                 bt_not_through_examine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(onNotThroughExamineLintener != null) {
-                            onNotThroughExamineLintener.onClick();
+                        if(onNotThroughExamineListener != null) {
+                            onNotThroughExamineListener.onClick();
                         }
                     }
                 });
