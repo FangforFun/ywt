@@ -1,11 +1,8 @@
 package com.gkzxhn.gkprison.avchat;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.util.AttributeSet;
 import android.widget.Chronometer;
-
-import com.gkzxhn.gkprison.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

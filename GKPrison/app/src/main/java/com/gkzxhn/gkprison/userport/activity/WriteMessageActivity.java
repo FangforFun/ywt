@@ -37,6 +37,10 @@ import java.io.UnsupportedEncodingException;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
+/**
+ * created by huangzhengneng on 2016/2/1
+ * 写信页面
+ */
 public class WriteMessageActivity extends BaseActivity {
 
     private EditText et_theme;

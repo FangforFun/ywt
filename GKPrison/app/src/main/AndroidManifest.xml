@@ -175,10 +175,6 @@
         <activity android:name=".userport.activity.ReChargeActivity"
             android:screenOrientation="portrait" />
         <!--微信回调该activity 显示错误代码-->
-        <activity
-            android:name=".userport.activity.WXPayEntryActivity"
-            android:exported="true"
-            android:launchMode="singleTop"/>
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"

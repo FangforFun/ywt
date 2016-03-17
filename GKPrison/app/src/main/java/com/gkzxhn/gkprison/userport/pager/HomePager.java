@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,14 +34,9 @@ import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.utils.Log;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 
-import org.apache.http.client.HttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +46,7 @@ import java.util.List;
 
 /**
  * Created by hzn on 2015/12/3.
+ * 首页pager
  */
 public class HomePager extends BasePager {
 

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Reply;
+import com.gkzxhn.gkprison.utils.Log;
 import com.umeng.analytics.MobclickAgent;
 
 import org.apache.http.HttpResponse;
@@ -115,7 +115,7 @@ public class InterractiveMailboxFragment extends Fragment {
     private void initData(){
         sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
         family_id = sp.getInt("family_id", 1);
-        Log.d("个人ID",family_id+"");
+        Log.d("个人ID", family_id + "");
         token = sp.getString("token", "");
         Log.d("个人ID",token);
         url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;

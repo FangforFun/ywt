@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -250,7 +251,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         editor.commit();
         setRefreshVisibility(View.VISIBLE);
         StatusCode code = NIMClient.getStatus();
-        showToastMsgShort("" + code);
+        checkStatusCode(code);// 判断当前用户状态方法
         setTitle("会见列表");
         setLogoutVisibility(View.VISIBLE);
         preImgBtn.setOnClickListener(this);
@@ -266,7 +267,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(currentDate);
         final String formatDate = format.format(date);
-        requestData(formatDate);// 请求数据
+        if(code == StatusCode.LOGINED) {// 已登录状态才刷新数据
+            requestData(formatDate);// 请求数据
+        }
         Log.i("时间", (CalendarCard.mShowDate.getDay() + "") + "---" + (formatDate.substring(formatDate.length() - 3, formatDate.length())));
         lv_meeting_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -287,6 +290,50 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         rl_refresh.setOnClickListener(this);
         bt_logout.setOnClickListener(this);
         fl_transparent.setOnClickListener(this);
+    }
+
+    /**
+     * 判断当前云信id状态
+     */
+    private void checkStatusCode(StatusCode code) {
+        if(code == StatusCode.KICKOUT){// 被其他端挤掉
+            showKickoutDialog();
+        }else if(code == StatusCode.CONNECTING){// 正在连接
+            showToastMsgShort("正在连接...");
+        }else if(code == StatusCode.LOGINING){// 正在登录
+            showToastMsgShort("正在登录...");
+        }else if(code == StatusCode.NET_BROKEN){ // 网络连接已断开
+            showToastMsgLong("网络连接已断开，请检查网络设置");
+        }else if(code == StatusCode.UNLOGIN){// 未登录
+            showToastMsgShort("未登录");
+        }else {
+
+        }
+    }
+
+    /**
+     * 云信id在其他设备登录
+     */
+    private void showKickoutDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("账号下线提示");
+        builder.setCancelable(false);
+        builder.setMessage("您的账号" + sp.getString("token", "") + "在其他设备登录，点击重新登录。");
+        builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                SharedPreferences.Editor editor = sp.edit();
+                editor.clear();
+                editor.putBoolean("is_first", false); // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
+                editor.commit();
+                startActivity(intent);
+                NIMClient.getService(AuthService.class).logout();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     /**

@@ -8,7 +8,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.util.Log;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
@@ -16,8 +16,10 @@ import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
-import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
@@ -64,6 +66,11 @@ public class MyApplication extends Application {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
         NIMClient.init(this, loginInfo(), options()); // 初始化
+
+        // 初始化全局异常捕获
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+
         if (inMainProcess()) {
             // 初始化UIKit模块
             initUIKit();
@@ -83,6 +90,15 @@ public class MyApplication extends Application {
                                     }
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                     startActivity(intent);
+                                    break;
+                                case NET_BROKEN:
+                                    Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case CONNECTING:
+                                    Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
+                                    break;
+                                case LOGINING:
+                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
                                     break;
                             }
                         }

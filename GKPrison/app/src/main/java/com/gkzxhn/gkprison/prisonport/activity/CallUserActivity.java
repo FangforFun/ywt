@@ -1,8 +1,10 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -10,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
@@ -19,12 +22,19 @@ import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.BitmapUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+
 /**
+ * created by huangzhengneng on 2016/1/12
  * 准备呼叫页面
  */
 public class CallUserActivity extends BaseActivity {
@@ -38,6 +48,7 @@ public class CallUserActivity extends BaseActivity {
     private BitmapUtils bitmapUtil;
     private SharedPreferences sp;
     private int family_id;
+    private TextView tv_meeting_notice;
     private FamilyMeetingInfo familyMeetingInfo;
     private Handler handler = new Handler(){
         @Override
@@ -70,6 +81,7 @@ public class CallUserActivity extends BaseActivity {
         rl_getting = (RelativeLayout) view.findViewById(R.id.rl_getting);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0] - DensityUtil.dip2px(this, 80));
         fl_video_view.setLayoutParams(params);
+        tv_meeting_notice = (TextView) view.findViewById(R.id.tv_meeting_notice);
         return view;
     }
 
@@ -83,6 +95,28 @@ public class CallUserActivity extends BaseActivity {
         Log.i("family_id", family_id + "");
         getMeetingDetailInfo(family_id);
         bt_call.setOnClickListener(this);
+//        String filename = sp.getString("错误信息文件名...", "");
+//        try {
+//            if (!TextUtils.isEmpty(filename)) {
+//                Log.i("错误信息文件名...", filename);
+//                File file = new File(Environment.getExternalStorageDirectory() + "/crash/" + filename);
+//                if (file.isFile() && file.exists()) { //判断文件是否存在
+//                    InputStreamReader read = new InputStreamReader(
+//                            new FileInputStream(file));//考虑到编码格式
+//                    BufferedReader bufferedReader = new BufferedReader(read);
+//                    String lineTxt = null;
+//                    while ((lineTxt = bufferedReader.readLine()) != null) {
+//                        System.out.println(lineTxt);
+//                        tv_meeting_notice.setText(lineTxt);
+//                    }
+//                    read.close();
+//                }
+//            }else {
+//                showToastMsgShort("找不到文件...");
+//            }
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
     }
 
     /**
@@ -168,12 +202,16 @@ public class CallUserActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_call:
-                AVChatActivity.start(this,
-                        familyMeetingInfo.getAccid()
-                        , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("family_accid", familyMeetingInfo.getAccid());
-                editor.commit();
+                if(Utils.isNetworkAvailable()) {
+                    AVChatActivity.start(this,
+                            familyMeetingInfo.getAccid()
+                            , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.putString("family_accid", familyMeetingInfo.getAccid());
+                    editor.commit();
+                }else {
+                    showToastMsgShort("没有网络，请检查网络设置");
+                }
                 break;
         }
     }

@@ -3,12 +3,13 @@ package com.gkzxhn.gkprison.userport.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.widget.Toast;
 
-import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.userport.activity.AlarmActivity;
 
+/**
+ * created by huangzhengneng on 2016/1/20
+ * 闹钟
+ */
 public class AlarmReceiver extends BroadcastReceiver {
     public AlarmReceiver() {
     }

@@ -481,6 +481,7 @@ public class MainActivity extends BaseActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 SharedPreferences.Editor editor = sp.edit();
                 editor.clear();
+                editor.putBoolean("is_first", false); // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
                 editor.commit();
                 startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();

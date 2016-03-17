@@ -11,12 +11,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;
@@ -27,10 +27,13 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 import de.greenrobot.event.EventBus;
 
+/**
+ * created by huangzhengneng on 2016/1/15
+ * 自定义通知接收者
+ */
 public class CustomNotificationReceiver extends BroadcastReceiver {
 
     private SharedPreferences sp;
