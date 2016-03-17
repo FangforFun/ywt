@@ -8,13 +8,17 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
-import com.tencent.mm.sdk.modelbase.BaseResp;
+import com.gkzxhn.gkprison.utils.Utils;
+import com.netease.nim.uikit.common.util.string.MD5;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+
+import org.json.JSONObject;
 
 public class WeixinPayActivity extends BaseActivity {
     private TextView tv_prisonname;
@@ -51,7 +55,7 @@ public class WeixinPayActivity extends BaseActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
          long t = System.currentTimeMillis();
         long m = t/1000;
-        Log.d("timeshow", m + "");
+        Log.d("timeshow",m+"");
         timeStamp = getIntent().getStringExtra("timeStamp");
         packge = "Sign=WXPay";
         prisonname = sp.getString("prisonname", "");
@@ -64,18 +68,24 @@ public class WeixinPayActivity extends BaseActivity {
         app_id = getIntent().getStringExtra("app_id");
         mch_id = getIntent().getStringExtra("mch_id");
         nonce_str = getIntent().getStringExtra("nonce_str");
+        sign = getIntent().getStringExtra("sign");
         api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID, false);
         api.registerApp(WeixinConstants.APP_ID);
-        String str = "appId=" + app_id + "&nonceStr=" + nonce_str + "&package="+packge+"&partnerId="+mch_id+"&prepayId="+prepay_id+"&timeStamp="+timeStamp+"";
+        /**
+        String str = "appid="+app_id+"&noncestr="+nonce_str+"&package="+packge+"&partnerid="+mch_id+"&prepayid="+prepay_id+"&timestamp="+timeStamp+"";
         Log.d("sign",str);
-        String key = "76c8d8c627a677d50c726d986dd0eaa9";
-        String pass = str + "&key=" + key;
-        sign = MD5Utils.ecoder(pass);
+        String key = "d75699d893882dea526ea05e9c7a4090";
+        String pass = str+"&key="+key;
+        String bb = MD5.getStringMD5(pass);
+        sign = bb.toUpperCase();
+         **/
+
         Log.d("sign",sign);
-        sign.toUpperCase();
         btn_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 PayReq req = new PayReq();
                 //req.appId = "wxf8b4f85f3a794e77";  // 测试用appId
                 req.appId			= app_id;
@@ -84,18 +94,12 @@ public class WeixinPayActivity extends BaseActivity {
                 req.nonceStr		= nonce_str;
                 req.timeStamp		= timeStamp;
                 req.packageValue	= packge;
-                req.sign			= sign.toUpperCase();
-                Log.i("------", app_id + "---" + mch_id  + "---" + prepay_id  + "---" + nonce_str  + "---" + timeStamp + "---" + packge  + "---" + sign.toUpperCase());
-                //req.extData			= "app data"; // optiona
+                req.sign			= sign;
+                req.extData			= "app data"; // optiona
                 // 在支付之前，如果应用没有注册到微信，应该先调用IWXMsg.registerApp将应用注册到微信
                 api.sendReq(req);
+                Log.i("zhifu", "-----=");
             }
         });
-    }
-
-    // 第三方应用发送到微信的请求处理后的响应结果，会回调到该方法
-    public void onResp(BaseResp resp) {
-        int result = 0;
-        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
     }
 }

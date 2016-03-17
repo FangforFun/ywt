@@ -99,7 +99,7 @@ public class PaymentActivity extends BaseActivity {
                                 String sign = getsign(type);
                                 intent.putExtra("sign",sign);
                                 intent.putExtra("price", countmoney);
-                                String t = sytemtim+"";
+                                String t = gettimestamp(type);
                                 intent.putExtra("timeStamp",t);
                                 PaymentActivity.this.startActivity(intent);
                             }else if (payment_type.equals("unionpay")){
@@ -175,6 +175,16 @@ public class PaymentActivity extends BaseActivity {
         try {
             JSONObject jsonObject = new JSONObject(type);
             t = jsonObject.getString("sign");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return t;
+    }
+    private String gettimestamp(String type){
+        String t = "";
+        try {
+            JSONObject jsonObject = new JSONObject(type);
+            t = jsonObject.getString("timestamp");
         } catch (JSONException e) {
             e.printStackTrace();
         }

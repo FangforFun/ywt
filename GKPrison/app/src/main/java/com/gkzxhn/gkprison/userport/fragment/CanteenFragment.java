@@ -152,7 +152,7 @@ public class CanteenFragment extends BaseFragment {
                         Bundle bundle = msg.getData();
                         String s = bundle.getString("result");
                         TradeNo = getResultTradeno(s);
-                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+",out_trade_no=" +TradeNo+ "   where time = '"+times+"'";
+                        String sql = "update Cart set total_money = '"+send+"',count = "+allcount+",out_trade_no ='" +TradeNo+ "'   where time = '"+times+"'";
                         db.execSQL(sql);
                         Log.d("订单号", TradeNo);
                         int a = getResultcode(s);
@@ -588,7 +588,7 @@ public class CanteenFragment extends BaseFragment {
         order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
-        order.setAmount(f);
+        order.setAmount(1);
         gson = new Gson();
         apply = gson.toJson(order);
         Log.d("结算发送",apply);
