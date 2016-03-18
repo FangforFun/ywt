@@ -257,7 +257,6 @@ public class AVChatSurface {
                 iv_meeting_icon.setVisibility(View.GONE);
                 bt_through_examine.setVisibility(View.GONE);
                 bt_not_through_examine.setVisibility(View.GONE);
-                AVChatManager.getInstance().setMute(true);// 静音
                 String network_type = SystemUtil.GetNetworkType(context);
                 Log.i("当前网络状态", "------------" + network_type);
                 switch (network_type){

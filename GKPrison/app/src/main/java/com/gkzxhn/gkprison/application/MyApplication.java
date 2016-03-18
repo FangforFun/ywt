@@ -98,7 +98,7 @@ public class MyApplication extends Application {
                                     Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
                                     break;
                                 case LOGINING:
-                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
                                     break;
                             }
                         }

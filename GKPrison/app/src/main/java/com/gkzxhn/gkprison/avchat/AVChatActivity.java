@@ -194,7 +194,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             // 如果是普通用户  视频结束恢复未审查状态
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("is_can_video", false);
-            editor.putString("current_ms", 900 + "");// 保存会见时长
+//            editor.putString("current_ms", 900 + "");// 保存会见时长
             // 保存会见时间
             editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
             editor.commit();

@@ -212,13 +212,15 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
      * @param visible
      */
     public void setTime(boolean visible){
-        Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         time.setVisibility(visible ? View.VISIBLE : View.GONE);
         tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
             time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "")));
             time.start();
+            int surplus_time = (int) (Long.parseLong(sp.getString("current_ms", 900 + "").equals("上次通话已完成") ? 900 + "" : sp.getString("current_ms", 900 + "")) / 60);
+            Toast.makeText(context, "开始进行视频通话，您还剩余" +
+                    surplus_time + "分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -325,6 +327,9 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     public void onTimeComplete() {
         Toast.makeText(context, "会话结束", Toast.LENGTH_SHORT).show();
         listener.onHangUp();// 时间到自动挂断
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString("current_ms", "上次通话已完成");
+        editor.commit();
     }
 
     @Override
