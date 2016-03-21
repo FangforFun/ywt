@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.gkzxhn.gkprison">
-
+    package="com.gkzxhn.gkprison"
+    android:versionCode="1"
+    android:versionName="1.0">
+    <uses-sdk android:minSdkVersion="4" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
-    
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
@@ -56,11 +61,17 @@
 
         <activity
             android:name=".welcome.SplashActivity"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx4973a8b575999262"/>
             </intent-filter>
         </activity>
         <activity
@@ -68,7 +79,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".userport.activity.MainActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="wx4973a8b575999262"/>
+            </intent-filter>
+        </activity>
         <activity
             android:name=".userport.activity.PrisonIntroductionActivity"
             android:screenOrientation="portrait" />
@@ -123,7 +141,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".userport.activity.PaymentActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop"></activity>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW"/>
+            <category android:name="android.intent.category.DEFAULT"/>
+            <data android:scheme="wx4973a8b575999262"/>
+        </intent-filter>/>
+
         <activity
             android:name=".userport.activity.BankPayActivity"
             android:screenOrientation="portrait" />
@@ -132,12 +157,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".userport.activity.WeixinPayActivity"
-            android:screenOrientation="portrait" >
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="wx4973a8b575999262"/>
-            </intent-filter>
+            android:screenOrientation="portrait"
+            android:exported="true">
         </activity>
         <activity
             android:name=".prisonport.activity.DateMeetingListActivity"
@@ -178,7 +199,9 @@
         <activity
             android:name=".userport.wxapi.WXPayEntryActivity"
             android:exported="true"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop">
+        </activity>
+
         <!-- 声明云信后台服务，如需保持后台推送，使用独立进程效果会更好。 -->
         <service
             android:name="com.netease.nimlib.service.NimService"
@@ -262,7 +285,7 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" >
         </activity>
         <receiver
-            android:name=".broadcast.AppRegister">
+            android:name=".userport.activity.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP" />
             </intent-filter>

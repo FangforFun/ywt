@@ -19,7 +19,10 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -130,7 +133,8 @@ public class PaymentActivity extends BaseActivity {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
-            t = jsonObject.getString("prepay_id");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("signed_params");
+            t = jsonObject1.getString("prepayId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -141,7 +145,8 @@ public class PaymentActivity extends BaseActivity {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
-            t = jsonObject.getString("app_id");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("signed_params");
+            t = jsonObject1.getString("appId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -152,7 +157,8 @@ public class PaymentActivity extends BaseActivity {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
-            t = jsonObject.getString("mch_id");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("signed_params");
+            t = jsonObject1.getString("partnerId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -163,7 +169,8 @@ public class PaymentActivity extends BaseActivity {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
-            t = jsonObject.getString("nonce_str");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("signed_params");
+            t = jsonObject1.getString("nonceStr");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -184,7 +191,8 @@ public class PaymentActivity extends BaseActivity {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
-            t = jsonObject.getString("timestamp");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("signed_params");
+            t = jsonObject1.getString("timeStamp");
         } catch (JSONException e) {
             e.printStackTrace();
         }

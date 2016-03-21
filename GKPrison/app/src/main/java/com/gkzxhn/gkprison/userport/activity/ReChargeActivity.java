@@ -135,7 +135,7 @@ public class ReChargeActivity extends BaseActivity {
         order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
-        order.setAmount(f);
+        order.setAmount(1);
         gson = new Gson();
         apply = gson.toJson(order);
         Log.d("成功", apply);
