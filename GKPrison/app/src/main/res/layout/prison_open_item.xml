@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:src="@drawable/img4"
+            android:src="@drawable/default_img"
             android:layout_gravity="center_vertical"
             android:padding="10dp"
             android:scaleType="fitXY"/>
@@ -47,6 +47,5 @@
                 android:textColor="@color/tv_mid"
                 android:textSize="14sp" />
         </LinearLayout>
-
     </LinearLayout>
 </RelativeLayout>

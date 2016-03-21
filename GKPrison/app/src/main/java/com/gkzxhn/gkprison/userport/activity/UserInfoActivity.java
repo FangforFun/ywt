@@ -11,6 +11,10 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 
+/**
+ * created by huangzhengneng on 2016/1/14
+ * 账户信息页面
+ */
 public class UserInfoActivity extends BaseActivity {
 
     private final String[] USER_INFO_LEFT_TVS = {"姓名", "身份证号", "联系电话",  "与服刑人员关系","服刑人员性别", "服刑人员囚号", "服刑人员刑期"};

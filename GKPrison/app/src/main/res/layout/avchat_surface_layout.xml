@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/avchat_call_bg2">
 
     <SurfaceView
         android:id="@+id/capture_preview"
@@ -30,11 +31,13 @@
 
         <TextView
             android:id="@+id/tv_examine"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:gravity="center"
             android:text="狱警正在审核，请稍后..."
             android:textSize="20sp"
+            android:background="@drawable/avchat_call_bg2"
             android:textColor="@color/tv_bg"
             android:visibility="gone"/>
     </FrameLayout>

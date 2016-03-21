@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -21,6 +20,7 @@ import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -90,9 +90,6 @@ public class SplashActivity extends BaseActivity {
             }
         }, 1500);
         setActionBarGone(View.GONE);
-//        if(sp.getBoolean("isRegisteredUser", false)) {
-//            checkNewVersion();
-//        }
         copyDB("chaoshi.db");
     }
 

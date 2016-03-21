@@ -8,9 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
@@ -35,14 +35,9 @@ import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.utils.Log;
 import com.lidroid.xutils.BitmapUtils;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 
-import org.apache.http.client.HttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,6 +47,7 @@ import java.util.List;
 
 /**
  * Created by hzn on 2015/12/3.
+ * 首页pager
  */
 public class HomePager extends BasePager {
 
@@ -105,21 +101,24 @@ public class HomePager extends BasePager {
      * 轮播图导航点集合
      */
     private List<View> dotList = new ArrayList<>();
-//    private HttpClient httpClient;
+    private SwipeRefreshLayout srl_refresh;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:
-                    dialog.dismiss();
+                    if(dialog.isShowing()) {
+                        dialog.dismiss();
+                    }
                     setCacheNews();// 若请求失败  则显示缓存新闻
                     is_request_foucs_news_successed = false;
+                    if(srl_refresh.isRefreshing()){
+                        srl_refresh.setRefreshing(false);
+                    }
                     break;
                 case 1:
                     String result = (String) msg.obj;
                     parseFocusNews(result);// 解析焦点新闻
-                    setRoll();
-                    fillNewsData();// 填充新闻数据
                     is_request_foucs_news_successed = true;
                     break;
             }
@@ -156,15 +155,20 @@ public class HomePager extends BasePager {
         view_01 = view.findViewById(R.id.view_01);
         view_02 = view.findViewById(R.id.view_02);
         tv_focus_attention = (TextView) view.findViewById(R.id.tv_focus_attention);
+        srl_refresh = (SwipeRefreshLayout) view.findViewById(R.id.srl_refresh);
+        srl_refresh.setColorSchemeResources(R.color.theme,
+                R.color.theme,
+                R.color.theme,
+                R.color.theme);
         return view;
     }
 
     @Override
     public void initData() {
-//        httpClient = HttpRequestUtil.initHttpClient(null);
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
         jail_id = sp.getInt("jail_id", 0);
+        showLoadingDialog(); // 初次进来加载对话框
         getFocusNews();// 获取焦点新闻
         Drawable[] drawables = tv_focus_attention.getCompoundDrawables();
         drawables[0].setBounds(0, 0, 40, 40);
@@ -176,6 +180,12 @@ public class HomePager extends BasePager {
         if(isRegisteredUser) {
             token = sp.getString("token", "");
         }
+        srl_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getFocusNews();// 获取焦点新闻
+            }
+        });
     }
 
     /**
@@ -192,24 +202,18 @@ public class HomePager extends BasePager {
      * 获取焦点新闻
      */
     private void getFocusNews() {
-        showLoadingDialog();
-        Log.i("获取焦点新闻url", Constants.URL_HEAD + "news?jail_id=" + jail_id);
         new Thread(){
             @Override
             public void run() {
                 try {
                     String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "news?jail_id="+jail_id);
                     Message msg = handler.obtainMessage();
-                    if(result.contains("StatusCode is ")){
-                        handler.sendEmptyMessage(0);
-                        Log.i("获取焦点新闻失败", result);
-                    }else {
-                        msg.what = 1;
-                        msg.obj = result;
-                        handler.sendMessage(msg);
-                    }
+                    msg.what = 1;
+                    msg.obj = result;
+                    handler.sendMessage(msg);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    handler.sendEmptyMessage(0);
                 }
             }
         }.start();
@@ -401,7 +405,12 @@ public class HomePager extends BasePager {
             editor.putInt("focus_news_3_id", focus_news_3.getId());
             editor.commit();
         }
-        dialog.dismiss();// 消掉加载对话框进度条
+        if(dialog.isShowing()) {
+            dialog.dismiss();// 消掉加载对话框进度条
+        }
+        if(srl_refresh.isRefreshing()){
+            srl_refresh.setRefreshing(false);
+        }
     }
 
     /**
@@ -434,6 +443,8 @@ public class HomePager extends BasePager {
                 allnews.add(news);
             }
             Log.i("新闻:", focus_news_list.size() + "-----" + allnews.size());
+            setRoll();// 设置轮播
+            fillNewsData();// 填充新闻数据
         } catch (JSONException e) {
             e.printStackTrace();
             showToastMsgShort("新闻解析异常");
@@ -575,11 +586,9 @@ public class HomePager extends BasePager {
                 intent = new Intent(context, NewsDetailActivity.class);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_1.getId());
-//                    Log.i("新闻id", focus_news_1.getId() + "");
                 }else {
                     int focus_news_1_id = sp.getInt("focus_news_1_id", 0);
                     intent.putExtra("id", focus_news_1_id);
-//                    Log.i("新闻id", focus_news_1_id + "");
                 }
                 context.startActivity(intent);
                 break;
@@ -587,11 +596,9 @@ public class HomePager extends BasePager {
                 intent = new Intent(context, NewsDetailActivity.class);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_2.getId());
-//                    Log.i("新闻id", focus_news_2.getId() + "");
                 }else {
                     int focus_news_2_id = sp.getInt("focus_news_2_id", 0);
                     intent.putExtra("id", focus_news_2_id);
-//                    Log.i("新闻id", focus_news_2_id + "");
                 }
                 context.startActivity(intent);
                 break;
@@ -599,11 +606,9 @@ public class HomePager extends BasePager {
                 intent = new Intent(context, NewsDetailActivity.class);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_3.getId());
-//                    Log.i("新闻id", focus_news_3.getId() + "");
                 }else {
                     int focus_news_3_id = sp.getInt("focus_news_3_id", 0);
                     intent.putExtra("id", focus_news_3_id);
-//                    Log.i("新闻id", focus_news_3_id + "");
                 }
                 context.startActivity(intent);
                 break;

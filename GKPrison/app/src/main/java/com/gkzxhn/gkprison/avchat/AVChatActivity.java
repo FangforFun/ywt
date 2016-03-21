@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -15,9 +14,8 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
-import com.gkzxhn.gkprison.utils.SystemUtil;
-import com.lidroid.xutils.view.annotation.event.EventBase;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -196,7 +194,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             // 如果是普通用户  视频结束恢复未审查状态
             SharedPreferences.Editor editor = sp.edit();
             editor.putBoolean("is_can_video", false);
-            editor.putString("current_ms", 900 + "");// 保存会见时长
+//            editor.putString("current_ms", 900 + "");// 保存会见时长
             // 保存会见时间
             editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
             editor.commit();

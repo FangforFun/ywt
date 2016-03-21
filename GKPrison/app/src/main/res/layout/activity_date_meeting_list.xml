@@ -9,36 +9,42 @@
         android:layout_height="match_parent">
 
         <LinearLayout
+            android:id="@+id/ll_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <ProgressBar
+                android:id="@+id/pb_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"/>
+
+            <TextView
+                android:id="@+id/tv_loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="正在刷新..."
+                android:layout_gravity="center_vertical"
+                android:textColor="@color/tv_gray"
+                android:textSize="20sp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/bg"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:focusable="true"
-            android:focusableInTouchMode="true">
+            android:focusableInTouchMode="true"
+            android:layout_below="@id/ll_loading">
 
             <LinearLayout
-                android:id="@+id/ll_loading"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_horizontal"
-                android:visibility="gone">
-
-                <ProgressBar
-                    android:id="@+id/pb_loading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"/>
-
-                <TextView
-                    android:id="@+id/tv_loading"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="正在刷新..."
-                    android:layout_gravity="center_vertical"
-                    android:textColor="@color/tv_gray"
-                    android:textSize="20sp"/>
-            </LinearLayout>
+                android:layout_weight="1">
 
             <LinearLayout
                 android:id="@+id/ll_calendar"
@@ -152,55 +158,62 @@
                     </android.support.v4.view.ViewPager>
                 </LinearLayout>
             </LinearLayout>
+            </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="49dp">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp">
+
+                    <TextView
+                        android:id="@+id/tv_meeting_num"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:textColor="@color/tv_mid"
+                        android:background="@color/white"
+                        android:textSize="30sp"
+                        android:text="今日待会见人员"
+                        android:paddingBottom="5dp"
+                        android:gravity="center"/>
+
+                </RelativeLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/et_hint"/>
+
+                <ListView
+                    android:id="@+id/lv_meeting_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:dividerHeight="1dp"
+                    android:focusable="false"
+                    android:fadingEdge="none"
+                    android:divider="@color/et_hint"
+                    android:visibility="gone"></ListView>
 
                 <TextView
-                    android:id="@+id/tv_meeting_num"
+                    android:id="@+id/tv_no_list"
                     android:layout_width="match_parent"
-                    android:layout_height="49dp"
-                    android:textColor="@color/tv_mid"
+                    android:layout_height="100dp"
+                    android:text="暂无待会见名单..."
+                    android:gravity="center"
+                    android:textSize="26sp"
                     android:background="@color/white"
-                    android:textSize="30sp"
-                    android:text="今日待会见人员"
-                    android:paddingBottom="5dp"
-                    android:gravity="center"/>
+                    android:textColor="@color/tv_red"
+                    android:visibility="gone"/>
 
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/et_hint"/>
-
-            <ListView
-                android:id="@+id/lv_meeting_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:dividerHeight="1dp"
-                android:focusable="false"
-                android:fadingEdge="none"
-                android:divider="@color/et_hint"
-                android:visibility="gone"></ListView>
-
-            <TextView
-                android:id="@+id/tv_no_list"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:text="暂无待会见名单..."
-                android:gravity="center"
-                android:textSize="26sp"
-                android:background="@color/white"
-                android:textColor="@color/tv_red"
-                android:visibility="gone"/>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/et_hint"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/et_hint"/>
+            </LinearLayout>
         </LinearLayout>
 
         <FrameLayout

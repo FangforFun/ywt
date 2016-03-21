@@ -5,7 +5,6 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
-import android.util.Log;
 
 import com.gkzxhn.gkprison.avchat.DemoCache;
 
@@ -224,11 +223,10 @@ public class Utils {
     /**
      * 获得状态栏的高度
      *
-     * @param context
      * @return
      */
-    public static int getStatusHeight(Context context) {
-
+    public static int getStatusHeight() {
+        Context context = DemoCache.getContext();
         int statusHeight = -1;
         try {
             Class clazz = Class.forName("com.android.internal.R$dimen");
@@ -239,6 +237,7 @@ public class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Log.i("StatusHeight is : ", statusHeight + "");
         return statusHeight;
     }
 
@@ -255,14 +254,13 @@ public class Utils {
         String[] Wi = { "7", "9", "10", "5", "8", "4", "2", "1", "6", "3", "7",
                 "9", "10", "5", "8", "4", "2" };
         String Ai = "";
-        // ================ 号码的长度 15位或18位 ================
+        // 号码的长度 15位或18位
         if (IDStr.length() != 15 && IDStr.length() != 18) {
             errorInfo = "身份证号码长度应该为15位或18位。";
             return errorInfo;
         }
-        // =======================(end)========================
 
-        // ================ 数字 除最后以为都为数字 ================
+        // 数字 除最后一位都为数字
         if (IDStr.length() == 18) {
             Ai = IDStr.substring(0, 17);
         } else if (IDStr.length() == 15) {
@@ -272,9 +270,8 @@ public class Utils {
             errorInfo = "身份证15位号码都应为数字 ; 18位号码除最后一位外，都应为数字。";
             return errorInfo;
         }
-        // =======================(end)========================
 
-        // ================ 出生年月是否有效 ================
+        // 出生年月是否有效
         String strYear = Ai.substring(6, 10);// 年份
         String strMonth = Ai.substring(10, 12);// 月份
         String strDay = Ai.substring(12, 14);// 月份
@@ -298,17 +295,15 @@ public class Utils {
             errorInfo = "身份证日期无效";
             return errorInfo;
         }
-        // =====================(end)=====================
 
-        // ================ 地区码时候有效 ================
+        // 地区码是否有效
         Hashtable h = GetAreaCode();
         if (h.get(Ai.substring(0, 2)) == null) {
             errorInfo = "身份证地区编码错误。";
             return errorInfo;
         }
-        // ==============================================
 
-        // ================ 判断最后一位的值 ================
+        // 判断最后一位的值
         int TotalmulAiWi = 0;
         for (int i = 0; i < 17; i++) {
             TotalmulAiWi = TotalmulAiWi
@@ -327,7 +322,6 @@ public class Utils {
         } else {
             return "";
         }
-        // =====================(end)=====================
         return "";
     }
 

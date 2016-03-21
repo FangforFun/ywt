@@ -403,4 +403,10 @@ public class PrisonOpenActivity extends BaseActivity {
         TextView tv_home_news_content;
         ImageView iv_home_news_go;
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        super.onBackPressed();
+//        moveTaskToBack(true);
+//    }
 }
