@@ -21,6 +21,7 @@ import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
+import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
@@ -49,6 +50,7 @@ public class SplashActivity extends BaseActivity {
     private RelativeLayout rl_splash;
     private TextView tv1;
     private TextView tv2;
+    private int[] screenWidthHeight;
 
     @Override
     protected View initView() {
@@ -57,12 +59,28 @@ public class SplashActivity extends BaseActivity {
         rl_splash = (RelativeLayout) view.findViewById(R.id.rl_splash);
         tv1 = (TextView) view.findViewById(R.id.tv1);
         tv2 = (TextView) view.findViewById(R.id.tv2);
-        if(SystemUtil.isTablet(this)){
-            rl_splash.setBackgroundResource(R.drawable.splash_tablet);
-            tv1.setTextSize(20);
-            tv2.setTextSize(20);
-            tv_version.setTextSize(20);
-        }else {
+        if(SystemUtil.isTablet(this)){ // 平板
+            screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
+//            showToastMsgLong(screenWidthHeight[0] + "---" + screenWidthHeight[1]);
+            Log.i("screenWidthHeight is : ", screenWidthHeight[0] + "---" + screenWidthHeight[1]);
+            if(screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) { // orange pi
+                rl_splash.setBackgroundResource(R.drawable.splash_tablet);
+                tv1.setTextSize(20);
+                tv2.setTextSize(20);
+                tv_version.setTextSize(20);
+            }else if(screenWidthHeight[0] == 1536 && screenWidthHeight[1] == 2048){ // 小米平板的尺寸
+                rl_splash.setBackgroundResource(R.drawable.splash_common_tablet);
+                tv1.setTextSize(16);
+                tv2.setTextSize(16);
+                tv_version.setTextSize(16);
+            }else {
+                // 默认平板
+                rl_splash.setBackgroundResource(R.drawable.splash);
+                tv1.setTextSize(16);
+                tv2.setTextSize(16);
+                tv_version.setTextSize(16);
+            }
+        }else { // 手机
             rl_splash.setBackgroundResource(R.drawable.splash);
             tv1.setTextSize(11);
             tv2.setTextSize(11);
