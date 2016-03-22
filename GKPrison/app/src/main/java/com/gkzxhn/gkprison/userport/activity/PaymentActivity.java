@@ -65,7 +65,6 @@ public class PaymentActivity extends BaseActivity {
     private String token;
     private String payment_type = "";
     private String prepay_id = "";
-    private long sytemtim = 0;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -102,6 +101,7 @@ public class PaymentActivity extends BaseActivity {
                                 String sign = getsign(type);
                                 intent.putExtra("sign",sign);
                                 intent.putExtra("price", countmoney);
+                                intent.putExtra("outorderno",TradeNo);
                                 String t = gettimestamp(type);
                                 intent.putExtra("timeStamp",t);
                                 PaymentActivity.this.startActivity(intent);
@@ -270,8 +270,6 @@ public class PaymentActivity extends BaseActivity {
                         handler.sendMessage(msg);
                     }else {
                         msg.obj = "success";
-                        long t = System.currentTimeMillis();
-                        sytemtim = t/1000;
                         Bundle bundle = new Bundle();
                         bundle.putString("result",result);
                         msg.setData(bundle);
