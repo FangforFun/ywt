@@ -42,6 +42,7 @@ public class WeixinPayActivity extends BaseActivity {
     private String timeStamp;
     private String packge;
     StringBuffer sb;
+    private String tradeno;
     PayReq req = new PayReq();
     private Map<String,Object> jsonmap = new HashMap<String,Object>();
     @Override
@@ -60,14 +61,15 @@ public class WeixinPayActivity extends BaseActivity {
         sb = new StringBuffer();
         setTitle("微信支付");
         setBackVisibility(View.VISIBLE);
+        tradeno = getIntent().getStringExtra("outorderno");
         sp = getSharedPreferences("config", MODE_PRIVATE);
         timeStamp = getIntent().getStringExtra("timeStamp");
         packge = "Sign=WXPay";
-        prisonname = sp.getString("prisonname", "");
+        prisonname = sp.getString("prisonname", "德山监狱");
         tv_prisonname.setText(prisonname);
         tv_receviale.setText(prisonname);
         prepay_id = getIntent().getStringExtra("prepay_id");
-        tv_ordernum.setText(prepay_id);
+        tv_ordernum.setText(tradeno);
         countmoney = getIntent().getStringExtra("price");
         tv_money.setText(countmoney);
         app_id = getIntent().getStringExtra("app_id");
