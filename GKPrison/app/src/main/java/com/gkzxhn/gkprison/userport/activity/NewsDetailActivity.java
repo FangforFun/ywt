@@ -37,6 +37,7 @@ public class NewsDetailActivity extends BaseActivity {
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/news/" + id);
+//        wv_news_detail.loadUrl("http://www.sina.com.cn/");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
@@ -36,16 +37,37 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
+/**
+ * created by huangzhengneng on 2015/12/22
+ * 启动页
+ */
 public class SplashActivity extends BaseActivity {
 
     private SharedPreferences sp;
     private VersionInfo versionInfo;
     private TextView tv_version;
+    private RelativeLayout rl_splash;
+    private TextView tv1;
+    private TextView tv2;
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(),R.layout.activity_splash,null);
         tv_version = (TextView) view.findViewById(R.id.tv_version);
+        rl_splash = (RelativeLayout) view.findViewById(R.id.rl_splash);
+        tv1 = (TextView) view.findViewById(R.id.tv1);
+        tv2 = (TextView) view.findViewById(R.id.tv2);
+        if(SystemUtil.isTablet(this)){
+            rl_splash.setBackgroundResource(R.drawable.splash_tablet);
+            tv1.setTextSize(20);
+            tv2.setTextSize(20);
+            tv_version.setTextSize(20);
+        }else {
+            rl_splash.setBackgroundResource(R.drawable.splash);
+            tv1.setTextSize(11);
+            tv2.setTextSize(11);
+            tv_version.setTextSize(11);
+        }
         return view;
     }
 

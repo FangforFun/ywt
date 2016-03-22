@@ -40,7 +40,7 @@ import java.io.InputStreamReader;
 public class CallUserActivity extends BaseActivity {
 
     private Button bt_call; // 呼叫按钮  默认是不可用的  当成功解析详细会见信息后恢复可用
-    private FrameLayout fl_video_view;
+    private RelativeLayout rl_video_view;
     private LinearLayout ll_id_card_photo;// 身份证正反面
     private ImageView iv_id_card_01;
     private ImageView iv_id_card_02;
@@ -74,13 +74,13 @@ public class CallUserActivity extends BaseActivity {
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_call_user, null);
         bt_call = (Button) view.findViewById(R.id.bt_call);
-        fl_video_view = (FrameLayout) view.findViewById(R.id.fl_video_view);
+        rl_video_view = (RelativeLayout) view.findViewById(R.id.rl_video_view);
         ll_id_card_photo = (LinearLayout) view.findViewById(R.id.ll_id_card_photo);
         iv_id_card_01 = (ImageView) view.findViewById(R.id.iv_id_card_01);
         iv_id_card_02 = (ImageView) view.findViewById(R.id.iv_id_card_02);
         rl_getting = (RelativeLayout) view.findViewById(R.id.rl_getting);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0] - DensityUtil.dip2px(this, 80));
-        fl_video_view.setLayoutParams(params);
+//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0] - DensityUtil.dip2px(this, 80));
+//        rl_video_view.setLayoutParams(params);
         tv_meeting_notice = (TextView) view.findViewById(R.id.tv_meeting_notice);
         return view;
     }
@@ -131,16 +131,11 @@ public class CallUserActivity extends BaseActivity {
                 try {
                     String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "families/" + family_id
                             + "?access_token=" + sp.getString("token", ""));
-                    if(result.contains("StatusCode is ")){
-                        Log.i("会见详细请求失败", result);
-                        handler.sendEmptyMessage(1);
-                    }else {
-                        Log.i("会见详细请求成功", result);
-                        Message msg = handler.obtainMessage();
-                        msg.what = 0;
-                        msg.obj = result;
-                        handler.sendMessage(msg);
-                    }
+                    Log.i("会见详细请求成功", result);
+                    Message msg = handler.obtainMessage();
+                    msg.what = 0;
+                    msg.obj = result;
+                    handler.sendMessage(msg);
                 } catch (Exception e) {
                     e.printStackTrace();
                     handler.sendEmptyMessage(2);
