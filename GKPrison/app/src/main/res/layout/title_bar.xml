@@ -170,7 +170,7 @@
                 android:textColor="@color/white"
                 android:textSize="@dimen/logout_tv_size"
                 android:visibility="gone"
-                android:background="@drawable/red_bg_bt_selector"/>
+                android:background="@drawable/img_selector"/>
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 </RelativeLayout>

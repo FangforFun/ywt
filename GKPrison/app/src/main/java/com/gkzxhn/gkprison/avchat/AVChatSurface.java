@@ -278,6 +278,8 @@ public class AVChatSurface {
                 }
                 break;
             case OUTGOING_VIDEO_CALLING:// 去电
+                closeSmallSizePreview();// 关闭己方图像
+                smallSizePreviewFrameLayout.setVisibility(View.GONE);
                 iv_meeting_ic_card.setVisibility(View.VISIBLE);
                 iv_meeting_icon.setVisibility(View.VISIBLE);
                 bt_through_examine.setVisibility(View.VISIBLE);
