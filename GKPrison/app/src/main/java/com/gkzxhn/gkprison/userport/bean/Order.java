@@ -10,7 +10,7 @@ public class Order {
     private int jail_id;
     private List<line_items_attributes> line_items_attributes;
     private String created_at;
-    private int amount;
+    private float amount;
     private int family_id;
 
     public int getFamily_id() {
@@ -26,7 +26,7 @@ public class Order {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(float amount) {
         this.amount = amount;
     }
 

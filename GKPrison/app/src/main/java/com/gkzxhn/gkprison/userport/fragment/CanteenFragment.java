@@ -554,7 +554,7 @@ public class CanteenFragment extends BaseFragment {
             count = n;
             lcount.add(count);
         }
-        total += 2;
+      //  total += 2;
         for (int i = 0;i < lcount.size();i++){
             allcount += lcount.get(i);
         }
@@ -570,7 +570,7 @@ public class CanteenFragment extends BaseFragment {
             msg.what = 1;
             handler1.sendMessage(msg);
         }else if (allcount == 0){
-            total -= 2;
+        //    total -= 2;
             DecimalFormat fnum = new DecimalFormat("####0.00");
             send = fnum.format(total);
             Message msg = handler1.obtainMessage();
@@ -588,7 +588,7 @@ public class CanteenFragment extends BaseFragment {
         order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
-        order.setAmount(1);
+        order.setAmount(f);
         gson = new Gson();
         apply = gson.toJson(order);
         Log.d("结算发送",apply);
