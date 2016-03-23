@@ -95,6 +95,8 @@ public class CallUserActivity extends BaseActivity {
         Log.i("family_id", family_id + "");
         getMeetingDetailInfo(family_id);
         bt_call.setOnClickListener(this);
+        int[] screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
+        Log.i("screenWidthHeight is : ", screenWidthHeight[0] + "---" + screenWidthHeight[1]);
 //        String filename = sp.getString("错误信息文件名...", "");
 //        try {
 //            if (!TextUtils.isEmpty(filename)) {

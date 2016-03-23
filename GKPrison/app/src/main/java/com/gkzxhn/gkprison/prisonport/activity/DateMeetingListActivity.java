@@ -92,6 +92,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
     private AlertDialog cancel_meeting_dialog;// 取消会见对话框
+    private int[] screenWidthHeight;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -225,7 +226,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     protected View initView() {
-        View view = View.inflate(this, R.layout.activity_date_meeting_list, null);
+        screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
+        View view;
+        if(screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
+            view = View.inflate(this, R.layout.activity_date_meeting_list, null);
+        }else {
+            view = View.inflate(this, R.layout.activity_date_meeting_list_tablet, null);
+        }
         mViewPager = (ViewPager) view.findViewById(R.id.vp_calendar);
         preImgBtn = (ImageButton) view.findViewById(R.id.btnPreMonth);
         nextImgBtn = (ImageButton) view.findViewById(R.id.btnNextMonth);
@@ -367,7 +374,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             new Thread() {
                 @Override
                 public void run() {
-                    SystemClock.sleep(1000);// 休眠1秒  模拟网络环境
+                    SystemClock.sleep(500);// 休眠1秒  模拟网络环境
                     Message msg = handler.obtainMessage();
                     try {
                         String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD +

@@ -53,7 +53,7 @@ android {
             def oldFile = output.outputFile
             def newName = '';
             if(variant.buildType.name.equals('release')){
-                def releaseApkName = 'ywt-android-v' + defaultConfig.versionName + '-1.apk'
+                def releaseApkName = 'yuwutong-' + defaultConfig.versionName + '.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }
             if(variant.buildType.name.equals('beta')){
