@@ -70,4 +70,11 @@
         <!-- <item name="android:background">@drawable/nav_page</item> -->
         <item name="android:background">@color/navpage</item>
     </style>
+
+    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/warden_tab_tv_size</item>
+    </style>
+    <!--<style name="MyTabLayoutTextAppearanceInverse" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">-->
+        <!--<item name="android:textSize">15sp</item>-->
+    <!--</style>-->
 </resources>

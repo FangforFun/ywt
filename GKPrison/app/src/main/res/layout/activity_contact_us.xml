@@ -7,11 +7,11 @@
     <TextView
         android:id="@+id/tv_contact_us"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="@dimen/contact_us_height"
         android:text="联系我们"
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
-        android:textSize="16sp"
+        android:textSize="@dimen/goods_car_tv_size"
         android:textColor="@color/theme"
         android:background="@color/white"/>
 
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:text="地址："
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/goods_car_tv_size"/>
 
             <TextView
                 android:id="@+id/tv_address"
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:text="北京市海淀区西三旗建材城中路3号程远大厦A座5层"
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"
+                android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
 
@@ -58,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:text="邮编："
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/goods_car_tv_size"/>
 
             <TextView
                 android:id="@+id/tv_zip_code"
@@ -66,7 +66,7 @@
                 android:layout_height="wrap_content"
                 android:text="100086"
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"
+                android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
 
@@ -80,7 +80,7 @@
                 android:layout_height="wrap_content"
                 android:text="客服电话："
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"/>
+                android:textSize="@dimen/goods_car_tv_size"/>
 
             <TextView
                 android:id="@+id/tv_tell"
@@ -88,7 +88,7 @@
                 android:layout_height="wrap_content"
                 android:text="010-82911287-5032"
                 android:textColor="@color/tv_bg"
-                android:textSize="16sp"
+                android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
     </LinearLayout>
