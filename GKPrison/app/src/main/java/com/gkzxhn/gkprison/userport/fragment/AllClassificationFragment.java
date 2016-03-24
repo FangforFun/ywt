@@ -57,10 +57,12 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private float count = 0;
-    private int cart_id = 0;
+    private int cart_id;
     private String tv_count = "0.0";
     private int qty = 0;
     private RelativeLayout xiala;
+    private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
+    private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
     private String token;
     private int jail_id;
     private  int page;
@@ -83,16 +85,51 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                     String result = (String)msg.obj;
                     commodities = analysiscommodity(result);
                     Log.d("dd",commodities.size()+"");
-                    adapter = new SalesAdapter(getActivity().getApplication(),commodities);
-                    lv_allclass.setAdapter(adapter);
+                    String sql = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
+                    Cursor cursor = db.rawQuery(sql,null);
+                    if (cursor.getCount() == 0) {
+                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        lv_allclass.setAdapter(adapter);
+                    }else {
+                        while (cursor.moveToNext()){
+                            Commodity commodity = new Commodity();
+                            commodity.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
+                            commodity.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                            buycommidty.add(commodity.getId());
+                            buyqty.add(commodity.getQty());
+                        }
+                        for (int i = 0;i < commodities.size();i++){
+                            for (int j = 0;j < buyqty.size();j++){
+                                if (commodities.get(i).getId() == buycommidty.get(j)){
+                                    commodities.get(i).setQty(buyqty.get(j));
+                                }
+                            }
+                        }
+                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        lv_allclass.setAdapter(adapter);
+                    }
                     break;
                 case 2:
                     String add = (String)msg.obj;
                     addcommdity = analysiscommodity(add);
                     if (addcommdity.size() != 0) {
                         loadDate(addcommdity);
-                        loadmore.setVisibility(View.GONE);
-                        adapter.notifyDataSetChanged();
+                        String sql1 = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
+                        Cursor cursor1 = db.rawQuery(sql1,null);
+                        if (cursor1.getCount() == 0){
+                            loadmore.setVisibility(View.GONE);
+                            adapter.notifyDataSetChanged();
+                        }else {
+                            for (int i = 0;i < commodities.size();i++){
+                                for (int j = 0;j < buyqty.size();j++){
+                                    if (commodities.get(i).getId() == buycommidty.get(j)){
+                                        commodities.get(i).setQty(buyqty.get(j));
+                                    }
+                                }
+                            }
+                            loadmore.setVisibility(View.GONE);
+                            adapter.notifyDataSetChanged();
+                        }
                     }else {
                         showToastMsgShort("已到最后一页");
                         loadmore.setVisibility(View.GONE);
@@ -150,6 +187,11 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private void getDate(){
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
+        String sql = "select id from Cart where time = '" + times + "'";
+        Cursor cursor = db.rawQuery(sql,null);
+        while (cursor.moveToNext()){
+            cart_id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
         category_id = bundle.getInt("leibie", 1);
         Log.d("dd", category_id + "");
         if (category_id == 0){
@@ -432,10 +474,13 @@ private class SalesAdapter extends BaseAdapter{
 
                     String t = viewHolder.tv_num.getText().toString();
                     Items_id = commodities.get(position).getId();
+                    String price = commodities.get(position).getPrice();
+                    String title = commodities.get(position).getTitle();
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id +"," + cart_id +",1,"+position+")";
+                        Log.d("fd",cart_id+"");
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position,price,title) values ("+ Items_id +"," + cart_id +",1,"+position+",'"+price+"','"+title+"')";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -489,6 +534,7 @@ private class SalesAdapter extends BaseAdapter{
                     msg.obj = qty;
                     msg.what = 2;
                     handler.sendMessage(msg);
+                    String price = commodities.get(position).getPrice();
                     EventBus.getDefault().post(new ClickEvent());
 
                 }
@@ -530,12 +576,16 @@ private class SalesAdapter extends BaseAdapter{
         if (eventint == 0) {
             int id = eventlist.get(0);
             int qty = eventlist.get(1);
-            commodities.get(id).setQty(qty);
+            for (int i = 0;i < commodities.size();i++){
+                if (commodities.get(i).getId() == id){
+                    commodities.get(i).setQty(qty);
+                }
+            }
             adapter.notifyDataSetChanged();
         }else if (eventint == 1){
-            for (int i = 0;i < eventlist.size();i++){
-                commodities.get(eventlist.get(i)).setQty(0);
-            }
+           for (int i = 0;i < commodities.size();i++){
+               commodities.get(i).setQty(0);
+           }
         }
         adapter.notifyDataSetChanged();
 

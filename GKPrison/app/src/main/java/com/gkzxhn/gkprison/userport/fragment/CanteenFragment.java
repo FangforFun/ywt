@@ -323,6 +323,7 @@ public class CanteenFragment extends BaseFragment {
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
+                        clicksalse = 1;
                         break;
                     case 1:
                         sales = new SalesPriorityFragment();
@@ -330,6 +331,7 @@ public class CanteenFragment extends BaseFragment {
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
+                        clicksalse = 1;
                         break;
                     case 2:
                         sales = new SalesPriorityFragment();
@@ -337,6 +339,7 @@ public class CanteenFragment extends BaseFragment {
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
+                        clicksalse = 1;
                         break;
                     case 3:
                         sales = new SalesPriorityFragment();
@@ -344,6 +347,7 @@ public class CanteenFragment extends BaseFragment {
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
+                        clicksalse = 1;
                         break;
                 }
             }
@@ -351,6 +355,7 @@ public class CanteenFragment extends BaseFragment {
         lv_allchoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
                switch (position){
                    case 0:
                        allclass = new AllClassificationFragment();
@@ -358,6 +363,7 @@ public class CanteenFragment extends BaseFragment {
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
+                       click = 1;
                        break;
                    case 1:
                        allclass = new AllClassificationFragment();
@@ -365,6 +371,7 @@ public class CanteenFragment extends BaseFragment {
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
+                       click = 1;
                        break;
                    case 2:
                        allclass = new AllClassificationFragment();
@@ -372,13 +379,15 @@ public class CanteenFragment extends BaseFragment {
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
+                       click = 1;
                        break;
                    case 3:
                        allclass = new AllClassificationFragment();
-                       data.putInt("leibie",2);
+                       data.putInt("leibie",3);
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
+                       click = 1;
                        break;
                }
             }
@@ -427,6 +436,9 @@ public class CanteenFragment extends BaseFragment {
         rl_allclass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isFastClick()){
+                    return;
+                }
                 tv_allclass.setTextColor(Color.parseColor("#6495ed"));
                 tv_sales.setTextColor(context.getResources().getColor(R.color.tv_bg));
                 tv_zhineng.setTextColor(context.getResources().getColor(R.color.tv_bg));
@@ -442,7 +454,8 @@ public class CanteenFragment extends BaseFragment {
                     allclass = new AllClassificationFragment();
                     allclass.setArguments(data);
                     ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-                    click = 1;
+
+                     click = 1;
                 }
                     //  sp_sales.setEnabled(false);
                // sp_sales.setFocusable(false);
@@ -453,6 +466,9 @@ public class CanteenFragment extends BaseFragment {
         rl_sales.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (Utils.isFastClick()){
+                    return;
+                }
                 tv_sales.setTextColor(Color.parseColor("#6495ed"));
                 tv_allclass.setTextColor(Color.parseColor("#333333"));
                 tv_zhineng.setTextColor(Color.parseColor("#333333"));
@@ -536,8 +552,9 @@ public class CanteenFragment extends BaseFragment {
         lcount.clear();
         line_items_attributes.clear();
         allcount = 0;
-        String sql = "select distinct line_items.Items_id,line_items.qty,line_items.position,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and line_items.cart_id = "+cart_id;
+        String sql = "select distinct line_items.Items_id,line_items.qty,line_items.id,line_items.price,line_items.title from line_items,Cart where line_items.cart_id = "+cart_id;
         Cursor cursor = db.rawQuery(sql, null);
+        android.util.Log.d("ff",cursor.getCount()+"");
         total = 0;
         if (cursor.getCount() == 0){
             tv_total_money.setText("0.0");
@@ -550,7 +567,6 @@ public class CanteenFragment extends BaseFragment {
                 shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
                 shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                shoppinglist.setPosition(cursor.getInt(cursor.getColumnIndex("position")));
                 commodities.add(shoppinglist);
             }
             adapter = new BuyCarAdapter();
@@ -805,7 +821,7 @@ public class CanteenFragment extends BaseFragment {
                     msg2.what = 1;
                     handler2.sendMessage(msg2);
                     commodities.get(position).setQty(j);
-                    int d = commodities.get(position).getPosition();
+                    int d = commodities.get(position).getId();
                     eventlist.add(d);
                     eventlist.add(qty);
                     EventBus.getDefault().post(new ClickEven1(0,eventlist));
@@ -839,7 +855,7 @@ public class CanteenFragment extends BaseFragment {
                         String sql = "delete from line_items where Items_id ="+id+"  and cart_id ="+cart_id;
                         db.execSQL(sql);
                         adapter.notifyDataSetChanged();
-                        int d = commodities.get(position).getPosition();
+                        int d = commodities.get(position).getId();
                         eventlist.add(d);
                         eventlist.add(0);
                         EventBus.getDefault().post(new ClickEven1(0,eventlist));
@@ -874,7 +890,7 @@ public class CanteenFragment extends BaseFragment {
                         msg2.what = 1;
                         handler2.sendMessage(msg2);
                         commodities.get(position).setQty(j);
-                        int d = commodities.get(position).getPosition();
+                        int d = commodities.get(position).getId();
                         eventlist.add(d);
                         eventlist.add(qty);
                         EventBus.getDefault().post(new ClickEven1(0,eventlist));
