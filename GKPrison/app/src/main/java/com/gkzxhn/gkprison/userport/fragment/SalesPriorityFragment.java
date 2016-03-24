@@ -63,6 +63,8 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
     private int jail_id;
     private  int page;
     private List<Commodity> addcommdity = new ArrayList<>();
+    private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
+    private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
     private View loadmore;
     private int visibleLastIndex = 0; //最后的可视索引；
     private int visibleItemCount;//当前窗口可见项总数；
@@ -90,8 +92,29 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                             return -1;
                         }
                     });
-                    adapter = new SalesAdapter(getActivity().getApplication(),commodities);
-                    lv_sale.setAdapter(adapter);
+                    String sql = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
+                    Cursor cursor = db.rawQuery(sql,null);
+                    if (cursor.getCount() == 0) {
+                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        lv_sale.setAdapter(adapter);
+                    }else {
+                        while (cursor.moveToNext()){
+                            Commodity commodity = new Commodity();
+                            commodity.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
+                            commodity.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                            buycommidty.add(commodity.getId());
+                            buyqty.add(commodity.getQty());
+                        }
+                        for (int i = 0;i < commodities.size();i++){
+                            for (int j = 0;j < buyqty.size();j++){
+                                if (commodities.get(i).getId() == buycommidty.get(j)){
+                                    commodities.get(i).setQty(buyqty.get(j));
+                                }
+                            }
+                        }
+                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        lv_sale.setAdapter(adapter);
+                    }
                     break;
                 case 2:
                     String add = (String)msg.obj;
@@ -109,8 +132,22 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                     });
                     if (addcommdity.size() != 0) {
                         loadDate(addcommdity);
-                        loadmore.setVisibility(View.GONE);
-                        adapter.notifyDataSetChanged();
+                        String sql1 = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
+                        Cursor cursor1 = db.rawQuery(sql1,null);
+                        if (cursor1.getCount() == 0){
+                            loadmore.setVisibility(View.GONE);
+                            adapter.notifyDataSetChanged();
+                        }else {
+                            for (int i = 0;i < commodities.size();i++){
+                                for (int j = 0;j < buyqty.size();j++){
+                                    if (commodities.get(i).getId() == buycommidty.get(j)){
+                                        commodities.get(i).setQty(buyqty.get(j));
+                                    }
+                                }
+                            }
+                            loadmore.setVisibility(View.GONE);
+                            adapter.notifyDataSetChanged();
+                        }
                     }else {
                         showToastMsgShort("已到最后一页");
                         loadmore.setVisibility(View.GONE);
@@ -178,6 +215,11 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
         category_id = bundle.getInt("leibie", 0);
+        String sql = "select id from Cart where time = '" + times + "'";
+        Cursor cursor = db.rawQuery(sql, null);
+        while (cursor.moveToNext()){
+            cart_id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
         if (category_id == 0){
             url = Constants.URL_HEAD + "items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id ;
             Log.d("ff", url);
@@ -447,10 +489,12 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
 
                     String t = viewHolder.tv_num.getText().toString();
                     Items_id = commodities.get(position).getId();
+                    String price = commodities.get(position).getPrice();
+                    String title = commodities.get(position).getTitle();
                     int i = Integer.parseInt(t);
                     int j = i + 1;
                     if ( i == 0){
-                        String sql = "insert into line_items(Items_id,cart_id,qty,position) values ("+ Items_id  +"," + cart_id +",1,"+position+")";
+                        String sql = "insert into line_items(Items_id,cart_id,qty,position,price,title) values ("+ Items_id +"," + cart_id +",1,"+position+",'"+price+"','"+title+"')";
                         db.execSQL(sql);
                         commodities.get(position).setQty(1);
                     }else {
@@ -505,7 +549,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                     msg.obj = qty;
                     msg.what = 2;
                     handler.sendMessage(msg);
-
+                    String price = commodities.get(position).getPrice();
                     EventBus.getDefault().post(new ClickEvent());
                 }
             });
