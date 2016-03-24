@@ -53,6 +53,7 @@ import java.util.List;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
+    private String crash_file_names;
 
     /**
      *
@@ -72,6 +73,7 @@ public class MyApplication extends Application {
         // 初始化全局异常捕获
         CrashHandler crashHandler = CrashHandler.getInstance();
         crashHandler.init(getApplicationContext());
+        checkCrashLog(); // 检查是否有崩溃日志
 
         if (inMainProcess()) {
             // 初始化UIKit模块
@@ -112,6 +114,34 @@ public class MyApplication extends Application {
                 }
             }, true);
         }
+    }
+
+    /**
+     * 检查是否有崩溃日志
+     */
+    private void checkCrashLog() {
+        crash_file_names = sp.getString("错误信息文件名...", "");
+        if(!TextUtils.isEmpty(crash_file_names)){
+            if(crash_file_names.contains("+")){
+                // 不止一个文件
+                String[] names = crash_file_names.split("u002B");
+                for(String name : names){ // 遍历发送log文件  发送完成删除相关文件
+                    sendCrashFileToServer(name);
+                }
+            }else {
+                // 只有一个log文件
+                sendCrashFileToServer(crash_file_names);
+            }
+        }
+    }
+
+    /**
+     * 发送Crash文件至服务器
+     * @param file_name
+     */
+    private void sendCrashFileToServer(String file_name) {
+        // ToDo 发送至服务器
+        Log.i("。。。。。。", file_name);
     }
 
     /**

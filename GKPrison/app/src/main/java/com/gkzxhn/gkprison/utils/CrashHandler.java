@@ -21,6 +21,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -112,8 +113,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
         //保存日志文件
         String file_name = saveCrashInfo2File(ex);
         SharedPreferences sp = mContext.getSharedPreferences("config", Context.MODE_PRIVATE);
+        String file_names = sp.getString("错误信息文件名...", "");
         SharedPreferences.Editor editor = sp.edit();
-        editor.putString("错误信息文件名...", file_name);
+        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
         editor.commit();
         return true;
     }

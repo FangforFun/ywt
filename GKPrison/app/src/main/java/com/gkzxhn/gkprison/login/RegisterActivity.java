@@ -201,7 +201,7 @@ public class RegisterActivity extends BaseActivity {
                             showToastMsgShort("注册失败");
                         }else if(register_back_code == 501){
                             JSONObject errors = jsonObject.getJSONObject("errors");
-                            JSONArray apply_create = errors.getJSONArray("apply_create");
+                            JSONArray apply_create = errors.getJSONArray(register_result.contains("phone") ? "phone" : "apply_create");
                             showToastMsgShort(apply_create.getString(0));
                         }else {
                             showToastMsgShort("注册失败");
