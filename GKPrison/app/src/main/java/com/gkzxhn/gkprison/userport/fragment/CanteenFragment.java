@@ -103,7 +103,7 @@ public class CanteenFragment extends BaseFragment {
     private BuyCarAdapter adapter;
     private RelativeLayout clear;
     private List<Integer> eventlist = new ArrayList<Integer>();//用于点击事件传值
-    private String[] choosestring = {"洗涤日化","食品","服饰鞋帽"};
+    private String[] choosestring = {"全部分类","洗涤日化","食品","服饰鞋帽"};
     private FrameLayout choose;
     private ListView lv_allchoose_items;
     private ListView lv_salsechoose_items;
@@ -307,7 +307,7 @@ public class CanteenFragment extends BaseFragment {
         });
         rl_allclass.requestFocus();
         allclass = new AllClassificationFragment();
-        data.putInt("leibie",1);
+        data.putInt("leibie",0);
         allclass.setArguments(data);
         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         allchooseAdapter = new AllchooseAdapter();
@@ -319,19 +319,26 @@ public class CanteenFragment extends BaseFragment {
                 switch (position){
                     case 0:
                         sales = new SalesPriorityFragment();
-                        data.putInt("leibie", 1);
+                        data.putInt("leibie", 0);
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         break;
                     case 1:
                         sales = new SalesPriorityFragment();
-                        data.putInt("leibie",2);
+                        data.putInt("leibie",1);
                         sales.setArguments(data);
                         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         break;
                     case 2:
+                        sales = new SalesPriorityFragment();
+                        data.putInt("leibie", 2);
+                        sales.setArguments(data);
+                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        salsechoose.setVisibility(View.GONE);
+                        break;
+                    case 3:
                         sales = new SalesPriorityFragment();
                         data.putInt("leibie",3);
                         sales.setArguments(data);
@@ -347,21 +354,28 @@ public class CanteenFragment extends BaseFragment {
                switch (position){
                    case 0:
                        allclass = new AllClassificationFragment();
-                       data.putInt("leibie",1);
+                       data.putInt("leibie",0);
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
                        break;
                    case 1:
                        allclass = new AllClassificationFragment();
-                       data.putInt("leibie",2);
+                       data.putInt("leibie",1);
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
                        break;
                    case 2:
                        allclass = new AllClassificationFragment();
-                       data.putInt("leibie",3);
+                       data.putInt("leibie",2);
+                       allclass.setArguments(data);
+                       ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                       choose.setVisibility(View.GONE);
+                       break;
+                   case 3:
+                       allclass = new AllClassificationFragment();
+                       data.putInt("leibie",2);
                        allclass.setArguments(data);
                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                        choose.setVisibility(View.GONE);
@@ -554,7 +568,7 @@ public class CanteenFragment extends BaseFragment {
             count = n;
             lcount.add(count);
         }
-        total += 2;
+      //  total += 2;
         for (int i = 0;i < lcount.size();i++){
             allcount += lcount.get(i);
         }
@@ -570,7 +584,7 @@ public class CanteenFragment extends BaseFragment {
             msg.what = 1;
             handler1.sendMessage(msg);
         }else if (allcount == 0){
-            total -= 2;
+        //    total -= 2;
             DecimalFormat fnum = new DecimalFormat("####0.00");
             send = fnum.format(total);
             Message msg = handler1.obtainMessage();
@@ -588,7 +602,7 @@ public class CanteenFragment extends BaseFragment {
         order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
-        order.setAmount(1);
+        order.setAmount(f);
         gson = new Gson();
         apply = gson.toJson(order);
         Log.d("结算发送",apply);

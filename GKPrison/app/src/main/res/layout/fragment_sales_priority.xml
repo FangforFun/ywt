@@ -3,16 +3,14 @@
     android:layout_height="match_parent"
     tools:context=".userport.fragment.SalesPriorityFragment">
 
-
-    <com.gkzxhn.gkprison.userport.view.PullToRefreshListView
+    <ListView
         android:id="@+id/lv_sales"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="#F1F1F1"
         android:dividerHeight="1dp"
         android:scrollbars="none"
-        android:fastScrollEnabled="false"
-        ></com.gkzxhn.gkprison.userport.view.PullToRefreshListView>
+        android:fastScrollEnabled="false"></ListView>
 
 
 </LinearLayout>

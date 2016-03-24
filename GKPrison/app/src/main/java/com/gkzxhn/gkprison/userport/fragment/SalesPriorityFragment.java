@@ -7,10 +7,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -32,159 +36,116 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SalesPriorityFragment extends BaseFragment {
+public class SalesPriorityFragment extends BaseFragment implements AbsListView.OnScrollListener{
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodities = new ArrayList<Commodity>();
     private ListView lv_sale;
     private SalesAdapter adapter;
     private int cart_id = 0;
     private int qty = 0;
+    private String url;
     private int Items_id;
+    private String token;
+    private int jail_id;
+    private  int page;
+    private List<Commodity> addcommdity = new ArrayList<>();
+    private View loadmore;
+    private int visibleLastIndex = 0; //最后的可视索引；
+    private int visibleItemCount;//当前窗口可见项总数；
     private  int category_id;
     private SharedPreferences sp;
     private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
+    OkHttpClient client = new OkHttpClient();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 1:
-                    String m = (String)msg.obj;
-                    if (m.equals("success")){
-                        Bundle bundle = msg.getData();
-                        String commodity = bundle.getString("result");
-                        commodities = analysiscommodity(commodity);
-                        if (commodities.size() != 0){
-                            String sql = "delete from Items where 1=1";
-                            db.execSQL(sql);
-                            for (int i = 0;i < commodities.size();i++){
-                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodities.get(i).getId()+",'"+commodities.get(i).getTitle()+"','"+commodities.get(i).getDescription()+"','"+ commodities.get(i).getPrice()+"','"+ commodities.get(i).getAvatar_url()+"',"+commodities.get(i).getCategory_id()+","+commodities.get(i).getRanking()+")";
-                                db.execSQL(sql1);
+                    String result = (String)msg.obj;
+                    commodities = analysiscommodity(result);
+                    Log.d("dd",commodities.size()+"");
+                    Collections.sort(commodities, new Comparator<Commodity>() {
+                        @Override
+                        public int compare(Commodity lhs, Commodity rhs) {
+                            int heat1 = lhs.getRanking();
+                            int heat2 = rhs.getRanking();
+                            if (heat1 < heat2) {
+                                return 1;
                             }
+                            return -1;
                         }
-                        commodities.clear();
-                        getDate();
-                        for (int i = 0;i < commodities.size();i++){
-                            commodities.get(i).setQty(0);
+                    });
+                    adapter = new SalesAdapter(getActivity().getApplication(),commodities);
+                    lv_sale.setAdapter(adapter);
+                    break;
+                case 2:
+                    String add = (String)msg.obj;
+                    addcommdity = analysiscommodity(add);
+                    Collections.sort(addcommdity, new Comparator<Commodity>() {
+                        @Override
+                        public int compare(Commodity lhs, Commodity rhs) {
+                            int heat1 = lhs.getRanking();
+                            int heat2 = rhs.getRanking();
+                            if (heat1 < heat2) {
+                                return 1;
+                            }
+                            return -1;
                         }
-                        lv_sale.setAdapter(adapter);
-                    }else if (m.equals("error")){
-                        Toast.makeText(context,"同步数据失败",Toast.LENGTH_SHORT).show();
+                    });
+                    if (addcommdity.size() != 0) {
+                        loadDate(addcommdity);
+                        loadmore.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
+                    }else {
+                        showToastMsgShort("已到最后一页");
+                        loadmore.setVisibility(View.GONE);
                     }
                     break;
             }
         }
     };
 
-
+    private void loadDate(List<Commodity> adddate) {
+        for (int i = 0;i < adddate.size();i++){
+            adapter.addItem(adddate.get(i));
+        }
+    }
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_sales_priority,null);
-        lv_sale = (PullToRefreshListView)view.findViewById(R.id.lv_sales);
+        lv_sale = (ListView)view.findViewById(R.id.lv_sales);
+        loadmore = View.inflate(getActivity().getApplication(),R.layout.bottom,null);
         return view;
     }
 
     @Override
     protected void initData() {
-        ((PullToRefreshListView)lv_sale).setOnRefreshListener(new PullToRefreshListView.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new GetDateTask().execute();
-            }
-        });
+        lv_sale.addFooterView(loadmore);
+        loadmore.setVisibility(View.GONE);
+        sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+        jail_id = sp.getInt("jail_id", 1);
+        token = sp.getString("token", "");
         EventBus.getDefault().register(this);
         getDate();
-        Collections.sort(commodities, new Comparator<Commodity>() {
-            @Override
-            public int compare(Commodity lhs, Commodity rhs) {
-                int heat1 = lhs.getRanking();
-                int heat2 = rhs.getRanking();
-                if (heat1 < heat2){
-                    return 1;
-                }
-                return -1;
-            }
-        });
-        adapter = new SalesAdapter();
-        lv_sale.setAdapter(adapter);
+        lv_sale.setOnScrollListener(this);
     }
 
-    private class GetDateTask extends AsyncTask<Void,Void,List<Commodity>>{
-        @Override
-        protected List<Commodity> doInBackground(Void... params) {
-            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
-            Message msg = handler.obtainMessage();
-          //  HttpClient httpClient = new DefaultHttpClient();
-            String token = sp.getString("token", "");
-            int jail_id = sp.getInt("jail_id",0);
-            //HttpGet httpGet = new HttpGet(url + token);
-            /**
-            try {
-                HttpResponse response = httpClient.execute(httpGet);
-                if (response.getStatusLine().getStatusCode() == 200) {
-                    String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                    msg.obj = "success";
-                    Bundle bundle = new Bundle();
-                    bundle.putString("result", result);
-                    msg.setData(bundle);
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                } else {
-                    msg.obj = "error";
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                msg.obj = "error";
-                msg.what = 1;
-                handler.sendMessage(msg);
-            }
-            **/
-            String url = Constants.URL_HEAD + "items?jail_id="+jail_id+"&access_token=";
-            try {
-                String result = HttpRequestUtil.doHttpsGet(url + token);
-                if (result.contains("StatusCode is")){
-                    msg.obj = "error";
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                }else {
-                    msg.obj = "success";
-                    Bundle bundle = new Bundle();
-                    bundle.putString("result", result);
-                    msg.setData(bundle);
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                msg.obj = "error";
-                msg.what = 1;
-                handler.sendMessage(msg);
 
-            }
-            return commodities;
-        }
-
-        @Override
-        protected void onPostExecute(List<Commodity> commodities) {
-            ((PullToRefreshListView)lv_sale).onRefreshComplete();
-            super.onPostExecute(commodities);
-            String sql = "delete from line_items where cart_id =" + cart_id;
-            db.execSQL(sql);
-            EventBus.getDefault().post(new ClickEvent());
-        }
-    }
 
 
     /**
@@ -217,49 +178,221 @@ public class SalesPriorityFragment extends BaseFragment {
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
         category_id = bundle.getInt("leibie", 0);
-        String sql1 = "select id from Cart where time = '"+times+"'";
-        Cursor cursor = null;
-        Cursor cursor1 = db.rawQuery(sql1, null);
-        while (cursor1.moveToNext()){
-            cart_id = cursor1.getInt(cursor1.getColumnIndex("id"));
-        }
-        if (category_id == 1){
-            String sql = "select * from Items where category_id = 1";
-            cursor = db.rawQuery(sql,null);
-        }else if (category_id == 2){
-            String sql = "select * from Items where category_id = 2";
-            cursor = db.rawQuery(sql,null);
-        }else if (category_id == 3){
-            String sql = "select * from Items where category_id = 3";
-            cursor = db.rawQuery(sql,null);
-        }
-
-        while (cursor.moveToNext()) {
-            if (commodities.size() < cursor.getCount()) {
-                Commodity commodity = new Commodity();
-                commodity.setRanking(cursor.getInt(cursor.getColumnIndex("ranking")));
-                commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
-                commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-                commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
-                commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
-                commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
-                commodity.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                String sql = "select line_items.qty from line_items where line_items.Items_id = "+commodity.getId()+" and line_items.cart_id = "+cart_id;
-                Cursor cursor2 = db.rawQuery(sql,null);
-                if (cursor2.getCount() != 0){
-                    while (cursor2.moveToNext()) {
-                        commodity.setQty(cursor2.getInt(cursor2.getColumnIndex("qty")));
+        if (category_id == 0){
+            url = Constants.URL_HEAD + "items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id ;
+            Log.d("ff", url);
+            new Thread(){
+                @Override
+                public void run() {
+                    Request request = new Request.Builder().url(url).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            Log.d("dd", result);
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
-                }else {
-                    commodity.setQty(0);
                 }
-                commodities.add(commodity);
-            }
+            }.start();
+        }else if (category_id == 1){
+            url = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Request request = new Request.Builder().url(url).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            Log.d("dd", result);
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }else if (category_id == 2){
+            url = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Request request = new Request.Builder().url(url).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            Log.d("dd", result);
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }else if (category_id == 3){
+            url = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Request request = new Request.Builder().url(url).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            Log.d("dd", result);
+                            msg.obj = result;
+                            msg.what = 1;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
         }
     }
 
-    private class SalesAdapter extends BaseAdapter {
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemLastIndex = adapter.getCount() - 1;
+        int lastIndex = itemLastIndex + 1;
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && visibleLastIndex ==lastIndex){
+            loadmore.setVisibility(View.VISIBLE);
+            loadmore();
+        }
+    }
 
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
+    }
+
+
+    /**
+     * 加载更多商品
+     */
+    private void loadmore(){
+        page += 1;
+        if (category_id == 0){
+            final String addurl = Constants.URL_HEAD +"items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Request request = new Request.Builder().url(addurl).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            msg.obj = result;
+                            msg.what = 2;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        Looper.loop();
+                    }
+                }
+            }.start();
+        }else if (category_id == 1){
+            final String addurl = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Request request = new Request.Builder().url(addurl).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            msg.obj = result;
+                            msg.what = 2;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        Looper.loop();
+                    }
+                }
+            }.start();
+        }else if (category_id == 2){
+            final String addurl = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Request request = new Request.Builder().url(addurl).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            msg.obj = result;
+                            msg.what = 2;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        Looper.loop();
+                    }
+                }
+            }.start();
+        }else if (category_id == 3){
+            final String addurl = Constants.URL_HEAD+"items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
+            new Thread(){
+                @Override
+                public void run() {
+                    Looper.prepare();
+                    Request request = new Request.Builder().url(addurl).build();
+                    try {
+                        Message msg = handler.obtainMessage();
+                        Response response = client.newCall(request).execute();
+                        if (response.isSuccessful()){
+                            String result = response.body().string();
+                            msg.obj = result;
+                            msg.what = 2;
+                            handler.sendMessage(msg);
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }finally {
+                        Looper.loop();
+                    }
+                }
+            }.start();
+        }
+    }
+
+
+    private class SalesAdapter extends BaseAdapter {
+        private List<Commodity> commodityList;
+        private LayoutInflater inflater;
+
+
+        public SalesAdapter(Context context,List<Commodity> commodityList) {
+            this.commodityList = commodityList;
+            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
         @Override
         public int getCount() {
             return commodities.size();
@@ -267,12 +400,12 @@ public class SalesPriorityFragment extends BaseFragment {
 
         @Override
         public Object getItem(int position) {
-            return null;
+            return position;
         }
 
         @Override
         public long getItemId(int position) {
-            return 0;
+            return position;
         }
 
         @Override
@@ -383,6 +516,9 @@ public class SalesPriorityFragment extends BaseFragment {
            // viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
             return convertView;
+        }
+        public void addItem(Commodity commodity){
+            commodities.add(commodity);
         }
     }
     private class ViewHolder{
