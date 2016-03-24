@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -15,6 +16,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.utils.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
     private WebView wv_news_detail;
     private FrameLayout fl_loading;
     private int id;
+    private SharedPreferences sp;
 
     @Override
     protected View initView() {
@@ -40,8 +43,10 @@ public class PrisonIntroductionActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        id = getIntent().getIntExtra("id",1);
+        sp = getSharedPreferences("config", MODE_PRIVATE);
+        id = sp.getInt("jail_id",1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/" + id);
+        Log.i("jail_id is :", id + "");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

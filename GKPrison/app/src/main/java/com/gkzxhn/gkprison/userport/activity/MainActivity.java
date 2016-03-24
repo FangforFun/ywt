@@ -80,6 +80,28 @@ import java.util.Map;
 /**
  * created by huangzhengneng on 2015/12/22
  * 主activity
+ *
+ *
+ *                                  _ooOoo_
+                                   o8888888o
+                                   88" . "88
+                                   (| -_- |)
+                                   O\  =  /O
+                                ____/`---'\____
+                              .'  \\|     |//  `.
+                             /  \\|||  :  |||//  \
+                            /  _||||| -:- |||||-  \
+                           |   | \\\  -  /// |    |
+                           | \_|  ''\---/''  |   |
+                           \  .-\__  `-`  ___/-. /
+                         ___`. .'  /--.--\  `. . __
+                       ."" '<  `.___\_<|>_/___.'  >'"".
+                      | | :  `- \`.;`\ _ /`;.`/ - ` : | |
+                      \  \ `-.   \_ __\ /__ _/   .-` /  /
+                 ======`-.____`-.___\_____/___.-`____.-'======
+                                    `=---='
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                            佛祖保佑       永无BUG
  */
 public class MainActivity extends BaseActivity {
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
@@ -176,7 +198,6 @@ public class MainActivity extends BaseActivity {
         rb_bottom_guide_canteen = (RadioButton) view.findViewById(R.id.rb_bottom_guide_canteen);
         drawerLayout = (CustomDrawerLayout) view.findViewById(R.id.drawer_layout);
         fl_drawer = (FrameLayout) view.findViewById(R.id.fl_drawer);
-//        tv_title_bar_title = (TextView) view.findViewById(R.id.tv_title_bar_title);
         Drawable[] drawables = rb_bottom_guide_home.getCompoundDrawables();
         drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
         rb_bottom_guide_home.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
@@ -203,7 +224,6 @@ public class MainActivity extends BaseActivity {
             RequestCallback callback = new RequestCallback() {
                 @Override
                 public void onSuccess(Object o) {
-//                    showToastMsgShort("重新登录成功");
                     Log.i("MainActivity", "MainActivity重新登录了");
                 }
 
@@ -655,7 +675,6 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-
     /**
      *  解析商品列表
      * @param s
@@ -681,7 +700,4 @@ public class MainActivity extends BaseActivity {
         }
         return commodities;
     }
-
-
 }
-

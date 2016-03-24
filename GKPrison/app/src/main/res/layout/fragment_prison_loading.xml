@@ -16,14 +16,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="请输入个人注册信息"
-            android:textSize="14sp"
+            android:textSize="@dimen/register_sex_tv_size"
             android:textColor="@color/tv_mid"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"/>
         <EditText
             android:id="@+id/et_username"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/register_edittext_height"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
@@ -31,12 +31,12 @@
             android:hint="账号"
             android:singleLine="true"
             android:paddingLeft="10dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/goods_car_tv_size"
             android:textColor="@color/tv_bg" />
         <EditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/register_edittext_height"
             android:layout_marginRight="10dp"
             android:layout_marginLeft="10dp"
             android:layout_marginTop="2dp"
@@ -45,13 +45,13 @@
             android:singleLine="true"
             android:inputType="textPassword"
             android:paddingLeft="10dp"
-            android:textSize="16sp"
+            android:textSize="@dimen/goods_car_tv_size"
             android:textColor="@color/tv_bg"/>
 
         <com.dd.processbutton.iml.ActionProcessButton
             android:id="@+id/btn_login"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
+            android:layout_height="@dimen/register_edittext_height"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/theme_bg_bt_selector"
@@ -59,7 +59,7 @@
             android:textColor="@color/white"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:textSize="20sp"
+            android:textSize="@dimen/total_money_tv_size"
             custom:pb_colorComplete="@color/theme"
             custom:pb_colorNormal="@color/theme"
             custom:pb_colorPressed="@color/theme"
