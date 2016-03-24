@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="160dp" >
+    android:layout_height="@dimen/roll_height" >
 
     <LinearLayout
         android:id="@+id/top_news_viewpager"
         android:layout_width="fill_parent"
-        android:layout_height="160dp"
+        android:layout_height="@dimen/roll_height"
         android:orientation="horizontal" >
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/ll_title_dot"
         android:layout_width="fill_parent"
-        android:layout_height="30dp"
+        android:layout_height="@dimen/roll_title_height"
         android:layout_alignParentBottom="true"
         android:background="#5000"
         android:gravity="center_vertical"
@@ -28,6 +28,7 @@
             android:layout_weight="1"
             android:singleLine="true"
             android:text="狱务通App上线啦"
+            android:textSize="@dimen/roll_title_size"
             android:ellipsize="end"
             android:textColor="#f6f6f6" />
 

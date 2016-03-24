@@ -6,39 +6,36 @@
     android:focusable="true"
     android:focusableInTouchMode="true">
 
-
     <LinearLayout
         android:id="@+id/ll_navigation"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="@dimen/canteen_tab_height"
         android:orientation="horizontal"
-        android:background="@color/white"
-       >
+        android:background="@color/white">
         <RelativeLayout
-        android:id="@+id/rl_allclass"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:layout_weight="1">
-        <TextView
-            android:id="@+id/tv_allclass"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="全部分类"
-            android:textSize="16sp"
-            android:textColor="@color/tv_bg"
-
-            android:layout_centerInParent="true"/>
+            android:id="@+id/rl_allclass"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_allclass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="全部分类"
+                android:textSize="@dimen/canteen_tab_tv_size"
+                android:textColor="@color/tv_bg"
+                android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_allclass"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:layout_width="@dimen/canteen_tab_spinner_size"
+                android:layout_height="@dimen/canteen_tab_spinner_size"
                 android:layout_toRightOf="@+id/tv_allclass"
+                android:layout_alignBottom="@+id/tv_allclass"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/spinner"
-                android:layout_marginTop="20dp"
-                ></Spinner>
+                />
     </RelativeLayout>
         <View
             android:layout_width="1dp"
@@ -55,18 +52,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="销量优先"
-                android:textSize="16sp"
+                android:textSize="@dimen/canteen_tab_tv_size"
                 android:textColor="@color/tv_bg"
                 android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_sales"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:layout_width="@dimen/canteen_tab_spinner_size"
+                android:layout_height="@dimen/canteen_tab_spinner_size"
                 android:layout_toRightOf="@+id/tv_sales"
+                android:layout_alignBottom="@+id/tv_sales"
                 android:layout_marginLeft="5dp"
                 android:background="@drawable/spinner"
-                android:layout_marginTop="20dp"
-                ></Spinner>
+                />
         </RelativeLayout>
         <View
             android:layout_width="1dp"
@@ -83,19 +80,18 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="智能排序"
-                android:textSize="16sp"
+                android:textSize="@dimen/canteen_tab_tv_size"
                 android:textColor="@color/tv_bg"
                 android:layout_centerInParent="true"/>
             <Spinner
                 android:id="@+id/sp_zhineng"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
+                android:layout_width="@dimen/canteen_tab_spinner_size"
+                android:layout_height="@dimen/canteen_tab_spinner_size"
                 android:layout_toRightOf="@+id/tv_zhineng"
+                android:layout_alignBottom="@+id/tv_zhineng"
                 android:layout_marginLeft="5dp"
-                android:entries="@array/shopping"
                 android:background="@drawable/spinner"
-                android:layout_marginTop="20dp"
-                ></Spinner>
+                />
         </RelativeLayout>
     </LinearLayout>
     <View
@@ -110,11 +106,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:layout_below="@+id/fenjie"></FrameLayout>
+        android:layout_below="@+id/fenjie"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/canteen_tab_height"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true">
         <LinearLayout
@@ -125,60 +121,49 @@
             android:layout_weight="1">
             <ImageView
                 android:id="@+id/image_buycar"
-                android:layout_width="35dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/goods_car_iv_size"
+                android:layout_height="@dimen/goods_car_iv_size"
                 android:src="@drawable/buycar"
                 android:layout_marginLeft="20dp"
-                android:layout_gravity="center_vertical"
-                />
-            <!--
-            <ImageView
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginTop="5dp"
-                android:src="@drawable/num"/>
-                -->
+                android:layout_gravity="center_vertical" />
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
-               >
-
-            <TextView
-                android:id="@+id/tv_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="合计:"
-                android:textSize="16sp"
-               android:layout_marginLeft="20dp"/>
-            <TextView
-                android:id="@+id/tv_total_money"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/tv_total"
-                android:text="0.00"
-                android:textSize="16sp"
-                android:textColor="#FF3503"
-                android:layout_toRightOf="@+id/tv_total"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="#FF3503"
-                android:textSize="16sp"
-                android:text="元"
-                android:layout_alignBaseline="@+id/tv_total"
-                android:layout_toRightOf="@+id/tv_total_money"/>
-            <TextView
-                android:id="@+id/tv_total_money_remarks"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="(含配送费2元)"
-                android:textSize="12sp"
-                android:textColor="@color/tv_mid"
-                android:layout_below="@+id/tv_total"
-                android:layout_marginLeft="20dp"/>
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tv_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="合计:"
+                    android:textSize="@dimen/goods_car_tv_size"
+                   android:layout_marginLeft="20dp"/>
+                <TextView
+                    android:id="@+id/tv_total_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignBaseline="@+id/tv_total"
+                    android:text="0.00"
+                    android:textSize="@dimen/goods_car_tv_size"
+                    android:textColor="#FF3503"
+                    android:layout_toRightOf="@+id/tv_total"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF3503"
+                    android:textSize="@dimen/goods_car_tv_size"
+                    android:text="元"
+                    android:layout_alignBaseline="@+id/tv_total"
+                    android:layout_toRightOf="@+id/tv_total_money"/>
+                <TextView
+                    android:id="@+id/tv_total_money_remarks"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="(含配送费2元)"
+                    android:textSize="@dimen/tv_total_money_remarks"
+                    android:textColor="@color/tv_mid"
+                    android:layout_below="@+id/tv_total"
+                    android:layout_marginLeft="20dp"/>
             </RelativeLayout>
         </LinearLayout>
         <Button
@@ -188,7 +173,7 @@
             android:layout_weight="1"
             android:background="@color/orange_bg"
             android:text="结算"
-            android:textSize="16sp"
+            android:textSize="@dimen/goods_car_tv_size"
             android:textColor="@android:color/white"/>
     </LinearLayout>
     <FrameLayout
@@ -196,7 +181,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/half_transparent"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="@dimen/canteen_tab_height"
         android:visibility="gone"
         >
         <RelativeLayout
@@ -207,7 +192,7 @@
         <LinearLayout
             android:id="@+id/ll_biaoti"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/canteen_tab_height"
             >
             <TextView
                 android:layout_width="wrap_content"

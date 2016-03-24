@@ -28,11 +28,11 @@
 
                 <ImageView
                     android:id="@+id/iv_home_menu"
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
+                    android:layout_width="@dimen/menu_icon_size"
+                    android:layout_height="@dimen/menu_icon_size"
                     android:src="@drawable/icon_menu"
                     android:layout_centerVertical="true"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="@dimen/menu_icon_left_padding"/>
             </RelativeLayout>
 
             <TextView
