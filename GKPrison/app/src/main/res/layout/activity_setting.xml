@@ -49,23 +49,23 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/laws_item_height"
             android:background="@drawable/item_selector"
             android:layout_marginTop="10dp">
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/setting_item_iv_size"
+                android:layout_height="@dimen/setting_item_iv_size"
                 android:src="@drawable/gray_clock"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/laws_item_height"
                 android:text="闹钟提醒"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
@@ -86,23 +86,23 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/laws_item_height"
             android:background="@drawable/item_selector"
             android:layout_marginTop="10dp" >
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/setting_item_iv_size"
+                android:layout_height="@dimen/setting_item_iv_size"
                 android:src="@drawable/gray_pwd_setting"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/laws_item_height"
                 android:text="独立密码设置"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
@@ -124,23 +124,23 @@
         <RelativeLayout
             android:id="@+id/rl_opinion_feedback"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/laws_item_height"
             android:background="@drawable/item_selector"
             android:layout_marginTop="10dp" >
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/setting_item_iv_size"
+                android:layout_height="@dimen/setting_item_iv_size"
                 android:src="@drawable/opinion_feedback"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/laws_item_height"
                 android:text="意见反馈"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
@@ -149,23 +149,23 @@
         <RelativeLayout
             android:id="@+id/rl_version_update"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/laws_item_height"
             android:background="@drawable/item_selector"
             android:layout_marginTop="10dp" >
 
             <ImageView
-                android:layout_width="25dp"
-                android:layout_height="25dp"
+                android:layout_width="@dimen/setting_item_iv_size"
+                android:layout_height="@dimen/setting_item_iv_size"
                 android:src="@drawable/gray_version_update"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="60dp"
+                android:layout_height="@dimen/laws_item_height"
                 android:text="版本信息"
                 android:gravity="center_vertical"
-                android:textSize="16sp"
+                android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
@@ -175,7 +175,7 @@
                 android:layout_height="wrap_content"
                 android:text="V 3.0"
                 android:textColor="@color/tv_mid"
-                android:textSize="16sp"
+                android:textSize="@dimen/setting_item_tv_size"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"/>
@@ -200,7 +200,7 @@
                 android:layout_height="wrap_content"
                 android:text="狱务通软件使用协议"
                 android:textColor="@color/theme"
-                android:textSize="12sp"/>
+                android:textSize="@dimen/setting_bottom_tv_size"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -217,7 +217,7 @@
                 android:layout_height="wrap_content"
                 android:text="联系我们"
                 android:textColor="@color/theme"
-                android:textSize="12sp"/>
+                android:textSize="@dimen/setting_bottom_tv_size"/>
         </LinearLayout>
 
         <TextView
@@ -229,6 +229,6 @@
             android:layout_marginTop="5dp"
             android:lineSpacingExtra="5dp"
             android:textColor="@color/tv_gray"
-            android:textSize="12sp"/>
+            android:textSize="@dimen/setting_bottom_tv_size"/>
     </LinearLayout>
 </RelativeLayout>

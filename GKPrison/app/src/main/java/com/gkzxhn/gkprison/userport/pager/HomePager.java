@@ -229,17 +229,25 @@ public class HomePager extends BasePager {
             list_news_title.add("");
             list_news_title.add("");
             list_news_title.add("");
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(2).getImage_url());
+            imgurl_list.add("");
+            imgurl_list.add("");
+            imgurl_list.add("");
         } else if(allnews.size() == 1){
             list_news_title.add("");
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+            imgurl_list.add("");
         } else if(allnews.size() == 2){
             list_news_title.add("");
             list_news_title.add("");
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
-            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(0).getImage_url());
+//            imgurl_list.add(Constants.RESOURSE_HEAD + allnews.get(1).getImage_url());
+            imgurl_list.add("");
+            imgurl_list.add("");
+        }else { // <=0
+
         }
         initDot();// 初始化轮播图底部小圆圈
         vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
@@ -255,12 +263,12 @@ public class HomePager extends BasePager {
                 }
             }
         });
-        if(allnews.size() > 0 && list_news_title.size() > 0) {
+//        if(allnews.size() > 0 && list_news_title.size() > 0) {
             vp_carousel.initTitle(list_news_title, top_news_title);
             vp_carousel.initImgUrl(imgurl_list);
-        }else {
-            showToastMsgShort("抱歉,没有数据...");
-        }
+//        }else {
+//            showToastMsgShort("抱歉,没有数据...");
+//        }
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
@@ -454,8 +462,8 @@ public class HomePager extends BasePager {
     private void initDot() {
         dotList.clear();
         dots_ll.removeAllViews();
-        if(list_news_title.size() > 0){
-            for (int i = 0; i < list_news_title.size(); i++) {
+//        if(list_news_title.size() > 0){
+            for (int i = 0; i < 3; i++) {
                 View view = new View(context);
                 if (i == 0) {
                     view.setBackgroundResource(R.drawable.rb_shape_blue);
@@ -470,7 +478,7 @@ public class HomePager extends BasePager {
                 dots_ll.addView(view, layoutParams);
                 dotList.add(view);
             }
-        }
+//        }
         ll_title_dot.setGravity(Gravity.CENTER);
         ll_title_dot.setBackgroundColor(Color.TRANSPARENT);
     }
