@@ -70,8 +70,8 @@ public class MyApplication extends Application {
         NIMClient.init(this, loginInfo(), options()); // 初始化
 
         // 初始化全局异常捕获
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
+        //CrashHandler crashHandler = CrashHandler.getInstance();
+        //crashHandler.init(getApplicationContext());
 
         if (inMainProcess()) {
             // 初始化UIKit模块

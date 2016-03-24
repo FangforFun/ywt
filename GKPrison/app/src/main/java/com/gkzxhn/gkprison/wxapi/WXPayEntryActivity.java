@@ -4,13 +4,21 @@ package com.gkzxhn.gkprison.wxapi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
+import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.activity.WeixinPayActivity;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -20,11 +28,34 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import com.gkzxhn.gkprison.R;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.HTTP;
+import org.apache.http.util.EntityUtils;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 	
 	private static final String TAG = "MicroMsg.SDKSample.WXPayEntryActivity";
 	
     private IWXAPI api;
+	private SharedPreferences sp;
+	private String token;
+	private Handler handler = new Handler(){
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what){
+				case 1:
+					String result = (String)msg.obj;
+					Log.d("ag",result);
+					break;
+			}
+		}
+	};
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,6 +64,45 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         
     	api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
+		sp = getSharedPreferences("config", MODE_PRIVATE);
+		token = sp.getString("token", "");
+		Log.d("ff", token);
+		String tradeno = WeixinPayActivity.tradeno;
+		Log.d("ii", tradeno);
+		final String str = "{\"order\":{\"trade_no\":\""+tradeno+"\",\"status\":\"WAIT_FOR_NOTIFY\"}}";
+		Log.d("dds", str);
+		new Thread(){
+			@Override
+			public void run() {
+				Looper.prepare();
+				Message msg = handler.obtainMessage();
+				HttpClient httpClient = new DefaultHttpClient();
+				HttpPatch httpPatch = new HttpPatch(Constants.URL_HEAD+"payment_status?access_token="+token);
+				Log.d("asd",Constants.URL_HEAD+"payment_status?access_token="+token);
+				try {
+					StringEntity entity = new StringEntity(str,HTTP.UTF_8);
+					entity.setContentType("application/json");
+					httpPatch.setEntity(entity);
+					HttpResponse response = httpClient.execute(httpPatch);
+					if (response.getStatusLine().getStatusCode() == 200){
+						String result = EntityUtils.toString(response.getEntity(), "utf-8");
+						msg.obj = result;
+						msg.what = 1;
+						handler.sendMessage(msg);
+					}else {
+						Toast.makeText(getApplicationContext(),"通知服务器失败",Toast.LENGTH_SHORT).show();
+					}
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}finally {
+					Looper.loop();
+				}
+			}
+		}.start();
     }
 
 	@Override
@@ -48,11 +118,12 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
 	@Override
 	public void onResp(BaseResp resp) {
-		String str = resp.transaction;
-		Log.d("ff",str);
+
+
 		if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
 			Log.d("dd", resp.errCode + "");
 			if (resp.errCode == 0){
+
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				View view = this.getLayoutInflater().inflate(R.layout.weixinpay_dialog,null);
 				Button button = (Button)view.findViewById(R.id.btn_payfinish);
