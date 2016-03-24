@@ -532,7 +532,7 @@ public class MainActivity extends BaseActivity {
                 editor.putString("prisoner_number", jsonObject1.getString("prisoner_number"));
                 editor.commit();
                 jail_id = sp.getInt("jail_id",0);
-                getCommodity();// 获取商品
+               // getCommodity();// 获取商品
                 handler.sendEmptyMessage(3);
             }
         } catch (JSONException e) {

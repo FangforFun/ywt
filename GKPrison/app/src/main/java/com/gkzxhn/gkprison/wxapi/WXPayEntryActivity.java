@@ -48,8 +48,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
 	@Override
 	public void onResp(BaseResp resp) {
-
-
+		String str = resp.transaction;
+		Log.d("ff",str);
 		if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
 			Log.d("dd", resp.errCode + "");
 			if (resp.errCode == 0){
