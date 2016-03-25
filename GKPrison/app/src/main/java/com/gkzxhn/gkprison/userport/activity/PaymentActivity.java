@@ -101,6 +101,7 @@ public class PaymentActivity extends BaseActivity {
                                 String sign = getsign(type);
                                 intent.putExtra("sign",sign);
                                 intent.putExtra("price", countmoney);
+                                intent.putExtra("times",times);
                                 intent.putExtra("outorderno",TradeNo);
                                 String t = gettimestamp(type);
                                 intent.putExtra("timeStamp",t);

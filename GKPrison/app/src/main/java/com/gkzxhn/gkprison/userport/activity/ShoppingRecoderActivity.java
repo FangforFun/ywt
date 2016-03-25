@@ -86,7 +86,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
        for (int i = 0; i < carts.size();i++){
            List<Commodity> commodities = new ArrayList<Commodity>();
            int cart_id = carts.get(i).getId();
-           String sql1 = "select distinct line_items.qty,Items.price,Items.title from line_items,Items,Cart where line_items.Items_id = Items.id and  Cart.isfinish = 1 and line_items.cart_id = "+cart_id;
+           String sql1 = "select distinct line_items.qty,line_items.price,line_items.title from line_items,Items,Cart where Cart.isfinish = 1 and line_items.cart_id = "+cart_id;
            Cursor cursor1 = db.rawQuery(sql1, null);
            Log.d("消费记录",cursor1.getCount()+"");
            while (cursor1.moveToNext()){

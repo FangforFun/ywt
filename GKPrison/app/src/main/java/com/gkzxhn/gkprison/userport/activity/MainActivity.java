@@ -119,6 +119,7 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sp;
     private boolean isRegisteredUser; // 是否注册登录用户
     private MyPagerAdapter adapter;
+    private String times;
     private AutoCompleteTextView actv_prison_choose; // 监狱选择
     private AutoTextAdapater autoTextAdapater;
     private String data; // 监狱选择访问服务器返回的字符串
@@ -287,6 +288,12 @@ public class MainActivity extends BaseActivity {
             getUserInfo();// 获取当前登录用户的信息
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
+            }
+            times = getIntent().getStringExtra("times");
+            if (times != null){
+            String type = "微信支付";
+            String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '"+times+"'";
+            db.execSQL(sql);
             }
         }else {
             pagerList.clear();
