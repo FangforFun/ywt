@@ -195,13 +195,13 @@ public class CanteenFragment extends BaseFragment {
         settlement = (Button)view.findViewById(R.id.bt_shopping_cart_commit);
         rl_allclass = (RelativeLayout)view.findViewById(R.id.rl_allclass);
         rl_sales = (RelativeLayout)view.findViewById(R.id.rl_sales);
-        rl_zhineng = (RelativeLayout)view.findViewById(R.id.rl_zhineng);
+        //rl_zhineng = (RelativeLayout)view.findViewById(R.id.rl_zhineng);
         tv_allclass = (TextView)view.findViewById(R.id.tv_allclass);
         tv_sales = (TextView)view.findViewById(R.id.tv_sales);
-        tv_zhineng = (TextView)view.findViewById(R.id.tv_zhineng);
+        //tv_zhineng = (TextView)view.findViewById(R.id.tv_zhineng);
         sp_allclass = (Spinner)view.findViewById(R.id.sp_allclass);
         sp_sales = (Spinner)view.findViewById(R.id.sp_sales);
-        sp_zhineng = (Spinner)view.findViewById(R.id.sp_zhineng);
+        //sp_zhineng = (Spinner)view.findViewById(R.id.sp_zhineng);
         tv_total_money = (TextView)view.findViewById(R.id.tv_total_money);
         image_buycar = view.findViewById(R.id.image_buycar);
         badgeView = new BadgeView(context);
@@ -441,10 +441,10 @@ public class CanteenFragment extends BaseFragment {
                 }
                 tv_allclass.setTextColor(Color.parseColor("#6495ed"));
                 tv_sales.setTextColor(context.getResources().getColor(R.color.tv_bg));
-                tv_zhineng.setTextColor(context.getResources().getColor(R.color.tv_bg));
+                //tv_zhineng.setTextColor(context.getResources().getColor(R.color.tv_bg));
                 sp_allclass.setBackgroundResource(R.drawable.spinner_down);
                 sp_sales.setBackgroundResource(R.drawable.spinner);
-                sp_zhineng.setBackgroundResource(R.drawable.spinner);
+                //sp_zhineng.setBackgroundResource(R.drawable.spinner);
 
                 if (click == 1){
                     choose.setVisibility(View.VISIBLE);
@@ -471,10 +471,10 @@ public class CanteenFragment extends BaseFragment {
                 }
                 tv_sales.setTextColor(Color.parseColor("#6495ed"));
                 tv_allclass.setTextColor(Color.parseColor("#333333"));
-                tv_zhineng.setTextColor(Color.parseColor("#333333"));
+                //tv_zhineng.setTextColor(Color.parseColor("#333333"));
                 sp_sales.setBackgroundResource(R.drawable.spinner_down);
                 sp_allclass.setBackgroundResource(R.drawable.spinner);
-                sp_zhineng.setBackgroundResource(R.drawable.spinner);
+                //sp_zhineng.setBackgroundResource(R.drawable.spinner);
                 if (clicksalse == 1) {
                     salsechoose.setVisibility(View.VISIBLE);
                     sales = new SalesPriorityFragment();
@@ -492,6 +492,7 @@ public class CanteenFragment extends BaseFragment {
 
             }
         });
+        /**
         rl_zhineng.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -506,6 +507,7 @@ public class CanteenFragment extends BaseFragment {
                 ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
             }
         });
+         **/
         try {
             settlement.setOnClickListener(new View.OnClickListener() {
                 @Override

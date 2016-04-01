@@ -119,6 +119,13 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                 case 2:
                     String add = (String)msg.obj;
                     addcommdity = analysiscommodity(add);
+                    for (int i = 0;i < commodities.size();i++){
+                        for (int j = 0;j < addcommdity.size();j++){
+                            if (commodities.get(i).getId() == addcommdity.get(j).getId()){
+                                addcommdity.remove(j);
+                            }
+                        }
+                    }
                     Collections.sort(addcommdity, new Comparator<Commodity>() {
                         @Override
                         public int compare(Commodity lhs, Commodity rhs) {

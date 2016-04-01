@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.wxapi;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -21,6 +22,7 @@ import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.WeixinPayActivity;
+import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -31,14 +33,27 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.gkzxhn.gkprison.R;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+import java.util.logging.XMLFormatter;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 	
@@ -48,7 +63,14 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 	private SharedPreferences sp;
 	private String token;
 	private String times;
+	private String partnerid = "1320273701";
+	StringBuffer sb;
 	private String paystatus;
+	StringBuffer xml;
+	private String URL= "https://api.mch.weixin.qq.com/pay/orderquery";
+	public static final MediaType JSON
+			= MediaType.parse("application/json; charset=utf-8");
+	OkHttpClient client;
 	private Handler handler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
@@ -67,7 +89,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         setContentView(R.layout.pay_result);
     	api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
-
 		Log.d("ff", token);
 
 
@@ -151,13 +172,51 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 					public void onClick(View v) {
 						Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-						intent.putExtra("times",times);
+						intent.putExtra("times", times);
 						startActivity(intent);
 						finish();
+
 					}
 				});
 				builder.show();
 			}
 		}
 	}
+
+
+
+	private String genAppSign(List<NameValuePair> params) {
+		sb = new StringBuffer();
+		for (int i = 0; i < params.size(); i++) {
+			sb.append(params.get(i).getName());
+			sb.append('=');
+			sb.append(params.get(i).getValue());
+			sb.append('&');
+		}
+		com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
+		sb.append("key=");
+		sb.append("d75699d893882dea526ea05e9c7a4090");
+		com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
+		//  sb.append("sign str\n" + sb.toString() + "\n\n");
+		String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
+		com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
+		return appSign;
+	}
+	private String getRandomString() {
+		String suiji = "";
+		int len = 32;
+		char[] chars = new char[len];
+		Random random = new Random();
+		for (int i = 0;i < len;i++){
+			if (random.nextBoolean() == true){
+				chars[i] = (char)(random.nextInt(25) + 97);
+			}else {
+				chars[i] = (char)(random.nextInt(9) + 48);
+			}
+		}
+		suiji = new String(chars);
+		return suiji;
+	}
+
+
 }

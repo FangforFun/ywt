@@ -36,7 +36,6 @@ public class WeixinPayActivity extends BaseActivity {
     private String prepay_id;
     private String countmoney;
     private String app_id;
-    private String mch_id;
     private String nonce_str;
     private String sign;
     private String timeStamp;
@@ -44,6 +43,7 @@ public class WeixinPayActivity extends BaseActivity {
     StringBuffer sb;
     public static String tradeno;
     public static String times;
+    public static String mch_id;
     PayReq req = new PayReq();
     private Map<String,Object> jsonmap = new HashMap<String,Object>();
     @Override

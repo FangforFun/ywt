@@ -112,6 +112,13 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                 case 2:
                     String add = (String)msg.obj;
                     addcommdity = analysiscommodity(add);
+                    for (int i = 0;i < commodities.size();i++){
+                        for (int j = 0;j < addcommdity.size();j++){
+                            if (commodities.get(i).getId() == addcommdity.get(j).getId()){
+                                addcommdity.remove(j);
+                            }
+                        }
+                    }
                     if (addcommdity.size() != 0) {
                         loadDate(addcommdity);
                         String sql1 = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
