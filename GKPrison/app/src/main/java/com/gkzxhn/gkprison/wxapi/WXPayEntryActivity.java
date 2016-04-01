@@ -175,7 +175,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 						intent.putExtra("times", times);
 						startActivity(intent);
 						finish();
-
 					}
 				});
 				builder.show();

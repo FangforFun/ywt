@@ -59,6 +59,8 @@ import java.util.Locale;
 import java.util.Random;
 
 import de.greenrobot.event.EventBus;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by zhengneng on 2015/12/21.
@@ -112,6 +114,9 @@ public class CanteenFragment extends BaseFragment {
     private int jail_id;
     private FrameLayout salsechoose;
     private AllchooseAdapter allchooseAdapter;
+    OkHttpClient client = new OkHttpClient();
+    public static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -684,10 +689,7 @@ public class CanteenFragment extends BaseFragment {
                     Looper.loop();
                 }
             }
-
         }.start();
-
-
     }
 
 
