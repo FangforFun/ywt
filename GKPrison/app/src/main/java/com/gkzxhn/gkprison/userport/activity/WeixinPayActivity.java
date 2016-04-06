@@ -36,13 +36,14 @@ public class WeixinPayActivity extends BaseActivity {
     private String prepay_id;
     private String countmoney;
     private String app_id;
-    private String mch_id;
     private String nonce_str;
     private String sign;
     private String timeStamp;
     private String packge;
     StringBuffer sb;
     public static String tradeno;
+    public static String times;
+    public static String mch_id;
     PayReq req = new PayReq();
     private Map<String,Object> jsonmap = new HashMap<String,Object>();
     @Override
@@ -66,6 +67,7 @@ public class WeixinPayActivity extends BaseActivity {
         timeStamp = getIntent().getStringExtra("timeStamp");
         packge = "Sign=WXPay";
         prisonname = sp.getString("prisonname", "德山监狱");
+        times = getIntent().getStringExtra("times");
         tv_prisonname.setText(prisonname);
         tv_receviale.setText(prisonname);
         prepay_id = getIntent().getStringExtra("prepay_id");

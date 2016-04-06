@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,8 +23,10 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
+import com.gkzxhn.gkprison.utils.RSAUtil;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.unionpay.UPPayAssistEx;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -65,6 +69,7 @@ public class PaymentActivity extends BaseActivity {
     private String token;
     private String payment_type = "";
     private String prepay_id = "";
+    private  String mode = "01";
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -101,14 +106,20 @@ public class PaymentActivity extends BaseActivity {
                                 String sign = getsign(type);
                                 intent.putExtra("sign",sign);
                                 intent.putExtra("price", countmoney);
+                                intent.putExtra("times",times);
                                 intent.putExtra("outorderno",TradeNo);
                                 String t = gettimestamp(type);
                                 intent.putExtra("timeStamp",t);
                                 PaymentActivity.this.startActivity(intent);
                             }else if (payment_type.equals("unionpay")){
+                                /**
                                 Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
                                 intent.putExtra("price",countmoney);
                                 PaymentActivity.this.startActivity(intent);
+                                 **/
+
+                                String tn = "";
+                                UPPayAssistEx.startPay(PaymentActivity.this, null, null, tn, mode);
                             }
                         }
 
@@ -243,6 +254,7 @@ public class PaymentActivity extends BaseActivity {
                  if (ischeckeds[0] == true){
                      payment_type = "unionpay";
                      send_payment_type(payment_type);
+
                  }else if (ischeckeds[1] == true){
                      payment_type = "alipay";
                      send_payment_type(payment_type);
@@ -330,6 +342,64 @@ public class PaymentActivity extends BaseActivity {
         CheckBox cb_pay_way;
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        /*************************************************
+         * 步骤3：处理银联手机支付控件返回的支付结果
+         ************************************************/
+        if (data == null) {
+            return;
+        }
 
+        String msg = "";
+        /*
+         * 支付控件返回字符串:success、fail、cancel 分别代表支付成功，支付失败，支付取消
+         */
+        String str = data.getExtras().getString("pay_result");
+        if (str.equalsIgnoreCase("success")) {
+            // 支付成功后，extra中如果存在result_data，取出校验
+            // result_data结构见c）result_data参数说明
+            if (data.hasExtra("result_data")) {
+                String result = data.getExtras().getString("result_data");
+                try {
+                    JSONObject resultJson = new JSONObject(result);
+                    String sign = resultJson.getString("sign");
+                    String dataOrg = resultJson.getString("data");
+                    // 验签证书同后台验签证书
+                    // 此处的verify，商户需送去商户后台做验签
+                    boolean ret = RSAUtil.verify(dataOrg, sign, mode);
+                    if (ret) {
+                        // 验证通过后，显示支付结果
+                        msg = "支付成功！";
+                    } else {
+                        // 验证不通过后的处理
+                        // 建议通过商户后台查询支付结果
+                        msg = "支付失败！";
+                    }
+                } catch (JSONException e) {
+                }
+            } else {
+                // 未收到签名信息
+                // 建议通过商户后台查询支付结果
+                msg = "支付成功！";
+            }
+        } else if (str.equalsIgnoreCase("fail")) {
+            msg = "支付失败！";
+        } else if (str.equalsIgnoreCase("cancel")) {
+            msg = "用户取消了支付";
+        }
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("支付结果通知");
+        builder.setMessage(msg);
+        builder.setInverseBackgroundForced(true);
+        // builder.setCustomTitle();
+        builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
 }

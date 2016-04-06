@@ -36,6 +36,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
@@ -48,6 +49,7 @@ import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -61,11 +63,13 @@ import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,8 +78,16 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
+
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * created by huangzhengneng on 2015/12/22
@@ -119,6 +131,7 @@ public class MainActivity extends BaseActivity {
     private SharedPreferences sp;
     private boolean isRegisteredUser; // 是否注册登录用户
     private MyPagerAdapter adapter;
+    private String times;
     private AutoCompleteTextView actv_prison_choose; // 监狱选择
     private AutoTextAdapater autoTextAdapater;
     private String data; // 监狱选择访问服务器返回的字符串
@@ -126,6 +139,9 @@ public class MainActivity extends BaseActivity {
     private Map<String, Integer> prison_map; // 服务器返回的监狱列表存储需要的集合
     private int jail_id;  // 监狱id
     private String url; // 商品列表url
+    OkHttpClient client = new OkHttpClient();
+    public static final MediaType JSON
+            = MediaType.parse("application/xml; charset=utf-8");
 
     private Handler handler = new Handler(){
         @Override
@@ -287,6 +303,29 @@ public class MainActivity extends BaseActivity {
             getUserInfo();// 获取当前登录用户的信息
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
+            }
+            times = getIntent().getStringExtra("times");
+            if (times != null){
+                final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
+                final String str = getXml();
+                new Thread(){
+                    @Override
+                    public void run() {
+                        RequestBody body = RequestBody.create(JSON, str);
+                        Request request = new Request.Builder().url(url).post(body).build();
+                        try {
+                            Response response = client.newCall(request).execute();
+                            String result = response.body().string();
+                            Log.d("MainActivity",result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+
+                String type = "微信支付";
+                String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '"+times+"'";
+                db.execSQL(sql);
             }
         }else {
             pagerList.clear();
@@ -699,5 +738,81 @@ public class MainActivity extends BaseActivity {
             e.printStackTrace();
         }
         return commodities;
+    }
+
+    /**
+     * 获取微信签名
+     * @param params
+     * @return
+     */
+    private String genAppSign(List<NameValuePair> params) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < params.size(); i++) {
+            sb.append(params.get(i).getName());
+            sb.append('=');
+            sb.append(params.get(i).getValue());
+            sb.append('&');
+        }
+        com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
+        sb.append("key=");
+        sb.append("d75699d893882dea526ea05e9c7a4090");
+        com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
+        //  sb.append("sign str\n" + sb.toString() + "\n\n");
+        String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
+        com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
+        return appSign;
+    }
+
+    /**
+     * 获得32位随机字符串
+     * @return
+     */
+    private String getRandomString() {
+        String suiji = "";
+        int len = 32;
+        char[] chars = new char[len];
+        Random random = new Random();
+        for (int i = 0;i < len;i++){
+            if (random.nextBoolean() == true){
+                chars[i] = (char)(random.nextInt(25) + 97);
+            }else {
+                chars[i] = (char)(random.nextInt(9) + 48);
+            }
+        }
+        suiji = new String(chars);
+        return suiji;
+    }
+
+    /**
+     * 获取发至微信的xml
+     * @return
+     */
+    private String getXml(){
+        String nonce_str = getRandomString();
+        List<NameValuePair> list = new LinkedList<NameValuePair>();
+        list.add(new BasicNameValuePair("appid", WeixinConstants.APP_ID));
+        list.add(new BasicNameValuePair("mch_id",WeixinPayActivity.mch_id));
+        list.add(new BasicNameValuePair("nonce_str",nonce_str));
+        list.add(new BasicNameValuePair("out_trade_no", WeixinPayActivity.tradeno));
+        String sign = genAppSign(list);
+        StringBuffer  xml = new StringBuffer();
+        xml.append("<xml>");
+        xml.append("<appid>");
+        xml.append(WeixinConstants.APP_ID);
+        xml.append("</appid>");
+        xml.append("<mch_id>");
+        xml.append(WeixinPayActivity.mch_id);
+        xml.append("</mch_id>");
+        xml.append("<nonce_str>");
+        xml.append(nonce_str);
+        xml.append("</nonce_str>");
+        xml.append("<out_trade_no>");
+        xml.append(WeixinPayActivity.tradeno);
+        xml.append("</out_trade_no>");
+        xml.append("<sign>");
+        xml.append(sign);
+        xml.append("</sign>");
+        xml.append("</xml>");
+        return xml.toString();
     }
 }

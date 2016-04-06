@@ -148,7 +148,7 @@ public class FamilyServiceActivity extends BaseActivity {
     protected void initData() {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
-        setRemittanceVisibility(View.VISIBLE);
+       // setRemittanceVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         jail_id = sp.getInt("jail_id",0);
         ip = getLocalHostIp();

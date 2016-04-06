@@ -57,13 +57,14 @@ public class RemittanceRecordActivity extends BaseActivity {
 
     private void getDate() {
         remittances.clear();
-        String sql = "select distinct Cart.id,Cart.time,Cart.total_money from Cart,line_items where line_items.Items_id = 9999 and Cart.isfinish = 1 and remittance = 1";
+        String sql = "select distinct Cart.id,Cart.time,Cart.total_money,Cart.payment_type from Cart,line_items where line_items.Items_id = 9999 and Cart.isfinish = 1 and remittance = 1";
         Cursor cursor = db.rawQuery(sql,null);
         while (cursor.moveToNext()){
             Remittance remittance = new Remittance();
             remittance.setPrice(cursor.getString(cursor.getColumnIndex("total_money")));
             remittance.setTimes(cursor.getString(cursor.getColumnIndex("time")));
             remittance.setCart_id(cursor.getInt(cursor.getColumnIndex("id")));
+            remittance.setPayment_type(cursor.getString(cursor.getColumnIndex("payment_type")));
             remittances.add(remittance);
         }
         Collections.sort(remittances, new Comparator<Remittance>() {
@@ -112,7 +113,7 @@ public class RemittanceRecordActivity extends BaseActivity {
                 viewHolder = (ViewHolder)convertView.getTag();
             }
             viewHolder.tv_paytime.setText(remittances.get(position).getTimes());
-            viewHolder.tv_payment.setText("支付宝");
+            viewHolder.tv_payment.setText(remittances.get(position).getPayment_type());
             viewHolder.tv_money.setText(remittances.get(position).getPrice());
             viewHolder.tv_prisonnernum.setText(prisonernum);
             viewHolder.tv_prisonname.setText(prisonname);
