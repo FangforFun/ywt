@@ -12,9 +12,9 @@
             android:id="@+id/refuse"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/avchat_recive_refuse_height"
             android:text="拒绝"
-            android:textSize="18sp"
+            android:textSize="@dimen/total_money_tv_size"
             android:textColor="@color/white"
             android:background="@drawable/red_bg_bt_selector" />
 
@@ -24,10 +24,10 @@
             android:id="@+id/receive"
             android:layout_width="0dp"
             android:layout_weight="1"
-            android:layout_height="48dp"
+            android:layout_height="@dimen/avchat_recive_refuse_height"
             android:text="开启"
-            android:textSize="18sp"
+            android:textSize="@dimen/total_money_tv_size"
             android:textColor="@color/white"
             android:background="@drawable/theme_bg_bt_selector"
-            />
+        />
 </LinearLayout>

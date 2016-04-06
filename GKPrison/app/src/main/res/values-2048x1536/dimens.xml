@@ -85,4 +85,6 @@
     <dimen name="opinion_edittext_height">250dp</dimen>
     <dimen name="write_msg_content_height">240dp</dimen>
     <dimen name="warden_tab_tv_size">22sp</dimen>
+    <dimen name="register_success_dialog_height">300dp</dimen>
+    <dimen name="avchat_recive_refuse_height">80dp</dimen>
 </resources>
