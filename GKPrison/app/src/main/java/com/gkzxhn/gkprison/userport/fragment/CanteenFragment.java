@@ -321,6 +321,9 @@ public class CanteenFragment extends BaseFragment {
         lv_salsechoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (Utils.isFastClick()){
+                    return;
+                }
                 switch (position){
                     case 0:
                         sales = new SalesPriorityFragment();
@@ -360,6 +363,9 @@ public class CanteenFragment extends BaseFragment {
         lv_allchoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (Utils.isFastClick()){
+                    return;
+                }
 
                switch (position){
                    case 0:
@@ -939,7 +945,7 @@ public class CanteenFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             Holder holder;
             if (convertView == null){
-                convertView = View.inflate(getActivity(),R.layout.choose_item,null);
+                convertView = View.inflate(context,R.layout.choose_item,null);
                 holder = new Holder();
                 holder.textView = (TextView)convertView.findViewById(R.id.tv_fenlei);
                 convertView.setTag(holder);
