@@ -66,6 +66,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private String token;
     private int jail_id;
     private  int page;
+    private ImageView iv_nothing;//当商品列表没有数据时加载；
     private List<Commodity> addcommdity = new ArrayList<>();
     private View loadmore;
     private int visibleLastIndex = 0; //最后的可视索引；
@@ -84,11 +85,15 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                 case 1:
                     String result = (String)msg.obj;
                     commodities = analysiscommodity(result);
+                    if (commodities.size() == 0){
+                        iv_nothing.setVisibility(View.VISIBLE);
+                    }else {
+                        iv_nothing.setVisibility(View.GONE);
                     Log.d("dd",commodities.size()+"");
                     String sql = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
                     Cursor cursor = db.rawQuery(sql,null);
                     if (cursor.getCount() == 0) {
-                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        adapter = new SalesAdapter(context, commodities);
                         lv_allclass.setAdapter(adapter);
                     }else {
                         while (cursor.moveToNext()){
@@ -105,9 +110,10 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                                 }
                             }
                         }
-                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        adapter = new SalesAdapter(context, commodities);
                         lv_allclass.setAdapter(adapter);
                     }
+                     }
                     break;
                 case 2:
                     String add = (String)msg.obj;
@@ -158,7 +164,8 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     protected View initView() {
         view = View.inflate(context,R.layout.fragment_all_classification,null);
         lv_allclass = (ListView)view.findViewById(R.id.lv_allclassification);
-        loadmore = View.inflate(getActivity().getApplication(),R.layout.bottom,null);
+        loadmore = View.inflate(context,R.layout.bottom,null);
+        iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);
         return view;
     }
 
@@ -447,7 +454,7 @@ private class SalesAdapter extends BaseAdapter{
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder viewHolder;
             if (convertView == null) {
-                convertView = View.inflate(getActivity(), R.layout.sales_item, null);
+                convertView = View.inflate(context, R.layout.sales_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.rl_reduce = (RelativeLayout)convertView.findViewById(R.id.rl_reduce);
                 viewHolder.rl_add = (RelativeLayout)convertView.findViewById(R.id.rl_add);

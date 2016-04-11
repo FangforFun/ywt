@@ -97,7 +97,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         ZhifubaoPayActivity.this.startActivity(intent);
                         finish();
-                   ;
+
 
 
 

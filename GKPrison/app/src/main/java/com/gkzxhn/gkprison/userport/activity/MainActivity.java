@@ -791,9 +791,9 @@ public class MainActivity extends BaseActivity {
         String nonce_str = getRandomString();
         List<NameValuePair> list = new LinkedList<NameValuePair>();
         list.add(new BasicNameValuePair("appid", WeixinConstants.APP_ID));
-        list.add(new BasicNameValuePair("mch_id",WeixinPayActivity.mch_id));
+        list.add(new BasicNameValuePair("mch_id",PaymentActivity.mch_id));
         list.add(new BasicNameValuePair("nonce_str",nonce_str));
-        list.add(new BasicNameValuePair("out_trade_no", WeixinPayActivity.tradeno));
+        list.add(new BasicNameValuePair("out_trade_no", PaymentActivity.TradeNo));
         String sign = genAppSign(list);
         StringBuffer  xml = new StringBuffer();
         xml.append("<xml>");
@@ -801,13 +801,13 @@ public class MainActivity extends BaseActivity {
         xml.append(WeixinConstants.APP_ID);
         xml.append("</appid>");
         xml.append("<mch_id>");
-        xml.append(WeixinPayActivity.mch_id);
+        xml.append(PaymentActivity.mch_id);
         xml.append("</mch_id>");
         xml.append("<nonce_str>");
         xml.append(nonce_str);
         xml.append("</nonce_str>");
         xml.append("<out_trade_no>");
-        xml.append(WeixinPayActivity.tradeno);
+        xml.append(PaymentActivity.TradeNo);
         xml.append("</out_trade_no>");
         xml.append("<sign>");
         xml.append(sign);

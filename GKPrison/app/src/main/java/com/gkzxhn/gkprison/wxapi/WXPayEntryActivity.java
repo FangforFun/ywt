@@ -21,7 +21,8 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
-import com.gkzxhn.gkprison.userport.activity.WeixinPayActivity;
+import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
+
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -56,18 +57,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
-	
-	private static final String TAG = "MicroMsg.SDKSample.WXPayEntryActivity";
+
     private IWXAPI api;
 	private String tradeno;
 	private SharedPreferences sp;
 	private String token;
 	private String times;
-	private String partnerid = "1320273701";
 	StringBuffer sb;
-	private String paystatus;
-	StringBuffer xml;
-	private String URL= "https://api.mch.weixin.qq.com/pay/orderquery";
 	public static final MediaType JSON
 			= MediaType.parse("application/json; charset=utf-8");
 	OkHttpClient client;
@@ -89,9 +85,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         setContentView(R.layout.pay_result);
     	api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
-		Log.d("ff", token);
-
-
     }
 
 
@@ -120,14 +113,8 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 			if (resp.errCode == 0){
 				sp = getSharedPreferences("config", MODE_PRIVATE);
 				token = sp.getString("token", "");
-				times = WeixinPayActivity.times;
-				tradeno = WeixinPayActivity.tradeno;
-				/**
-				SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
-				String type = "微信支付";
-				String sql = "update Cart set isfinish = 1,payment_type = '" + type + "‘ where time = '" + times + "'";
-				db.execSQL(sql);
-				 **/
+				times = PaymentActivity.times;
+				tradeno = PaymentActivity.TradeNo;
 				final String str = "{\"order\":{\"trade_no\":\"" + tradeno + "\",\"status\":\"WAIT_FOR_NOTIFY\"}}";
 				Log.d("dds", str);
 				new Thread() {
@@ -173,6 +160,21 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 						Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
 						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
 						intent.putExtra("times", times);
+						startActivity(intent);
+						finish();
+					}
+				});
+				builder.show();
+			}else if (resp.errCode == -2){
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				View view = this.getLayoutInflater().inflate(R.layout.weixinpay_dialog,null);
+				Button button = (Button)view.findViewById(R.id.btn_payfinish);
+				builder.setView(view);
+				button.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+						Intent intent = new Intent(WXPayEntryActivity.this,MainActivity.class);
+						intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 						startActivity(intent);
 						finish();
 					}

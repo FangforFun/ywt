@@ -66,6 +66,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
     private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
     private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
     private View loadmore;
+    private ImageView iv_nothing;//当没有商品时显示；
     private int visibleLastIndex = 0; //最后的可视索引；
     private int visibleItemCount;//当前窗口可见项总数；
     private  int category_id;
@@ -80,6 +81,10 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                 case 1:
                     String result = (String)msg.obj;
                     commodities = analysiscommodity(result);
+                    if (commodities.size() == 0){
+                        iv_nothing.setVisibility(View.VISIBLE);
+                    }else {
+                        iv_nothing.setVisibility(View.GONE);
                     Log.d("dd",commodities.size()+"");
                     Collections.sort(commodities, new Comparator<Commodity>() {
                         @Override
@@ -95,7 +100,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                     String sql = "select distinct qty,Items_id from line_items where cart_id = "+ cart_id;
                     Cursor cursor = db.rawQuery(sql,null);
                     if (cursor.getCount() == 0) {
-                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        adapter = new SalesAdapter(context, commodities);
                         lv_sale.setAdapter(adapter);
                     }else {
                         while (cursor.moveToNext()){
@@ -112,8 +117,9 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                                 }
                             }
                         }
-                        adapter = new SalesAdapter(getActivity().getApplication(), commodities);
+                        adapter = new SalesAdapter(context, commodities);
                         lv_sale.setAdapter(adapter);
+                    }
                     }
                     break;
                 case 2:
@@ -173,7 +179,8 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_sales_priority,null);
         lv_sale = (ListView)view.findViewById(R.id.lv_sales);
-        loadmore = View.inflate(getActivity().getApplication(),R.layout.bottom,null);
+        loadmore = View.inflate(context,R.layout.bottom,null);
+        iv_nothing = (ImageView)view.findViewById(R.id.iv_nothing);
         return view;
     }
 
@@ -461,7 +468,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder viewHolder ;
             if (convertView == null){
-                convertView = View.inflate(getActivity(),R.layout.sales_item,null);
+                convertView = View.inflate(context,R.layout.sales_item,null);
                 viewHolder = new ViewHolder();
                 viewHolder.rl_reduce = (RelativeLayout)convertView.findViewById(R.id.rl_reduce);
                 viewHolder.rl_add = (RelativeLayout)convertView.findViewById(R.id.rl_add);
