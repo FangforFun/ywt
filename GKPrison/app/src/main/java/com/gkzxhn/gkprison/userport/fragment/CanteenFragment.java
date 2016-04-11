@@ -163,6 +163,7 @@ public class CanteenFragment extends BaseFragment {
                         int a = getResultcode(s);
                         Log.d("订单号",a+"");
                         if (a == 200) {
+                            settlement.setEnabled(true);
                             Intent intent = new Intent(context, PaymentActivity.class);
                             intent.putExtra("totalmoney", send);
                             intent.putExtra("TradeNo", TradeNo);
@@ -528,6 +529,7 @@ public class CanteenFragment extends BaseFragment {
                     }
                     if (allcount != 0) {
                         sendOrderToServer();
+                        settlement.setEnabled(false);
                     } else {
                         Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
                     }
