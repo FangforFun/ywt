@@ -176,7 +176,7 @@ public class PaymentActivity extends BaseActivity {
                     break;
                 case SDK_PAY_FLAG: {
                     PayResult payResult = new PayResult((String) msg.obj);
-
+                    bt_pay.setEnabled(true);
                     // 支付宝返回此次支付结果及加签，建议对支付宝签名信息拿签约时支付宝提供的公钥做验签
                     String resultInfo = payResult.getResult();
 
@@ -346,6 +346,7 @@ public class PaymentActivity extends BaseActivity {
         bt_pay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                bt_pay.setEnabled(false);
                 dialog = new ProgressDialog(PaymentActivity.this);
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setMessage("");
@@ -661,7 +662,7 @@ public class PaymentActivity extends BaseActivity {
         }
         api.registerApp(WeixinConstants.APP_ID);
         api.sendReq(req);
-
+        bt_pay.setEnabled(true);
     }
     private String genAppSign(List<NameValuePair> params) {
         sb = new StringBuffer();
