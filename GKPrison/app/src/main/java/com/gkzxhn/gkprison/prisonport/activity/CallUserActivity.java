@@ -200,9 +200,8 @@ public class CallUserActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_call:
                 if(Utils.isNetworkAvailable()) {
-                    AVChatActivity.start(this,
-                            familyMeetingInfo.getAccid()
-                            , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                    Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
+                    AVChatActivity.start(this, familyMeetingInfo.getAccid(), 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("family_accid", familyMeetingInfo.getAccid());
                     editor.commit();

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -31,6 +32,8 @@ import com.netease.nimlib.sdk.avchat.model.AVChatCommonEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatControlEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatOnlineAckEvent;
+
+import java.io.File;
 
 import de.greenrobot.event.EventBus;
 
@@ -83,6 +86,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     private SharedPreferences sp;
 
     public static void start(Context context, String account, int callType, int source) {
+        Log.i("AVChatActivity ---> ", account + "==");
         needFinish = false;
         Intent intent = new Intent();
         intent.setClass(context, AVChatActivity.class);
@@ -99,6 +103,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
      * @param context
      */
     public static void launch(Context context, AVChatData config, int source) {
+        Log.i("AVChatActivity ---> ", config.getAccount() + "==");
         needFinish = false;
         Intent intent = new Intent();
         intent.setClass(context, AVChatActivity.class);
@@ -240,6 +245,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
      */
     private void parseIncomingIntent() {
         avChatData = (AVChatData) getIntent().getSerializableExtra(KEY_CALL_CONFIG);
+        Log.i("AVChatActivity avChatData---> ", avChatData.getAccount() + "---");
         state = avChatData.getChatType().getValue();
     }
 
@@ -248,6 +254,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
      */
     private void parseOutgoingIntent() {
         receiverId = getIntent().getStringExtra(KEY_ACCOUNT);
+        Log.i("AVChatActivity ---> ", receiverId + "---");
         state = getIntent().getIntExtra(KEY_CALL_TYPE, -1);
     }
 
@@ -405,8 +412,10 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
 
     @Override
     public void onUserJoin(String account) {
-        Log.d(TAG, "onUserJoin");
-        avChatUI.setVideoAccount(account);
+        Log.i(TAG, "onUserJoin  " + account + "----" + getIntent().getStringExtra(KEY_ACCOUNT));
+        avChatUI.setVideoAccount(getIntent().getStringExtra(KEY_ACCOUNT));
+
+        avChatUI.initRemoteSurfaceView(avChatUI.getVideoAccount());
     }
 
     @Override
@@ -446,6 +455,38 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     @Override
     public void onOpenDeviceError(int code) {
 
+    }
+
+    @Override
+    public void onRecordEnd(String[] files, int event) {
+        if(files != null && files.length > 0) {
+            String file = files[0];
+            String parent = new File(file).getParent();
+            String msg;
+            if(event == 0) {
+                msg = "录制已结束";
+            } else {
+                msg = "你的手机内存不足, 录制已结束";
+            }
+
+            if(!TextUtils.isEmpty(parent)) {
+                msg += ", 录制文件已保存至：" + parent;
+            }
+
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        } else {
+            if(event == 1) {
+                Toast.makeText(this, "你的手机内存不足, 录制已结束.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "录制已结束.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        if(event == 1) {
+            if(avChatUI != null) {
+                avChatUI.resetRecordTip();
+            }
+        }
     }
 
     /****************************** 连接建立处理 ********************/

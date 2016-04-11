@@ -45,7 +45,13 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     ToggleView switchCameraToggle;
     ToggleView closeCameraToggle;
     ToggleView muteToggle;
+    ToggleView recordToggle;
     ImageView hangUpImg;
+
+    //record
+    private View recordView;
+    private View recordTip;
+    private View recordWarning;
 
     private int topRootHeight = 0;
     private int bottomRootHeight = 0;
@@ -87,10 +93,15 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         refuseTV.setOnClickListener(this);
         receiveTV.setOnClickListener(this);
 
+        recordView = root.findViewById(R.id.avchat_record_layout);
+        recordTip = recordView.findViewById(R.id.avchat_record_tip);
+        recordWarning = recordView.findViewById(R.id.avchat_record_warning);
+
         bottomRoot = root.findViewById(R.id.avchat_video_bottom_control);
         switchCameraToggle = new ToggleView(bottomRoot.findViewById(R.id.avchat_switch_camera), ToggleState.DISABLE, this);
         closeCameraToggle = new ToggleView(bottomRoot.findViewById(R.id.avchat_close_camera), ToggleState.DISABLE, this);
         muteToggle = new ToggleView(bottomRoot.findViewById(R.id.avchat_video_mute), ToggleState.DISABLE, this);
+        recordToggle = new ToggleView(bottomRoot.findViewById(R.id.avchat_video_record), ToggleState.DISABLE, this);
         hangUpImg = (ImageView) bottomRoot.findViewById(R.id.avchat_video_logout);
         hangUpImg.setOnClickListener(this);
         init = true;
@@ -141,13 +152,13 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 break;
             case OUTGOING_AUDIO_TO_VIDEO:
                 isInSwitch = true;
-                if(sp.getBoolean("is_can_video", false)) {
-                    setTopRoot(true);
-                }else {
-                    setTopRoot(false);
-                }
-//                setTime(true);
-//                setTopRoot(true);
+//                if(sp.getBoolean("is_can_video", false)) {
+//                    setTopRoot(true);
+//                }else {
+//                    setTopRoot(false);
+//                }
+                setTime(true);
+                setTopRoot(true);
                 setMiddleRoot(false);
                 setBottomRoot(true);
                 break;
@@ -243,6 +254,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 switchCameraToggle.enable();
             closeCameraToggle.enable();
             muteToggle.enable();
+            recordToggle.enable();
             shouldEnableToggle = false;
         }
     }
@@ -275,8 +287,27 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
             case R.id.avchat_close_camera:
                 listener.closeCamera();
                 break;
+            case R.id.avchat_video_record:
+                listener.toggleRecord();
+                break;
             default:
                 break;
+        }
+    }
+
+    public void showRecordView(boolean show, boolean warning) {
+        if(show) {
+            recordView.setVisibility(View.VISIBLE);
+            recordTip.setVisibility(View.VISIBLE);
+            if(warning) {
+                recordWarning.setVisibility(View.VISIBLE);
+            } else {
+                recordWarning.setVisibility(View.GONE);
+            }
+        } else {
+            recordView.setVisibility(View.INVISIBLE);
+            recordTip.setVisibility(View.INVISIBLE);
+            recordWarning.setVisibility(View.GONE);
         }
     }
 

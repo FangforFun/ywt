@@ -99,7 +99,7 @@ public class MyApplication extends Application {
                                     Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
                                     break;
                                 case CONNECTING:
-                                    Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
                                     break;
                                 case LOGINING:
 //                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
@@ -169,6 +169,7 @@ public class MyApplication extends Application {
                 // 有网络来电打开AVChatActivity
                 AVChatProfile.getInstance().setAVChatting(true);
                 AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
+                Log.i("----------------", data.getAccount() + "---" + data.toString());
             }
         }, register);
     }
@@ -215,20 +216,26 @@ public class MyApplication extends Application {
         @Override
         public Bitmap getAvatarForMessageNotifier(String s) {
             UserInfo user = getUserInfo(s);
-            if (user != null && !TextUtils.isEmpty(user.getAvatar())) {
-                return ImageLoaderKit.getBitmapFromCache(user.getAvatar(), R.dimen.avatar_size_default, R.dimen
-                        .avatar_size_default);
-            }
-            return null;
+            return (user != null) ? ImageLoaderKit.getNotificationBitmapFromCache(user) : null;
         }
 
         @Override
         public String getDisplayNameForMessageNotifier(String account, String sessionId, SessionTypeEnum sessionTypeEnum) {
+            String nick = null;
             if (sessionTypeEnum == SessionTypeEnum.P2P) {
-                return NimUserInfoCache.getInstance().getUserDisplayName(account);
-            } else {
-                return TeamDataCache.getInstance().getDisplayNameWithoutMe(sessionId, account);
+                nick = NimUserInfoCache.getInstance().getAlias(account);
+            } else if (sessionTypeEnum == SessionTypeEnum.Team) {
+                nick = TeamDataCache.getInstance().getTeamNick(sessionId, account);
+                if (TextUtils.isEmpty(nick)) {
+                    nick = NimUserInfoCache.getInstance().getAlias(account);
+                }
             }
+            // 返回null，交给sdk处理。如果对方有设置nick，sdk会显示nick
+            if (TextUtils.isEmpty(nick)) {
+                return null;
+            }
+
+            return nick;
         }
     };
 

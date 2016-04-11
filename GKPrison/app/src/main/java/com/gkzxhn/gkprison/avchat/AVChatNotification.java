@@ -46,7 +46,7 @@ public class AVChatNotification {
             localIntent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
             String tickerText = String.format(context.getString(R.string.avchat_notification), displayName);
-            int iconId = R.drawable.ic_stat_notify_msg;
+            int iconId = R.mipmap.ic_launcher;
 
             PendingIntent pendingIntent = PendingIntent.getActivity(context, CALLING_NOTIFY_ID, localIntent, PendingIntent
                     .FLAG_UPDATE_CURRENT);
