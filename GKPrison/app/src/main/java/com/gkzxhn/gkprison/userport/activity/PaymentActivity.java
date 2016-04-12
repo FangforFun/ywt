@@ -69,7 +69,7 @@ public class PaymentActivity extends BaseActivity {
     private Button bt_pay;
     private TextView tv_count_money;
     private String countmoney;
-    private String[] pay_ways = {"银联支付", "支付宝支付","微信支付"};
+    private String[] pay_ways = {"支付宝支付","微信支付"};
     private int[] pay_way_icons = {R.drawable.pay_way_bank_card,R.drawable.pay_way_zhifubao,R.drawable.pay_way_weixin};
     private boolean[] ischeckeds = {true, false, false};
     private MyAdapter adapter;
@@ -351,14 +351,14 @@ public class PaymentActivity extends BaseActivity {
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setMessage("");
                 dialog.show();
-                 if (ischeckeds[0] == true){
-                     payment_type = "unionpay";
-                     send_payment_type(payment_type);
-
-                 }else if (ischeckeds[1] == true){
+                 //if (ischeckeds[0] == true){
+                   //  payment_type = "unionpay";
+                   //  send_payment_type(payment_type);
+                // }else
+                if (ischeckeds[0] == true){
                      payment_type = "alipay";
                      send_payment_type(payment_type);
-                 }else if (ischeckeds[2] == true){
+                 }else if (ischeckeds[1] == true){
                      payment_type = "weixin";
                      send_payment_type(payment_type);
                  }
@@ -402,7 +402,7 @@ public class PaymentActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 3;
+            return pay_ways.length;
         }
 
         @Override
