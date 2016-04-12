@@ -631,6 +631,7 @@ public class PaymentActivity extends BaseActivity {
     }
 
 
+    
     /**
      * get the sign type we use. 获取签名方式
      *
