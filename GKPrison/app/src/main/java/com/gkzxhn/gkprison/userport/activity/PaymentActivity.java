@@ -629,6 +629,8 @@ public class PaymentActivity extends BaseActivity {
         //  Log.d("MainActivity","bbb:"+ SignUtils.sign("445", RSA_PRIVATE));
         return SignUtils.sign(content, RSA_PRIVATE);
     }
+
+    
     /**
      * get the sign type we use. 获取签名方式
      *
