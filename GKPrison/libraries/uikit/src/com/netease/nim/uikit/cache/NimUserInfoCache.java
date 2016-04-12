@@ -53,6 +53,10 @@ public class NimUserInfoCache {
      * 从云信服务器获取用户信息（重复请求处理）[异步]
      */
     public void getUserInfoFromRemote(final String account, final RequestCallback<NimUserInfo> callback) {
+        if (TextUtils.isEmpty(account)) {
+            return;
+        }
+
         if (requestUserInfoMap.containsKey(account)) {
             if (callback != null) {
                 requestUserInfoMap.get(account).add(callback);
@@ -179,12 +183,20 @@ public class NimUserInfoCache {
      * @return
      */
     public String getUserDisplayName(String account) {
+        String alias = getAlias(account);
+        if (!TextUtils.isEmpty(alias)) {
+            return alias;
+        }
+
+        return getUserName(account);
+    }
+
+    public String getAlias(String account) {
         Friend friend = FriendDataCache.getInstance().getFriendByAccount(account);
         if (friend != null && !TextUtils.isEmpty(friend.getAlias())) {
             return friend.getAlias();
         }
-
-        return getUserName(account);
+        return null;
     }
 
     // 获取用户原本的昵称

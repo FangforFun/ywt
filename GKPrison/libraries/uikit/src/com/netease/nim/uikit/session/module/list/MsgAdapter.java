@@ -5,6 +5,7 @@ import android.view.View;
 
 import com.netease.nim.uikit.common.adapter.TAdapter;
 import com.netease.nim.uikit.common.adapter.TAdapterDelegate;
+import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.IMMessage;
 
 import java.util.HashMap;
@@ -17,6 +18,7 @@ public class MsgAdapter extends TAdapter<IMMessage> {
 
     private ViewHolderEventListener eventListener;
     private Map<String, Float> progresses; // 有文件传输，需要显示进度条的消息ID map
+    private String messageId;
 
     public MsgAdapter(Context context, List<IMMessage> items, TAdapterDelegate delegate) {
         super(context, items, delegate);
@@ -165,6 +167,9 @@ public class MsgAdapter extends TAdapter<IMMessage> {
     }
 
     private boolean hideTimeAlways(IMMessage message) {
+        if (message.getSessionType() == SessionTypeEnum.ChatRoom) {
+            return true;
+        }
         switch (message.getMsgType()) {
         case notification:
             return true;
@@ -179,5 +184,13 @@ public class MsgAdapter extends TAdapter<IMMessage> {
 
         // 发送失败或者多媒体文件下载失败指示按钮点击响应处理
         void onFailedBtnClick(IMMessage resendMessage);
+    }
+
+    public void setUuid(String messageId) {
+        this.messageId = messageId;
+    }
+
+    public String getUuid() {
+        return messageId;
     }
 }

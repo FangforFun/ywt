@@ -3,6 +3,11 @@ package com.gkzxhn.gkprison.avchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.StatFs;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Toast;
@@ -23,19 +28,26 @@ import com.netease.nimlib.sdk.avchat.AVChatCallback;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 import com.netease.nimlib.sdk.avchat.constant.AVChatType;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
+import com.netease.nimlib.sdk.avchat.model.AVChatNotifyOption;
 import com.netease.nimlib.sdk.avchat.model.VideoChatParam;
 
 import org.apache.http.entity.StringEntity;
 import org.apache.http.protocol.HTTP;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import de.greenrobot.event.EventBus;
 
 /**
  * 音视频管理器, 音视频相关功能管理
- * Created by hzxuwen on 2015/4/23.
+ * Created by huangzhengneng on 2016/1/23.
  */
 public class AVChatUI implements AVChatUIListener {
     // constant
@@ -64,6 +76,38 @@ public class AVChatUI implements AVChatUIListener {
     public boolean canSwitchCamera = false;
     private boolean isClosedCamera = false;
     public AtomicBoolean isCallEstablish = new AtomicBoolean(false);
+
+    // 检查存储
+    private Handler uiHandler = new Handler(Looper.getMainLooper());
+    private boolean recordWarning = false;
+    private Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            File dir = Environment.getExternalStorageDirectory();
+            StatFs stat = new StatFs(dir.getPath());
+            long blockSize;
+            if( Build.VERSION.SDK_INT >= 18) {
+                blockSize = stat.getBlockSizeLong();
+            } else {
+                blockSize = stat.getBlockSize();
+            }
+            long availableBlocks;
+            if(Build.VERSION.SDK_INT >= 18) {
+                availableBlocks = stat.getAvailableBlocksLong();
+            } else {
+                availableBlocks = stat.getAvailableBlocks();
+            }
+
+            long size = availableBlocks * blockSize;
+
+            if(size <= 10 * 1024 * 1024) {
+                recordWarning = true;
+                updateRecordTip();
+            } else {
+                uiHandler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     public interface AVChatListener {
         void uiExit();
@@ -126,6 +170,10 @@ public class AVChatUI implements AVChatUIListener {
                         ((Activity) context).getWindowManager().getDefaultDisplay().getRotation());
             }
         }
+
+        AVChatNotifyOption notifyOption = new AVChatNotifyOption();
+        notifyOption.extendMessage = "extra_data";
+
         /**
          * 发起通话
          * account 对方帐号
@@ -133,7 +181,7 @@ public class AVChatUI implements AVChatUIListener {
          * videoParam 发起视频通话时传入，发起音频通话传null
          * AVChatCallback 回调函数，返回AVChatInfo
          */
-        AVChatManager.getInstance().call(account, callTypeEnum, videoParam, new AVChatCallback<AVChatData>() {
+        AVChatManager.getInstance().call(account, callTypeEnum, videoParam, notifyOption, new AVChatCallback<AVChatData>() {
             @Override
             public void onSuccess(AVChatData data) {
                 Log.d(TAG, "success");
@@ -212,6 +260,7 @@ public class AVChatUI implements AVChatUIListener {
             avChatAudio.closeSession(exitCode);
         if (avChatVideo != null)
             avChatVideo.closeSession(exitCode);
+        uiHandler.removeCallbacks(runnable);
         showQuitToast(exitCode);
         isCallEstablish.set(false);
         canSwitchCamera = false;
@@ -278,17 +327,17 @@ public class AVChatUI implements AVChatUIListener {
         AVChatManager.getInstance().hangUp(new AVChatCallback<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
-                Log.d(TAG, "reject sucess");
+                Log.d(TAG, "reject success");
             }
 
             @Override
             public void onFailed(int code) {
-                Log.d(TAG, "reject sucess->" + code);
+                Log.d(TAG, "reject success->" + code);
             }
 
             @Override
             public void onException(Throwable exception) {
-                Log.d(TAG, "reject sucess");
+                Log.d(TAG, "reject success");
             }
         });
         closeSessions(AVChatExitCode.REJECT);
@@ -300,6 +349,39 @@ public class AVChatUI implements AVChatUIListener {
     private void rejectAudioToVideo() {
         onCallStateChange(CallStateEnum.AUDIO);
         AVChatManager.getInstance().ackSwitchToVideo(false, videoParam, null); // 音频切换到视频请求的回应. true为同意，false为拒绝
+        updateRecordTip();
+    }
+
+    //Only for test
+    private int getVideoDimens() {
+
+        File file = new File("sdcard/nim.properties");
+
+        if(file.exists()) {
+            InputStream is = null;
+
+            try {
+                is = new BufferedInputStream(new FileInputStream(file));
+                Properties properties = new Properties();
+                properties.load(is);
+                int dimens = Integer.parseInt(properties.getProperty("avchat.video.dimens", "0"));
+                LogUtil.i(TAG, "dimes:" + dimens);
+                return dimens;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if(is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+
+        return 0;
     }
 
     /**
@@ -313,10 +395,8 @@ public class AVChatUI implements AVChatUIListener {
             onCallStateChange(CallStateEnum.AUDIO_CONNECTING);
         } else {
             onCallStateChange(CallStateEnum.VIDEO_CONNECTING);
-            videoParam = new VideoChatParam(avChatSurface.mCapturePreview,
-                    ((Activity) context).getWindowManager().getDefaultDisplay().getRotation());
+            videoParam = new VideoChatParam(avChatSurface.mCapturePreview, 0, getVideoDimens());
         }
-
         /**
          * 接收方接听电话
          * videoParam 接听视频通话时传入，接听音频通话传null
@@ -361,6 +441,26 @@ public class AVChatUI implements AVChatUIListener {
         } else {
             hangUp(AVChatExitCode.CANCEL);
         }
+//        // 停止录制
+//        if(AVChatManager.getInstance().isRecording()) {
+//            AVChatManager.getInstance().stopRecord(new AVChatCallback<Void>() {
+//                @Override
+//                public void onSuccess(Void aVoid) {
+//                    Log.i("stop record success ---> ", "success");
+//                    Toast.makeText(context, "录像成功，已保存至SD卡", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                @Override
+//                public void onFailed(int i) {
+//                    Log.i("stop record failed ---> ", "failed " + i);
+//                }
+//
+//                @Override
+//                public void onException(Throwable throwable) {
+//                    Log.i("stop record exception ---> ", throwable.getMessage());
+//                }
+//            });
+//        }
     }
 
     /**
@@ -431,6 +531,68 @@ public class AVChatUI implements AVChatUIListener {
     }
 
     @Override
+    public void toggleRecord() {
+        if(AVChatManager.getInstance().isRecording()) {
+            AVChatManager.getInstance().stopRecord(new AVChatCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+
+                }
+
+                @Override
+                public void onFailed(int code) {
+
+                }
+
+                @Override
+                public void onException(Throwable exception) {
+
+                }
+            });
+
+            uiHandler.removeCallbacks(runnable);
+            recordWarning = false;
+
+        } else {
+            recordWarning = false;
+
+            if(AVChatManager.getInstance().startRecord(new AVChatCallback<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+
+                }
+
+                @Override
+                public void onFailed(int code) {
+
+                }
+
+                @Override
+                public void onException(Throwable exception) {
+
+                }
+            })) {
+
+                if(CallStateEnum.isAudioMode(callingState)) {
+                    Toast.makeText(context, "仅录制你说话的内容", Toast.LENGTH_SHORT).show();
+                }
+
+                if(CallStateEnum.isVideoMode(callingState)) {
+                    Toast.makeText(context, "仅录制你的声音和图像", Toast.LENGTH_SHORT).show();
+                }
+
+                uiHandler.post(runnable);
+
+            } else {
+
+                Toast.makeText(context, "录制失败", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        updateRecordTip();
+    }
+
+    @Override
     public void videoSwitchAudio() {
         /**
          * 请求视频切换到音频
@@ -468,7 +630,7 @@ public class AVChatUI implements AVChatUIListener {
             editor.putBoolean("is_can_video", true);
             editor.putString("current_ms", 900 + "");
             editor.commit();
-        }else if(!TextUtils.isEmpty(msg) && msg.equals("审核未通过")){
+        } else if (!TextUtils.isEmpty(msg) && msg.equals("审核未通过")) {
             // 审核未通过  自动挂断  家属端提示审核未通过
 //            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             hangUp(AVChatExitCode.HANGUP);
@@ -571,9 +733,31 @@ public class AVChatUI implements AVChatUIListener {
      * @param largeAccount 对方的帐号
      */
     public void initSurfaceView(String largeAccount) {
-        avChatSurface.initLargeSurfaceView(largeAccount);
+        Log.i("AVChatUI initSurfaceView ---> ", largeAccount + "----" + DemoCache.getAccount() + "----" + avChatData.toString());
+        avChatSurface.initLargeSurfaceView(avChatData.getAccount());
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
-        if(!largeAccount.contains("gkzxhn")) { // 发起者(狱警方)
+        if(!avChatData.getAccount().contains("gkzxhn")) { // 发起者(狱警方)
+            // 开始录像
+//            if(!AVChatManager.getInstance().isRecording()) {
+//                AVChatManager.getInstance().startRecord(new AVChatCallback<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Log.i("record success ---> ", largeAccount + "----" + DemoCache.getAccount());
+//                    }
+//
+//                    @Override
+//                    public void onFailed(int i) {
+//                        Toast.makeText(context, "录像失败 ---> " + i, Toast.LENGTH_SHORT).show();
+//                        Log.i("record failed --- > ", "录像失败 ---> " + i);
+//                    }
+//
+//                    @Override
+//                    public void onException(Throwable throwable) {
+//                        Toast.makeText(context, "录像异常 ---> " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
+//                        Log.i("record failed --- > ", "录像异常 ---> " + throwable.getMessage());
+//                    }
+//                });
+//            }
             avChatSurface.setIsComing(false);
             avChatSurface.setonThroughExamineClickListener(new AVChatSurface.OnThroughExamineListener() {
                 @Override
@@ -607,28 +791,6 @@ public class AVChatUI implements AVChatUIListener {
                             EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
                         }
                     });
-//                    new Thread(){
-//                        @Override
-//                        public void run() {
-//                            String content = "{" +
-//                                    "    \"notification\": {" +
-//                                    "        \"code\": 200," +
-//                                    "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
-//                                    "        \"sender\": \"" + sp.getString("token", "") + "\"" +
-//                                    "    }" +
-//                                    "}";
-//                            try {
-//                                String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.VIDEO_EXAMIME, content);
-//                                Log.i("审核通过成功", result);
-//                                avChatSurface.setExamineButtonVisibility(View.GONE);
-//                                avChatVideo.setTime(true);// 开始计时
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                                Log.i("审核通过失败", e.getMessage().toString());
-//                                EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
-//                            }
-//                        }
-//                    }.start();
                 }
             });
             avChatSurface.setonNotThroughExamineClickListener(new AVChatSurface.OnNotThroughExamineListener() {
@@ -664,34 +826,41 @@ public class AVChatUI implements AVChatUIListener {
                             EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
                         }
                     });
-//                    new Thread(){
-//                        @Override
-//                        public void run() {
-//                            String content = "{" +
-//                                    "    \"notification\": {" +
-//                                    "        \"code\": 401," +
-//                                    "        \"receiver\": \"" + sp.getString("family_accid", "") + "\"," +
-//                                    "        \"sender\": \"" + sp.getString("token", "") + "\"" +
-//                                    "    }" +
-//                                    "}";
-//                            try {
-//                                String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.VIDEO_EXAMIME, content);
-//                                Log.i("审核不通过成功", result);
-//                                avChatSurface.setExamineButtonVisibility(View.GONE);
-//                                //  挂断
-//                                hangUp(AVChatExitCode.HANGUP);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                                Log.i("审核不通过失败", e.getMessage().toString());
-//                                EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
-//                            }
-//                        }
-//                    }.start();
                 }
             });
         }else {
             avChatSurface.setIsComing(true);
             avChatVideo.setTopRoot(false);
+        }
+    }
+
+    public void initRemoteSurfaceView(String account) {
+        avChatSurface.initLargeSurfaceView(avChatData.getAccount());
+    }
+
+    public void initLocalSurfaceView() {
+        avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
+    }
+
+    private void updateRecordTip() {
+
+        if(CallStateEnum.isAudioMode(callingState)) {
+            avChatAudio.showRecordView(AVChatManager.getInstance().isRecording(), recordWarning);
+        }
+        if(CallStateEnum.isVideoMode(callingState)) {
+            avChatVideo.showRecordView(AVChatManager.getInstance().isRecording(), recordWarning);
+        }
+
+    }
+
+    public void resetRecordTip() {
+        uiHandler.removeCallbacks(runnable);
+        recordWarning = false;
+        if(CallStateEnum.isAudioMode(callingState)) {
+            avChatAudio.showRecordView(AVChatManager.getInstance().isRecording(), recordWarning);
+        }
+        if(CallStateEnum.isVideoMode(callingState)) {
+            avChatVideo.showRecordView(AVChatManager.getInstance().isRecording(), recordWarning);
         }
     }
 

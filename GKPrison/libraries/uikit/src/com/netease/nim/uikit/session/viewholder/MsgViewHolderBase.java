@@ -1,20 +1,22 @@
 package com.netease.nim.uikit.session.viewholder;
 
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.R;
+import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nim.uikit.common.adapter.TViewHolder;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.sys.TimeUtil;
 import com.netease.nim.uikit.session.module.list.MsgAdapter;
-import com.netease.nim.uikit.cache.TeamDataCache;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.msg.MsgService;
 import com.netease.nimlib.sdk.msg.attachment.FileAttachment;
@@ -36,9 +38,13 @@ public abstract class MsgViewHolderBase extends TViewHolder {
     protected ProgressBar progressBar;
     protected TextView nameTextView;
     protected FrameLayout contentContainer;
+    protected LinearLayout nameContainer;
+    protected TextView readReceiptTextView;
 
     private HeadImageView avatarLeft;
     private HeadImageView avatarRight;
+
+    public ImageView nameIconView;
 
     // contentContainerView的默认长按事件。如果子类需要不同的处理，可覆盖onItemLongClick方法
     // 但如果某些子控件会拦截触摸消息，导致contentContainer收不到长按事件，子控件也可在inflate时重新设置
@@ -76,6 +82,16 @@ public abstract class MsgViewHolderBase extends TViewHolder {
     // 返回该消息是不是居中显示
     protected boolean isMiddleItem() {
         return false;
+    }
+
+    // 是否显示头像，默认为显示
+    protected boolean isShowHeadImage() {
+        return true;
+    }
+
+    // 是否显示气泡背景，默认为显示
+    protected boolean isShowBubble() {
+        return true;
     }
 
     /// -- 以下接口可由子类调用
@@ -133,6 +149,9 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         progressBar = findViewById(R.id.message_item_progress);
         nameTextView = findViewById(R.id.message_item_nickname);
         contentContainer = findViewById(R.id.message_item_content);
+        nameIconView = findViewById(R.id.message_item_name_icon);
+        nameContainer = findViewById(R.id.message_item_name_layout);
+        readReceiptTextView = findView(R.id.textViewAlreadyRead);
 
         View.inflate(view.getContext(), getContentResId(), contentContainer);
         inflateContentView();
@@ -148,6 +167,7 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         setOnClickListener();
         setLongClickListener();
         setContent();
+        setReadReceipt();
 
         bindContentView();
     }
@@ -203,6 +223,10 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         } else {
             show.setVisibility(View.VISIBLE);
             show.loadBuddyAvatar(message.getFromAccount());
+        }
+
+        if (!isShowHeadImage()) {
+            show.setVisibility(View.GONE);
         }
         hide.setVisibility(View.GONE);
     }
@@ -274,7 +298,7 @@ public abstract class MsgViewHolderBase extends TViewHolder {
         }
     }
 
-    private void setNameTextView() {
+    public void setNameTextView() {
         if (message.getSessionType() == SessionTypeEnum.Team && isReceivedMessage() && !isMiddleItem()) {
             nameTextView.setVisibility(View.VISIBLE);
             nameTextView.setText(TeamDataCache.getInstance().getTeamMemberDisplayName(message.getSessionId(), message
@@ -285,10 +309,14 @@ public abstract class MsgViewHolderBase extends TViewHolder {
     }
 
     private void setContent() {
+        if (!isShowBubble() && !isMiddleItem()) {
+            return;
+        }
+
         LinearLayout bodyContainer = (LinearLayout) view.findViewById(R.id.message_item_body);
 
         // 调整container的位置
-        int index = isReceivedMessage() ? 0 : 2;
+        int index = isReceivedMessage() ? 0 : 3;
         if (bodyContainer.getChildAt(index) != contentContainer) {
             bodyContainer.removeView(contentContainer);
             bodyContainer.addView(contentContainer, index);
@@ -304,6 +332,14 @@ public abstract class MsgViewHolderBase extends TViewHolder {
                 setGravity(bodyContainer, Gravity.RIGHT);
                 contentContainer.setBackgroundResource(rightBackground());
             }
+        }
+    }
+
+    private void setReadReceipt() {
+        if (!TextUtils.isEmpty(getAdapter().getUuid()) && message.getUuid().equals(getAdapter().getUuid())) {
+            readReceiptTextView.setVisibility(View.VISIBLE);
+        } else {
+            readReceiptTextView.setVisibility(View.GONE);
         }
     }
 }

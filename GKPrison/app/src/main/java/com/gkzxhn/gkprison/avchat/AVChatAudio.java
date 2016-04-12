@@ -19,7 +19,7 @@ import com.netease.nim.uikit.common.util.sys.NetworkUtil;
 
 /**
  * 音频管理器， 音频界面初始化和管理
- * Created by hzxuwen on 2015/4/24.
+ * Created by huangzhengneng on 2016/1/24.
  */
 public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticlockwise.OnTimeCompleteListener {
     // constant
@@ -39,11 +39,17 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
     private View mute_speaker_hangup;
     private ToggleView muteToggle;
     private ToggleView speakerToggle;
+    private ToggleView recordToggle;
     private View hangup;
 
     private View refuse_receive;
     private TextView refuseTV;
     private TextView receiveTV;
+
+    //record
+    private View recordView;
+    private View recordTip;
+    private View recordWarning;
 
     // data
     private AVChatUI manager;
@@ -99,6 +105,7 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
                 setSTime(true);
                 setMuteSpeakerHangupControl(true);
                 setRefuseReceive(false);
+                enableToggle();
                 break;
             case AUDIO_CONNECTING:
                 showNotify(R.string.avchat_connecting);
@@ -113,6 +120,15 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
                 break;
         }
         setRoot(CallStateEnum.isAudioMode(state));
+    }
+
+    private boolean isEnabled = false;
+
+    private void enableToggle() {
+        if(!isEnabled) {
+            recordToggle.enable();
+        }
+        isEnabled = true;
     }
 
     /**
@@ -139,6 +155,8 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
         muteToggle = new ToggleView(mute, ToggleState.OFF, this);
         View speaker = mute_speaker_hangup.findViewById(R.id.avchat_audio_speaker);
         speakerToggle = new ToggleView(speaker, ToggleState.OFF, this);
+        View record = mute_speaker_hangup.findViewById(R.id.avchat_audio_record);
+        recordToggle = new ToggleView(record, ToggleState.OFF, this);
         hangup = mute_speaker_hangup.findViewById(R.id.avchat_audio_hangup);
         hangup.setOnClickListener(this);
 
@@ -147,6 +165,10 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
         receiveTV = (TextView) refuse_receive.findViewById(R.id.receive);
         refuseTV.setOnClickListener(this);
         receiveTV.setOnClickListener(this);
+
+        recordView = rootView.findViewById(R.id.avchat_record_layout);
+        recordTip = rootView.findViewById(R.id.avchat_record_tip);
+        recordWarning = rootView.findViewById(R.id.avchat_record_warning);
 
         init = true;
     }
@@ -178,6 +200,22 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
      */
     private void hideNotify(){
         notifyTV.setVisibility(View.GONE);
+    }
+
+    public void showRecordView(boolean show, boolean warning) {
+        if(show) {
+            recordView.setVisibility(View.VISIBLE);
+            recordTip.setVisibility(View.VISIBLE);
+            if(warning) {
+                recordWarning.setVisibility(View.VISIBLE);
+            } else {
+                recordWarning.setVisibility(View.GONE);
+            }
+        } else {
+            recordView.setVisibility(View.INVISIBLE);
+            recordTip.setVisibility(View.INVISIBLE);
+            recordWarning.setVisibility(View.GONE);
+        }
     }
 
     /**
@@ -283,6 +321,9 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
             case R.id.avchat_audio_switch_video:
                 listener.audioSwitchVideo();
                 break;
+            case R.id.avchat_audio_record:
+                listener.toggleRecord();
+                break;
             default:
                 break;
         }
@@ -293,6 +334,7 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
             time.stop();
             muteToggle.disable(false);
             speakerToggle.disable(false);
+            recordToggle.disable(false);
             refuseTV.setEnabled(false);
             receiveTV.setEnabled(false);
             hangup.setEnabled(false);

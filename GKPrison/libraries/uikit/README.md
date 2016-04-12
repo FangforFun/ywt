@@ -568,11 +568,11 @@ public final static class FuncItem extends AbsContactItem {
     }
 
     static List<AbsContactItem> provide() {
-        List<AbsContactItem> lineitemsattributes = new ArrayList<AbsContactItem>();
-        lineitemsattributes.add(NORMAL_TEAM);
-        lineitemsattributes.add(BLACK_LIST);
+        List<AbsContactItem> items = new ArrayList<AbsContactItem>();
+        items.add(NORMAL_TEAM);
+        items.add(BLACK_LIST);
 
-        return lineitemsattributes;
+        return items;
     }
 
     static void handle(Context context, AbsContactItem item) {

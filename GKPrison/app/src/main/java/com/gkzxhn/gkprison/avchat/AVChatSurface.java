@@ -30,6 +30,7 @@ import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadFrom;
 import com.netease.nim.uikit.common.util.sys.ScreenUtil;
+import com.netease.nimlib.sdk.avchat.AVChatCallback;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
 
 /**
@@ -405,6 +406,7 @@ public class AVChatSurface {
          * 获取视频SurfaceView，加入到自己的布局中，用于呈现视频图像
          * account 要显示视频的用户帐号
          */
+        Log.i("account 啊啊啊啊 啊啊啊", account + "----" + largeAccount);
         SurfaceView surfaceView = AVChatManager.getInstance().getSurfaceRender(account);
         if (surfaceView != null) {
             addIntoLargeSizePreviewLayout(surfaceView);
@@ -442,6 +444,7 @@ public class AVChatSurface {
         if (surfaceView.getParent() != null)
             ((ViewGroup)surfaceView.getParent()).removeView(surfaceView);
         largeSizePreviewLayout.addView(surfaceView);
+        surfaceView.setZOrderMediaOverlay(false);
         if(manager.getCallingState() == CallStateEnum.VIDEO)
             largeSizePreviewCoverLayout.setVisibility(View.GONE);
     }
