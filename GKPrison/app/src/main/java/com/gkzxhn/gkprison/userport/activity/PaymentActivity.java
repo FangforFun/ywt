@@ -70,7 +70,7 @@ public class PaymentActivity extends BaseActivity {
     private TextView tv_count_money;
     private String countmoney;
     private String[] pay_ways = {"支付宝支付","微信支付"};
-    private int[] pay_way_icons = {R.drawable.pay_way_bank_card,R.drawable.pay_way_zhifubao,R.drawable.pay_way_weixin};
+    private int[] pay_way_icons = {R.drawable.pay_way_zhifubao,R.drawable.pay_way_weixin};
     private boolean[] ischeckeds = {true, false, false};
     private MyAdapter adapter;
     public static String TradeNo;
