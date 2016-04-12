@@ -630,7 +630,7 @@ public class PaymentActivity extends BaseActivity {
         return SignUtils.sign(content, RSA_PRIVATE);
     }
 
-    
+
     /**
      * get the sign type we use. 获取签名方式
      *
