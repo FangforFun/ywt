@@ -197,7 +197,11 @@ public class AVChatUI implements AVChatUIListener {
             public void onFailed(int code) {
                 Log.d(TAG, "failed code->" + code);// 408请求超时
                 DialogMaker.dismissProgressDialog();
-                Toast.makeText(context, "发起通话失败" + code, Toast.LENGTH_SHORT).show();
+                if(code == 11001){
+                    Toast.makeText(context, "对方不在线", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(context, "发起通话失败" + code, Toast.LENGTH_SHORT).show();
+                }
                 closeSessions(code);
             }
 
@@ -359,7 +363,6 @@ public class AVChatUI implements AVChatUIListener {
 
         if(file.exists()) {
             InputStream is = null;
-
             try {
                 is = new BufferedInputStream(new FileInputStream(file));
                 Properties properties = new Properties();

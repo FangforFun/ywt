@@ -134,15 +134,15 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 setMiddleRoot(true);
                 setBottomRoot(false);
                 break;
-            case VIDEO:
+            case VIDEO:// 发起者
                 isInSwitch = false;
 //                enableToggle();
 //                setTime(true);
-                if(sp.getBoolean("is_can_video", false)) {
+//                if(sp.getBoolean("is_can_video", false)) {
                     setTopRoot(true);
-                }else {
-                    setTopRoot(false);
-                }
+//                }else {
+//                    setTopRoot(false);
+//                }
                 setMiddleRoot(false);
                 setBottomRoot(true);
                 break;
