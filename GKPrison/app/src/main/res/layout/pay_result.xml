@@ -1,14 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
-    style="@style/NavPage">
-    
+    style="@style/NavPage"
+	android:background="#f0f0f0">
+	<include android:id="@+id/tool_bar"
+		layout="@layout/title_bar"/>
+    <LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:background="@color/white">
+	<ImageView
+		android:id="@+id/image_check"
+		android:layout_width="100dp"
+		android:layout_height="100dp"
+		android:layout_marginTop="20dp"
+		android:src="@drawable/checkpay"
+		android:layout_gravity="center_horizontal"/>
 	<TextView
-	    android:layout_width="fill_parent"
-	 	android:layout_height="fill_parent"
-		android:gravity="center"
-	 	android:textColor="#ff000000"
-	 	android:textSize="20dp"
-	 	android:text="@string/pay_result_tip"/>
+		android:id="@+id/tv_pay_result"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="支付成功"
+		android:layout_gravity="center_horizontal"
+		android:textColor="@color/theme"
+		android:textSize="@dimen/logout_tv_size"/>
+	<TextView
+		android:id="@+id/tv_send_goods"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginTop="16dp"
+		android:text="请耐心等待监狱方发货"
+		android:layout_gravity="center_horizontal"
+		android:textSize="@dimen/roll_title_size"
+		android:layout_marginBottom="16dp"/>
+	</LinearLayout>
+
 	
 </LinearLayout>
