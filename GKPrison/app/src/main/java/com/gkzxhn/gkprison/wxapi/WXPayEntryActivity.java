@@ -100,7 +100,10 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     }
 
-
+	@Override
+	public void onBackPressed() {
+//		super.onBackPressed();
+	}
 
 	@Override
 	protected void onDestroy() {

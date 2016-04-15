@@ -599,7 +599,7 @@ public class CanteenFragment extends BaseFragment {
             count = n;
             lcount.add(count);
         }
-      //  total += 2;
+        total += 2;
         for (int i = 0;i < lcount.size();i++){
             allcount += lcount.get(i);
         }
@@ -615,7 +615,7 @@ public class CanteenFragment extends BaseFragment {
             msg.what = 1;
             handler1.sendMessage(msg);
         }else if (allcount == 0){
-        //    total -= 2;
+            total -= 2;
             DecimalFormat fnum = new DecimalFormat("####0.00");
             send = fnum.format(total);
             Message msg = handler1.obtainMessage();

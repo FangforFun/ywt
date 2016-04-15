@@ -662,7 +662,6 @@ public class AVChatUI implements AVChatUIListener {
             public void onFailed(int code) {
                 Log.d(TAG, "requestSwitchToVideo onFailed" + code);
             }
-
             @Override
             public void onException(Throwable exception) {
                 Log.d(TAG, "requestSwitchToVideo onException" + exception);
@@ -716,6 +715,7 @@ public class AVChatUI implements AVChatUIListener {
                 avChatVideo.setTime(true);// 开始计时
                 avChatVideo.setTopRoot(true);// 设置顶部栏可见
                 avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
+                avChatSurface.setThroughtVisibility(View.GONE);
             }
 
             @Override

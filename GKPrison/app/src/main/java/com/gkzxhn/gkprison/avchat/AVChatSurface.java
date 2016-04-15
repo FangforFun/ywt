@@ -406,7 +406,6 @@ public class AVChatSurface {
          * 获取视频SurfaceView，加入到自己的布局中，用于呈现视频图像
          * account 要显示视频的用户帐号
          */
-        Log.i("account 啊啊啊啊 啊啊啊", account + "----" + largeAccount);
         SurfaceView surfaceView = AVChatManager.getInstance().getSurfaceRender(account);
         if (surfaceView != null) {
             addIntoLargeSizePreviewLayout(surfaceView);
