@@ -65,7 +65,7 @@
     <dimen name="total_money_tv_size">18sp</dimen>
     <dimen name="pay_way_item_height">50dp</dimen>
     <dimen name="pay_way_check_size">20dp</dimen>
-    <dimen name="canteen_tab_height">40dp</dimen>
+    <dimen name="canteen_tab_height">50dp</dimen>
     <dimen name="canteen_tab_tv_size">16sp</dimen>
     <dimen name="canteen_tab_spinner_size">8dp</dimen>
     <dimen name="goods_car_iv_size">35dp</dimen>

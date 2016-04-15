@@ -38,31 +38,21 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.unionpay.UPPayAssistEx;
 
-import org.apache.http.HttpResponse;
+
 import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.JSONValue;
 
-import java.io.IOException;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
+
 
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
@@ -629,9 +619,6 @@ public class PaymentActivity extends BaseActivity {
         //  Log.d("MainActivity","bbb:"+ SignUtils.sign("445", RSA_PRIVATE));
         return SignUtils.sign(content, RSA_PRIVATE);
     }
-
-
-    
     /**
      * get the sign type we use. 获取签名方式
      *
