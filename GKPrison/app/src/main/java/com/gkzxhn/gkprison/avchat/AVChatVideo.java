@@ -18,7 +18,7 @@ import com.netease.nimlib.sdk.avchat.AVChatManager;
 
 /**
  * 视频管理器， 视频界面初始化和相关管理
- * Created by hzxuwen on 2015/5/5.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticlockwise.OnTimeCompleteListener {
 
@@ -105,6 +105,14 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         hangUpImg = (ImageView) bottomRoot.findViewById(R.id.avchat_video_logout);
         hangUpImg.setOnClickListener(this);
         init = true;
+    }
+
+    /**
+     * 设置切换按钮是否可见
+     * @param visibility
+     */
+    public void setSwitchVisibility(int visibility){
+        switchAudio.setVisibility(visibility);
     }
 
     /**
@@ -227,7 +235,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
         tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){
             time.setOnTimeCompleteListener(this);
-            time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "")));
+            time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "").equals("上次通话已完成") ? 900 + "" : sp.getString("current_ms", 900 + "")));
             time.start();
             int surplus_time = (int) (Long.parseLong(sp.getString("current_ms", 900 + "").equals("上次通话已完成") ? 900 + "" : sp.getString("current_ms", 900 + "")) / 60);
             Toast.makeText(context, "开始进行视频通话，您还剩余" +

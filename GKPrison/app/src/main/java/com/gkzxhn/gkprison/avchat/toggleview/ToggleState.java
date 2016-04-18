@@ -1,7 +1,7 @@
 package com.gkzxhn.gkprison.avchat.toggleview;
 
 /**
-* Created by hzlichengda on 14-3-31.
+* Created by huangzhengneng on 2016/1/5.
 */
 public enum ToggleState {
     DISABLE, //禁用

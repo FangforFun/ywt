@@ -39,7 +39,7 @@ import de.greenrobot.event.EventBus;
 
 /**
  * 音视频界面
- * Created by hzxuwen on 2015/4/21.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener, AVChatStateObserver {
     // constant
@@ -416,9 +416,9 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     @Override
     public void onUserJoin(String account) {
         Log.i(TAG, "onUserJoin  " + account + "----" + getIntent().getStringExtra(KEY_ACCOUNT));
-        avChatUI.setVideoAccount(avChatData.getAccount());
+        avChatUI.setVideoAccount(getIntent().getStringExtra(KEY_ACCOUNT));
 
-        avChatUI.initRemoteSurfaceView(avChatUI.getVideoAccount());
+        avChatUI.initSurfaceView(avChatUI.getVideoAccount());
     }
 
     @Override

@@ -14,7 +14,7 @@ public class Anticlockwise extends Chronometer{
 
     public Anticlockwise(Context context, AttributeSet attrs) {
         super(context, attrs);
-        // TODO 自动生成的构造函数存根
+        // 自动生成的构造函数存根
         mTimeFormat = new SimpleDateFormat("mm:ss");
         this.setOnChronometerTickListener(listener);
         mContext = context;

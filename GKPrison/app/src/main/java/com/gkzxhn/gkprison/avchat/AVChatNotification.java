@@ -14,7 +14,7 @@ import com.netease.nim.uikit.session.activity.P2PMessageActivity;
 
 /**
  * 音视频聊天通知栏
- * Created by huangjun on 2015/5/14.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatNotification {
 

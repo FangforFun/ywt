@@ -132,6 +132,14 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
     }
 
     /**
+     * 设置切换按钮是否可见
+     * @param visibility
+     */
+    public void setSwitchVisibility(int visibility){
+        switchVideo.setVisibility(visibility);
+    }
+
+    /**
      * 界面初始化
      */
     private void findViews() {
