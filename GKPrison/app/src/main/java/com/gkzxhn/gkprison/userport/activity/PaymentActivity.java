@@ -59,8 +59,8 @@ public class PaymentActivity extends BaseActivity {
     private Button bt_pay;
     private TextView tv_count_money;
     private String countmoney;
-    private String[] pay_ways = {"支付宝支付","微信支付"};
-    private int[] pay_way_icons = {R.drawable.pay_way_zhifubao,R.drawable.pay_way_weixin};
+    private String[] pay_ways = {"支付宝支付", "微信支付"};
+    private int[] pay_way_icons = {R.drawable.pay_way_zhifubao, R.drawable.pay_way_weixin};
     private boolean[] ischeckeds = {true, false, false};
     private MyAdapter adapter;
     public static String TradeNo;
@@ -98,63 +98,63 @@ public class PaymentActivity extends BaseActivity {
     private String token;
     private String payment_type = "";
     private String prepay_id = "";
-    private  String mode = "01";
+    private String mode = "01";
     private String app_id = "";
     public static String mch_id = "";
     private ProgressDialog dialog;
     private String nonce_str = "";
     private String timeStamp = "";
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String result = (String)msg.obj;
-                    if (result.equals("error")){
+                    String result = (String) msg.obj;
+                    if (result.equals("error")) {
                         showToastMsgShort("选择支付类型失败");
-                    }else if (result.equals("success")){
+                    } else if (result.equals("success")) {
                         Bundle bundle = msg.getData();
                         String type = bundle.getString("result");
                         int code = getResultcode(type);
-                        Log.d("订单类型",payment_type);
-                        if (code == 200){
-                            if (payment_type.equals("alipay")){
+                        Log.d("订单类型", payment_type);
+                        if (code == 200) {
+                            if (payment_type.equals("alipay")) {
                                 /**
-                                Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
-                                intent.putExtra("price",countmoney);
-                                intent.putExtra("outorderno",TradeNo);
-                                intent.putExtra("times",times);
-                                intent.putExtra("cart_id",cart_id);
-                                intent.putExtra("saletype",saletype);
-                                intent.putExtra("bussiness", bussinesstype);
-                               // PaymentActivity.this.startActivity(intent);
+                                 Intent intent = new Intent(PaymentActivity.this,ZhifubaoPayActivity.class);
+                                 intent.putExtra("price",countmoney);
+                                 intent.putExtra("outorderno",TradeNo);
+                                 intent.putExtra("times",times);
+                                 intent.putExtra("cart_id",cart_id);
+                                 intent.putExtra("saletype",saletype);
+                                 intent.putExtra("bussiness", bussinesstype);
+                                 // PaymentActivity.this.startActivity(intent);
                                  **/
 
                                 alipay();
-                            }else if (payment_type.equals("weixin")){
-                               // Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
+                            } else if (payment_type.equals("weixin")) {
+                                // Intent intent = new Intent(PaymentActivity.this,WeixinPayActivity.class);
                                 prepay_id = getPrepay_id(type);
-                               // intent.putExtra("prepay_id",prepay_id);
+                                // intent.putExtra("prepay_id",prepay_id);
                                 app_id = getapp_id(type);
-                             //   intent.putExtra("app_id",app_id);
+                                //   intent.putExtra("app_id",app_id);
                                 mch_id = getmch_id(type);
-                             //   intent.putExtra("mch_id",mch_id);
+                                //   intent.putExtra("mch_id",mch_id);
                                 nonce_str = getnonce_str(type);
-                             //   intent.putExtra("nonce_str", nonce_str);
+                                //   intent.putExtra("nonce_str", nonce_str);
                                 String sign = getsign(type);
-                               // intent.putExtra("sign",sign);
-                              //  intent.putExtra("price", countmoney);
-                             //   intent.putExtra("times",times);
+                                // intent.putExtra("sign",sign);
+                                //  intent.putExtra("price", countmoney);
+                                //   intent.putExtra("times",times);
                                 //intent.putExtra("outorderno",TradeNo);
                                 timeStamp = gettimestamp(type);
                                 //PaymentActivity.this.startActivity(intent);
 
                                 weixinPay();
-                            }else if (payment_type.equals("unionpay")){
+                            } else if (payment_type.equals("unionpay")) {
                                 /**
-                                Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
-                                intent.putExtra("price",countmoney);
-                                PaymentActivity.this.startActivity(intent);
+                                 Intent intent = new Intent(PaymentActivity.this,BankPayActivity.class);
+                                 intent.putExtra("price",countmoney);
+                                 PaymentActivity.this.startActivity(intent);
                                  **/
 
                                 String tn = "";
@@ -175,16 +175,14 @@ public class PaymentActivity extends BaseActivity {
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         String type = "支付宝";
-                        String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '"+times+"'";
+                        String sql = "update Cart set isfinish = 1,payment_type = '" + type + "' where time = '" + times + "'";
                         db.execSQL(sql);
                         Toast.makeText(PaymentActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(PaymentActivity.this,MainActivity.class);
+                        Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         PaymentActivity.this.startActivity(intent);
                         finish();
-
-
 
 
                     } else {
@@ -225,7 +223,7 @@ public class PaymentActivity extends BaseActivity {
         return a;
     }
 
-    private String getPrepay_id(String type){
+    private String getPrepay_id(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -237,7 +235,7 @@ public class PaymentActivity extends BaseActivity {
         return t;
     }
 
-    private  String getapp_id(String type){
+    private String getapp_id(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -249,7 +247,7 @@ public class PaymentActivity extends BaseActivity {
         return t;
     }
 
-    private String getmch_id(String type){
+    private String getmch_id(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -261,7 +259,7 @@ public class PaymentActivity extends BaseActivity {
         return t;
     }
 
-    private String getnonce_str(String type){
+    private String getnonce_str(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -273,7 +271,7 @@ public class PaymentActivity extends BaseActivity {
         return t;
     }
 
-    private String getsign(String type){
+    private String getsign(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -283,7 +281,8 @@ public class PaymentActivity extends BaseActivity {
         }
         return t;
     }
-    private String gettimestamp(String type){
+
+    private String gettimestamp(String type) {
         String t = "";
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -294,12 +293,13 @@ public class PaymentActivity extends BaseActivity {
         }
         return t;
     }
+
     @Override
     protected View initView() {
-        View view =View.inflate(this,R.layout.activity_payment,null);
+        View view = View.inflate(this, R.layout.activity_payment, null);
         lv_pay_way = (ListView) view.findViewById(R.id.lv_pay_way);
         bt_pay = (Button) view.findViewById(R.id.bt_pay);
-        tv_count_money = (TextView)view.findViewById(R.id.tv_count_money);
+        tv_count_money = (TextView) view.findViewById(R.id.tv_count_money);
         return view;
     }
 
@@ -308,16 +308,16 @@ public class PaymentActivity extends BaseActivity {
         setTitle("支付");
         setBackVisibility(View.VISIBLE);
         TradeNo = getIntent().getStringExtra("TradeNo");
-        Log.d("订单号",TradeNo);
+        Log.d("订单号", TradeNo);
         countmoney = getIntent().getStringExtra("totalmoney");
         times = getIntent().getStringExtra("times");
         cart_id = getIntent().getIntExtra("cart_id", 0);
         saletype = getIntent().getStringExtra("saletype");
         bussinesstype = getIntent().getStringExtra("bussiness");
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        token =sp.getString("token", "");
-        jail_id = sp.getInt("jail_id",0);
-        tv_count_money.setText(countmoney+"");
+        token = sp.getString("token", "");
+        jail_id = sp.getInt("jail_id", 0);
+        tv_count_money.setText(countmoney + "");
         adapter = new MyAdapter();
         lv_pay_way.setAdapter(adapter);
         lv_pay_way.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -341,39 +341,39 @@ public class PaymentActivity extends BaseActivity {
                 dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 dialog.setMessage("");
                 dialog.show();
-                 //if (ischeckeds[0] == true){
-                   //  payment_type = "unionpay";
-                   //  send_payment_type(payment_type);
+                //if (ischeckeds[0] == true){
+                //  payment_type = "unionpay";
+                //  send_payment_type(payment_type);
                 // }else
-                if (ischeckeds[0] == true){
-                     payment_type = "alipay";
-                     send_payment_type(payment_type);
-                 }else if (ischeckeds[1] == true){
-                     payment_type = "weixin";
-                     send_payment_type(payment_type);
-                 }
+                if (ischeckeds[0] == true) {
+                    payment_type = "alipay";
+                    send_payment_type(payment_type);
+                } else if (ischeckeds[1] == true) {
+                    payment_type = "weixin";
+                    send_payment_type(payment_type);
+                }
             }
         });
     }
 
     private void send_payment_type(String payment_type) {
-        final String str = "{\"trade_no\":\""+TradeNo+"\",\"payment_type\":\"" + payment_type + "\"}";
-        final String url = Constants.URL_HEAD +"prepay?jail_id="+jail_id+"&access_token=";
-        new Thread(){
+        final String str = "{\"trade_no\":\"" + TradeNo + "\",\"payment_type\":\"" + payment_type + "\"}";
+        final String url = Constants.URL_HEAD + "prepay?jail_id=" + jail_id + "&access_token=";
+        new Thread() {
             @Override
             public void run() {
                 Message msg = handler.obtainMessage();
                 try {
-                    String result = HttpRequestUtil.doHttpsPost(url + token,str);
-                    Log.d("支付类型返回",result);
-                    if (result.contains("StatusCode is")){
+                    String result = HttpRequestUtil.doHttpsPost(url + token, str);
+                    Log.d("支付类型返回", result);
+                    if (result.contains("StatusCode is")) {
                         msg.obj = "error";
                         msg.what = 1;
                         handler.sendMessage(msg);
-                    }else {
+                    } else {
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
+                        bundle.putString("result", result);
                         msg.setData(bundle);
                         msg.what = 1;
                         handler.sendMessage(msg);
@@ -408,14 +408,14 @@ public class PaymentActivity extends BaseActivity {
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(PaymentActivity.this, R.layout.pay_way_item, null);
                 holder = new ViewHolder();
                 holder.iv_pay_way_icon = (ImageView) convertView.findViewById(R.id.iv_pay_way_icon);
                 holder.tv_pay_way = (TextView) convertView.findViewById(R.id.tv_pay_way);
-               holder.cb_pay_way = (CheckBox) convertView.findViewById(R.id.cb_pay_way);
+                holder.cb_pay_way = (CheckBox) convertView.findViewById(R.id.cb_pay_way);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.iv_pay_way_icon.setImageResource(pay_way_icons[position]);
@@ -426,7 +426,7 @@ public class PaymentActivity extends BaseActivity {
         }
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         ImageView iv_pay_way_icon;
         TextView tv_pay_way;
         CheckBox cb_pay_way;
@@ -496,10 +496,9 @@ public class PaymentActivity extends BaseActivity {
 
     /**
      * call alipay sdk pay. 调用SDK支付
-     *
      */
     public void alipay() {
-        if(Utils.isFastClick()){
+        if (Utils.isFastClick()) {
             return;
         }
         if (TextUtils.isEmpty(PARTNER) || TextUtils.isEmpty(RSA_PRIVATE)
@@ -519,11 +518,11 @@ public class PaymentActivity extends BaseActivity {
         }
         // 订单
 
-        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述",countmoney );
+        String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", countmoney);
 
         // 对订单做RSA 签名
         String sign = sign(orderInfo);
-        Log.d("MainActivity","jdksaj:"+sign);
+        Log.d("MainActivity", "jdksaj:" + sign);
         try {
             // 仅需对sign 做URL编码
             sign = URLEncoder.encode(sign, "UTF-8");
@@ -539,7 +538,7 @@ public class PaymentActivity extends BaseActivity {
 
             @Override
             public void run() {
-                if (dialog.isShowing()){
+                if (dialog.isShowing()) {
                     dialog.dismiss();
                 }
                 // 构造PayTask 对象
@@ -557,9 +556,9 @@ public class PaymentActivity extends BaseActivity {
         Thread payThread = new Thread(payRunnable);
         payThread.start();
     }
+
     /**
      * create the order info. 创建订单信息
-     *
      */
     public String getOrderInfo(String subject, String body, String price) {
 
@@ -611,31 +610,32 @@ public class PaymentActivity extends BaseActivity {
 
         // 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
         // orderInfo += "&paymethod=\"expressGateway\"";
-        Log.d("MainActivity","aaa:"+orderInfo);
+        Log.d("MainActivity", "aaa:" + orderInfo);
         return orderInfo;
 
     }
+
     public String sign(String content) {
         //  Log.d("MainActivity","bbb:"+ SignUtils.sign("445", RSA_PRIVATE));
         return SignUtils.sign(content, RSA_PRIVATE);
     }
+
     /**
      * get the sign type we use. 获取签名方式
-     *
      */
     public String getSignType() {
         return "sign_type=\"RSA\"";
     }
 
-    private void weixinPay(){
+    private void weixinPay() {
         String packge = "Sign=WXPay";
-        api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID,true);
-        req.appId			= app_id;
-        req.nonceStr		= nonce_str;
-        req.packageValue	= packge;
-        req.partnerId		= mch_id;
-        req.prepayId		= prepay_id;
-        req.timeStamp		= timeStamp;
+        api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID, true);
+        req.appId = app_id;
+        req.nonceStr = nonce_str;
+        req.packageValue = packge;
+        req.partnerId = mch_id;
+        req.prepayId = prepay_id;
+        req.timeStamp = timeStamp;
 
 
         List<NameValuePair> signParams = new LinkedList<NameValuePair>();
@@ -647,13 +647,14 @@ public class PaymentActivity extends BaseActivity {
         //signParams.add(new BasicNameValuePair("sign", sign));
         signParams.add(new BasicNameValuePair("timestamp", req.timeStamp));
         req.sign = genAppSign(signParams);
-        if (dialog.isShowing()){
+        if (dialog.isShowing()) {
             dialog.dismiss();
         }
         api.registerApp(WeixinConstants.APP_ID);
         api.sendReq(req);
         bt_pay.setEnabled(true);
     }
+
     private String genAppSign(List<NameValuePair> params) {
         sb = new StringBuffer();
 

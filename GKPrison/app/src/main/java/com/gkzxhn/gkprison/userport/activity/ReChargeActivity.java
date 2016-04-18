@@ -2,11 +2,10 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -34,8 +33,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 public class ReChargeActivity extends BaseActivity {
     private Button btn_recharge;
@@ -44,33 +41,33 @@ public class ReChargeActivity extends BaseActivity {
     private RadioButton fifty;
     private RadioButton hundred;
     private String ip;
-    private String money ;
+    private String money;
     private String TradeNo = "";
     private SharedPreferences sp;
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
-    private String times ="";
+    private String times = "";
     private Gson gson;
     private String apply;
     private int jail_id;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String recharge = (String)msg.obj;
-                    if (recharge.equals("error")){
+                    String recharge = (String) msg.obj;
+                    if (recharge.equals("error")) {
                         showToastMsgShort("上传数据失败");
-                    }else if (recharge.equals("success")){
+                    } else if (recharge.equals("success")) {
                         Bundle bundle = msg.getData();
                         String code = bundle.getString("result");
                         TradeNo = getResultTradeno(code);
                         int a = getResultcode(code);
-                        if (a == 200){
-                            Intent intent = new Intent(ReChargeActivity.this,PaymentActivity.class);
+                        if (a == 200) {
+                            Intent intent = new Intent(ReChargeActivity.this, PaymentActivity.class);
                             intent.putExtra("totalmoney", money);
-                            intent.putExtra("times",times);
-                            intent.putExtra("TradeNo",TradeNo);
-                            intent.putExtra("saletype","视频充值");
+                            intent.putExtra("times", times);
+                            intent.putExtra("TradeNo", TradeNo);
+                            intent.putExtra("saletype", "视频充值");
                             startActivity(intent);
                         }
                     }
@@ -78,14 +75,15 @@ public class ReChargeActivity extends BaseActivity {
             }
         }
     };
+
     @Override
     protected View initView() {
-        View view = View.inflate(getApplicationContext(), R.layout.activity_re_charge,null);
-        btn_recharge = (Button)view.findViewById(R.id.btn_recharge);
-        five = (RadioButton)view.findViewById(R.id.rb_five);
-        twenty = (RadioButton)view.findViewById(R.id.rb_twenty);
-        fifty = (RadioButton)view.findViewById(R.id.rb_fifty);
-        hundred = (RadioButton)view.findViewById(R.id.rb_hundred);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_re_charge, null);
+        btn_recharge = (Button) view.findViewById(R.id.btn_recharge);
+        five = (RadioButton) view.findViewById(R.id.rb_five);
+        twenty = (RadioButton) view.findViewById(R.id.rb_twenty);
+        fifty = (RadioButton) view.findViewById(R.id.rb_fifty);
+        hundred = (RadioButton) view.findViewById(R.id.rb_hundred);
         return view;
     }
 
@@ -94,23 +92,23 @@ public class ReChargeActivity extends BaseActivity {
         setTitle("充值");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        jail_id = sp.getInt("jail_id",0);
+        jail_id = sp.getInt("jail_id", 0);
         ip = getLocalHostIp();
         btn_recharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (Utils.isFastClick()){
+                if (Utils.isFastClick()) {
                     return;
                 }
-                if (five.isChecked()){
+                if (five.isChecked()) {
                     money = "5";
-                }else if (twenty.isChecked()){
+                } else if (twenty.isChecked()) {
                     money = "20";
-                }else if (fifty.isChecked() ){
+                } else if (fifty.isChecked()) {
                     money = "50";
-                }else if (hundred.isChecked()){
+                } else if (hundred.isChecked()) {
                     money = "100";
-                }else {
+                } else {
                     showToastMsgShort("请选择充值金额");
                     return;
                 }
@@ -124,7 +122,7 @@ public class ReChargeActivity extends BaseActivity {
     }
 
     private void sendOrderToServer() {
-        int family_id = sp.getInt("family_id",1);
+        int family_id = sp.getInt("family_id", 1);
         final Order order = new Order();
         order.setFamily_id(family_id);
         line_items_attributes lineitemsattributes = new line_items_attributes();
@@ -143,27 +141,27 @@ public class ReChargeActivity extends BaseActivity {
         aa.setOrder(order);
         final String str = gson.toJson(aa);
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
                 //       HttpClient httpClient = new DefaultHttpClient();
                 //       HttpPost post = new HttpPost(url+token);
-                String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
-                String s = url+token;
+                String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
+                String s = url + token;
                 Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
                     String result = HttpRequestUtil.doHttpsPost(url + token, str);
-                    Log.d("订单号",result);
-                    if (result.contains("StatusCode is ")){
+                    Log.d("订单号", result);
+                    if (result.contains("StatusCode is ")) {
                         msg.obj = "error";
                         msg.what = 1;
                         handler.sendMessage(msg);
-                    }else {
+                    } else {
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
+                        bundle.putString("result", result);
                         msg.setData(bundle);
                         msg.what = 1;
                         handler.sendMessage(msg);
@@ -173,40 +171,35 @@ public class ReChargeActivity extends BaseActivity {
                     msg.what = 1;
                     handler.sendMessage(msg);
                     e.printStackTrace();
-                }finally {
+                } finally {
                     Looper.loop();
                 }
 
-            }}.start();
+            }
+        }.start();
     }
 
     public String getLocalHostIp() {
         String ipaddress = "";
-        try
-        {
+        try {
             Enumeration<NetworkInterface> en = NetworkInterface
                     .getNetworkInterfaces();
             // 遍历所用的网络接口
-            while (en.hasMoreElements())
-            {
+            while (en.hasMoreElements()) {
                 NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
                 Enumeration<InetAddress> inet = nif.getInetAddresses();
                 // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements())
-                {
+                while (inet.hasMoreElements()) {
                     InetAddress ip = inet.nextElement();
                     if (!ip.isLoopbackAddress()
                             && InetAddressUtils.isIPv4Address(ip
-                            .getHostAddress()))
-                    {
+                            .getHostAddress())) {
                         return ipaddress = ip.getHostAddress();
                     }
                 }
 
             }
-        }
-        catch (SocketException e)
-        {
+        } catch (SocketException e) {
             Log.e("feige", "获取本地ip地址失败");
             e.printStackTrace();
         }

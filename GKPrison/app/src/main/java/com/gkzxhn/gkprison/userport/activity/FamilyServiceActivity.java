@@ -27,9 +27,9 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
+import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
-import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
@@ -46,14 +46,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
-import java.util.Random;
 
 public class FamilyServiceActivity extends BaseActivity {
     private ExpandableListView el_messge;
     private MyAdapter adapter;
     private String TradeNo;
-    private String times ="";
+    private String times = "";
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private SharedPreferences sp;
     private String ip;
@@ -68,23 +66,23 @@ public class FamilyServiceActivity extends BaseActivity {
     private TextView prison_end_time;
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private int jail_id;
-    private String url1 = Constants.URL_HEAD +"services?access_token=";
-    private Handler handler = new Handler(){
+    private String url1 = Constants.URL_HEAD + "services?access_token=";
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String information = (String)msg.obj;
-                    if (information.equals("error")){
+                    String information = (String) msg.obj;
+                    if (information.equals("error")) {
                         showToastMsgShort("同步数据有误");
-                    }else if (information.equals("success")){
+                    } else if (information.equals("success")) {
                         Bundle bundle = msg.getData();
                         String prison_information = bundle.getString("result");
                         prison = analysisprison(prison_information);
                         prison_num.setText(prison.getPrisoner_number());
-                        if (prison.getGender().equals("m")){
+                        if (prison.getGender().equals("m")) {
                             prison_gender.setText("男");
-                        }else {
+                        } else {
                             prison_gender.setText("女");
                         }
                         prison_crimes.setText(prison.getCrimes());
@@ -93,20 +91,20 @@ public class FamilyServiceActivity extends BaseActivity {
                     }
                     break;
                 case 2:
-                    String ording = (String)msg.obj;
-                    if (ording.equals("error")){
+                    String ording = (String) msg.obj;
+                    if (ording.equals("error")) {
                         showToastMsgShort("上传数据失败，请检查网络");
-                    }else if (ording.equals("success")){
+                    } else if (ording.equals("success")) {
                         Bundle bundle = msg.getData();
                         String code = bundle.getString("result");
                         TradeNo = getResultTradeno(code);
                         int passcode = getResultcode(code);
-                        if (passcode == 200){
+                        if (passcode == 200) {
                             Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
                             intent.putExtra("totalmoney", money);
-                            intent.putExtra("times",times);
-                            intent.putExtra("TradeNo",TradeNo);
-                            intent.putExtra("saletype","汇款");
+                            intent.putExtra("times", times);
+                            intent.putExtra("TradeNo", TradeNo);
+                            intent.putExtra("saletype", "汇款");
                             startActivity(intent);
                         }
                     }
@@ -115,7 +113,7 @@ public class FamilyServiceActivity extends BaseActivity {
         }
     };
 
-    private List<Integer> image_messge = new ArrayList<Integer>(){
+    private List<Integer> image_messge = new ArrayList<Integer>() {
         {
             add(R.drawable.sentence);
             add(R.drawable.consumption);
@@ -123,7 +121,7 @@ public class FamilyServiceActivity extends BaseActivity {
         }
     };
 
-    private List<String> text_messge = new ArrayList<String>(){
+    private List<String> text_messge = new ArrayList<String>() {
         {
             add("刑期变动");
             add("消费记录");
@@ -133,14 +131,14 @@ public class FamilyServiceActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(getApplicationContext(),R.layout.activity_family_service,null);
-        el_messge = (ExpandableListView)view.findViewById(R.id.el_messge);
+        View view = View.inflate(getApplicationContext(), R.layout.activity_family_service, null);
+        el_messge = (ExpandableListView) view.findViewById(R.id.el_messge);
         el_messge.setGroupIndicator(null);
-        prison_num = (TextView)view.findViewById(R.id.tv_prison_num);
-        prison_gender = (TextView)view.findViewById(R.id.tv_mail_sex);
-        prison_crimes = (TextView)view.findViewById(R.id.tv_crime_accent);
-        prison_start_time = (TextView)view.findViewById(R.id.tv_sentence_time);
-        prison_end_time = (TextView)view.findViewById(R.id.tv_sentence_time_end);
+        prison_num = (TextView) view.findViewById(R.id.tv_prison_num);
+        prison_gender = (TextView) view.findViewById(R.id.tv_mail_sex);
+        prison_crimes = (TextView) view.findViewById(R.id.tv_crime_accent);
+        prison_start_time = (TextView) view.findViewById(R.id.tv_sentence_time);
+        prison_end_time = (TextView) view.findViewById(R.id.tv_sentence_time_end);
         return view;
     }
 
@@ -148,9 +146,9 @@ public class FamilyServiceActivity extends BaseActivity {
     protected void initData() {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
-       // setRemittanceVisibility(View.VISIBLE);
+        // setRemittanceVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        jail_id = sp.getInt("jail_id",0);
+        jail_id = sp.getInt("jail_id", 0);
         ip = getLocalHostIp();
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
@@ -159,23 +157,24 @@ public class FamilyServiceActivity extends BaseActivity {
     }
 
     private void getPrisonIformation() {
-        if (Utils.isNetworkAvailable()){
-            new Thread(){
-                String token = sp.getString("token","");
+        if (Utils.isNetworkAvailable()) {
+            new Thread() {
+                String token = sp.getString("token", "");
                 Message msg = handler.obtainMessage();
+
                 @Override
                 public void run() {
                     Looper.prepare();
                     try {
                         String result = HttpRequestUtil.doHttpsGet(url1 + token);
-                        if (result.contains("StatusCode is ")){
+                        if (result.contains("StatusCode is ")) {
                             msg.obj = "error";
                             msg.what = 1;
                             handler.sendMessage(msg);
-                        }else {
+                        } else {
                             msg.obj = "success";
                             Bundle bundle = new Bundle();
-                            bundle.putString("result",result);
+                            bundle.putString("result", result);
                             msg.setData(bundle);
                             msg.what = 1;
                             handler.sendMessage(msg);
@@ -185,17 +184,17 @@ public class FamilyServiceActivity extends BaseActivity {
                         msg.what = 1;
                         handler.sendMessage(msg);
                         e.printStackTrace();
-                    }finally {
+                    } finally {
                         Looper.loop();
                     }
                 }
             }.start();
-        }else {
+        } else {
             showToastMsgShort("没有网络");
         }
     }
 
-    private Prison analysisprison(String t){
+    private Prison analysisprison(String t) {
         Prison prison = new Prison();
         try {
             JSONObject jsonObject = new JSONObject(t);
@@ -215,17 +214,17 @@ public class FamilyServiceActivity extends BaseActivity {
     public void onClick(View v) {
         super.onClick(v);
         //Intent intent;
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.rl_remittance:
-               // intent = new Intent(this, RemittanceWaysActivity.class);
+                // intent = new Intent(this, RemittanceWaysActivity.class);
                 //startActivity(intent);
                 long time = System.currentTimeMillis();
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date = new Date(time);
                 times = format.format(date);
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
-                View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog,null);
-                final EditText et_money = (EditText)view.findViewById(R.id.et_money);
+                View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog, null);
+                final EditText et_money = (EditText) view.findViewById(R.id.et_money);
                 Editable ea = et_money.getText();
                 et_money.setSelection(ea.length());
                 TextView tv_cancel = (TextView) view.findViewById(R.id.tv_cancel);
@@ -248,7 +247,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 tv_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (Utils.isFastClick()){return;}
+                        if (Utils.isFastClick()) {
+                            return;
+                        }
                         money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
                             Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
@@ -265,15 +266,15 @@ public class FamilyServiceActivity extends BaseActivity {
                             return;
                         } else {
                             sendOrderToServer();
-                            String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('"+times+"','"+TradeNo+"',0,'"+money+"',1)";
+                            String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('" + times + "','" + TradeNo + "',0,'" + money + "',1)";
                             db.execSQL(sql);
                             int cart_id = 0;
-                            String sql1 = "select id from Cart where time = '"+times+"'";
-                            Cursor cursor = db.rawQuery(sql1,null);
-                            while (cursor.moveToNext()){
+                            String sql1 = "select id from Cart where time = '" + times + "'";
+                            Cursor cursor = db.rawQuery(sql1, null);
+                            while (cursor.moveToNext()) {
                                 cart_id = cursor.getInt(cursor.getColumnIndex("id"));
                             }
-                            String sql2 = "insert into line_items(Items_id,cart_id) values (9999,"+cart_id+")";
+                            String sql2 = "insert into line_items(Items_id,cart_id) values (9999," + cart_id + ")";
                             db.execSQL(sql2);
                         }
                     }
@@ -285,7 +286,7 @@ public class FamilyServiceActivity extends BaseActivity {
     }
 
     private void sendOrderToServer() {
-        int family_id = sp.getInt("family_id",1);
+        int family_id = sp.getInt("family_id", 1);
         final Order order = new Order();
         order.setFamily_id(family_id);
         line_items_attributes lineitemsattributes = new line_items_attributes();
@@ -303,45 +304,45 @@ public class FamilyServiceActivity extends BaseActivity {
         aa.setOrder(order);
         final String str = gson.toJson(aa);
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 String token = sp.getString("token", "");
-                String url = Constants.URL_HEAD + "orders?jail_id="+jail_id+"&access_token=";
-         //       HttpClient httpClient = new DefaultHttpClient();
-         //       HttpPost post = new HttpPost(url+token);
-                String s = url+token;
+                String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
+                //       HttpClient httpClient = new DefaultHttpClient();
+                //       HttpPost post = new HttpPost(url+token);
+                String s = url + token;
 
-                    /**
-                    StringEntity entity = new StringEntity(str);
-                    entity.setContentType("application/json");
-                    entity.setContentEncoding("UTF-8");
-                    post.setEntity(entity);
-                    HttpResponse response = httpClient.execute(post);
-                    if (response.getStatusLine().getStatusCode() == 200){
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                    }
-                }  catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                } catch (ClientProtocolException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                **/
+                /**
+                 StringEntity entity = new StringEntity(str);
+                 entity.setContentType("application/json");
+                 entity.setContentEncoding("UTF-8");
+                 post.setEntity(entity);
+                 HttpResponse response = httpClient.execute(post);
+                 if (response.getStatusLine().getStatusCode() == 200){
+                 String result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                 }
+                 }  catch (UnsupportedEncodingException e) {
+                 e.printStackTrace();
+                 } catch (ClientProtocolException e) {
+                 e.printStackTrace();
+                 } catch (IOException e) {
+                 e.printStackTrace();
+                 }
+                 **/
                 Looper.prepare();
                 Message msg = handler.obtainMessage();
                 try {
-                    String result = HttpRequestUtil.doHttpsPost(url+token,str);
-                    Log.d("订单号",result);
-                    if (result.contains("StatusCode is ")){
+                    String result = HttpRequestUtil.doHttpsPost(url + token, str);
+                    Log.d("订单号", result);
+                    if (result.contains("StatusCode is ")) {
                         msg.obj = "error";
                         msg.what = 2;
                         handler.sendMessage(msg);
-                    }else {
+                    } else {
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
+                        bundle.putString("result", result);
                         msg.setData(bundle);
                         msg.what = 2;
                         handler.sendMessage(msg);
@@ -351,11 +352,12 @@ public class FamilyServiceActivity extends BaseActivity {
                     msg.what = 2;
                     handler.sendMessage(msg);
                     e.printStackTrace();
-                }finally {
+                } finally {
                     Looper.loop();
                 }
 
-            }}.start();
+            }
+        }.start();
     }
 
     private int getResultcode(String result) {
@@ -371,31 +373,25 @@ public class FamilyServiceActivity extends BaseActivity {
 
     public String getLocalHostIp() {
         String ipaddress = "";
-        try
-        {
+        try {
             Enumeration<NetworkInterface> en = NetworkInterface
                     .getNetworkInterfaces();
             // 遍历所用的网络接口
-            while (en.hasMoreElements())
-            {
+            while (en.hasMoreElements()) {
                 NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
                 Enumeration<InetAddress> inet = nif.getInetAddresses();
                 // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements())
-                {
+                while (inet.hasMoreElements()) {
                     InetAddress ip = inet.nextElement();
                     if (!ip.isLoopbackAddress()
                             && InetAddressUtils.isIPv4Address(ip
-                            .getHostAddress()))
-                    {
+                            .getHostAddress())) {
                         return ipaddress = ip.getHostAddress();
                     }
                 }
 
             }
-        }
-        catch (SocketException e)
-        {
+        } catch (SocketException e) {
             Log.e("feige", "获取本地ip地址失败");
             e.printStackTrace();
         }
@@ -403,7 +399,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
     }
 
-    private class MyAdapter extends BaseExpandableListAdapter{
+    private class MyAdapter extends BaseExpandableListAdapter {
 
         @Override
         public int getGroupCount() {
@@ -443,19 +439,19 @@ public class FamilyServiceActivity extends BaseActivity {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             GroupViewHolder viewHolder;
-            if (convertView == null){
-                convertView = View.inflate(getApplicationContext(),R.layout.familyservice_item,null);
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.familyservice_item, null);
                 viewHolder = new GroupViewHolder();
-                viewHolder.image_click = (ImageView)convertView.findViewById(R.id.image_click);
-                viewHolder.img_messge = (ImageView)convertView.findViewById(R.id.image_messge);
-                viewHolder.tv_messge = (TextView)convertView.findViewById(R.id.tv_messge);
+                viewHolder.image_click = (ImageView) convertView.findViewById(R.id.image_click);
+                viewHolder.img_messge = (ImageView) convertView.findViewById(R.id.image_messge);
+                viewHolder.tv_messge = (TextView) convertView.findViewById(R.id.tv_messge);
                 convertView.setTag(viewHolder);
-            }else {
-                viewHolder = (GroupViewHolder)convertView.getTag();
+            } else {
+                viewHolder = (GroupViewHolder) convertView.getTag();
             }
-            if (isExpanded){
+            if (isExpanded) {
                 viewHolder.image_click.setImageResource(R.drawable.touchup);
-            }else {
+            } else {
                 viewHolder.image_click.setImageResource(R.drawable.touchdown);
             }
             viewHolder.img_messge.setImageResource(image_messge.get(groupPosition));
@@ -466,25 +462,25 @@ public class FamilyServiceActivity extends BaseActivity {
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-                if (groupPosition == 0){
-                    convertView = View.inflate(getApplicationContext(),R.layout.sentence_change,null);
-                    //ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
-                    SentenceAdapter adapter = new SentenceAdapter();
-                   // lv_sentence.setAdapter(adapter);
-                    //ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
-                }else if (groupPosition == 1){
-                    convertView = View.inflate(getApplicationContext(),R.layout.consumption,null);
-                  //  ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
-                    ConsumptionAdapter adapter = new ConsumptionAdapter();
-                 //   lv_consumption.setAdapter(adapter);
-                   // ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
-                }else if (groupPosition == 2){
-                    convertView = View.inflate(getApplicationContext(),R.layout.shoppingreceipt,null);
-                  //  ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
-                    ReceiptAdapter adapter = new ReceiptAdapter();
-                  //  lv_shopping.setAdapter(adapter);
-                 //   ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
-                }
+            if (groupPosition == 0) {
+                convertView = View.inflate(getApplicationContext(), R.layout.sentence_change, null);
+                //ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
+                SentenceAdapter adapter = new SentenceAdapter();
+                // lv_sentence.setAdapter(adapter);
+                //ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
+            } else if (groupPosition == 1) {
+                convertView = View.inflate(getApplicationContext(), R.layout.consumption, null);
+                //  ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
+                ConsumptionAdapter adapter = new ConsumptionAdapter();
+                //   lv_consumption.setAdapter(adapter);
+                // ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
+            } else if (groupPosition == 2) {
+                convertView = View.inflate(getApplicationContext(), R.layout.shoppingreceipt, null);
+                //  ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
+                ReceiptAdapter adapter = new ReceiptAdapter();
+                //  lv_shopping.setAdapter(adapter);
+                //   ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
+            }
             return convertView;
         }
 
@@ -493,7 +489,8 @@ public class FamilyServiceActivity extends BaseActivity {
             return false;
         }
     }
-    private class GroupViewHolder{
+
+    private class GroupViewHolder {
         ImageView img_messge;
         TextView tv_messge;
         ImageView image_click;
@@ -501,7 +498,7 @@ public class FamilyServiceActivity extends BaseActivity {
     }
 
 
-    private class SentenceAdapter extends BaseAdapter{
+    private class SentenceAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -521,35 +518,36 @@ public class FamilyServiceActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
-            if (convertView == null){
-                convertView = View.inflate(getApplicationContext(),R.layout.sentence_change_item,null);
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.sentence_change_item, null);
                 viewHolder = new ViewHolder();
-                viewHolder.tv_sentence_time = (TextView)convertView.findViewById(R.id.tv_sentence_time);
-                viewHolder.tv_sentence_case = (TextView)convertView.findViewById(R.id.tv_sentence_case);
-                viewHolder.tv_sentence_add = (TextView)convertView.findViewById(R.id.tv_sentence_add);
+                viewHolder.tv_sentence_time = (TextView) convertView.findViewById(R.id.tv_sentence_time);
+                viewHolder.tv_sentence_case = (TextView) convertView.findViewById(R.id.tv_sentence_case);
+                viewHolder.tv_sentence_add = (TextView) convertView.findViewById(R.id.tv_sentence_add);
                 convertView.setTag(viewHolder);
-            }else {
-                viewHolder = (ViewHolder)convertView.getTag();
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
-            if (position == 0){
+            if (position == 0) {
                 viewHolder.tv_sentence_time.setText("时间");
                 viewHolder.tv_sentence_case.setText("原因");
                 viewHolder.tv_sentence_add.setText("加/减刑");
-            }else {
+            } else {
                 //viewHolder.tv_sentence_time.setText(sentence_time.get(position-1));
                 //viewHolder.tv_sentence_case.setText(sentence_cause.get(position-1));
                 //viewHolder.tv_sentence_add.setText(sentence_time_add.get(position-1));
             }
             return convertView;
         }
-        private class ViewHolder{
+
+        private class ViewHolder {
             TextView tv_sentence_time;
             TextView tv_sentence_case;
             TextView tv_sentence_add;
         }
     }
 
-    private class ConsumptionAdapter extends BaseAdapter{
+    private class ConsumptionAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -569,35 +567,36 @@ public class FamilyServiceActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
-            if (convertView == null){
-                convertView = View.inflate(getApplicationContext(),R.layout.sentence_change_item,null);
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.sentence_change_item, null);
                 viewHolder = new ViewHolder();
-                viewHolder.buy_time = (TextView)convertView.findViewById(R.id.tv_sentence_time);
-                viewHolder.buy_commodity = (TextView)convertView.findViewById(R.id.tv_sentence_case);
-                viewHolder.buy_money = (TextView)convertView.findViewById(R.id.tv_sentence_add);
+                viewHolder.buy_time = (TextView) convertView.findViewById(R.id.tv_sentence_time);
+                viewHolder.buy_commodity = (TextView) convertView.findViewById(R.id.tv_sentence_case);
+                viewHolder.buy_money = (TextView) convertView.findViewById(R.id.tv_sentence_add);
                 convertView.setTag(viewHolder);
-            }else {
-                viewHolder = (ViewHolder)convertView.getTag();
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
-            if (position == 0){
+            if (position == 0) {
                 viewHolder.buy_time.setText("购买时间");
                 viewHolder.buy_commodity.setText("商品");
                 viewHolder.buy_money.setText("金额");
-            }else {
+            } else {
                 //viewHolder.buy_time.setText(sentence_time.get(position-1));
                 //viewHolder.buy_commodity.setText(commodity.get(position-1));
                 //viewHolder.buy_money.setText(money1.get(position-1));
             }
             return convertView;
         }
-        private class ViewHolder{
+
+        private class ViewHolder {
             TextView buy_time;
             TextView buy_commodity;
             TextView buy_money;
         }
     }
 
-    private class ReceiptAdapter extends BaseAdapter{
+    private class ReceiptAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -617,25 +616,25 @@ public class FamilyServiceActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder viewHolder;
-            if (convertView == null){
-                convertView = View.inflate(getApplicationContext(),R.layout.shoppingreceipt_item,null);
+            if (convertView == null) {
+                convertView = View.inflate(getApplicationContext(), R.layout.shoppingreceipt_item, null);
                 viewHolder = new ViewHolder();
-                viewHolder.receipt = (ImageView)convertView.findViewById(R.id.image_receipt);
-                viewHolder.qianshou = (TextView)convertView.findViewById(R.id.tv_qianshou);
-                viewHolder.qianshou_time = (TextView)convertView.findViewById(R.id.tv_receipt_time);
-                viewHolder.qianshou_id = (TextView)convertView.findViewById(R.id.tv_buy_id);
-                viewHolder.qianshou_money = (TextView)convertView.findViewById(R.id.tv_money);
+                viewHolder.receipt = (ImageView) convertView.findViewById(R.id.image_receipt);
+                viewHolder.qianshou = (TextView) convertView.findViewById(R.id.tv_qianshou);
+                viewHolder.qianshou_time = (TextView) convertView.findViewById(R.id.tv_receipt_time);
+                viewHolder.qianshou_id = (TextView) convertView.findViewById(R.id.tv_buy_id);
+                viewHolder.qianshou_money = (TextView) convertView.findViewById(R.id.tv_money);
                 convertView.setTag(viewHolder);
-            }else {
-                viewHolder = (ViewHolder)convertView.getTag();
+            } else {
+                viewHolder = (ViewHolder) convertView.getTag();
             }
-            if (position == 0){
+            if (position == 0) {
                 viewHolder.qianshou.setText("确认签收");
                 viewHolder.qianshou_time.setText("签收时间");
                 viewHolder.qianshou_id.setText("购物ID");
                 viewHolder.qianshou_money.setText("购物数值");
                 viewHolder.receipt.setVisibility(View.GONE);
-            }else {
+            } else {
                 viewHolder.receipt.setVisibility(View.VISIBLE);
                 //viewHolder.qianshou_time.setText(sentence_time.get(position-1));
                 //viewHolder.qianshou_id.setText(buyer_id.get(position-1));
@@ -643,7 +642,8 @@ public class FamilyServiceActivity extends BaseActivity {
             }
             return convertView;
         }
-        private class ViewHolder{
+
+        private class ViewHolder {
             TextView qianshou_time;
             TextView qianshou_id;
             TextView qianshou_money;
@@ -651,6 +651,7 @@ public class FamilyServiceActivity extends BaseActivity {
             ImageView receipt;
         }
     }
+
     private String getResultTradeno(String s) {
         String str = "";
         try {

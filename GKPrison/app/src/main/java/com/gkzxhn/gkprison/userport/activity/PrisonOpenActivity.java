@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +16,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,28 +23,20 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
-import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Random;
 
 /**
  * 狱务公开页面
@@ -54,7 +44,7 @@ import java.util.Random;
 public class PrisonOpenActivity extends BaseActivity {
 
     private ListView lv_prison_open;
-//    private RelativeLayout rl_carousel;
+    //    private RelativeLayout rl_carousel;
     private RollViewPager vp_carousel;
     private View layout_roll_view;
     private LinearLayout dots_ll;
@@ -75,22 +65,21 @@ public class PrisonOpenActivity extends BaseActivity {
     private ProgressBar progressBar;
 
 
-    
     private boolean isLoadingMore = false;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String tag = (String)msg.obj;
-                    if (tag.equals("success")){
+                    String tag = (String) msg.obj;
+                    if (tag.equals("success")) {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         allnews = analysisNews(result);
                         newsList.clear();
-                        for (int i = 0;i < allnews.size();i++){
+                        for (int i = 0; i < allnews.size(); i++) {
                             News news = allnews.get(i);
-                            if (news.getType_id() == 1){
+                            if (news.getType_id() == 1) {
                                 newsList.add(news);
                             }
                         }
@@ -99,7 +88,7 @@ public class PrisonOpenActivity extends BaseActivity {
                             public int compare(News lhs, News rhs) {
                                 int heat1 = lhs.getId();
                                 int heat2 = rhs.getId();
-                                if (heat1 < heat2){
+                                if (heat1 < heat2) {
                                     return 1;
                                 }
                                 return -1;
@@ -107,22 +96,22 @@ public class PrisonOpenActivity extends BaseActivity {
                         });
                         List<String> imgurl_list = new ArrayList<>();
                         setCarousel(imgurl_list);
-                        if(myAdapter == null) {
+                        if (myAdapter == null) {
                             myAdapter = new MyAdapter();
                             lv_prison_open.setAdapter(myAdapter);
-                        }else {
+                        } else {
                             myAdapter.notifyDataSetChanged();
                         }
-                    }else if (tag.equals("error")){
+                    } else if (tag.equals("error")) {
                         Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
-                        if(getNews_Dialog.isShowing()) {
+                        if (getNews_Dialog.isShowing()) {
                             getNews_Dialog.dismiss();
                         }
                     }
-                    if(mRefreshLayout.isRefreshing()){
+                    if (mRefreshLayout.isRefreshing()) {
                         mRefreshLayout.setRefreshing(false);
                     }
-                    if(isLoadingMore){
+                    if (isLoadingMore) {
                         mRefreshLayout.setLoading(false);
                         textMore.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
@@ -136,6 +125,7 @@ public class PrisonOpenActivity extends BaseActivity {
 
     /**
      * 设置轮播图
+     *
      * @param imgurl_list
      */
     private void setCarousel(List<String> imgurl_list) {
@@ -149,7 +139,7 @@ public class PrisonOpenActivity extends BaseActivity {
             list_news_title.add(newsList.get(1).getTitle());
             list_news_title.add(newsList.get(2).getTitle());
             list_news_title.add(newsList.get(3).getTitle());
-        }else if(newsList.size() == 3){
+        } else if (newsList.size() == 3) {
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
@@ -157,13 +147,13 @@ public class PrisonOpenActivity extends BaseActivity {
             list_news_title.add(newsList.get(0).getTitle());
             list_news_title.add(newsList.get(1).getTitle());
             list_news_title.add(newsList.get(2).getTitle());
-        }else if(newsList.size() == 2){
+        } else if (newsList.size() == 2) {
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
             list_news_title.clear();
             list_news_title.add(newsList.get(0).getTitle());
             list_news_title.add(newsList.get(1).getTitle());
-        }else if(newsList.size() == 1){
+        } else if (newsList.size() == 1) {
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
             list_news_title.clear();
             list_news_title.add(newsList.get(0).getTitle());
@@ -183,7 +173,7 @@ public class PrisonOpenActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        if(getNews_Dialog.isShowing()) {
+        if (getNews_Dialog.isShowing()) {
             getNews_Dialog.dismiss();
         }
     }
@@ -227,7 +217,7 @@ public class PrisonOpenActivity extends BaseActivity {
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         jail_id = sp.getInt("jail_id", 0);
-        url = Constants.URL_HEAD + "news?jail_id="+jail_id ;
+        url = Constants.URL_HEAD + "news?jail_id=" + jail_id;
         getNews(0);
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -263,18 +253,18 @@ public class PrisonOpenActivity extends BaseActivity {
     /**
      * 获取新闻
      */
-    private void getNews(int getType){
-        if(Utils.isNetworkAvailable()) {
-            if(getType == 0) {// 进入页面
+    private void getNews(int getType) {
+        if (Utils.isNetworkAvailable()) {
+            if (getType == 0) {// 进入页面
                 getNews_Dialog = new ProgressDialog(this);
                 getNews_Dialog.setMessage("正在加载...");
                 getNews_Dialog.setCanceledOnTouchOutside(false);
                 getNews_Dialog.setCancelable(false);
                 getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 getNews_Dialog.show();
-            }else if(getType == 1){  // 下拉刷新
+            } else if (getType == 1) {  // 下拉刷新
 
-            }else if(getType == 2){// 上拉加载
+            } else if (getType == 2) {// 上拉加载
                 textMore.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 isLoadingMore = true;
@@ -300,21 +290,22 @@ public class PrisonOpenActivity extends BaseActivity {
                     }
                 }
             }.start();
-        }else {
+        } else {
             showToastMsgShort("没有网络");
         }
     }
 
     /**
      * 解析新闻
+     *
      * @param s
      * @return
      */
-    private List<News> analysisNews(String s){
+    private List<News> analysisNews(String s) {
         List<News> newses = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0;i < jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 News news = new News();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 news.setId(jsonObject.getInt("id"));
@@ -359,7 +350,7 @@ public class PrisonOpenActivity extends BaseActivity {
         super.onClick(v);
     }
 
-    private class MyAdapter extends BaseAdapter{
+    private class MyAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -379,14 +370,14 @@ public class PrisonOpenActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.prison_open_item, null);
                 holder = new ViewHolder();
                 holder.iv_home_news_icon = (ImageView) convertView.findViewById(R.id.iv_home_news_icon);
                 holder.tv_home_news_title = (TextView) convertView.findViewById(R.id.tv_home_news_title);
                 holder.tv_home_news_content = (TextView) convertView.findViewById(R.id.tv_home_news_content);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             String t = Constants.RESOURSE_HEAD + newsList.get(position).getImage_url();
@@ -397,7 +388,7 @@ public class PrisonOpenActivity extends BaseActivity {
         }
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         ImageView iv_home_news_icon;
         TextView tv_home_news_title;
         TextView tv_home_news_content;

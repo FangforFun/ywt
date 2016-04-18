@@ -33,8 +33,8 @@ public class LawsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        id = getIntent().getIntExtra("id",1);
-        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/laws/"+id+"");
+        id = getIntent().getIntExtra("id", 1);
+        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/laws/" + id + "");
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
@@ -51,7 +51,7 @@ public class LawsDetailActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && wv_news_detail.canGoBack()){
+        if (keyCode == KeyEvent.KEYCODE_BACK && wv_news_detail.canGoBack()) {
             wv_news_detail.goBack();
             return true;
         }

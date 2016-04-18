@@ -29,16 +29,10 @@ import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,20 +63,20 @@ public class VisitingServiceActivity extends BaseActivity {
     private ProgressBar progressBar;
 
     private boolean isLoadingMore = false;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String tag = (String)msg.obj;
-                    if (tag.equals("success")){
+                    String tag = (String) msg.obj;
+                    if (tag.equals("success")) {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         allnews = analysisNews(result);
                         newsList.clear();
-                        for (int i = 0;i < allnews.size();i++){
+                        for (int i = 0; i < allnews.size(); i++) {
                             News news = allnews.get(i);
-                            if (news.getType_id() == 2){
+                            if (news.getType_id() == 2) {
                                 newsList.add(news);
                             }
                         }
@@ -91,29 +85,29 @@ public class VisitingServiceActivity extends BaseActivity {
                             public int compare(News lhs, News rhs) {
                                 int heat1 = lhs.getId();
                                 int heat2 = rhs.getId();
-                                if (heat1 < heat2){
+                                if (heat1 < heat2) {
                                     return 1;
                                 }
                                 return -1;
                             }
                         });
-                        if(myAdapter == null) {
+                        if (myAdapter == null) {
                             myAdapter = new MyAdapter();
                             lv_prison_open.setAdapter(myAdapter);
-                        }else {
+                        } else {
                             myAdapter.notifyDataSetChanged();
                         }
                         setCarousel();
-                    }else if (tag.equals("error")){
+                    } else if (tag.equals("error")) {
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                        if(getNews_dialog.isShowing()) {
+                        if (getNews_dialog.isShowing()) {
                             getNews_dialog.dismiss();
                         }
                     }
-                    if(mRefreshLayout.isRefreshing()){
+                    if (mRefreshLayout.isRefreshing()) {
                         mRefreshLayout.setRefreshing(false);
                     }
-                    if(isLoadingMore){
+                    if (isLoadingMore) {
                         mRefreshLayout.setLoading(false);
                         textMore.setVisibility(View.GONE);
                         progressBar.setVisibility(View.GONE);
@@ -131,7 +125,7 @@ public class VisitingServiceActivity extends BaseActivity {
     private void setCarousel() {
         List<String> imgurl_list = new ArrayList<>();
         list_news_title.clear();
-        if(newsList.size() > 3) {
+        if (newsList.size() > 3) {
             list_news_title.add(newsList.get(0).getTitle());
             list_news_title.add(newsList.get(1).getTitle());
             list_news_title.add(newsList.get(2).getTitle());
@@ -140,19 +134,19 @@ public class VisitingServiceActivity extends BaseActivity {
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(3).getImage_url());
-        }else if(newsList.size() == 3){
+        } else if (newsList.size() == 3) {
             list_news_title.add(newsList.get(0).getTitle());
             list_news_title.add(newsList.get(1).getTitle());
             list_news_title.add(newsList.get(2).getTitle());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(2).getImage_url());
-        }else if(newsList.size() == 2){
+        } else if (newsList.size() == 2) {
             list_news_title.add(newsList.get(0).getTitle());
             list_news_title.add(newsList.get(1).getTitle());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(1).getImage_url());
-        }else if(newsList.size() == 1){
+        } else if (newsList.size() == 1) {
             list_news_title.add(newsList.get(0).getTitle());
             imgurl_list.add(Constants.RESOURSE_HEAD + newsList.get(0).getImage_url());
         }
@@ -171,7 +165,7 @@ public class VisitingServiceActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        if(getNews_dialog.isShowing()) {
+        if (getNews_dialog.isShowing()) {
             getNews_dialog.dismiss();
         }
     }
@@ -180,7 +174,6 @@ public class VisitingServiceActivity extends BaseActivity {
      * 轮播图导航点集合
      */
     private List<View> dotList = new ArrayList<>();
-
 
 
     @Override
@@ -216,12 +209,12 @@ public class VisitingServiceActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
-        url = Constants.URL_HEAD + "news?jail_id=" + sp.getInt("jail_id", 0) ;
+        url = Constants.URL_HEAD + "news?jail_id=" + sp.getInt("jail_id", 0);
         getNews(0);
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(position > 0) {
+                if (position > 0) {
                     int i = newsList.get(position - 1).getId();
                     Intent intent = new Intent(VisitingServiceActivity.this, NewsDetailActivity.class);
                     intent.putExtra("id", i);
@@ -252,18 +245,18 @@ public class VisitingServiceActivity extends BaseActivity {
     /**
      * 获取新闻
      */
-    private void getNews(int getType){
-        if(Utils.isNetworkAvailable()) {
-            if(getType == 0) {// 进入页面
+    private void getNews(int getType) {
+        if (Utils.isNetworkAvailable()) {
+            if (getType == 0) {// 进入页面
                 getNews_dialog = new ProgressDialog(this);
                 getNews_dialog.setMessage("正在加载...");
                 getNews_dialog.setCanceledOnTouchOutside(false);
                 getNews_dialog.setCancelable(false);
                 getNews_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 getNews_dialog.show();
-            }else if(getType == 1){  // 下拉刷新
+            } else if (getType == 1) {  // 下拉刷新
 
-            }else if(getType == 2){// 上拉加载
+            } else if (getType == 2) {// 上拉加载
                 textMore.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 isLoadingMore = true;
@@ -285,7 +278,7 @@ public class VisitingServiceActivity extends BaseActivity {
                     }
                 }
             }.start();
-        }else {
+        } else {
             showToastMsgShort("没有网络");
         }
     }
@@ -314,11 +307,11 @@ public class VisitingServiceActivity extends BaseActivity {
         }
     }
 
-    private List<News> analysisNews(String s){
+    private List<News> analysisNews(String s) {
         List<News> newses = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0;i < jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 News news = new News();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 news.setId(jsonObject.getInt("id"));
@@ -356,17 +349,17 @@ public class VisitingServiceActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.prison_open_item, null);
                 holder = new ViewHolder();
                 holder.iv_home_news_icon = (ImageView) convertView.findViewById(R.id.iv_home_news_icon);
                 holder.tv_home_news_title = (TextView) convertView.findViewById(R.id.tv_home_news_title);
                 holder.tv_home_news_content = (TextView) convertView.findViewById(R.id.tv_home_news_content);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
-            String t = Constants.RESOURSE_HEAD+newsList.get(position).getImage_url();
+            String t = Constants.RESOURSE_HEAD + newsList.get(position).getImage_url();
             Picasso.with(holder.iv_home_news_icon.getContext()).load(t).into(holder.iv_home_news_icon);
             holder.tv_home_news_title.setText(Html.fromHtml(newsList.get(position).getTitle()));
             holder.tv_home_news_content.setText(Html.fromHtml(newsList.get(position).getContents()));
@@ -374,7 +367,7 @@ public class VisitingServiceActivity extends BaseActivity {
         }
     }
 
-    private static class ViewHolder{
+    private static class ViewHolder {
         ImageView iv_home_news_icon;
         TextView tv_home_news_title;
         TextView tv_home_news_content;
