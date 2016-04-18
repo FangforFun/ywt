@@ -39,7 +39,7 @@ import de.greenrobot.event.EventBus;
 
 /**
  * 音视频界面
- * Created by hzxuwen on 2015/4/21.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener, AVChatStateObserver {
     // constant
@@ -195,6 +195,9 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         registerNetCallObserver(false);
         cancelCallingNotifier();
         needFinish = true;
+        if(sp == null){
+            sp = getSharedPreferences("config", MODE_PRIVATE);
+        }
         if(sp.getBoolean("isCommonUser", true)){
             // 如果是普通用户  视频结束恢复未审查状态
             SharedPreferences.Editor editor = sp.edit();
@@ -415,7 +418,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         Log.i(TAG, "onUserJoin  " + account + "----" + getIntent().getStringExtra(KEY_ACCOUNT));
         avChatUI.setVideoAccount(getIntent().getStringExtra(KEY_ACCOUNT));
 
-        avChatUI.initRemoteSurfaceView(avChatUI.getVideoAccount());
+        avChatUI.initSurfaceView(avChatUI.getVideoAccount());
     }
 
     @Override
@@ -446,7 +449,8 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         if (state == AVChatType.AUDIO.getValue()) {
             avChatUI.onCallStateChange(CallStateEnum.AUDIO);
         } else {
-            avChatUI.initSurfaceView(avChatUI.getVideoAccount());
+//            avChatUI.initSurfaceView(avChatUI.getVideoAccount());
+            avChatUI.initLocalSurfaceView();
             avChatUI.onCallStateChange(CallStateEnum.VIDEO);
         }
         isCallEstablished = true;
@@ -538,6 +542,12 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
                 break;
             case NOTIFY_VIDEO_ON:
                 avChatUI.peerVideoOn();
+                break;
+            case NOTIFY_RECORD_START:
+                Toast.makeText(this, "对方开始了通话录制", Toast.LENGTH_SHORT).show();
+                break;
+            case NOTIFY_RECORD_STOP:
+                Toast.makeText(this, "对方结束了通话录制", Toast.LENGTH_SHORT).show();
                 break;
             default:
                 break;

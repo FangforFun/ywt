@@ -197,9 +197,9 @@ public class AVChatUI implements AVChatUIListener {
             public void onFailed(int code) {
                 Log.d(TAG, "failed code->" + code);// 408请求超时
                 DialogMaker.dismissProgressDialog();
-                if(code == 11001){
+                if (code == 11001) {
                     Toast.makeText(context, "对方不在线", Toast.LENGTH_SHORT).show();
-                }else {
+                } else {
                     Toast.makeText(context, "发起通话失败" + code, Toast.LENGTH_SHORT).show();
                 }
                 closeSessions(code);
@@ -710,12 +710,14 @@ public class AVChatUI implements AVChatUIListener {
             public void onSuccess(Void aVoid) {
                 onAudioToVideo();
                 initSurfaceView(videoAccount);
-                if (sp.getBoolean("is_can_video", true)) {
-                    avChatSurface.setThroughtVisibility(View.GONE);
-                }
+//                if (sp.getBoolean("is_can_video", true)) {
+                // 会有这个操作都是已经审核通过了的   不用再判断
+                avChatSurface.setThroughtVisibility(View.GONE);
+//                }
                 avChatVideo.setTime(true);// 开始计时
                 avChatVideo.setTopRoot(true);// 设置顶部栏可见
                 avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
+                avChatSurface.setThroughtVisibility(View.GONE);
             }
 
             @Override
@@ -740,6 +742,7 @@ public class AVChatUI implements AVChatUIListener {
         avChatSurface.initLargeSurfaceView(avChatData.getAccount());
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
         if(!avChatData.getAccount().contains("gkzxhn")) { // 发起者(狱警方)
+            Log.i(TAG, "发起者(狱警方)");
             // 开始录像
 //            if(!AVChatManager.getInstance().isRecording()) {
 //                AVChatManager.getInstance().startRecord(new AVChatCallback<Void>() {
@@ -777,6 +780,7 @@ public class AVChatUI implements AVChatUIListener {
                                 "    }" +
                                 "}", HTTP.UTF_8);
                         params.setBodyEntity(entity);
+                        Log.i(TAG, "through entity is :" + entity);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
                     }
@@ -810,6 +814,7 @@ public class AVChatUI implements AVChatUIListener {
                                 "        \"sender\": \"" + sp.getString("token", "") + "\"" +
                                 "    }" +
                                 "}", HTTP.UTF_8);
+                        Log.i(TAG, "not through entity is :" + entity);
                         params.setBodyEntity(entity);
                     } catch (UnsupportedEncodingException e) {
                         e.printStackTrace();
@@ -832,8 +837,14 @@ public class AVChatUI implements AVChatUIListener {
                 }
             });
         }else {
-            avChatSurface.setIsComing(true);
-            avChatVideo.setTopRoot(false);
+            Log.i(TAG, "不是发起者(狱警方)");
+            if(sp.getBoolean("is_can_video", false)){
+                avChatVideo.setTime(true);// 开始计时
+                avChatVideo.setTopRoot(true);// 设置顶部栏可见
+            }else {
+                avChatSurface.setIsComing(true);
+                avChatVideo.setTopRoot(false);
+            }
         }
     }
 

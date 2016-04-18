@@ -35,10 +35,11 @@ import com.netease.nimlib.sdk.avchat.AVChatManager;
 
 /**
  * 视频绘制管理
- * Created by hzxuwen on 2015/5/6.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatSurface {
 
+    private static final String TAG = "AVChatSurface";
     private Context context;
     private AVChatUI manager;
     private View surfaceRoot;
@@ -270,8 +271,7 @@ public class AVChatSurface {
                     case "4G":
                         Toast.makeText(context, "目前网络处于4G状态，请尽快切换到wifi，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
                         break;
-                    case "WIFI":
-                        Toast.makeText(context, "目前网络处于wifi状态，请保持网络畅通，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                    case "WIFI":Toast.makeText(context, "目前网络处于wifi状态，请保持网络畅通，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
                         break;
                     default:
                         Toast.makeText(context, "目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
@@ -288,16 +288,22 @@ public class AVChatSurface {
                 bt_through_examine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.i(TAG, "clicked through examine button !");
                         if(onThroughExamineListener != null) {
                             onThroughExamineListener.onClick();
+                        }else {
+                            Log.i(TAG, "sorry ! onThroughExamineListener is null");
                         }
                     }
                 });
                 bt_not_through_examine.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.i(TAG, "clicked not through examine button !");
                         if(onNotThroughExamineListener != null) {
                             onNotThroughExamineListener.onClick();
+                        }else {
+                            Log.i(TAG, "sorry ! onNotThroughExamineListener is null");
                         }
                     }
                 });
@@ -406,12 +412,11 @@ public class AVChatSurface {
          * 获取视频SurfaceView，加入到自己的布局中，用于呈现视频图像
          * account 要显示视频的用户帐号
          */
-        Log.i("account 啊啊啊啊 啊啊啊", account + "----" + largeAccount);
         SurfaceView surfaceView = AVChatManager.getInstance().getSurfaceRender(account);
         if (surfaceView != null) {
             addIntoLargeSizePreviewLayout(surfaceView);
         }
-        if(sp.getBoolean("isCommonUser", false)){
+        if(sp.getBoolean("isCommonUser", false) && !sp.getBoolean("is_can_video", false)){
             fl_examine.setVisibility(View.VISIBLE);
             tv_examine.setVisibility(View.VISIBLE);
         }

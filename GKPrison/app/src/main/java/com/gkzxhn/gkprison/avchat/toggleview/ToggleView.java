@@ -4,7 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 /**
- * Created by hzlichengda on 14-3-14.
+ * Created by huangzhengneng on 2016/1/5.
  * if you want to use this parentView with an inner parentView inside ,the inner parentView's id must be R.id.childView
  */
 public class ToggleView {

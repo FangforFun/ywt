@@ -1,7 +1,7 @@
 package com.gkzxhn.gkprison.avchat;
 
 /**
- * Created by hzxuwen on 2015/4/24.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatExitCode {
     public static final int PEER_HANGUP = 0;

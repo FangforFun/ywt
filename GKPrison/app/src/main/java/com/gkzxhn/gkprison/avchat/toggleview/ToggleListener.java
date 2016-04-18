@@ -3,7 +3,7 @@ package com.gkzxhn.gkprison.avchat.toggleview;
 import android.view.View;
 
 /**
-* Created by hzlichengda on 14-3-31.
+* Created by huangzhengneng on 2016/1/5.
 */
 public interface ToggleListener {
     void toggleOn(View v);

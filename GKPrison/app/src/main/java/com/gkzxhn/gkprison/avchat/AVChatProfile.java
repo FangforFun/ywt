@@ -1,7 +1,7 @@
 package com.gkzxhn.gkprison.avchat;
 
 /**
- * Created by huangjun on 2015/5/12.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class AVChatProfile {
 

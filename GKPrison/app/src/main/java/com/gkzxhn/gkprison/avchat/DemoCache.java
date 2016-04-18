@@ -6,7 +6,7 @@ import com.netease.nim.uikit.NimUIKit;
 import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 
 /**
- * Created by jezhee on 2/20/15.
+ * Created by huangzhengneng on 2016/1/5.
  */
 public class DemoCache {
 
