@@ -2,17 +2,14 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,18 +43,18 @@ public class LawsRegulationsActivity extends BaseActivity {
     private String token = "";
     private String url = "";
     private int jail_id;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String messge = (String)msg.obj;
-                    if (messge.equals("sucess")){
+                    String messge = (String) msg.obj;
+                    if (messge.equals("sucess")) {
                         Bundle bundle = msg.getData();
                         String laws = bundle.getString("result");
                         lawses = analysisLaws(laws);
                         lv_laws_regulations.setAdapter(new MyAdapter());
-                    }else if (messge.equals("error")){
+                    } else if (messge.equals("error")) {
                         Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
                     }
                     break;
@@ -77,23 +74,23 @@ public class LawsRegulationsActivity extends BaseActivity {
         setTitle("法律法规");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        token = sp.getString("token","00");
-        jail_id = sp.getInt("jail_id",0);
-        url = Constants.URL_HEAD + "laws?jail_id="+jail_id+"&access_token=" + token;
+        token = sp.getString("token", "00");
+        jail_id = sp.getInt("jail_id", 0);
+        url = Constants.URL_HEAD + "laws?jail_id=" + jail_id + "&access_token=" + token;
         getLaws();
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               int i = lawses.get(position).getId();
-                Intent intent = new Intent(LawsRegulationsActivity.this,LawsDetailActivity.class);
-                intent.putExtra("id",i);
+                int i = lawses.get(position).getId();
+                Intent intent = new Intent(LawsRegulationsActivity.this, LawsDetailActivity.class);
+                intent.putExtra("id", i);
                 startActivity(intent);
             }
         });
     }
 
-    private void getLaws(){
-        new Thread(){
+    private void getLaws() {
+        new Thread() {
             @Override
             public void run() {
                 Message msg = handler.obtainMessage();
@@ -101,15 +98,15 @@ public class LawsRegulationsActivity extends BaseActivity {
                 HttpGet Get = new HttpGet(url);
                 try {
                     HttpResponse Response = httpClient.execute(Get);
-                    if (Response.getStatusLine().getStatusCode() == 200){
+                    if (Response.getStatusLine().getStatusCode() == 200) {
                         String result = EntityUtils.toString(Response.getEntity(), "utf-8");
                         msg.obj = "sucess";
                         Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
+                        bundle.putString("result", result);
                         msg.setData(bundle);
                         msg.what = 1;
                         handler.sendMessage(msg);
-                    }else {
+                    } else {
                         msg.obj = "error";
                         msg.what = 1;
                         handler.sendMessage(msg);
@@ -121,12 +118,12 @@ public class LawsRegulationsActivity extends BaseActivity {
         }.start();
     }
 
-    private List<Laws> analysisLaws(String s){
+    private List<Laws> analysisLaws(String s) {
         List<Laws> lawsList = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(s);
-            JSONArray  jsonArray1 = jsonObject.getJSONArray("laws");
-            for (int i = 0;i < jsonArray1.length();i++){
+            JSONArray jsonArray1 = jsonObject.getJSONArray("laws");
+            for (int i = 0; i < jsonArray1.length(); i++) {
                 Laws laws = new Laws();
                 JSONObject jsonObject1 = jsonArray1.getJSONObject(i);
                 laws.setId(jsonObject1.getInt("id"));
@@ -143,7 +140,7 @@ public class LawsRegulationsActivity extends BaseActivity {
         return lawsList;
     }
 
-    private class MyAdapter extends BaseAdapter{
+    private class MyAdapter extends BaseAdapter {
 
         @Override
         public int getCount() {
@@ -163,12 +160,12 @@ public class LawsRegulationsActivity extends BaseActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
-            if(convertView == null) {
+            if (convertView == null) {
                 convertView = View.inflate(getApplicationContext(), R.layout.laws_regulations_item, null);
                 holder = new ViewHolder();
                 holder.tv_laws_regulations_item = (TextView) convertView.findViewById(R.id.tv_laws_regulations_item);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.tv_laws_regulations_item.setText(Html.fromHtml(lawses.get(position).getTitle()));

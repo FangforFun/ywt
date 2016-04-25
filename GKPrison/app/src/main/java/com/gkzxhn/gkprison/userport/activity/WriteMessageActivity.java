@@ -1,10 +1,8 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -22,18 +20,6 @@ import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Letter;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -54,10 +40,10 @@ public class WriteMessageActivity extends BaseActivity {
     private String token;
     private int family_id = 0;
     private SweetAlertDialog pDialog;
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 0:// 发送成功(200)
                     pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
                     pDialog.setTitleText("提交成功，感谢您的反馈！")
@@ -114,7 +100,7 @@ public class WriteMessageActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         bt_commit_write_message.setOnClickListener(this);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        jail_id = sp.getInt("jail_id",1);
+        jail_id = sp.getInt("jail_id", 1);
         family_id = sp.getInt("family_id", 1);
         token = sp.getString("token", "");
         rl_back.setOnClickListener(this);
@@ -122,20 +108,20 @@ public class WriteMessageActivity extends BaseActivity {
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.bt_commit_write_message:
                 theme = et_theme.getText().toString();
                 contents = et_content.getText().toString();
-                if (theme.equals("主题:") || TextUtils.isEmpty(theme)){
+                if (theme.equals("主题:") || TextUtils.isEmpty(theme)) {
                     showToastMsgShort("请输入主题");
                     return;
-                }else if (TextUtils.isEmpty(contents)){
+                } else if (TextUtils.isEmpty(contents)) {
                     showToastMsgShort("请输入内容");
                     return;
-                }else {
-                    if(Utils.isNetworkAvailable()) {
+                } else {
+                    if (Utils.isNetworkAvailable()) {
                         sendMessage();
-                    }else {
+                    } else {
                         showToastMsgShort("没有网络,请检查网络设置");
                     }
                 }
@@ -143,7 +129,7 @@ public class WriteMessageActivity extends BaseActivity {
             case R.id.rl_back:
                 contents = et_content.getText().toString().trim();
                 theme = et_theme.getText().toString().trim();
-                if(!TextUtils.isEmpty(contents) || !TextUtils.isEmpty(theme)){
+                if (!TextUtils.isEmpty(contents) || !TextUtils.isEmpty(theme)) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(WriteMessageActivity.this);
                     builder.setMessage("放弃写信？");
                     builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
@@ -161,7 +147,7 @@ public class WriteMessageActivity extends BaseActivity {
                     });
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                }else {
+                } else {
                     WriteMessageActivity.this.finish();
                 }
                 break;
@@ -171,7 +157,7 @@ public class WriteMessageActivity extends BaseActivity {
     /**
      * 提交
      */
-    private void sendMessage(){
+    private void sendMessage() {
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
                 .setTitleText("正在提交,请稍后...");
         pDialog.setCancelable(false);
@@ -183,21 +169,21 @@ public class WriteMessageActivity extends BaseActivity {
         letter.setFamily_id(family_id);
         gson = new Gson();
         String message = gson.toJson(letter);
-        final String sendmessage = "{\"message\":"+message+"}";
-        new Thread(){
+        final String sendmessage = "{\"message\":" + message + "}";
+        new Thread() {
             @Override
             public void run() {
                 try {
-                    String url = Constants.URL_HEAD + "mail_boxes?jail_id="+jail_id+"&access_token=";
+                    String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
                     String result = HttpRequestUtil.doHttpsPost(url + token, sendmessage);
-                    if(result.contains("StatusCode is ")){
+                    if (result.contains("StatusCode is ")) {
                         Log.d("写信失败", result);
                         Message msg = handler.obtainMessage();
                         msg.what = 1;
                         msg.obj = result;
                         handler.sendMessage(msg);
                         SystemClock.sleep(500);// 模拟网络差的情景
-                    }else {
+                    } else {
                         Log.d("写信成功", result);
                         Message msg = handler.obtainMessage();
                         msg.what = 0;
@@ -205,12 +191,11 @@ public class WriteMessageActivity extends BaseActivity {
                         handler.sendMessage(msg);
                         SystemClock.sleep(500);// 模拟网络差的情景
                     }
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                     SystemClock.sleep(500);// 模拟网络差的情景
                     handler.sendEmptyMessage(2);
-                    Log.i("写信异常","异常1");
+                    Log.i("写信异常", "异常1");
                 }
             }
         }.start();
@@ -218,10 +203,10 @@ public class WriteMessageActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             contents = et_content.getText().toString().trim();
             theme = et_theme.getText().toString().trim();
-            if(!TextUtils.isEmpty(contents) || !TextUtils.isEmpty(theme)){
+            if (!TextUtils.isEmpty(contents) || !TextUtils.isEmpty(theme)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(WriteMessageActivity.this);
                 builder.setMessage("放弃写信？");
                 builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
@@ -239,11 +224,11 @@ public class WriteMessageActivity extends BaseActivity {
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
-            }else {
+            } else {
                 WriteMessageActivity.this.finish();
             }
             return true;
-        }else {
+        } else {
             return super.onKeyDown(keyCode, event);
         }
     }

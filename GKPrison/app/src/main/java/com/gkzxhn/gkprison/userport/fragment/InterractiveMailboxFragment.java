@@ -47,15 +47,15 @@ public class InterractiveMailboxFragment extends Fragment {
     private String token = "";
     private TextView nonotice;
     private List<Reply> replies = new ArrayList<Reply>();
-    private Handler handler = new Handler(){
+    private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case 1:
-                    String message = (String)msg.obj;
-                    if (message.equals("error")){
+                    String message = (String) msg.obj;
+                    if (message.equals("error")) {
                         Toast.makeText(getActivity(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                    }else if (message.equals("success")){
+                    } else if (message.equals("success")) {
                         Bundle bundle = msg.getData();
                         String result = bundle.getString("result");
                         replies = analysisReply(result);
@@ -64,15 +64,15 @@ public class InterractiveMailboxFragment extends Fragment {
                             public int compare(Reply lhs, Reply rhs) {
                                 int heat1 = lhs.getId();
                                 int heat2 = rhs.getId();
-                                if (heat1 < heat2){
+                                if (heat1 < heat2) {
                                     return 1;
                                 }
                                 return -1;
                             }
                         });
-                        if (replies.size() == 0){
+                        if (replies.size() == 0) {
                             nonotice.setVisibility(View.VISIBLE);
-                        }else {
+                        } else {
                             nonotice.setVisibility(View.GONE);
                         }
                         elv_my_mailbox_list.setAdapter(new MyAdapter());
@@ -83,7 +83,7 @@ public class InterractiveMailboxFragment extends Fragment {
     };
 
     private ExpandableListView elv_my_mailbox_list;
-    private List<String> my_mailbox_list_title = new ArrayList<String>(){
+    private List<String> my_mailbox_list_title = new ArrayList<String>() {
         {
             add("回复：关于监狱用餐问题的建议");
             add("关于住宿问题的建议");
@@ -105,28 +105,28 @@ public class InterractiveMailboxFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_interractive_mailbox,null);
+        View view = inflater.inflate(R.layout.fragment_interractive_mailbox, null);
         elv_my_mailbox_list = (ExpandableListView) view.findViewById(R.id.elv_my_mailbox_list);
-        nonotice = (TextView)view.findViewById(R.id.tv_nothing);
+        nonotice = (TextView) view.findViewById(R.id.tv_nothing);
         initData();
         return view;
     }
 
-    private void initData(){
+    private void initData() {
         sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
         family_id = sp.getInt("family_id", 1);
         Log.d("个人ID", family_id + "");
         token = sp.getString("token", "");
-        Log.d("个人ID",token);
-        url = Constants.URL_HEAD+"comments?access_token="+token+"&family_id="+family_id;
+        Log.d("个人ID", token);
+        url = Constants.URL_HEAD + "comments?access_token=" + token + "&family_id=" + family_id;
         getReply();
 
-        Log.d("个人信息",family_id+"");
-        Log.d("个人信息",token);
+        Log.d("个人信息", family_id + "");
+        Log.d("个人信息", token);
     }
 
-    private void getReply(){
-        new Thread(){
+    private void getReply() {
+        new Thread() {
             @Override
             public void run() {
                 Message msg = handler.obtainMessage();
@@ -134,15 +134,15 @@ public class InterractiveMailboxFragment extends Fragment {
                 HttpGet get = new HttpGet(url);
                 try {
                     HttpResponse response = httpClient.execute(get);
-                    if (response.getStatusLine().getStatusCode()==200){
+                    if (response.getStatusLine().getStatusCode() == 200) {
                         String result = EntityUtils.toString(response.getEntity(), "UTF-8");
                         msg.obj = "success";
                         Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
+                        bundle.putString("result", result);
                         msg.setData(bundle);
                         msg.what = 1;
                         handler.sendMessage(msg);
-                    }else {
+                    } else {
                         msg.obj = "error";
                         msg.what = 1;
                         handler.sendMessage(msg);
@@ -154,11 +154,11 @@ public class InterractiveMailboxFragment extends Fragment {
         }.start();
     }
 
-    private List<Reply> analysisReply(String s){
+    private List<Reply> analysisReply(String s) {
         List<Reply> replies = new ArrayList<Reply>();
         try {
             JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0;i < jsonArray.length();i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 Reply reply = new Reply();
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 reply.setId(jsonObject.getInt("id"));
@@ -173,7 +173,6 @@ public class InterractiveMailboxFragment extends Fragment {
         }
         return replies;
     }
-
 
 
     private class MyAdapter extends BaseExpandableListAdapter {
@@ -216,19 +215,19 @@ public class InterractiveMailboxFragment extends Fragment {
         @Override
         public View getGroupView(int groupPosition, boolean isExpanded, View convertView, ViewGroup parent) {
             GroupViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(getActivity(), R.layout.prison_warden_item, null);
                 holder = new GroupViewHolder();
                 holder.tv_reply_item_title = (TextView) convertView.findViewById(R.id.tv_reply_item_title);
                 holder.iv_reply_item = (ImageView) convertView.findViewById(R.id.iv_reply_item);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (GroupViewHolder) convertView.getTag();
             }
             holder.tv_reply_item_title.setText(replies.get(groupPosition).getTitle());
-            if (isExpanded){
+            if (isExpanded) {
                 holder.iv_reply_item.setImageResource(R.drawable.up_gray);
-            }else {
+            } else {
                 holder.iv_reply_item.setImageResource(R.drawable.down_gray);
             }
             return convertView;
@@ -237,15 +236,15 @@ public class InterractiveMailboxFragment extends Fragment {
         @Override
         public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
             ChildViewHolder holder;
-            if(convertView == null){
+            if (convertView == null) {
                 convertView = View.inflate(getActivity(), R.layout.interactive_mailbox_child, null);
                 holder = new ChildViewHolder();
-                holder.tv_send_reply = (TextView)convertView.findViewById(R.id.tv_send_reply_contents);
+                holder.tv_send_reply = (TextView) convertView.findViewById(R.id.tv_send_reply_contents);
                 holder.tv_reply_content = (TextView) convertView.findViewById(R.id.tv_reply_content);
                 holder.tv_warden_signature = (TextView) convertView.findViewById(R.id.tv_warden_signature);
                 holder.tv_message_time = (TextView) convertView.findViewById(R.id.tv_message_time);
                 convertView.setTag(holder);
-            }else {
+            } else {
                 holder = (ChildViewHolder) convertView.getTag();
             }
             holder.tv_send_reply.setText(replies.get(groupPosition).getContents());
@@ -260,12 +259,12 @@ public class InterractiveMailboxFragment extends Fragment {
         }
     }
 
-    private static class GroupViewHolder{
+    private static class GroupViewHolder {
         TextView tv_reply_item_title;
         ImageView iv_reply_item;
     }
 
-    private static class ChildViewHolder{
+    private static class ChildViewHolder {
         TextView tv_reply_content;
         TextView tv_warden_signature;
         TextView tv_message_time;
