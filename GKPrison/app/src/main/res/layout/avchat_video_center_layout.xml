@@ -7,8 +7,8 @@
 
     <com.netease.nim.uikit.common.ui.imageview.HeadImageView
             android:id="@+id/avchat_video_head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/avchat_icon_size"
+            android:layout_height="@dimen/avchat_icon_size"
             android:layout_marginTop="80dp"
             android:layout_gravity="center_horizontal" />
 
@@ -20,7 +20,7 @@
             android:layout_marginTop="15dp"
             android:layout_marginBottom="15dp"
             android:textColor="@color/tv_bg"
-            android:textSize="20sp"
+            android:textSize="@dimen/tv_apply_meeting_call"
             android:text=""
             android:gravity="center"
             android:singleLine="true"
@@ -59,6 +59,7 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:paddingBottom="40dp">
+
         <include
             android:id="@+id/avchat_video_refuse_receive"
             layout="@layout/avchat_refuse_receive_layout"

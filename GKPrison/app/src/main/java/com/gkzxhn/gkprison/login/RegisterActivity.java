@@ -595,14 +595,14 @@ public class RegisterActivity extends BaseActivity {
                         switch (event.getAction()){
                             case MotionEvent.ACTION_DOWN:
                                 downTime = System.currentTimeMillis();
-                                Log.i("按下了...", downTime + "");
+//                                Log.i("按下了...", downTime + "");
                                 break;
                             case MotionEvent.ACTION_UP:
                                 long upTime = System.currentTimeMillis();
                                 if(upTime - downTime < 500){
                                     agreement_dialog.dismiss();
                                 }
-                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
+//                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
                                 break;
                         }
                         return false;

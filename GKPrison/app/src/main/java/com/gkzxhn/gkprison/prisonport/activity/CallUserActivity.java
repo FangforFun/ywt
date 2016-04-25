@@ -200,11 +200,13 @@ public class CallUserActivity extends BaseActivity {
         switch (v.getId()){
             case R.id.bt_call:
                 if(Utils.isNetworkAvailable()) {
-                    Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
-                    AVChatActivity.start(this, familyMeetingInfo.getAccid(), 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("family_accid", familyMeetingInfo.getAccid());
                     editor.commit();
+                    Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
+                    AVChatActivity.start(this,
+                            familyMeetingInfo.getAccid()
+                            , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
                 }else {
                     showToastMsgShort("没有网络，请检查网络设置");
                 }
