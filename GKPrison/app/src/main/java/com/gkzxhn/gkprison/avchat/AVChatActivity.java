@@ -464,6 +464,21 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     @Override
     public void onRecordEnd(String[] files, int event) {
         if(files != null && files.length > 0) {
+
+            // test
+            for(String file : files){
+
+//                String file = files[0];
+                String parent = new File(file).getParent();
+                String msg;
+                if(event == 0) {
+                    msg = "录制已结束";
+                } else {
+                    msg = "你的手机内存不足, 录制已结束";
+                }
+                Log.i("record files save path:", msg += ", 录制文件已保存至：" + parent);
+            }
+
             String file = files[0];
             String parent = new File(file).getParent();
             String msg;

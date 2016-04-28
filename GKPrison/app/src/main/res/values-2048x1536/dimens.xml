@@ -87,4 +87,5 @@
     <dimen name="warden_tab_tv_size">22sp</dimen>
     <dimen name="register_success_dialog_height">300dp</dimen>
     <dimen name="avchat_recive_refuse_height">80dp</dimen>
+    <dimen name="avchat_icon_size">80dp</dimen>
 </resources>
