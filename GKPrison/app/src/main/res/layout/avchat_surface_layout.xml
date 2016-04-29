@@ -73,7 +73,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="bottom"
-        android:paddingBottom="80dp">
+        android:paddingBottom="50dp">
 
         <ImageView
             android:id="@+id/iv_meeting_ic_card"

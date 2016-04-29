@@ -97,9 +97,11 @@ public class PersonLoadingFragment extends BaseFragment {
                         info = new LoginInfo(userInfo.getToken(), userInfo.getToken()); // config...
                         NIMClient.getService(AuthService.class).login(info)
                                 .setCallback(callback);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("avatar", userInfo.getAvatar().split("\\|")[2]);
-                        editor.commit();
+                        if(userInfo != null) {
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putString("avatar", userInfo.getAvatar().split("\\|")[2]);
+                            editor.commit();
+                        }
                     }else {
                         btn_login.setProgress(0);
                         btn_login.setText("登录失败");
