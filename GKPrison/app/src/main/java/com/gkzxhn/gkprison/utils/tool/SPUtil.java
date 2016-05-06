@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.utils;
+package com.gkzxhn.gkprison.utils.tool;
 
 import android.content.Context;
 import android.content.SharedPreferences;

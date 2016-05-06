@@ -51,7 +51,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
 
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 
 /**
  * Layout manager that allows the user to flip left and right

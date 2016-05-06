@@ -1,10 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,7 +12,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -51,26 +46,14 @@ import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -753,13 +736,13 @@ public class MainActivity extends BaseActivity {
             sb.append(params.get(i).getValue());
             sb.append('&');
         }
-        com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
+        com.gkzxhn.gkprison.utils.tool.Log.d("sa", sb.toString());
         sb.append("key=");
         sb.append("d75699d893882dea526ea05e9c7a4090");
-        com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
+        com.gkzxhn.gkprison.utils.tool.Log.d("dd", sb.toString());
         //  sb.append("sign str\n" + sb.toString() + "\n\n");
         String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
-        com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
+        com.gkzxhn.gkprison.utils.tool.Log.d("orion1", appSign);
         return appSign;
     }
 

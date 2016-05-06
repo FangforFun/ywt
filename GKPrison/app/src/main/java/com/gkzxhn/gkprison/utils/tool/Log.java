@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.utils;
+package com.gkzxhn.gkprison.utils.tool;
 
 /**
  * Created by zhengneng on 2016/3/13.

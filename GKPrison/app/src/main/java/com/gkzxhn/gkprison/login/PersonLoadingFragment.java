@@ -22,7 +22,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NIMClient;

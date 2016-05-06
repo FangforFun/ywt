@@ -22,7 +22,7 @@ import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
 import com.gkzxhn.gkprison.utils.DensityUtil;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;

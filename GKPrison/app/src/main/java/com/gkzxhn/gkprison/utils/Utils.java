@@ -7,6 +7,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.utils.tool.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -26,7 +27,9 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.security.KeyManagementException;
@@ -93,7 +96,7 @@ public class Utils {
      *            原始日期格式
      * @return yyyy-MM-dd格式化后的日期显示
      */
-    public static String dateFormat(String sdate) {
+    public static String dateFormat(long sdate) {
         return dateFormat(sdate, "yyyy-MM-dd");
     }
 
@@ -106,9 +109,9 @@ public class Utils {
      *            格式化后日期格式
      * @return 格式化后的日期显示
      */
-    public static String dateFormat(String sdate, String format) {
+    public static String dateFormat(long sdate, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format);
-        java.sql.Date date = java.sql.Date.valueOf(sdate);
+        Date date = new Date(sdate);
         String dateString = formatter.format(date);
         return dateString;
     }
@@ -500,5 +503,26 @@ public class Utils {
         public Socket createSocket() throws IOException {
             return sslContext.getSocketFactory().createSocket();
         }
+    }
+
+    /**
+     * 序列化
+     * @param object
+     * @return
+     */
+    public static byte[] serialize(Object object) {
+        ObjectOutputStream oos = null;
+        ByteArrayOutputStream baos = null;
+        try {
+            // 序列化
+            baos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baos);
+            oos.writeObject(object);
+            byte[] bytes = baos.toByteArray();
+            return bytes;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

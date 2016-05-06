@@ -15,8 +15,9 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -33,7 +34,14 @@ import com.netease.nimlib.sdk.avchat.model.AVChatControlEvent;
 import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatOnlineAckEvent;
 
+import org.ksoap2.SoapEnvelope;
+import org.ksoap2.serialization.SoapObject;
+import org.ksoap2.serialization.SoapSerializationEnvelope;
+import org.ksoap2.transport.HttpTransportSE;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 
 import de.greenrobot.event.EventBus;
 
@@ -464,11 +472,11 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     @Override
     public void onRecordEnd(String[] files, int event) {
         if(files != null && files.length > 0) {
-
             // test
             for(String file : files){
-
 //                String file = files[0];
+                // /storage/emulated/0/Android/data/com.gkzxhn.gkprison/files/record/20160506153709
+                // /storage/emulated/0/Android/data/com.gkzxhn.gkprison/files/record/20160506154032/201605061540_16000_198x352_1.mp4
                 String parent = new File(file).getParent();
                 String msg;
                 if(event == 0) {
@@ -476,23 +484,35 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
                 } else {
                     msg = "你的手机内存不足, 录制已结束";
                 }
-                Log.i("record files save path:", msg += ", 录制文件已保存至：" + parent);
+                Log.i("record files save path:", file + "------" + msg + ", 录制文件已保存至：" + parent);
             }
-
             String file = files[0];
-            String parent = new File(file).getParent();
+            File mFile = new File(file);
+            String parent = mFile.getParent();
             String msg;
             if(event == 0) {
                 msg = "录制已结束";
             } else {
                 msg = "你的手机内存不足, 录制已结束";
             }
-
             if(!TextUtils.isEmpty(parent)) {
                 msg += ", 录制文件已保存至：" + parent;
             }
-
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+            // 修改文件名
+            String prisoner_name = sp.getString("prisoner_name", "");
+            String meeting_time = Utils.dateFormat(System.currentTimeMillis(), "yyyyMMddHHmmss");
+            Log.i("视频相关信息...", prisoner_name + "---" + meeting_time);
+            boolean isRename = mFile.renameTo(new File(parent + "/" + meeting_time + prisoner_name + ".mp4"));
+            if(isRename){
+                Log.i("修改视频文件名...", "rename success -- > " + parent + "/" + meeting_time + prisoner_name + ".mp4");
+                // 开子线程拿到新文件发送至服务器
+                sendVideoToServer(meeting_time + prisoner_name + ".mp4", new File(parent + "/" + meeting_time + prisoner_name + ".mp4"));
+            }else {
+                Log.i("修改视频文件名...", "rename failed -- > " + parent + "/" + meeting_time + prisoner_name + ".mp4");
+                // 拿到修改文件名失败的文件发送至服务器
+            }
         } else {
             if(event == 1) {
                 Toast.makeText(this, "你的手机内存不足, 录制已结束.", Toast.LENGTH_SHORT).show();
@@ -500,12 +520,66 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
                 Toast.makeText(this, "录制已结束.", Toast.LENGTH_SHORT).show();
             }
         }
-
         if(event == 1) {
             if(avChatUI != null) {
                 avChatUI.resetRecordTip();
             }
         }
+    }
+
+    /**
+     * 发送视频文件至服务器
+     * @param fileName
+     * @param videoFile
+     */
+    private void sendVideoToServer(final String fileName, final File videoFile) {
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    String nameSpace = "http://impl.service.com/";
+                    String methodName = "uploadFile";
+                    // EndPoint
+                    String endPoint = "http://123.57.7.159:8081/service?wsdl";
+                    // SOAP Action
+                    String soapAction = "http://impl.service.com/uploadFile";
+
+                    // 指定webservice命名空间和调用方法
+                    SoapObject rpc = new SoapObject(nameSpace, methodName);
+
+                    // 视频文件字节数组
+//                    ByteArrayOutputStream baos = null;
+//                    FileInputStream fis = new FileInputStream(videoFile);
+//                    baos = new ByteArrayOutputStream();
+//                    byte[] buffer = new byte[1024];
+//                    int count = 0;
+//                    while((count = fis.read(buffer)) >= 0){
+//                        baos.write(buffer, 0, count);
+//                    }
+                    byte[] fileContent = Utils.serialize(videoFile);
+                    // 设置需调用WebService接口需要传入的两个参数mobileCode、userId
+                    rpc.addProperty("fileName",fileName);
+                    rpc.addProperty("type", "one");
+                    rpc.addProperty("fileContent", fileContent);
+
+                    // 生成调用WebService方法的SOAP请求信息  并指定SOAP的版本
+                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER10);
+                    envelope.bodyOut = rpc;
+                    // 设置是否调用的是dotNet开发的WebService
+                    envelope.dotNet = true;
+                    // 等价于envelope.bodyOut = rpc;
+                    envelope.setOutputSoapObject(rpc);
+                    HttpTransportSE transportSE = new HttpTransportSE(endPoint);
+                    transportSE.call(soapAction, envelope);
+                    SoapObject object = (SoapObject) envelope.bodyIn;
+                    String result = object.getProperty(0).toString();
+                    Log.i("connect webService result", result);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    Log.e("connect webService exception", e.getMessage());
+                }
+            }
+        }.start();
     }
 
     /****************************** 连接建立处理 ********************/

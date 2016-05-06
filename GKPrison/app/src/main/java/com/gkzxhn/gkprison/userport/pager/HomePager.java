@@ -35,7 +35,7 @@ import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
 import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.lidroid.xutils.BitmapUtils;
 
 import org.json.JSONArray;

@@ -10,7 +10,7 @@ import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 
 import java.util.ArrayList;
 import java.util.List;

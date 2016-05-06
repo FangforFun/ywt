@@ -37,7 +37,7 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;

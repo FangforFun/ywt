@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,18 +7,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.view.RollViewPager;
-import com.gkzxhn.gkprison.utils.Log;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.gkzxhn.gkprison.utils.tool.Log;
 
 /**
  * 监狱简介

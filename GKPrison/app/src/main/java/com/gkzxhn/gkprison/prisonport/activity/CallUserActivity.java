@@ -1,14 +1,10 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -21,17 +17,12 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.BitmapUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 
 /**
  * created by huangzhengneng on 2016/1/12
@@ -49,6 +40,7 @@ public class CallUserActivity extends BaseActivity {
     private SharedPreferences sp;
     private int family_id;
     private TextView tv_meeting_notice;
+    private String prisoner_name;
     private FamilyMeetingInfo familyMeetingInfo;
     private Handler handler = new Handler(){
         @Override
@@ -92,6 +84,7 @@ public class CallUserActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         bitmapUtil = new BitmapUtils(this);
         family_id = getIntent().getIntExtra("family_id", 0);
+        prisoner_name = getIntent().getStringExtra("prisoner_name");
         Log.i("family_id", family_id + "");
         getMeetingDetailInfo(family_id);
         bt_call.setOnClickListener(this);
@@ -202,6 +195,7 @@ public class CallUserActivity extends BaseActivity {
                 if(Utils.isNetworkAvailable()) {
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("family_accid", familyMeetingInfo.getAccid());
+                    editor.putString("prisoner_name", prisoner_name);
                     editor.commit();
                     Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
                     AVChatActivity.start(this,

@@ -1,10 +1,8 @@
 package com.gkzxhn.gkprison.application;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -18,9 +16,8 @@ import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
-import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.DensityUtil;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;

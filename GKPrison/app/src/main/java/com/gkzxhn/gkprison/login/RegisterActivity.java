@@ -44,7 +44,7 @@ import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
 import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.ImageTools;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 

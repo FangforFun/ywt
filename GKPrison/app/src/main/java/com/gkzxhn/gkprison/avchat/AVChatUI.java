@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;

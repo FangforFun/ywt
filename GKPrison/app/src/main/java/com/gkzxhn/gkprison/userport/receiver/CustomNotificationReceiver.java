@@ -16,7 +16,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;

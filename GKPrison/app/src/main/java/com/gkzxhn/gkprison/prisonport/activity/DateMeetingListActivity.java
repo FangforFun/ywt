@@ -40,7 +40,7 @@ import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
-import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
@@ -285,6 +285,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 //                    if ((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))) {
                     Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
                     intent.putExtra("family_id", meetingInfos.get(position).getFamily_id());
+                    intent.putExtra("prisoner_name", meetingInfos.get(position).getName());
                     startActivity(intent);
 //                        showToastMsgShort(mDate.getDay() + "" + formatDate.substring(formatDate.length() - 3, formatDate.length()));
 //                    } else {
