@@ -238,8 +238,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
             time.initTime(Long.parseLong(sp.getString("current_ms", 900 + "").equals("上次通话已完成") ? 900 + "" : sp.getString("current_ms", 900 + "")));
             time.start();
             int surplus_time = (int) (Long.parseLong(sp.getString("current_ms", 900 + "").equals("上次通话已完成") ? 900 + "" : sp.getString("current_ms", 900 + "")) / 60);
-            Toast.makeText(context, "开始进行视频通话，您还剩余" +
-                    surplus_time + "分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "开始进行视频通话，您还剩余" + surplus_time + "分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         }
     }
 

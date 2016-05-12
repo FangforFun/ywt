@@ -164,6 +164,13 @@ public class MyApplication extends Application {
             @Override
             public void onEvent(AVChatData data) {
                 // 有网络来电打开AVChatActivity
+                new Thread(){
+                    @Override
+                    public void run() {
+                        if(SystemUtil.checkCameraFacing(0) || SystemUtil.checkCameraFacing(1)){
+                        }
+                    }
+                }.start();
                 AVChatProfile.getInstance().setAVChatting(true);
                 AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
                 Log.i("----------------", data.getAccount() + "---" + data.toString());

@@ -606,7 +606,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
 
     /**************************** 处理音视频切换 *********************************/
 
-    /**
+    /**4
      * 处理音视频切换请求
      *
      * @param notification

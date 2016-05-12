@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.lidroid.xutils.BitmapUtils;
@@ -192,17 +193,22 @@ public class CallUserActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_call:
-                if(Utils.isNetworkAvailable()) {
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("family_accid", familyMeetingInfo.getAccid());
-                    editor.putString("prisoner_name", prisoner_name);
-                    editor.commit();
-                    Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
-                    AVChatActivity.start(this,
-                            familyMeetingInfo.getAccid()
-                            , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                Log.i("摄像头检查...",SystemUtil.checkCameraFacing(0) + "---" + SystemUtil.checkCameraFacing(0));
+                if(SystemUtil.checkCameraFacing(0) || SystemUtil.checkCameraFacing(1)) {
+                    if (Utils.isNetworkAvailable()) {
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putString("family_accid", familyMeetingInfo.getAccid());
+                        editor.putString("prisoner_name", prisoner_name);
+                        editor.commit();
+                        Log.i("Call User Activity ---> ", familyMeetingInfo.getAccid() + "");
+                        AVChatActivity.start(this,
+                                familyMeetingInfo.getAccid()
+                                , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
+                    } else {
+                        showToastMsgShort("没有网络，请检查网络设置");
+                    }
                 }else {
-                    showToastMsgShort("没有网络，请检查网络设置");
+                    showToastMsgShort("没有检测到摄像头");
                 }
                 break;
         }

@@ -5,8 +5,10 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
+import android.hardware.Camera;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -140,5 +142,28 @@ public class SystemUtil {
      */
     public static boolean isTablet(Context context) {
         return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    public static boolean checkCameraFacing(final int facing) {
+        if (getSdkVersion() < Build.VERSION_CODES.GINGERBREAD) {
+            return false;
+        }
+        final int cameraCount = Camera.getNumberOfCameras();
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        for (int i = 0; i < cameraCount; i++) {
+            Camera.getCameraInfo(i, info);
+            if (facing == info.facing) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取系统版本
+     * @return
+     */
+    public static int getSdkVersion() {
+        return android.os.Build.VERSION.SDK_INT;
     }
 }
