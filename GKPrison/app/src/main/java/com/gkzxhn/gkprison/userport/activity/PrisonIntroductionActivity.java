@@ -44,7 +44,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        id = sp.getInt("jail_id",1);
+        id = sp.getInt("jail_id",-1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/" + id);
         Log.i("jail_id is :", id + "");
         fl_loading.setVisibility(View.VISIBLE);

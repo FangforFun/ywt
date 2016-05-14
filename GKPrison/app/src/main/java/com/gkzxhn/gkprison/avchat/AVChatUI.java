@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.avchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -184,10 +185,13 @@ public class AVChatUI implements AVChatUIListener {
         AVChatManager.getInstance().call(account, callTypeEnum, videoParam, notifyOption, new AVChatCallback<AVChatData>() {
             @Override
             public void onSuccess(AVChatData data) {
-                Log.d(TAG, "success");
                 avChatData = data;
                 DialogMaker.dismissProgressDialog();
                 avChatSurface.setExamineButtonVisibility(View.VISIBLE);
+//                if(AVChatManager.getInstance().hasMultipleCameras()) {
+                    canSwitchCamera = true;
+//                }
+                Log.d(TAG, "success" + AVChatManager.getInstance().hasMultipleCameras() + "---" + canSwitchCamera + AVChatManager.getInstance().isFrontCamera());
                 SharedPreferences.Editor editor = sp.edit();
                 editor.putBoolean("is_can_video", true);
                 editor.commit();
@@ -741,29 +745,9 @@ public class AVChatUI implements AVChatUIListener {
         Log.i("AVChatUI initSurfaceView ---> ", largeAccount + "----" + DemoCache.getAccount() + "----" + avChatData.toString());
         avChatSurface.initLargeSurfaceView(avChatData.getAccount());
         avChatSurface.initSmallSurfaceView(DemoCache.getAccount());
-        if(!avChatData.getAccount().contains("gkzxhn")) { // 发起者(狱警方)
+        Log.i(TAG, avChatData.getAccount() + "----" + DemoCache.getAccount());
+        if(avChatData.getAccount().length() == 32) { // 发起者(狱警方)  普通用户都是32位
             Log.i(TAG, "发起者(狱警方)");
-            // 开始录像
-//            if(!AVChatManager.getInstance().isRecording()) {
-//                AVChatManager.getInstance().startRecord(new AVChatCallback<Void>() {
-//                    @Override
-//                    public void onSuccess(Void aVoid) {
-//                        Log.i("record success ---> ", largeAccount + "----" + DemoCache.getAccount());
-//                    }
-//
-//                    @Override
-//                    public void onFailed(int i) {
-//                        Toast.makeText(context, "录像失败 ---> " + i, Toast.LENGTH_SHORT).show();
-//                        Log.i("record failed --- > ", "录像失败 ---> " + i);
-//                    }
-//
-//                    @Override
-//                    public void onException(Throwable throwable) {
-//                        Toast.makeText(context, "录像异常 ---> " + throwable.getMessage(), Toast.LENGTH_SHORT).show();
-//                        Log.i("record failed --- > ", "录像异常 ---> " + throwable.getMessage());
-//                    }
-//                });
-//            }
             avChatSurface.setIsComing(false);
             avChatSurface.setonThroughExamineClickListener(new AVChatSurface.OnThroughExamineListener() {
                 @Override
