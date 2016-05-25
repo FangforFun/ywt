@@ -38,7 +38,7 @@ import java.util.Locale;
 import java.util.Random;
 
 public class ZhifubaoPayActivity extends FragmentActivity {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";
