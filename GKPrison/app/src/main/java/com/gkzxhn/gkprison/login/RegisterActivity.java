@@ -369,6 +369,7 @@ public class RegisterActivity extends BaseActivity {
                 byte[] ba2 = bao2.toByteArray();
                 String tu2 = Base64.encode(ba2);
                 String[] tu = {tu1,tu2};
+                uuid_images.clear();
                 for (int i = 0;i< tu.length;i++){
                     Uuid_images_attributes uuid_images_attributes = new Uuid_images_attributes();
                     uuid_images_attributes.setImage_data(tu[i]);

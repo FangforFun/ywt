@@ -255,6 +255,7 @@ public class AVChatSurface {
             case INCOMING_AUDIO_TO_VIDEO:
                 break;
             case INCOMING_VIDEO_CALLING:// 来电
+                smallSizePreviewFrameLayout.setVisibility(View.GONE);
                 iv_meeting_ic_card.setVisibility(View.GONE);
                 iv_meeting_icon.setVisibility(View.GONE);
                 bt_through_examine.setVisibility(View.GONE);

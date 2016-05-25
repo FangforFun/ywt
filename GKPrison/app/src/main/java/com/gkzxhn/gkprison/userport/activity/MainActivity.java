@@ -176,6 +176,11 @@ public class MainActivity extends BaseActivity {
                     pagerList.add(new CanteenPager(MainActivity.this));
                     layoutMain();
                     break;
+                case 5:
+                    // 用户信息为空
+
+
+                    break;
                 case 4: // 获取用户信息失败   提示重新登录
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                     builder.setTitle("提示");
@@ -593,8 +598,12 @@ public class MainActivity extends BaseActivity {
                 editor.commit();
                 jail_id = sp.getInt("jail_id",0);
                // getCommodity();// 获取商品
-                handler.sendEmptyMessage(3);
             }
+//            if(jsonArray.length() == 0){
+//                handler.sendEmptyMessage(5);
+//            }else {
+                handler.sendEmptyMessage(3);
+//            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

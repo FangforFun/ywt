@@ -258,7 +258,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
      */
     private void enableToggle() {
         if (shouldEnableToggle) {
-            if (manager.canSwitchCamera())
+//            if (manager.canSwitchCamera())
                 switchCameraToggle.enable();
             closeCameraToggle.enable();
             muteToggle.enable();
@@ -326,12 +326,12 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     public void onAudioToVideo(boolean muteOn){
         muteToggle.toggle(muteOn ? ToggleState.ON : ToggleState.OFF);
         closeCameraToggle.toggle(ToggleState.OFF);
-        if(manager.canSwitchCamera()){
-            if(AVChatManager.getInstance().isFrontCamera())
+//        if(manager.canSwitchCamera()){
+//            if(AVChatManager.getInstance().isFrontCamera())
                 switchCameraToggle.off(false);
-            else
-                switchCameraToggle.on(false);
-        }
+//            else
+//                switchCameraToggle.on(false);
+//        }
     }
 
     /******************************* toggle listener *************************/

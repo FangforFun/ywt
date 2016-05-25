@@ -101,7 +101,7 @@ public class SplashActivity extends BaseActivity {
         help = new SQLitehelp(this);
         db = help.getWritableDatabase();
         UmengUpdateAgent.setUpdateOnlyWifi(false);// 任意网络模式下都提示
-        UmengUpdateAgent.setUpdateUIStyle(UpdateStatus.STYLE_NOTIFICATION);// 通知栏提示形式(默认是dialog)
+        UmengUpdateAgent.setUpdateUIStyle(UpdateStatus.STYLE_DIALOG);// 通知栏提示形式(默认是dialog)
         UmengUpdateAgent.setDeltaUpdate(true);// 增量更新
         UmengUpdateAgent.setUpdateAutoPopup(true);// 更新提示开关(默认为true)
         UmengUpdateAgent.update(this);// 友盟更新
