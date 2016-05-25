@@ -47,7 +47,7 @@ import okhttp3.Response;
  * A simple {@link Fragment} subclass.
  */
 public class AllClassificationFragment extends BaseFragment implements AbsListView.OnScrollListener {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
