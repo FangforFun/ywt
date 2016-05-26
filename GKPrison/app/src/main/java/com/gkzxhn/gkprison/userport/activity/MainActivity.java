@@ -41,6 +41,7 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.userport.db.SQLitehelp;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -116,7 +117,7 @@ import okhttp3.Response;
                             佛祖保佑       永无BUG
  */
 public class MainActivity extends BaseActivity {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
     private LazyViewPager home_viewPager;
     private RadioGroup rg_bottom_guide; // 底部导航栏组

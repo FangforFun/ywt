@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
@@ -21,6 +23,7 @@ import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
+import com.gkzxhn.gkprison.userport.db.SQLitehelp;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
@@ -48,9 +51,13 @@ public class SplashActivity extends BaseActivity {
     private VersionInfo versionInfo;
     private TextView tv_version;
     private RelativeLayout rl_splash;
+    private SQLitehelp help ;
+    private SQLiteDatabase db ;
     private TextView tv1;
     private TextView tv2;
     private int[] screenWidthHeight;
+  //  private boolean tabexit;//判断数据库是否存在
+    private SQLitehelp sqLitehelp;
 
     @Override
     protected View initView() {
@@ -91,6 +98,8 @@ public class SplashActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        help = new SQLitehelp(this);
+        db = help.getWritableDatabase();
         UmengUpdateAgent.setUpdateOnlyWifi(false);// 任意网络模式下都提示
         UmengUpdateAgent.setUpdateUIStyle(UpdateStatus.STYLE_DIALOG);// 通知栏提示形式(默认是dialog)
         UmengUpdateAgent.setDeltaUpdate(true);// 增量更新
@@ -130,7 +139,12 @@ public class SplashActivity extends BaseActivity {
             }
         }, 1500);
         setActionBarGone(View.GONE);
-        copyDB("chaoshi.db");
+       // copyDB("chaoshi.db");
+//        tabexit = IsTableExist();
+//        if (!tabexit){
+//            CreatDb();
+//        }
+
     }
 
     /**
@@ -212,4 +226,30 @@ public class SplashActivity extends BaseActivity {
             }
         }
     }
+
+    /**
+//     * 创建数据库
+//     */
+//    private void CreatDb(){
+//        SQLitehelp sqLitehelp = new SQLitehelp(this,"chaoshi.db",null,1);
+//        SQLiteDatabase sqLiteDatabase = sqLitehelp.getWritableDatabase();
+//        sqLiteDatabase.execSQL("create table Cart(id INTEGER AUTO_INCREMENT,time VARCHAR2(60),out_trade_no VARCHAR2(60),isfinish BOOLEAN(30),total_money VARCHAR2(60),count INTEGER(60),remittance BOOLEAN(30),payment_type varchar(255))");
+//        sqLiteDatabase.execSQL("CREATE TABLE line_items(id INTEGER AUTO_INCREMENT,Items_id INTEGER(60),cart_id INTEGER,qty INTEGER(60),total_money VARCHAR2(60),positon INTEGER(60),price varchar[255],title varchar(255))");
+//        sqLiteDatabase.execSQL("create table sysmsg(apply_date VARCHAR2,name VARCHAR2,result VARCHAR2,is_read VARCHAR2,meeting_date VARCHAR2, type_id INTEGER,reason VARCHAR2,receive_time VARCHAR2,user_id VARCHAR2)");
+//    }
+
+    /**
+     * 判断数据库是否存在
+     */
+//    private boolean IsTableExist() {
+//        boolean isTableExist=true;
+//        SQLiteDatabase db=openOrCreateDatabase("chaoshi", 0, null);
+//        Cursor c=db.rawQuery("SELECT count(*) FROM sqlite_master WHERE type='table' AND name='Cart'", null);
+//        if (c.getInt(0)==0) {
+//            isTableExist=false;
+//        }
+//        c.close();
+//        db.close();
+//        return isTableExist;
+//    }
 }

@@ -27,7 +27,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     private List<Remittance> remittances = new ArrayList<Remittance>();
     private ImageView iv_recode;
     private  String prisonname;
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
 
 
     @Override

@@ -52,7 +52,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private MyAdapter adapter;
     private String TradeNo;
     private String times = "";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private SharedPreferences sp;
     private String ip;
     private String money = "";

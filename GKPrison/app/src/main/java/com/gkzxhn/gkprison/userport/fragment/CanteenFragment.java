@@ -66,7 +66,7 @@ import okhttp3.OkHttpClient;
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
     private RelativeLayout rl_zhineng;
