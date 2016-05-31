@@ -38,9 +38,13 @@ import org.apache.http.protocol.HTTP;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -189,7 +193,7 @@ public class AVChatUI implements AVChatUIListener {
                 DialogMaker.dismissProgressDialog();
                 avChatSurface.setExamineButtonVisibility(View.VISIBLE);
 //                if(AVChatManager.getInstance().hasMultipleCameras()) {
-                    canSwitchCamera = true;
+                canSwitchCamera = true;
 //                }
                 Log.d(TAG, "success" + AVChatManager.getInstance().hasMultipleCameras() + "---" + canSwitchCamera + AVChatManager.getInstance().isFrontCamera());
                 SharedPreferences.Editor editor = sp.edit();
@@ -628,7 +632,6 @@ public class AVChatUI implements AVChatUIListener {
     public void setExamine(String msg) {
         Log.d("event", msg);
         if(!TextUtils.isEmpty(msg) && msg.equals("审核通过")) {
-//            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             avChatVideo.setTime(true);// 开始计时
             avChatVideo.setTopRoot(true);// 设置顶部栏可见
             avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
@@ -639,12 +642,8 @@ public class AVChatUI implements AVChatUIListener {
             editor.commit();
         } else if (!TextUtils.isEmpty(msg) && msg.equals("审核未通过")) {
             // 审核未通过  自动挂断  家属端提示审核未通过
-//            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             hangUp(AVChatExitCode.HANGUP);
         }
-//        else {
-//            Toast.makeText(context, "服务器异常", Toast.LENGTH_LONG).show();
-//        }
     }
 
     @Override
@@ -780,6 +779,25 @@ public class AVChatUI implements AVChatUIListener {
                         public void onFailure(HttpException e, String s) {
                             Log.i("审核通过失败", s);
                             EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
+
+                            try {
+                                //用于格式化日期,作为日志文件名的一部分
+                                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+                                String time = formatter.format(new Date());
+                                String fileName = "审核异常日志文件" + time + "-" + ".txt";
+                                if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+                                    String path = Environment.getExternalStorageDirectory().getPath();
+                                    File dir = new File(path);
+                                    if (!dir.exists()) {
+                                        dir.mkdirs();
+                                    }
+                                    FileOutputStream fos = new FileOutputStream(path + "/" + fileName);
+                                    fos.write(e.toString().getBytes());
+                                    fos.close();
+                                }
+                            } catch (IOException e1) {
+                                e1.printStackTrace();
+                            }
                         }
                     });
                 }

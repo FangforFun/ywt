@@ -81,6 +81,7 @@ dependencies {
     compile 'me.biubiubiu.justifytext:library:1.1'
     compile 'cn.pedant.sweetalert:library:1.3'
     compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.bigkoo:alertview:1.0.2'
     compile project(':libraries:ToggleButtonLib')
     compile files('libs/xUtils-2.6.14.jar')
     compile files('libs/alipaySdk-20151112.jar')
@@ -93,4 +94,5 @@ dependencies {
     compile files('libs/nineoldandroids-2.4.0.jar')
     compile files('libs/umeng-update-v2.6.0.1.jar')
     compile files('libs/okhttp-3.2.0.jar')
+    compile files('libs/ksoap2-android-assembly-3.6.0-jar-with-dependencies.jar')
 }

@@ -38,6 +38,8 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
+import com.gkzxhn.gkprison.login.view.AlertView;
+import com.gkzxhn.gkprison.login.view.OnItemClickListener;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Register;
 import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
@@ -121,6 +123,7 @@ public class RegisterActivity extends BaseActivity {
     private int countdown = 60;
     private boolean isRunning = false;
     private SharedPreferences sp;
+    private AlertView alertView;
 
     private Handler handler = new Handler(){
         @Override
@@ -751,7 +754,10 @@ public class RegisterActivity extends BaseActivity {
                 return true;
             } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
                 return false;
-            } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+            } else if(alertView != null && alertView.isShowing()){
+                alertView.dismiss();
+                return false;
+            }else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
                     || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
                     || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -787,55 +793,58 @@ public class RegisterActivity extends BaseActivity {
      * @param context
      */
     private void showPhotoPicker(Context context, boolean isTwo) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("图片来源:");
-        builder.setNegativeButton("取消", null);
         if(isTwo) {
-            builder.setItems(new String[]{"拍照", "相册"},
-                    new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case TAKE_PHOTO:
-                                    Intent openCameraIntent = new Intent(
-                                            MediaStore.ACTION_IMAGE_CAPTURE);
-                                    Uri imageUri = Uri.fromFile(new File(Environment
-                                            .getExternalStorageDirectory(), "image.jpg"));
-                                    // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
-                                    openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                    startActivityForResult(openCameraIntent, TAKE_PHOTO);
-                                    break;
-
-                                case CHOOSE_PHOTO:
-                                    Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                                    openAlbumIntent.setType("image/*");
-                                    startActivityForResult(openAlbumIntent, CHOOSE_PHOTO);
-                                    break;
-                            }
-                        }
-                    });
+            alertView = new AlertView("上传身份证照片", null, "取消", null,
+                    new String[]{"拍照", "从相册中选择"},
+                    context, AlertView.Style.ActionSheet, new OnItemClickListener() {
+                @Override
+                public void onItemClick(Object o, int position) {
+                    switch (position) {
+                        case TAKE_PHOTO:// 0
+                            Intent openCameraIntent = new Intent(
+                                    MediaStore.ACTION_IMAGE_CAPTURE);
+                            Uri imageUri = Uri.fromFile(new File(Environment
+                                    .getExternalStorageDirectory(), "image.jpg"));
+                            // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                            openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                            startActivityForResult(openCameraIntent, TAKE_PHOTO);
+                            break;
+                        case CHOOSE_PHOTO:// 1
+                            Intent openAlbumIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                            openAlbumIntent.setType("image/*");
+                            startActivityForResult(openAlbumIntent, CHOOSE_PHOTO);
+                            break;
+                        case -1:// 取消
+                            alertView.dismiss();
+                            break;
+                    }
+                }
+            });
+            alertView.show();
         }else {
-            builder.setItems(new String[]{"拍照"},
-                    new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case TAKE_PHOTO:
-                                    Intent openCameraIntent = new Intent(
-                                            MediaStore.ACTION_IMAGE_CAPTURE);
-                                    Uri imageUri = Uri.fromFile(new File(Environment
-                                            .getExternalStorageDirectory(), "image.jpg"));
-                                    // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
-                                    openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
-                                    startActivityForResult(openCameraIntent, TAKE_PHOTO);
-                                    break;
-                            }
-                        }
-                    });
+            alertView = new AlertView("上传头像", null, "取消", null,
+                    new String[]{"拍照"},
+                    context, AlertView.Style.ActionSheet, new OnItemClickListener() {
+                @Override
+                public void onItemClick(Object o, int position) {
+                    switch (position) {
+                        case TAKE_PHOTO:// 0
+                            Intent openCameraIntent = new Intent(
+                                    MediaStore.ACTION_IMAGE_CAPTURE);
+                            Uri imageUri = Uri.fromFile(new File(Environment
+                                    .getExternalStorageDirectory(), "image.jpg"));
+                            // 指定照片保存路径（SD卡），image.jpg为一个临时文件，每次拍照后这个图片都会被替换
+                            openCameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri);
+                            startActivityForResult(openCameraIntent, TAKE_PHOTO);
+                            break;
+                        case -1:// 取消
+                            alertView.dismiss();
+                            break;
+                    }
+                }
+            });
+            alertView.show();
         }
-        builder.create().show();
     }
 
     @Override

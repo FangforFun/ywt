@@ -116,7 +116,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 //        SharedPreferences.Editor editor = sp.edit();
 //        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
 //        editor.commit();
-
         return true;
     }
 
@@ -185,7 +184,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(path + "/" + fileName);
+                FileOutputStream fos = new FileOutputStream(path + "/" +fileName);
                 fos.write(sb.toString().getBytes());
                 fos.close();
             }
