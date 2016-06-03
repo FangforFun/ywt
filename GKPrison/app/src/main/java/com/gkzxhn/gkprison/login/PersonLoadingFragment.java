@@ -25,6 +25,7 @@ import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.kedacom.mvc_demo.login.LoginFlowService;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -185,6 +186,8 @@ public class PersonLoadingFragment extends BaseFragment {
         startActivity(intent);
         getActivity().finish();
     }
+
+
 
     @Override
     protected View initView() {

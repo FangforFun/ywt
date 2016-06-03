@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black" >
+
+    <FrameLayout
+        android:id="@+id/video_frame"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <com.pc.ui.layout.SimpleGestureDetectorRelative
+            android:id="@+id/pic_frame"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="center" >
+
+            <include layout="@layout/vconf_video_playview_layout" />
+
+            <include layout="@layout/vconf_video_staticpic_layout" />
+
+            <include layout="@layout/vconf_video_sendingdesktop_layout" />
+        </com.pc.ui.layout.SimpleGestureDetectorRelative>
+
+        <com.pc.ui.layout.SimpleGestureDetectorFrame
+            android:id="@+id/pip_frame"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_marginBottom="90.0dip"
+            android:layout_marginRight="6.0dip"
+            android:background="@color/white"
+            android:padding="1.0dip" >
+
+            <FrameLayout
+                android:id="@+id/pip_pic_frame"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/black" >
+
+                <include layout="@layout/vconf_video_playview_layout" />
+
+                <include layout="@layout/vconf_video_staticpic_layout" />
+            </FrameLayout>
+
+            <ImageView
+                android:id="@+id/pip_close_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@null"
+                android:paddingBottom="10dp"
+                android:paddingRight="10dp"
+                android:visibility="gone" />
+        </com.pc.ui.layout.SimpleGestureDetectorFrame>
+
+        <FrameLayout
+            android:id="@+id/FacingPreview_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+        </FrameLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:paddingTop="20dip" >
+
+        <RelativeLayout
+            android:id="@+id/topVConfFunctionView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true"
+            android:padding="10dip" >
+
+            <ImageView
+                android:id="@+id/camera_convert_img"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@null"
+                android:src="@drawable/camera_convert_selector" />
+
+            <ImageView
+                android:id="@+id/camera_open_switchimg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:contentDescription="@null"
+                android:src="@drawable/camera_open" />
+        </RelativeLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/bottomFunction_Frame"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <include layout="@layout/vconf_function_layout" />
+    </LinearLayout>
+
+</RelativeLayout>

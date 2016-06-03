@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- com.kedacom.mvc_demo.vconf.ui.VConfFunctionView -->
+<com.kedacom.mvc_demo.vconf.ui.VConfFunctionView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/vconfFunction_Frame"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:background="@android:color/white"
+    android:gravity="center_vertical"
+    android:paddingBottom="15.0dip"
+    android:paddingLeft="10.0dip"
+    android:paddingRight="10.0dip"
+    android:paddingTop="15.0dip" >
+
+    <!-- android:src="@drawable/vconf_microphone_on" -->
+
+    <ImageView
+        android:id="@+id/mute_Img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#ff0000ff"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:src="@drawable/vconf_microphone_on" />
+
+    <!-- android:src="@drawable/vconf_speaker" -->
+
+    <ImageView
+        android:id="@+id/quiet_Img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#ff0000ff"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:src="@drawable/vconf_speaker" />
+
+    <Button
+        android:id="@+id/moreInfo_Img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:text="更多" />
+
+    <Button
+        android:id="@+id/exit_Img"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@null"
+        android:scaleType="center"
+        android:text="挂断" />
+
+</com.kedacom.mvc_demo.vconf.ui.VConfFunctionView>

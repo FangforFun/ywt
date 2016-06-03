@@ -106,4 +106,28 @@
     <string name="pay_result_tip">界面</string>
     <string name="app_tip">提示</string>
     <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>
+
+    <!-- 科达 -->
+    <string name="login_hint_account">帐号</string>
+    <string name="login_serveraddr_hint">服务器</string>
+    <string name="login_hint_password_optional">密码</string>
+    <string name="login_login">登录</string>
+    <string name="login_quit">退出</string>
+    <string name="menu_get_contact_list">获取联系人列表</string>
+    <string name="menu_multi_call">呼叫多点会议</string>
+    <string name="menu_log_off">注销</string>
+    <string name="parse_serveraddr_wrong">解析服务器地址失败</string>
+    <string name="login_failed">登录失败</string>
+    <string name="vconf_Apply4AdministrativePrivileges">申请管理权限</string>
+    <string name="vconf_releaseAdministrativePrivileges">释放管理权限</string>
+    <string name="vconf_joinConfAudio_failed">音频入会失败</string>
+    <string name="vconf_joinConfVideo_failed">视频入会失败</string>
+    <string name="vconf_failed">视音频入会失败</string>
+    <string name="vconf_ExitConf">退出会议</string>
+    <string name="vconf_EndConf">结束会议</string>
+    <string name="vconf_applychair">申请管理方</string>
+    <string name="vconf_applyspeaker">申请主讲人</string>
+    <string name="vconf_applychair_failed">申请管理方失败</string>
+    <string name="vconf_avresponse_audio">音频应答失败</string>
+    <string name="vconf_avresponse_video">视频应答失败</string>
 </resources>

@@ -32,6 +32,9 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.tool.SPUtil;
+import com.kedacom.kdv.mt.sdkapi.KdvMtBaseAPI;
+import com.kedacom.mvc_demo.ContactListActivity;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
@@ -42,6 +45,7 @@ import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.kedacom.mvc_demo.login.LoginFlowService;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -252,6 +256,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     protected void initData() {
+        loginKeDaChat();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putBoolean("is_first", false);
@@ -283,10 +288,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (mDate != null) {
 //                    if ((mDate.getDay() + "").equals(formatDate.substring(formatDate.length() - 2, formatDate.length()))) {
-                    Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
-                    intent.putExtra("family_id", meetingInfos.get(position).getFamily_id());
-                    intent.putExtra("prisoner_name", meetingInfos.get(position).getName());
+//                    Intent intent = new Intent(DateMeetingListActivity.this, CallUserActivity.class);
+//                    intent.putExtra("family_id", meetingInfos.get(position).getFamily_id());
+//                    intent.putExtra("prisoner_name", meetingInfos.get(position).getName());
+                    Intent intent = new Intent(DateMeetingListActivity.this, ContactListActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
+                    KdvMtBaseAPI.gKRegMtListInfo(); // 获取GK在线联系人列表
 //                        showToastMsgShort(mDate.getDay() + "" + formatDate.substring(formatDate.length() - 3, formatDate.length()));
 //                    } else {
 //                        showToastMsgShort(mDate.getYear() + "-" + mDate.getMonth() + "-" + mDate.getDay() + "才能会见哦");
@@ -298,6 +306,22 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         rl_refresh.setOnClickListener(this);
         bt_logout.setOnClickListener(this);
         fl_transparent.setOnClickListener(this);
+    }
+
+    /**
+     * 登录科达视频
+     */
+    private void loginKeDaChat() {
+        new Thread(){
+            @Override
+            public void run() {
+                String username = (String) SPUtil.get(DateMeetingListActivity.this, "username", "");
+                LoginFlowService.prepareRegGk("218.4.252.4", "940227",
+                        "940227"
+                        + System.currentTimeMillis(), "");
+                Log.i(SPUtil.get(DateMeetingListActivity.this, "username", "") + "---");
+            }
+        }.start();
     }
 
     /**

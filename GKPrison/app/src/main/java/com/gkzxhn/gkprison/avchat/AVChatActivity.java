@@ -508,7 +508,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             if(isRename){
                 Log.i("修改视频文件名...", "rename success -- > " + parent + "/" + meeting_time + prisoner_name + ".mp4");
                 // 开子线程拿到新文件发送至服务器
-                sendVideoToServer(meeting_time + prisoner_name + ".mp4", new File(parent + "/" + meeting_time + prisoner_name + ".mp4"));
+//                sendVideoToServer(meeting_time + prisoner_name + ".mp4", new File(parent + "/" + meeting_time + prisoner_name + ".mp4"));
             }else {
                 Log.i("修改视频文件名...", "rename failed -- > " + parent + "/" + meeting_time + prisoner_name + ".mp4");
                 // 拿到修改文件名失败的文件发送至服务器

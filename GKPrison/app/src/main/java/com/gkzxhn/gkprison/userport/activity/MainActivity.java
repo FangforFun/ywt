@@ -46,6 +46,7 @@ import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.kedacom.mvc_demo.login.LoginFlowService;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
@@ -215,6 +216,19 @@ public class MainActivity extends BaseActivity {
     }
 
     /**
+     * 登录科达视频
+     */
+    private void loginKeDaChat() {
+        new Thread(){
+            @Override
+            public void run() {
+                LoginFlowService.prepareRegGk("218.4.252.4", sp.getString("username", ""), sp.getString("username", "")
+                        + System.currentTimeMillis(), "");
+            }
+        }.start();
+    }
+
+    /**
      * 重新登录任务
      */
     private Runnable reLoginTask = new Runnable() {
@@ -335,6 +349,7 @@ public class MainActivity extends BaseActivity {
      * 布局
      */
     private void layoutMain() {
+        loginKeDaChat();
         adapter = new MyPagerAdapter();
         home_viewPager.setAdapter(adapter);
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {

@@ -20,8 +20,8 @@ android {
         applicationId "com.gkzxhn.gkprison"
         minSdkVersion 17
         targetSdkVersion 22
-        versionCode 3
-        versionName "1.0.2"
+        versionCode 4
+        versionName "2.0"
     }
     buildTypes {
         release {
@@ -96,4 +96,5 @@ dependencies {
     compile files('libs/umeng-update-v2.6.0.1.jar')
     compile files('libs/okhttp-3.2.0.jar')
     compile files('libs/ksoap2-android-assembly-3.6.0-jar-with-dependencies.jar')
+    compile files('libs/dom4j-1.6.1.jar')
 }

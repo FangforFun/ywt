@@ -90,4 +90,9 @@
     <dimen name="register_success_dialog_height">200dp</dimen>
     <dimen name="avchat_recive_refuse_height">48dp</dimen>
     <dimen name="avchat_icon_size">60dp</dimen>
+
+    <dimen name="default_setting_height">51.0dip</dimen>
+    <dimen name="Vconf_more_info_width">170dip</dimen>
+    <dimen name="VconfExitPopWidth">150dip</dimen>
+    <dimen name="vconfFunction_padding_top_bottom">15.0dip</dimen>
 </resources>

@@ -94,7 +94,7 @@ public class SplashActivity extends BaseActivity {
         UmengUpdateAgent.setUpdateOnlyWifi(false);// 任意网络模式下都提示
         UmengUpdateAgent.setUpdateUIStyle(UpdateStatus.STYLE_DIALOG);// 通知栏提示形式(默认是dialog)
         UmengUpdateAgent.setDeltaUpdate(true);// 增量更新
-        UmengUpdateAgent.setUpdateAutoPopup(true);// 更新提示开关(默认为true)
+        UmengUpdateAgent.setUpdateAutoPopup(false);// 更新提示开关(默认为true)
         UmengUpdateAgent.update(this);// 友盟更新
         MobclickAgent.openActivityDurationTrack(false);
         sp = getSharedPreferences("config", MODE_PRIVATE);

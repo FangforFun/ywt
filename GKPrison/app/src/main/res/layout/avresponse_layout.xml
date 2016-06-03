@@ -1,0 +1,74 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/avr_rootview"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/top_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <TextView
+            android:id="@+id/peer_alias"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@null"
+            android:textColor="#ff737373"
+            android:textSize="17sp" >
+        </TextView>
+
+        <TextView
+            android:id="@+id/joinVConf_waitingText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正在连接,请稍候…"
+            android:textColor="#ff737373"
+            android:textSize="17sp" />
+
+        <TextView
+            android:id="@+id/flow_remind"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="您当前正在使用移动网络"
+            android:textColor="#ffC1C1C1"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bottom_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal|bottom"
+        android:orientation="vertical"
+        android:paddingBottom="8.0dip"
+        android:paddingLeft="10.0dip"
+        android:paddingRight="10.0dip"
+        android:paddingTop="20.0dip" >
+
+        <Button
+            android:id="@+id/response_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5.0dip"
+            android:gravity="center"
+            android:text="接听"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/refuse_response_btn"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dip"
+            android:gravity="center"
+            android:text="拒绝"
+            android:textSize="17sp" />
+    </LinearLayout>
+
+</LinearLayout>

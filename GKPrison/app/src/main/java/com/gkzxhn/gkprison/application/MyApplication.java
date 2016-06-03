@@ -14,11 +14,14 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.kedacom.truetouch.mtc.MyMtcCallback;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.tool.CrashHandler;
 import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.kedacom.kdv.mt.sdkapi.KdvMtBaseAPI;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
@@ -41,6 +44,7 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +56,17 @@ public class MyApplication extends Application {
     private SharedPreferences sp;
     private String crash_file_names;
 
+    // keda
+    public final static String ID = "id";
+    public final static String JID = "jid";
+    public final static String NAME = "name";
+    public final static String IPAddr = "ipAddr";
+    public final static String ALIAS = "alias";
+    public final static String E164NUM = "e164Num";
+    public final static String USER_NAME = "username";
+    public final static String RESULT = "result";
+    public static MyApplication mOurApplication;
+
     /**
      *
      * @return
@@ -60,16 +75,31 @@ public class MyApplication extends Application {
         return new MyApplication();
     }
 
+    public static MyApplication getApplication() {
+        return (MyApplication) mOurApplication;
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        mOurApplication = this;
         sp = getSharedPreferences("config", MODE_PRIVATE);
         DemoCache.setContext(getApplicationContext());
         NIMClient.init(this, loginInfo(), options()); // 初始化
 
+        // keda
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                KdvMtBaseAPI.setcallback(new MyMtcCallback());
+                KdvMtBaseAPI.start(35, getMediaLibDir());
+            }
+        }).start();
+        iniVConf();
+
         // 初始化全局异常捕获
-      //  CrashHandler crashHandler = CrashHandler.getInstance();
-       // crashHandler.init(getApplicationContext());
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
         checkCrashLog(); // 检查是否有崩溃日志
 
         if (inMainProcess()) {
@@ -357,5 +387,30 @@ public class MyApplication extends Application {
                 return null;
             }
         }
+    }
+
+    /**  -----------科达相关-------------   */
+
+    public static String getMediaLibDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/MobileMVC_Demo/mediaLib");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir.getAbsolutePath();
+    }
+
+    /**
+     * 初始化音视频配置
+     */
+    private void iniVConf() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                // 设置音频上下文
+                KdvMtBaseAPI.setAndroidObjects(MyApplication.this);
+                // 启用不对称网络
+                KdvMtBaseAPI.setNonSymmetricNet(true, (short) 512, (short) 512);
+            }
+        }).start();
     }
 }
