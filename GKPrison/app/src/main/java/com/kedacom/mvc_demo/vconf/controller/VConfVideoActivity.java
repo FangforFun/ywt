@@ -18,20 +18,28 @@ import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.application.AppStackManager;
 import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.avchat.AVChatExitCode;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
+import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.tool.SPUtil;
 import com.kedacom.kdv.mt.sdkapi.KdvMtBaseAPI;
 import com.kedacom.mvc_demo.conf.bean.VConf;
 import com.kedacom.mvc_demo.vconf.bean.LinkState;
@@ -46,11 +54,24 @@ import com.kedacom.truetouch.video.player.EGLWindowSurfaceFactory;
 import com.kedacom.truetouch.video.player.Renderer;
 import com.kedacom.truetouch.video.player.Renderer.Channel;
 import com.kedacom.truetouch.video.player.VidGestureDetector;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.exception.HttpException;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 import com.pc.ui.layout.ISimpleTouchListener;
 import com.pc.ui.layout.SimpleGestureDetectorFrame;
 import com.pc.ui.layout.SimpleGestureDetectorRelative;
 import com.pc.utils.StringUtils;
 import com.pc.utils.TerminalUtils;
+
+import org.apache.http.entity.StringEntity;
+import org.apache.http.protocol.HTTP;
+
+import java.io.UnsupportedEncodingException;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * 视频会议
@@ -141,6 +162,13 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	private boolean isOpenCamera = true;
 
 	private VideoCapture mVideoCapture;
+
+	private FrameLayout fl_examine;// 审核
+	private LinearLayout ll_examine_button;
+	private Button bt_through_examine;
+	private Button bt_not_through_examine;
+
+	private boolean isCommon = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -260,7 +288,9 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 		if (extra == null) {
 			return;
 		}
-
+		if(extra.containsKey("isCommon")) {
+			isCommon = extra.getBoolean("isCommon");
+		}
 		mP2PConfVideo = VideoConferenceService.isP2PVConf();
 		mConfE164 = extra.getString(MyApplication.E164NUM);
 	}
@@ -271,6 +301,18 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 		mPlayPicFrame = (SimpleGestureDetectorRelative) findViewById(R.id.pic_frame);
 		mCameraConvertImg = (ImageView) findViewById(R.id.camera_convert_img);
 		mCameraOpenSwitchImg = (ImageView) findViewById(R.id.camera_open_switchimg);
+		fl_examine = (FrameLayout) findViewById(R.id.fl_examine);
+		ll_examine_button = (LinearLayout) findViewById(R.id.ll_examine_button);
+		bt_through_examine = (Button) findViewById(R.id.bt_through_examine);
+		bt_not_through_examine = (Button) findViewById(R.id.bt_not_through_examine);
+
+		if(TextUtils.isEmpty((String) SPUtil.get(this, "name", ""))){
+			ll_examine_button.setVisibility(View.VISIBLE);
+			bt_through_examine.setOnClickListener(this);
+			bt_not_through_examine.setOnClickListener(this);
+		}else {
+			fl_examine.setVisibility(View.VISIBLE);
+		}
 	}
 
 	public void initComponentValue() {
@@ -343,20 +385,88 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 		if (null == v) {
 			return;
 		}
-
 		switch (v.getId()) {
 		// 前后摄像头旋转
 			case R.id.camera_convert_img:
 				switchCamera();
 				break;
-
 			// 摄像头打开选择
 			case R.id.camera_open_switchimg:
 				toggleCamera();
 				break;
+			case R.id.bt_through_examine:
+				HttpUtils httpUtils = new HttpUtils(5000);
+				RequestParams params = new RequestParams();
+				params.setContentType("application/json");
+				try {
+					StringEntity entity = new StringEntity("{" +
+							"    \"notification\": {" +
+							"        \"code\": 200," +
+							"        \"receiver\": \"" + SPUtil.get(VConfVideoActivity.this, "family_accid", "") + "\"," +
+							"        \"sender\": \"" + SPUtil.get(VConfVideoActivity.this, "token", "") + "\"" +
+							"    }" +
+							"}", HTTP.UTF_8);
+					params.setBodyEntity(entity);
+					com.gkzxhn.gkprison.utils.tool.Log.i(TAG, "through entity is :" + entity);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				httpUtils.send(HttpRequest.HttpMethod.POST, Constants.URL_HEAD + Constants.VIDEO_EXAMIME, params, new RequestCallBack<Object>() {
+					@Override
+					public void onSuccess(ResponseInfo<Object> responseInfo) {
+						com.gkzxhn.gkprison.utils.tool.Log.i("审核通过成功", responseInfo.result.toString());
+					}
 
+					@Override
+					public void onFailure(HttpException e, String s) {
+						com.gkzxhn.gkprison.utils.tool.Log.i("审核通过失败", s);
+						EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
+					}
+				});
+				break;
+			case R.id.bt_not_through_examine:
+				HttpUtils httpUtils1 = new HttpUtils(5000);
+				RequestParams params1 = new RequestParams();
+				params1.setContentType("application/json");
+				try {
+					StringEntity entity = new StringEntity("{" +
+							"    \"notification\": {" +
+							"        \"code\": 401," +
+							"        \"receiver\": \"" + SPUtil.get(VConfVideoActivity.this, "family_accid", "") + "\"," +
+							"        \"sender\": \"" + SPUtil.get(VConfVideoActivity.this, "token", "") + "\"" +
+							"    }" +
+							"}", HTTP.UTF_8);
+					com.gkzxhn.gkprison.utils.tool.Log.i(TAG, "not through entity is :" + entity);
+					params1.setBodyEntity(entity);
+				} catch (UnsupportedEncodingException e) {
+					e.printStackTrace();
+				}
+				httpUtils1.send(HttpRequest.HttpMethod.POST, Constants.URL_HEAD + Constants.VIDEO_EXAMIME, params1, new RequestCallBack<Object>() {
+					@Override
+					public void onSuccess(ResponseInfo<Object> responseInfo) {
+						com.gkzxhn.gkprison.utils.tool.Log.i("审核不通过成功", responseInfo.result.toString());
+						// 挂断
+					}
+
+					@Override
+					public void onFailure(HttpException e, String s) {
+						com.gkzxhn.gkprison.utils.tool.Log.i("审核不通过失败", s);
+						EventBus.getDefault().post(new ExamineEvent("发送审核状态异常"));
+					}
+				});
+				break;
 			default:
 				break;
+		}
+	}
+
+	public void onEvent(final ExamineEvent examineEvent){
+		if(examineEvent.getMsg().contains("发送审核状态异常")){
+			Toast.makeText(VConfVideoActivity.this, "服务器异常", Toast.LENGTH_LONG).show();
+		}else {
+			Toast.makeText(VConfVideoActivity.this, examineEvent.getMsg(), Toast.LENGTH_LONG).show();
+			fl_examine.setVisibility(View.GONE);
+			ll_examine_button.setVisibility(View.GONE);
 		}
 	}
 

@@ -93,6 +93,22 @@
         </RelativeLayout>
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/fl_examine"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="@drawable/avchat_call_bg2">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="狱警正在审核..."
+            android:textColor="@color/tv_bg"
+            android:textSize="20sp"
+            android:gravity="center"/>
+    </FrameLayout>
+
     <LinearLayout
         android:id="@+id/bottomFunction_Frame"
         android:layout_width="fill_parent"
@@ -101,6 +117,35 @@
         android:orientation="vertical" >
 
         <include layout="@layout/vconf_function_layout" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_examine_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp">
+
+        <Button
+            android:id="@+id/bt_through_examine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="审核通过"
+            android:background="@drawable/theme_bg_bt_selector"
+            android:textColor="@color/white"
+            android:layout_marginRight="20dp"/>
+
+        <Button
+            android:id="@+id/bt_not_through_examine"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="审核失败"
+            android:background="@drawable/theme_bg_bt_selector"
+            android:textColor="@color/white"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"/>
     </LinearLayout>
 
 </RelativeLayout>

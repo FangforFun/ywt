@@ -3,8 +3,11 @@ package com.kedacom.mvc_demo;
 import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 
+import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.application.AppStackManager;
 import com.kedacom.kdv.mt.sdkapi.KdvMtBaseAPI;
 import com.kedacom.mvc_demo.vconf.bean.TagTMTAddr;

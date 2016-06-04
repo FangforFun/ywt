@@ -245,7 +245,7 @@ public class AVResponseActivity extends ActionBarActivity implements View.OnClic
 				if (VideoConferenceService.mLinkState != null && (VideoConferenceService.mLinkState.isCSP2P() || VideoConferenceService.mLinkState.isCSMCC())) {
 					unregisterReceivers();
 
-					VideoConferenceService.openVConfActivity(AVResponseActivity.this, mPeerAlias, ipAddr, mE164Num, (short) mCallRate, false, VConfType.exist.ordinal());
+					VideoConferenceService.openVConfActivity(AVResponseActivity.this, mPeerAlias, ipAddr, mE164Num, (short) mCallRate, false, VConfType.exist.ordinal(), true);
 					finish();
 				} else {
 					finish();

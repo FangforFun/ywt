@@ -70,5 +70,4 @@
             android:text="拒绝"
             android:textSize="17sp" />
     </LinearLayout>
-
 </LinearLayout>

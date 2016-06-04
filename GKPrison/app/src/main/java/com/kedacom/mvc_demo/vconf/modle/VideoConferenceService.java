@@ -279,7 +279,7 @@ public class VideoConferenceService {
 	public static void openVConfActivity(Activity activity, String alias, String ipAddr, String e164, boolean isJoinVConf, int vconfType) {
 		int callRate = confCallRete(MyApplication.mOurApplication);
 
-		openVConfActivity(activity, alias, ipAddr, e164, (short) callRate, isJoinVConf, vconfType);
+		openVConfActivity(activity, alias, ipAddr, e164, (short) callRate, isJoinVConf, vconfType, false);
 	}
 
 	/**
@@ -292,7 +292,7 @@ public class VideoConferenceService {
 	 * @param isJoinVConf true: 入会
 	 * @param vconfType 会议的创建形式：呼叫；召集；加入
 	 */
-	public static void openVConfActivity(Activity activity, String alias, String ipAddr, String e164, short callRete, boolean isJoinVConf, int vconfType) {
+	public static void openVConfActivity(Activity activity, String alias, String ipAddr, String e164, short callRete, boolean isJoinVConf, int vconfType, boolean isCommon) {
 		if (activity == null || (StringUtils.isNull(ipAddr) && StringUtils.isNull(e164))) {
 			return;
 		}
@@ -321,6 +321,9 @@ public class VideoConferenceService {
 
 		if (!isJoinVConf) {
 			b.putBoolean("PullDown", true);
+		}
+		if(isCommon){
+			b.putBoolean("isCommon", true);
 		}
 
 		if (VideoConferenceService.mSaveVconf == null || vconfType != VConfType.exist.ordinal()) {
