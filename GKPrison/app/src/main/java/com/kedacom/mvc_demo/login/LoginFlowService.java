@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.gkzxhn.gkprison.application.AppStackManager;
 import com.gkzxhn.gkprison.application.MyApplication;
@@ -195,9 +196,19 @@ public class LoginFlowService {
 	 * @Description
 	 * @param result
 	 */
-	public static void loginSuccessOrFail(boolean result) {
+	public static void loginSuccessOrFail(final boolean result) {
 		mRegisteringGK = false;
 		final Activity a = AppStackManager.Instance().currentActivity();
+		a.runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				if(result) {
+					Toast.makeText(a, "注册成功了", Toast.LENGTH_SHORT).show();
+				}else {
+					Toast.makeText(a, "注册失败了", Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
 //		if (result) {
 //			if (a != null && a instanceof LoginActivity) {
 //				((LoginActivity) a).loginSuccessed();

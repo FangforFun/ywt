@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.application.AppStackManager;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.utils.tool.SPUtil;
@@ -229,7 +230,15 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     }
 
     @Override
+    protected void onDestroy() {
+        AppStackManager.Instance().popActivity();
+        super.onDestroy();
+    }
+
+    @Override
     protected View initView() {
+        AppStackManager.Instance().pushActivity(this);
+
         screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
         View view;
         if(screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {

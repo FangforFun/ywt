@@ -28,6 +28,7 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.application.AppStackManager;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BasePager;
 import com.gkzxhn.gkprison.constant.Constants;
@@ -189,7 +190,15 @@ public class MainActivity extends BaseActivity {
     };
 
     @Override
+    protected void onDestroy() {
+        AppStackManager.Instance().popActivity();
+        super.onDestroy();
+    }
+
+    @Override
     protected View initView() {
+        AppStackManager.Instance().pushActivity(this);
+
         View view = View.inflate(this, R.layout.activity_main, null);
         home_viewPager = (LazyViewPager) view.findViewById(R.id.layout_content);
         rg_bottom_guide = (RadioGroup) view.findViewById(R.id.rg_bottom_guide);

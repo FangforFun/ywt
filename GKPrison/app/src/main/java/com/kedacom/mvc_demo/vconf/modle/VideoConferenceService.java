@@ -218,7 +218,7 @@ public class VideoConferenceService {
 			return CALLRATE_SPLITLINE;
 		}
 
-		return 128;
+		return 768;
 	}
 
 	/**

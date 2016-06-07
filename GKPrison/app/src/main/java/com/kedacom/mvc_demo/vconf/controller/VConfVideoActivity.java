@@ -18,10 +18,8 @@ import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
@@ -36,9 +34,9 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.application.AppStackManager;
 import com.gkzxhn.gkprison.application.MyApplication;
-import com.gkzxhn.gkprison.avchat.AVChatExitCode;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.tool.Log;
 import com.gkzxhn.gkprison.utils.tool.SPUtil;
 import com.kedacom.kdv.mt.sdkapi.KdvMtBaseAPI;
 import com.kedacom.mvc_demo.conf.bean.VConf;
@@ -85,8 +83,8 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	private final String TAG = "VConfVideoActivity";
 
 	// 预览窗口标准值计算基数：标准屏幕480x800,标准小窗口203x254
-	private final int standard_SW = 480;
-	private final int standard_SH = 800;
+	private final int standard_SW = 1080;
+	private final int standard_SH = 1920;
 	private final int standard_W = 203;
 	private final int standard_H = 254;
 
@@ -194,10 +192,11 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 
 		initPlayGLSurfaceView();
 		initPreGLSurfaceView();
+
+		EventBus.getDefault().register(this);
 	}
 
 	/**
-	 * @see com.kedacom.mobilemvc.base.MBaseFragmentActivity#onViewCreated()
 	 */
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
@@ -252,7 +251,7 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 			// 摄像头初始状态关闭
 			setCameraState(true);
 		} catch (Exception e) {
-			Log.e("VConfVideoActivity", "start Video Capture", e);
+			Log.e("VConfVideoActivity", "start Video Capture" + e);
 		}
 
 		if (null != mGlPlayView) {
@@ -402,7 +401,9 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 					StringEntity entity = new StringEntity("{" +
 							"    \"notification\": {" +
 							"        \"code\": 200," +
-							"        \"receiver\": \"" + SPUtil.get(VConfVideoActivity.this, "family_accid", "") + "\"," +
+							"        \"receiver\": \"" +
+//							SPUtil.get(VConfVideoActivity.this, "family_accid", "")
+							"4d8facc18698f3984a4eb06a6850f9f4" + "\"," +
 							"        \"sender\": \"" + SPUtil.get(VConfVideoActivity.this, "token", "") + "\"" +
 							"    }" +
 							"}", HTTP.UTF_8);
@@ -415,6 +416,8 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 					@Override
 					public void onSuccess(ResponseInfo<Object> responseInfo) {
 						com.gkzxhn.gkprison.utils.tool.Log.i("审核通过成功", responseInfo.result.toString());
+						ll_examine_button.setVisibility(View.GONE);
+//						EventBus.getDefault().post(new ExamineEvent("审核通过"));
 					}
 
 					@Override
@@ -432,7 +435,9 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 					StringEntity entity = new StringEntity("{" +
 							"    \"notification\": {" +
 							"        \"code\": 401," +
-							"        \"receiver\": \"" + SPUtil.get(VConfVideoActivity.this, "family_accid", "") + "\"," +
+							"        \"receiver\": \"" +
+//							SPUtil.get(VConfVideoActivity.this, "family_accid", "")
+							"4d8facc18698f3984a4eb06a6850f9f4" + "\"," +
 							"        \"sender\": \"" + SPUtil.get(VConfVideoActivity.this, "token", "") + "\"" +
 							"    }" +
 							"}", HTTP.UTF_8);
@@ -446,6 +451,7 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 					public void onSuccess(ResponseInfo<Object> responseInfo) {
 						com.gkzxhn.gkprison.utils.tool.Log.i("审核不通过成功", responseInfo.result.toString());
 						// 挂断
+//						EventBus.getDefault().post(new ExamineEvent("审核未通过"));
 					}
 
 					@Override
@@ -460,7 +466,8 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 		}
 	}
 
-	public void onEvent(final ExamineEvent examineEvent){
+	public void onEvent(ExamineEvent examineEvent){
+		Log.i("OnEvent----", examineEvent.getMsg());
 		if(examineEvent.getMsg().contains("发送审核状态异常")){
 			Toast.makeText(VConfVideoActivity.this, "服务器异常", Toast.LENGTH_LONG).show();
 		}else {
@@ -627,7 +634,6 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	/**
 	 * 设置摄像头状态
 	 *
-	 * @param colse
 	 *            关闭摄像头，发送静态图片
 	 */
 	private void setCameraState(boolean open) {
@@ -1089,7 +1095,6 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	/**
 	 * 开始采集图像
 	 *
-	 * @param prevHolder
 	 * @param resolution
 	 */
 	private void startVideoCapture(short resolution) throws Exception {
@@ -1118,7 +1123,6 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	/**
 	 * 重新开始采集图像
 	 *
-	 * @param prevHolder
 	 * @param resolution
 	 */
 	private void reStartVideoCapture(short resolution) {
@@ -1159,6 +1163,8 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 
 	@Override
 	protected void onDestroy() {
+		EventBus.getDefault().unregister(this);
+
 		unregisterReceivers();
 
 		getVConfFunctionView().onDestroyView();
@@ -1208,7 +1214,6 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 	}
 
 	/**
-	 * @param mJoinConfVideo
 	 *            the mJoinConfVideo to set
 	 */
 	public void setJoinConfVideo(boolean joinConfVideo) {
@@ -1268,7 +1273,7 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 				}
 
 				if (!result || linkState.isCSHanup()) {
-					Toast.makeText(getApplicationContext(), R.string.vconf_joinConfVideo_failed, 0).show();
+					Toast.makeText(getApplicationContext(), R.string.vconf_joinConfVideo_failed, Toast.LENGTH_SHORT).show();
 					finish();
 					return;
 				}
@@ -1506,7 +1511,5 @@ public class VConfVideoActivity extends ActionBarActivity implements View.OnClic
 				}
 			}
 		}
-
 	};
-
 }
