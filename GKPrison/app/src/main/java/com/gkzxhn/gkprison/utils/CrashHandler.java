@@ -1,5 +1,14 @@
 package com.gkzxhn.gkprison.utils;
 
+import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.os.Build;
+import android.os.Environment;
+import android.os.Looper;
+import android.widget.Toast;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -13,22 +22,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Build;
-import android.os.Environment;
-import android.os.Looper;
-import android.text.TextUtils;
-import android.util.Log;
-import android.widget.Toast;
-
 /**
  * UncaughtException处理类,当程序发生Uncaught异常的时候,有该类来接管程序,并记录发送错误报告.
  *
- * @author user
+ * @author huangzhengneng
+ * created on 2016/5/9
  *
  */
 public class CrashHandler implements UncaughtExceptionHandler {
@@ -36,7 +34,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
     public static final String TAG = "CrashHandler";
 
     //系统默认的UncaughtException处理类
-    private Thread.UncaughtExceptionHandler mDefaultHandler;
+    private UncaughtExceptionHandler mDefaultHandler;
     //CrashHandler实例
     private static CrashHandler INSTANCE = new CrashHandler();
     //程序的Context对象
@@ -81,7 +79,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             try {
                 Thread.sleep(3000);
             } catch (InterruptedException e) {
-                Log.e(TAG, "error : ", e);
+                Log.e(TAG, "error : " + e.getMessage());
             }
             //退出程序
             android.os.Process.killProcess(android.os.Process.myPid());
@@ -112,11 +110,12 @@ public class CrashHandler implements UncaughtExceptionHandler {
         collectDeviceInfo(mContext);
         //保存日志文件
         String file_name = saveCrashInfo2File(ex);
-        SharedPreferences sp = mContext.getSharedPreferences("config", Context.MODE_PRIVATE);
-        String file_names = sp.getString("错误信息文件名...", "");
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
-        editor.commit();
+        Log.i("save crash info to ", file_name);
+//        SharedPreferences sp = mContext.getSharedPreferences("config", Context.MODE_PRIVATE);
+//        String file_names = sp.getString("错误信息文件名...", "");
+//        SharedPreferences.Editor editor = sp.edit();
+//        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
+//        editor.commit();
         return true;
     }
 
@@ -135,7 +134,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 infos.put("versionCode", versionCode);
             }
         } catch (NameNotFoundException e) {
-            Log.e(TAG, "an error occured when collect package info", e);
+            Log.e(TAG, "an error occured when collect package info" + e.getMessage());
         }
         Field[] fields = Build.class.getDeclaredFields();
         for (Field field : fields) {
@@ -144,7 +143,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
                 infos.put(field.getName(), field.get(null).toString());
                 Log.d(TAG, field.getName() + " : " + field.get(null));
             } catch (Exception e) {
-                Log.e(TAG, "an error occured when collect crash info", e);
+                Log.e(TAG, "an error occured when collect crash info" + e.getMessage());
             }
         }
     }
@@ -180,18 +179,18 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory() + "/crash/";
+                String path = Environment.getExternalStorageDirectory().getPath();
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();
                 }
-                FileOutputStream fos = new FileOutputStream(path + fileName);
+                FileOutputStream fos = new FileOutputStream(path + "/" +fileName);
                 fos.write(sb.toString().getBytes());
                 fos.close();
             }
             return fileName;
         } catch (Exception e) {
-            Log.e(TAG, "an error occured while writing file...", e);
+            Log.e(TAG, "an error occured while writing file..." + e.getMessage());
         }
         return null;
     }

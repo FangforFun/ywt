@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.prisonport.view;
 
+import android.graphics.drawable.GradientDrawable;
+
 import com.gkzxhn.gkprison.utils.DateUtil;
 
 import java.io.Serializable;
