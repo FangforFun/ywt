@@ -18,8 +18,8 @@ public class SQLitehelp extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table Cart(id INTEGER AUTO_INCREMENT,time VARCHAR2(60),out_trade_no VARCHAR2(60),isfinish BOOLEAN(30),total_money VARCHAR2(60),count INTEGER(60),remittance BOOLEAN(30),payment_type varchar(255))");
-        db.execSQL("CREATE TABLE line_items(id INTEGER AUTO_INCREMENT,Items_id INTEGER(60),cart_id INTEGER,qty INTEGER(60),total_money VARCHAR2(60),position INTEGER(60),price varchar[255],title varchar(255))");
+        db.execSQL("create table Cart(id INTEGER PRIMARY KEY autoincrement,time VARCHAR2(60),out_trade_no VARCHAR2(60),isfinish BOOLEAN(30),total_money VARCHAR2(60),count INTEGER(60),remittance BOOLEAN(30),payment_type varchar(255))");
+        db.execSQL("CREATE TABLE line_items(id INTEGER PRIMARY KEY autoincrement,Items_id INTEGER(60),cart_id INTEGER,qty INTEGER(60),total_money VARCHAR2(60),position INTEGER(60),price varchar[255],title varchar(255))");
         db.execSQL("create table sysmsg(apply_date VARCHAR2,name VARCHAR2,result VARCHAR2,is_read VARCHAR2,meeting_date VARCHAR2, type_id INTEGER,reason VARCHAR2,receive_time VARCHAR2,user_id VARCHAR2)");
 
     }
