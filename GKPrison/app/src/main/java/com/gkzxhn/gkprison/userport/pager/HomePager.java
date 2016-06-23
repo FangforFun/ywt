@@ -195,8 +195,7 @@ public class HomePager extends BasePager {
         dialog = new ProgressDialog(context);
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setMessage("");
-        dialog.show();
-    }
+        dialog.show();    }
 
     /**
      * 获取焦点新闻
@@ -257,6 +256,8 @@ public class HomePager extends BasePager {
                     int i = allnews.get(position).getId();
                     Intent intent = new Intent(context, NewsDetailActivity.class);
                     intent.putExtra("id", i);
+                    intent.putExtra("type", 0);// 0是轮播图   1是新闻
+                    intent.putExtra("index", position + 1);
                     context.startActivity(intent);
                 }else {
                     showToastMsgShort("抱歉，没有数据...");
@@ -592,6 +593,7 @@ public class HomePager extends BasePager {
         switch (v.getId()){
             case R.id.ll_home_news1:
                 intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("type", 1);// 0是轮播图   1是新闻
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_1.getId());
                 }else {
@@ -602,6 +604,7 @@ public class HomePager extends BasePager {
                 break;
             case R.id.ll_home_news2:
                 intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("type", 0);// 0是轮播图   1是新闻
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_2.getId());
                 }else {
@@ -612,6 +615,7 @@ public class HomePager extends BasePager {
                 break;
             case R.id.ll_home_news3:
                 intent = new Intent(context, NewsDetailActivity.class);
+                intent.putExtra("type", 0);// 0是轮播图   1是新闻
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_3.getId());
                 }else {

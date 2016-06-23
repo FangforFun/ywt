@@ -164,6 +164,7 @@ public class PrisonOpenActivity extends BaseActivity {
             public void viewClick(int position) {
                 int i = newsList.get(position).getId();
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                intent.putExtra("type", 1);// 0是轮播图   1是新闻
                 intent.putExtra("id", i);
                 startActivity(intent);
             }
@@ -225,6 +226,7 @@ public class PrisonOpenActivity extends BaseActivity {
                 if (position > 0) {
                     int i = newsList.get(position - 1).getId();
                     Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
+                    intent.putExtra("type", 1);// 0是轮播图   1是新闻
                     intent.putExtra("id", i);
                     startActivity(intent);
                 }

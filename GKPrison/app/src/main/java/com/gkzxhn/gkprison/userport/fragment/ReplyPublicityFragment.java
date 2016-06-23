@@ -107,6 +107,7 @@ public class ReplyPublicityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 int i = replys.get(position).getId();
                 Intent intent = new Intent(getActivity(), NewsDetailActivity.class);
+                intent.putExtra("type", 1);// 0是轮播图   1是新闻
                 intent.putExtra("id", i);
                 startActivity(intent);
             }

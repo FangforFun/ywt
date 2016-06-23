@@ -18,6 +18,8 @@ public class NewsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
     private FrameLayout fl_loading;
+    private String webUrl;
+    private int type;
 
     @Override
     protected View initView() {
@@ -32,12 +34,19 @@ public class NewsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         int id = getIntent().getIntExtra("id",-1);
+        // type=0 轮播图  type=1 新闻  默认为1
+        type = getIntent().getIntExtra("type", 1);
+        if(type == 1) {
+            webUrl = Constants.RESOURSE_HEAD + "/news/" + id;
+        }else {
+            int index = getIntent().getIntExtra("index", 1);
+            webUrl = "https://www.fushuile.com/app/" + index;
+        }
         WebSettings webSettings = wv_news_detail.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
-        wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/news/" + id);
-//        wv_news_detail.loadUrl("http://www.sina.com.cn/");
+        wv_news_detail.loadUrl(webUrl);
         fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
