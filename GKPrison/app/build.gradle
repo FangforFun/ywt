@@ -7,7 +7,7 @@ def getDate() {
     return formattedDate
 }
 //从androidManifest.xml中获取版本号
-def getVersionNameFromManifest(){
+def getVersionNameFromManifest() {
     def manifestParser = new com.android.builder.core.DefaultManifestParser()
     return manifestParser.getVersionName(android.sourceSets.main.manifest.srcFile)
 }
@@ -20,8 +20,8 @@ android {
         applicationId "com.gkzxhn.gkprison"
         minSdkVersion 17
         targetSdkVersion 22
-        versionCode 4
-        versionName "1.0.3"
+        versionCode 5
+        versionName "1.1.0"
     }
     buildTypes {
         release {
@@ -47,19 +47,19 @@ android {
     }
 
     //修改生成的apk名字
-    applicationVariants.all{ variant->
+    applicationVariants. all{ variant->
         variant.outputs.each { output->
             def oldFile = output.outputFile
             def newName = '';
-            if(variant.buildType.name.equals('release')){
+            if (variant.buildType.name.equals('release')) {
                 def releaseApkName = 'yuwutong-' + defaultConfig.versionName + '.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }
-            if(variant.buildType.name.equals('beta')){
+            if (variant.buildType.name.equals('beta')) {
                 newName = oldFile.name.replace(".apk", "-v" + defaultConfig.versionName + "-build" + getDate() + ".apk")
                 output.outputFile = new File(oldFile.parent, newName)
             }
-            if(variant.buildType.name.equals('debug')){
+            if (variant.buildType.name.equals('debug')) {
 
             }
         }
@@ -68,20 +68,6 @@ android {
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.weiwangcn.betterspinner:library:1.1.0'
-    compile 'com.klinkerapps:link_builder:1.3.1@aar'
-    compile 'de.greenrobot:eventbus:2.1.0'
-    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
-    compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
-    compile 'com.jungly:gridPasswordView:0.3'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'me.biubiubiu.justifytext:library:1.1'
-    compile 'cn.pedant.sweetalert:library:1.3'
-    compile 'com.umeng.analytics:analytics:latest.integration'
-    compile 'com.bigkoo:alertview:1.0.2'
     compile project(':libraries:ToggleButtonLib')
     compile files('libs/xUtils-2.6.14.jar')
     compile files('libs/alipaySdk-20151112.jar')
@@ -95,4 +81,18 @@ dependencies {
     compile files('libs/okhttp-3.2.0.jar')
     compile files('libs/ksoap2-android-assembly-3.6.0-jar-with-dependencies.jar')
     compile project(':libraries:uikit')
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.weiwangcn.betterspinner:library:1.1.0'
+    compile 'com.klinkerapps:link_builder:1.3.1@aar'
+    compile 'de.greenrobot:eventbus:2.1.0'
+    compile 'com.github.dmytrodanylyk.android-process-button:library:1.0.0'
+    compile 'com.github.castorflex.smoothprogressbar:library:1.1.0'
+    compile 'com.jungly:gridPasswordView:0.3'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'me.biubiubiu.justifytext:library:1.1'
+    compile 'cn.pedant.sweetalert:library:1.3'
+    compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.bigkoo:alertview:1.0.2'
 }

@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white">
-   <!--
     <TextView
         android:id="@+id/tv_sentence_front"
         android:layout_width="wrap_content"
@@ -62,13 +61,12 @@
         android:layout_marginRight="10dp"
         android:divider="#000000"
         android:dividerHeight="1dp"/>
--->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="敬请期待"
-        android:textColor="@color/tv_gray"
-        android:textSize="20sp"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:text="敬请期待"-->
+        <!--android:textColor="@color/tv_gray"-->
+        <!--android:textSize="20sp"/>-->
 
 </RelativeLayout>

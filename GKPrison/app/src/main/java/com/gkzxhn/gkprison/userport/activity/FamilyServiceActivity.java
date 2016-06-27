@@ -19,6 +19,7 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,8 +31,11 @@ import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
+import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.netease.nim.uikit.common.util.string.StringUtil;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
@@ -126,6 +130,48 @@ public class FamilyServiceActivity extends BaseActivity {
             add("刑期变动");
             add("消费记录");
             add("购物签收");
+        }
+    };
+    private List<String> sentence_time = new ArrayList(){
+        {
+            add("2016年5月30日");
+            add("2016年5月20日");
+            add("2016年5月10日");
+        }
+    };
+    private List<String> sentence_cause = new ArrayList(){
+        {
+            add("制止狱内暴力");
+            add("制止狱内暴力");
+            add("制止狱内暴力");
+        }
+    };
+    private List<String> sentence_time_add = new ArrayList(){
+        {
+            add("减刑三个月");
+            add("减刑三个月");
+            add("减刑三个月");
+        }
+    };
+    private List<String> buyer_id = new ArrayList(){
+        {
+            add("1232423423423");
+            add("1232423423423");
+            add("1232423423423");
+        }
+    };
+    private List<String> money1 = new ArrayList(){
+        {
+            add("120元");
+            add("120元");
+            add("120元");
+        }
+    };
+    private List<String> commodity = new ArrayList(){
+        {
+            add("水杯");
+            add("水杯");
+            add("水杯");
         }
     };
 
@@ -464,22 +510,22 @@ public class FamilyServiceActivity extends BaseActivity {
 
             if (groupPosition == 0) {
                 convertView = View.inflate(getApplicationContext(), R.layout.sentence_change, null);
-                //ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
+                ListView lv_sentence = (ListView)convertView.findViewById(R.id.lv_sentence_recod);
                 SentenceAdapter adapter = new SentenceAdapter();
-                // lv_sentence.setAdapter(adapter);
-                //ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
+                 lv_sentence.setAdapter(adapter);
+                ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_sentence);
             } else if (groupPosition == 1) {
                 convertView = View.inflate(getApplicationContext(), R.layout.consumption, null);
-                //  ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
+                  ListView lv_consumption = (ListView)convertView.findViewById(R.id.lv_consumption);
                 ConsumptionAdapter adapter = new ConsumptionAdapter();
-                //   lv_consumption.setAdapter(adapter);
-                // ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
+                   lv_consumption.setAdapter(adapter);
+                 ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_consumption);
             } else if (groupPosition == 2) {
                 convertView = View.inflate(getApplicationContext(), R.layout.shoppingreceipt, null);
-                //  ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
+                  ListView lv_shopping = (ListView)convertView.findViewById(R.id.lv_shopping);
                 ReceiptAdapter adapter = new ReceiptAdapter();
-                //  lv_shopping.setAdapter(adapter);
-                //   ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
+                  lv_shopping.setAdapter(adapter);
+                   ListViewParamsUtils.setListViewHeightBasedOnChildren(lv_shopping);
             }
             return convertView;
         }
@@ -502,7 +548,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            return 4;
         }
 
         @Override
@@ -533,9 +579,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.tv_sentence_case.setText("原因");
                 viewHolder.tv_sentence_add.setText("加/减刑");
             } else {
-                //viewHolder.tv_sentence_time.setText(sentence_time.get(position-1));
-                //viewHolder.tv_sentence_case.setText(sentence_cause.get(position-1));
-                //viewHolder.tv_sentence_add.setText(sentence_time_add.get(position-1));
+                viewHolder.tv_sentence_time.setText(sentence_time.get(position-1));
+                viewHolder.tv_sentence_case.setText(sentence_cause.get(position-1));
+                viewHolder.tv_sentence_add.setText(sentence_time_add.get(position-1));
             }
             return convertView;
         }
@@ -551,7 +597,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            return 4;
         }
 
         @Override
@@ -582,9 +628,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.buy_commodity.setText("商品");
                 viewHolder.buy_money.setText("金额");
             } else {
-                //viewHolder.buy_time.setText(sentence_time.get(position-1));
-                //viewHolder.buy_commodity.setText(commodity.get(position-1));
-                //viewHolder.buy_money.setText(money1.get(position-1));
+                viewHolder.buy_time.setText(sentence_time.get(position-1));
+                viewHolder.buy_commodity.setText(commodity.get(position-1));
+                viewHolder.buy_money.setText(money1.get(position-1));
             }
             return convertView;
         }
@@ -600,7 +646,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
         @Override
         public int getCount() {
-            return 1;
+            return 4;
         }
 
         @Override
@@ -636,9 +682,9 @@ public class FamilyServiceActivity extends BaseActivity {
                 viewHolder.receipt.setVisibility(View.GONE);
             } else {
                 viewHolder.receipt.setVisibility(View.VISIBLE);
-                //viewHolder.qianshou_time.setText(sentence_time.get(position-1));
-                //viewHolder.qianshou_id.setText(buyer_id.get(position-1));
-                //viewHolder.qianshou_money.setText(money1.get(position-1));
+                viewHolder.qianshou_time.setText(sentence_time.get(position-1));
+                viewHolder.qianshou_id.setText(buyer_id.get(position-1));
+                viewHolder.qianshou_money.setText(money1.get(position-1));
             }
             return convertView;
         }
@@ -652,6 +698,11 @@ public class FamilyServiceActivity extends BaseActivity {
         }
     }
 
+    /**
+     *
+     * @param s
+     * @return
+     */
     private String getResultTradeno(String s) {
         String str = "";
         try {

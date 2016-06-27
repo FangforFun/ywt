@@ -4,7 +4,6 @@
     android:background="@android:color/white"
     android:layout_height="wrap_content"
     android:padding="10dp">
-<!--
     <View
         android:id="@+id/view_01"
         android:layout_width="match_parent"
@@ -22,12 +21,11 @@
        android:layout_marginLeft="10dp"
        android:divider="@color/black"
        android:dividerHeight="1dp"/>
-       -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="敬请期待"
-        android:textColor="@color/tv_gray"
-        android:textSize="20sp"/>
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_centerInParent="true"-->
+        <!--android:text="敬请期待"-->
+        <!--android:textColor="@color/tv_gray"-->
+        <!--android:textSize="20sp"/>-->
 </RelativeLayout>
