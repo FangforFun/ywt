@@ -11,10 +11,10 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
@@ -27,13 +27,16 @@ import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * created by hzn 2015/12/14
  * 监狱用户登录界面
  */
 public class PrisonLoadingFragment extends BaseFragment {
 
-    private ActionProcessButton btn_login;
+    private SweetAlertDialog sadDialog;
+    private Button btn_login;
     private EditText et_username;
     private EditText et_password;
     private String username;
@@ -44,10 +47,9 @@ public class PrisonLoadingFragment extends BaseFragment {
         public void handleMessage(Message msg) {
             switch (msg.what){
                 case 0:// 云信登录成功
-                    btn_login.setProgress(0);
-                    btn_login.setText("登录成功");
-                    btn_login.setEnabled(true);
-                    btn_login.setClickable(true);
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("登录成功！")
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
                     SharedPreferences.Editor editor = sp.edit();
                     editor.putString("token", username);
                     editor.putString("username", username);
@@ -55,15 +57,62 @@ public class PrisonLoadingFragment extends BaseFragment {
                     editor.putBoolean("isCommonUser", false);
                     editor.commit();
                     DemoCache.setAccount(username);// 设置云信id缓存
-                    Intent intent = new Intent(context, DateMeetingListActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            sadDialog.dismiss();
+                            Intent intent = new Intent(context, DateMeetingListActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    }, 1000);
                     break;
                 case 1:// 云信id登录失败
-                    btn_login.setProgress(0);
-                    btn_login.setText("登录失败");
-                    btn_login.setEnabled(true);
-                    btn_login.setClickable(true);
+                    int error_code = (int) msg.obj;
+                    String error_reason = "登录失败！";
+                    switch (error_code){
+                        case 302:
+                            error_reason = "用户名或密码错误！";
+                            break;
+                        case 503:
+                            error_reason = "服务器繁忙！";
+                            break;
+                        case 415:
+                            error_reason = "网络出错，请检查网络！";
+                            break;
+                        case 408:
+                            error_reason = "请求超时，请稍后再试！";
+                            break;
+                        case 403:
+                            error_reason = "非法操作或没有权限！";
+                            break;
+                        case 200:
+//                            error_reason = "非法操作或没有权限！";
+//                            Toast.makeText(context, "操作成功", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 422:
+                            error_reason = "您的账号已被禁用！";
+                            break;
+                        case 500:
+                            error_reason = "服务器错误！";
+                            break;
+                        case 416:
+                            error_reason = "操作频繁，请稍后再试！";
+                            break;
+                        default:
+                            Toast.makeText(context, "登录失败！", Toast.LENGTH_SHORT).show();
+                            break;
+                    }
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText(error_reason)
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
             }
         }
@@ -72,7 +121,7 @@ public class PrisonLoadingFragment extends BaseFragment {
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_prison_loading, null);
-        btn_login = (ActionProcessButton) view.findViewById(R.id.btn_login);
+        btn_login = (Button) view.findViewById(R.id.btn_login);
         et_username = (EditText) view.findViewById(R.id.et_username);
         et_password = (EditText) view.findViewById(R.id.et_password);
         return view;
@@ -94,11 +143,10 @@ public class PrisonLoadingFragment extends BaseFragment {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                     return;
                 }else {
-                    btn_login.setEnabled(false);
-                    btn_login.setClickable(false);
-                    btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
-                    btn_login.setProgress(1);
-                    btn_login.setText("正在登录...");
+                    sadDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.PROGRESS_TYPE)
+                        .setTitleText("正在登录...");
+                    sadDialog.setCancelable(false);
+                    sadDialog.show();
                     LoginInfo info = new LoginInfo(username, tokenFromPassword(password)); // config...
                     final RequestCallback<LoginInfo> callback =
                             new RequestCallback<LoginInfo>() {
@@ -144,7 +192,10 @@ public class PrisonLoadingFragment extends BaseFragment {
                                             Log.i("登录失败1", i + "");
                                             break;
                                     }
-                                    handler.sendEmptyMessage(1);
+                                    Message msg = handler.obtainMessage();
+                                    msg.what = 1;
+                                    msg.obj = i;
+                                    handler.sendMessage(msg);
                                     Looper.loop();
                                 }
 

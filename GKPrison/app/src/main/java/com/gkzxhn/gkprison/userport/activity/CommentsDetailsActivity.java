@@ -14,8 +14,6 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.Utils;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * created by huangzhengneng on 2016.6.27
@@ -23,11 +21,11 @@ import butterknife.ButterKnife;
  */
 public class CommentsDetailsActivity extends BaseActivity {
 
-    @BindView(R.id.tv_wonderful_comments) TextView tv_wonderful_comments;
-    @BindView(R.id.lv_wonderful_comments) ListView lv_wonderful_comments;
-    @BindView(R.id.tv_newest_comments) TextView tv_newest_comments;
-    @BindView(R.id.lv_newest_comments) ListView lv_newest_comments;
-    @BindView(R.id.srl_refresh) SwipeRefreshLayout srl_refresh;
+    private TextView tv_wonderful_comments;
+    private ListView lv_wonderful_comments;
+    private TextView tv_newest_comments;
+    private ListView lv_newest_comments;
+    private SwipeRefreshLayout srl_refresh;
 
     private CommentListAdapter wonderfulAdapter;
     private CommentListAdapter newestAdapter;
@@ -35,6 +33,10 @@ public class CommentsDetailsActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_commens_details, null);
+        tv_wonderful_comments = (TextView) view.findViewById(R.id.tv_wonderful_comments);
+        lv_wonderful_comments = (ListView) view.findViewById(R.id.lv_wonderful_comments);
+        tv_newest_comments = (TextView) view.findViewById(R.id.tv_newest_comments);
+        lv_newest_comments = (ListView) view.findViewById(R.id.lv_newest_comments);
         return view;
     }
 
@@ -42,7 +44,6 @@ public class CommentsDetailsActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        ButterKnife.bind(this);
         if(wonderfulAdapter == null){
             wonderfulAdapter = new CommentListAdapter(3);
             lv_wonderful_comments.setAdapter(wonderfulAdapter);

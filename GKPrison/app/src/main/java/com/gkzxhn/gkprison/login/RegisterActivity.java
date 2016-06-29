@@ -33,7 +33,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
@@ -66,12 +65,15 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * created by huangzhengneng 2015/12/15
  * 注册页面
  */
 public class RegisterActivity extends BaseActivity {
 
+    private SweetAlertDialog sadDialog;
     private static final int CROP_SMALL_PICTURE = 2;
     private String url = Constants.URL_HEAD + "apply";
     private String url1 = Constants.URL_HEAD+"verify_code";
@@ -93,7 +95,6 @@ public class RegisterActivity extends BaseActivity {
     private EditText et_identifying_code;// 验证码
     private Button bt_send_identifying_code;// 发送验证码
     private Button bt_register;// 提交申请
-    private ActionProcessButton apb_register;// 注册进度按钮
     private TextView tv_read;// 我已阅读协议
     private CheckBox cb_agree_disagree;// 我已阅读复选框
     private ImageView iv_add_photo_01;
@@ -135,27 +136,54 @@ public class RegisterActivity extends BaseActivity {
                         JSONObject jsonObject = new JSONObject(result);
                         int code = jsonObject.getInt("code");
                         if(code == 400){
-                            showToastMsgShort("验证码请求失败，请稍后再试");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("验证码请求失败，请稍后再试！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }else if(code == 200){
-                            showToastMsgShort("已发送");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("已发送！")
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                      sadDialog.dismiss();
+                                }
+                            }, 500);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     break;
                 case 1: // 发送验证码请求失败
-                    showToastMsgShort("验证码请求失败，请稍后再试");
-                    apb_register.setEnabled(true);
-                    apb_register.setClickable(true);
-                    apb_register.setProgress(0);
-                    apb_register.setText("注册");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("验证码请求失败，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
                 case 2: // 发送验证码请求异常
-                    showToastMsgShort("验证码请求异常，请稍后再试");
-                    apb_register.setEnabled(true);
-                    apb_register.setClickable(true);
-                    apb_register.setProgress(0);
-                    apb_register.setText("注册");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("验证码请求异常，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
                 case 3:
                     String code = (String)msg.obj;
@@ -165,19 +193,29 @@ public class RegisterActivity extends BaseActivity {
                         if (back_code == 200){
                             sendRegisterMessge();
                         }else if (back_code == 404 || back_code == 413){
-                            showToastMsgShort("验证码错误");
-                            apb_register.setEnabled(true);
-                            apb_register.setClickable(true);
-                            apb_register.setProgress(0);
-                            apb_register.setText("注册");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("验证码错误！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        showToastMsgShort("异常");
-                        apb_register.setEnabled(true);
-                        apb_register.setClickable(true);
-                        apb_register.setProgress(0);
-                        apb_register.setText("注册");
+                        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        sadDialog.setTitleText("异常！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                     }
                     break;
                 case 4: // 发送注册信息至服务器请求成功
@@ -186,6 +224,7 @@ public class RegisterActivity extends BaseActivity {
                         JSONObject jsonObject = new JSONObject(register_result);
                         int register_back_code = jsonObject.getInt("code");
                         if(register_back_code == 200){
+                            sadDialog.dismiss();
                             AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                             builder.setCancelable(false);
                             View view = View.inflate(RegisterActivity.this, R.layout.register_commit_success_dialog, null);
@@ -199,39 +238,89 @@ public class RegisterActivity extends BaseActivity {
                             editor.putString("prisoner_number", prisoner_number);
                             editor.commit();
                         }else if(register_back_code == 404){
-                            showToastMsgShort("验证码错误");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("验证码错误！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         } else if(register_back_code == 500){
-                            showToastMsgShort("注册失败");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("注册失败！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }else if(register_back_code == 501){
                             JSONObject errors = jsonObject.getJSONObject("errors");
                             JSONArray apply_create = errors.getJSONArray(register_result.contains("phone") ? "phone" : "apply_create");
-                            showToastMsgShort(apply_create.getString(0));
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText(apply_create.getString(0))
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }else {
-                            showToastMsgShort("注册失败");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("注册失败！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        showToastMsgShort("异常");
-                    } finally {
-                        apb_register.setEnabled(true);
-                        apb_register.setClickable(true);
-                        apb_register.setProgress(0);
-                        apb_register.setText("注册");
+                        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        sadDialog.setTitleText("异常！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                     }
                     break;
                 case 5:// 发送注册信息至服务器请求失败
-                    showToastMsgShort("注册请求失败，请稍后再试");
-                    apb_register.setEnabled(true);
-                    apb_register.setClickable(true);
-                    apb_register.setProgress(0);
-                    apb_register.setText("注册");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("注册请求失败，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
                 case 6:// 发送注册信息至服务器请求异常
-                    showToastMsgShort("注册请求异常，请稍后再试");
-                    apb_register.setEnabled(true);
-                    apb_register.setClickable(true);
-                    apb_register.setProgress(0);
-                    apb_register.setText("注册");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("注册请求异常，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
             }
         }
@@ -256,7 +345,6 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree = (CheckBox) view.findViewById(R.id.cb_agree_disagree);
         iv_add_photo_01.setTag(1);
         iv_add_photo_02.setTag(2);
-        apb_register = (ActionProcessButton) view.findViewById(R.id.apb_register);
         rg_sex = (RadioGroup) view.findViewById(R.id.rg_sex);
         rb_male = (RadioButton) view.findViewById(R.id.rb_male);
         rb_female = (RadioButton) view.findViewById(R.id.rb_female);
@@ -281,15 +369,12 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    bt_register.setVisibility(View.GONE);
-                    apb_register.setVisibility(View.VISIBLE);
+                    bt_register.setEnabled(true);
                 } else {
-                    bt_register.setVisibility(View.VISIBLE);
-                    apb_register.setVisibility(View.GONE);
+                    bt_register.setEnabled(false);
                 }
             }
         });
-        apb_register.setOnClickListener(this);
         bt_register.setOnClickListener(this);
         iv_add_photo_01.setOnClickListener(this);
         iv_add_photo_02.setOnClickListener(this);
@@ -432,11 +517,15 @@ public class RegisterActivity extends BaseActivity {
      * 发送手机号码和验证码
      */
     private void sendRegisterToServer() {
-        apb_register.setEnabled(false);
-        apb_register.setClickable(false);
-        apb_register.setMode(ActionProcessButton.Mode.ENDLESS);
-        apb_register.setProgress(1);
-        apb_register.setText("正在注册...");
+//        apb_register.setEnabled(false);
+//        apb_register.setClickable(false);
+//        apb_register.setMode(ActionProcessButton.Mode.ENDLESS);
+//        apb_register.setProgress(1);
+//        apb_register.setText("正在注册...");
+        sadDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+              .setTitleText("正在注册...");
+        sadDialog.setCancelable(false);
+        sadDialog.show();
         new Thread(){
             @Override
             public void run() {
@@ -464,7 +553,7 @@ public class RegisterActivity extends BaseActivity {
     @Override
     public void onClick(View v) {
         switch (v.getId()){
-            case R.id.apb_register:
+            case R.id.bt_register:
                 name = et_name.getText().toString().trim();
                 ic_card = et_ic_card.getText().toString().trim().toLowerCase();
                 phone_num = et_phone_num.getText().toString().trim();
@@ -598,15 +687,12 @@ public class RegisterActivity extends BaseActivity {
                         long downTime = 0;
                         switch (event.getAction()){
                             case MotionEvent.ACTION_DOWN:
-                                downTime = System.currentTimeMillis();
-//                                Log.i("按下了...", downTime + "");
                                 break;
                             case MotionEvent.ACTION_UP:
                                 long upTime = System.currentTimeMillis();
                                 if(upTime - downTime < 500){
                                     agreement_dialog.dismiss();
                                 }
-//                                Log.i("离开了...", upTime + "..." + (upTime - downTime));
                                 break;
                         }
                         return false;
@@ -649,6 +735,10 @@ public class RegisterActivity extends BaseActivity {
                                     "        \"phone\":" + "\"" + phone_num + "\"" +
                                     "    }" +
                                     "}";
+                            sadDialog = new SweetAlertDialog(RegisterActivity.this, SweetAlertDialog.PROGRESS_TYPE)
+                                .setTitleText("正在发送...");
+                            sadDialog.setCancelable(false);
+                            sadDialog.show();
                             new Thread() {
                                 @Override
                                 public void run() {

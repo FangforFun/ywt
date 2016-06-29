@@ -159,7 +159,7 @@ public class WriteMessageActivity extends BaseActivity {
      */
     private void sendMessage() {
         pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
-                .setTitleText("正在提交,请稍后...");
+                .setTitleText("正在提交,请稍候...");
         pDialog.setCancelable(false);
         pDialog.show();
         Letter letter = new Letter();

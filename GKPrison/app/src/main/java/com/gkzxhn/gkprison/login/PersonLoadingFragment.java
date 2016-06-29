@@ -14,13 +14,13 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.dd.processbutton.iml.ActionProcessButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.activity.WriteMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -33,6 +33,8 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
+
 /**
  * A simple {@link Fragment} subclass.
  * 个人用户登录界面
@@ -40,8 +42,9 @@ import org.json.JSONObject;
 public class PersonLoadingFragment extends BaseFragment {
 
     private String url = Constants.URL_HEAD + "login";
+    private SweetAlertDialog sadDialog;
     private Button bt_register;
-    private ActionProcessButton btn_login;
+    private Button btn_login;
     private EditText et_login_username;
     private EditText et_login_ic_card_num;
     private EditText et_identifying_code;
@@ -75,19 +78,31 @@ public class PersonLoadingFragment extends BaseFragment {
                     userInfo = gson.fromJson(result_login, UserInfo.class);
                     int code = userInfo.getCode();
                     if(code == 401){
-                        showToastMsgShort("用户身份验证失败");
-                        btn_login.setProgress(0);
-                        btn_login.setText("登录失败");
-                        btn_login.setEnabled(true);
-                        btn_login.setClickable(true);
+//                        showToastMsgShort("");
+                        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        sadDialog.setTitleText("用户身份验证失败！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                         successCode = 0;
                         return;
                     }else if(code == 404 || code == 413){
-                        showToastMsgShort("验证码错误");
-                        btn_login.setProgress(0);
-                        btn_login.setText("登录失败");
-                        btn_login.setEnabled(true);
-                        btn_login.setClickable(true);
+//                        showToastMsgShort("验证码错误");
+                        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        sadDialog.setTitleText("验证码错误！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                         successCode = 0;
                         return;
                     }else if(code == 200){
@@ -101,34 +116,53 @@ public class PersonLoadingFragment extends BaseFragment {
                         editor.putString("avatar", userInfo.getAvatar().split("\\|")[2]);
                         editor.commit();
                     }else {
-                        btn_login.setProgress(0);
-                        btn_login.setText("登录失败");
-                        btn_login.setEnabled(true);
-                        btn_login.setClickable(true);
+                        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        sadDialog.setTitleText("登录失败！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                         successCode = 0;
                     }
 //                    showToastMsgShort("返回码..." + code);
                     break;
                 case 1:// 云信id登录失败
                     successCode = 0;
-                    btn_login.setProgress(0);
-                    btn_login.setText("登录失败");
-                    btn_login.setEnabled(true);
-                    btn_login.setClickable(true);
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("登录失败！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     // 发送验证码设为可用
 //                    removeCodeTask();
                     break;
                 case 3:// 发送登录信息至服务器失败
                 case 4:// 发送登录信息至服务器异常
-                    btn_login.setProgress(0);
-                    btn_login.setText("登录失败");
-                    btn_login.setEnabled(true);
-                    btn_login.setClickable(true);
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
                     if(msg.what == 4){
-                        showToastMsgShort("登录异常,请稍后再试");
+                        sadDialog.setTitleText("登录异常,请稍后再试！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                     }else if(msg.what == 3){
-                       showToastMsgShort("登录失败，请稍后再试");
+                        sadDialog.setTitleText("登录失败，请稍后再试！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
                     }
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     break;
                 case 7:// 验证码已发送
                     String result = (String) msg.obj;
@@ -136,9 +170,26 @@ public class PersonLoadingFragment extends BaseFragment {
                         JSONObject jsonObject = new JSONObject(result);
                         int _code = jsonObject.getInt("code");
                         if(_code == 400){
-                            showToastMsgShort("验证码请求失败，请稍后再试");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("验证码请求失败，请稍后再试！")
+                                    .setConfirmText("确定")
+                                    .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                            sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    sweetAlertDialog.dismiss();
+                                }
+                            });
                         }else if(_code == 200){
-                            showToastMsgShort("已发送");
+                            sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                            sadDialog.setTitleText("已发送！")
+                                    .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    sadDialog.dismiss();
+                                }
+                            }, 1000);
                         }
                         Log.i("登录验证码", _code + "");
                     } catch (JSONException e) {
@@ -146,11 +197,29 @@ public class PersonLoadingFragment extends BaseFragment {
                     }
                     break;
                 case 8:// 验证码发送失败
-                    showToastMsgShort("验证码请求失败，请稍后再试");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("验证码请求失败，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     removeCodeTask();
                     break;
                 case 9:// 验证码发送异常
-                    showToastMsgShort("验证码请求异常，请稍后再试");
+                    sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    sadDialog.setTitleText("验证码请求异常，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
                     removeCodeTask();
                     break;
             }
@@ -161,10 +230,9 @@ public class PersonLoadingFragment extends BaseFragment {
      * 登录成功
      */
     private void loginSuccessed() {
-        btn_login.setProgress(0);
-        btn_login.setText("登录成功");
-        btn_login.setEnabled(true);
-        btn_login.setClickable(true);
+        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+        sadDialog.setTitleText("登录成功！")
+                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
         SharedPreferences.Editor editor = sp.edit();
         editor.putString("username", username);
         editor.putString("password", ic_card_num);
@@ -179,16 +247,24 @@ public class PersonLoadingFragment extends BaseFragment {
         editor.putBoolean("isRegisteredUser", true);
         editor.commit();
         DemoCache.setAccount(userInfo.getToken());
-        Intent intent = new Intent(context, MainActivity.class);
-        startActivity(intent);
-        getActivity().finish();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(sadDialog!= null && sadDialog.isShowing()) {
+                    sadDialog.dismiss();
+                }
+                Intent intent = new Intent(context, MainActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+            }
+        }, 500);
     }
 
     @Override
     protected View initView() {
         view = View.inflate(context, R.layout.fragment_person_loading, null);
         bt_register = (Button) view.findViewById(R.id.bt_register);
-        btn_login = (ActionProcessButton) view.findViewById(R.id.btn_login);
+        btn_login = (Button) view.findViewById(R.id.btn_login);
         et_login_username = (EditText) view.findViewById(R.id.et_login_username);
         et_login_ic_card_num = (EditText) view.findViewById(R.id.et_login_ic_card_num);
         bt_fast_login = (Button) view.findViewById(R.id.bt_fast_login);
@@ -219,11 +295,10 @@ public class PersonLoadingFragment extends BaseFragment {
                     return;
                 } else {
                     if (Utils.isNetworkAvailable()) {
-                        btn_login.setEnabled(false);
-                        btn_login.setClickable(false);
-                        btn_login.setMode(ActionProcessButton.Mode.ENDLESS);
-                        btn_login.setProgress(1);
-                        btn_login.setText("正在登录...");
+                        sadDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.PROGRESS_TYPE)
+                            .setTitleText("正在登录...");
+                        sadDialog.setCancelable(false);
+                        sadDialog.show();
                         callback = new RequestCallback<LoginInfo>() {
                             @Override
                             public void onSuccess(LoginInfo loginInfo) {
@@ -333,6 +408,10 @@ public class PersonLoadingFragment extends BaseFragment {
                                     "        \"phone\":" + "\"" + username + "\"" +
                                     "    }" +
                                     "}";
+                            sadDialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.PROGRESS_TYPE)
+                                    .setTitleText("正在发送...");
+                            sadDialog.setCancelable(false);
+                            sadDialog.show();
                             new Thread() {
                                 @Override
                                 public void run() {
@@ -371,10 +450,14 @@ public class PersonLoadingFragment extends BaseFragment {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
         if(handler != null && isRunning){
             removeCodeTask();
         }
+        if(sadDialog != null || sadDialog.isShowing()){
+            sadDialog.dismiss();
+            sadDialog = null;
+        }
+        super.onDestroy();
     }
 
     /**
