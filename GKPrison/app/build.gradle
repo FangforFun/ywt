@@ -1,15 +1,11 @@
 apply plugin: 'com.android.application'
+apply plugin: 'android-apt'
 
 //获取时间戳
 def getDate() {
     def date = new Date()
     def formattedDate = date.format('yyyyMMddHHmm')
     return formattedDate
-}
-//从androidManifest.xml中获取版本号
-def getVersionNameFromManifest() {
-    def manifestParser = new com.android.builder.core.DefaultManifestParser()
-    return manifestParser.getVersionName(android.sourceSets.main.manifest.srcFile)
 }
 
 android {
@@ -18,11 +14,13 @@ android {
 
     defaultConfig {
         applicationId "com.gkzxhn.gkprison"
+        multiDexEnabled = true
         minSdkVersion 17
-        targetSdkVersion 22
+        targetSdkVersion 21
         versionCode 5
         versionName "1.1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -32,9 +30,13 @@ android {
 
     allprojects {
         repositories {
-            mavenCentral()
+            jcenter()
         }
     }
+
+//    dexOptions {
+//        preDexLibraries = false
+//    }
 
     productFlavors {
         wandoujia {}
@@ -64,8 +66,20 @@ android {
             }
         }
     }
-
 }
+
+//afterEvaluate {
+//    tasks.matching {
+//        it.name.startsWith('dex')
+//    }.each { dx ->
+//        if (dx.additionalParameters == null) {
+//            dx.additionalParameters = []
+//        }
+//        dx.additionalParameters += '--multi-dex'
+//        dx.additionalParameters += "--main-dex-list=$projectDir/multidex.keep".toString()
+//    }
+//}
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libraries:ToggleButtonLib')
@@ -95,4 +109,7 @@ dependencies {
     compile 'cn.pedant.sweetalert:library:1.3'
     compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.bigkoo:alertview:1.0.2'
+    compile 'com.jakewharton:butterknife:8.1.0'
+    apt 'com.jakewharton:butterknife-compiler:8.1.0'
+    compile 'com.android.support:multidex:1.0.1'
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="100dp"
+    android:background="@color/white">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/ll_commenter_info"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <com.netease.nim.uikit.common.ui.imageview.CircleImageView
+                android:id="@+id/civ_commenter_icon"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/default_icon"
+                android:layout_marginLeft="10dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginLeft="15dp">
+
+                <TextView
+                    android:id="@+id/tv_commenter_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="我是张三"
+                    android:textColor="@color/tv_mid"
+                    android:textSize="14sp"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/tv_comment_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.7"
+                    android:text="2016-06-27"
+                    android:textSize="12sp"
+                    android:textColor="@color/tv_gray"
+                    android:gravity="start"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/tv_zan_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1212"
+                    android:textSize="12sp"
+                    android:textColor="@color/tv_gray"
+                    android:layout_marginTop="5dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"/>
+
+                <ImageView
+                    android:id="@+id/iv_wonderful"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="5dp"
+                    android:layout_toLeftOf="@+id/tv_zan_count"
+                    android:src="@drawable/zan"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_comment_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="哈哈哈哈哈哈哈哈哈哈哈哈嘻嘻嘻嘻哈哈哈哈哈哈哈哈哈哈哈哈嘻嘻嘻嘻。"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            android:textColor="@color/tv_bg"
+            android:layout_below="@id/ll_commenter_info"
+            android:layout_marginRight="10dp"
+            android:layout_marginLeft="65dp"/>
+    </RelativeLayout>
+</LinearLayout>

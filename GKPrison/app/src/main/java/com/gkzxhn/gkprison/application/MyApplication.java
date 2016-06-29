@@ -1,12 +1,14 @@
 package com.gkzxhn.gkprison.application;
 
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -51,66 +53,67 @@ import java.util.List;
 public class MyApplication extends Application {
 
     private SharedPreferences sp;
-    private String crash_file_names;
 
-    /**
-     *
-     * @return
-     */
-    public static MyApplication getInstance(){
-        return new MyApplication();
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        DemoCache.setContext(getApplicationContext());
-        NIMClient.init(this, loginInfo(), options()); // 初始化
+        new Runnable(){
+            @Override
+            public void run() {
+                sp = getSharedPreferences("config", MODE_PRIVATE);
+                DemoCache.setContext(getApplicationContext());
+                NIMClient.init(MyApplication.this, loginInfo(), options()); // 初始化
+                // 初始化全局异常捕获
+                CrashHandler crashHandler = CrashHandler.getInstance();
+                crashHandler.init(getApplicationContext());
 
-        // 初始化全局异常捕获
-        CrashHandler crashHandler = CrashHandler.getInstance();
-        crashHandler.init(getApplicationContext());
-
-        if (inMainProcess()) {
-            // 初始化UIKit模块
-            initUIKit();
-            // 注册网络通话来电
-            enableAVChat();
-            NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
-                    new Observer<StatusCode>() {
-                        public void onEvent(StatusCode status) {
-                            Log.i("tag", "User status changed to: " + status);
-                            switch (status) {
-                                case KICKOUT:
-                                    Intent intent;
-                                    if (sp.getBoolean("isCommonUser", true)) {
-                                        intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    } else {
-                                        intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
-                                    }
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                    break;
-                                case NET_BROKEN:
-                                    Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case CONNECTING:
+                if (inMainProcess()) {
+                    // 初始化UIKit模块
+                    initUIKit();
+                    // 注册网络通话来电
+                    enableAVChat();
+                    NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
+                            new Observer<StatusCode>() {
+                                public void onEvent(StatusCode status) {
+                                    Log.i("tag", "User status changed to: " + status);
+                                    switch (status) {
+                                        case KICKOUT:
+                                            Intent intent;
+                                            if (sp.getBoolean("isCommonUser", true)) {
+                                                intent = new Intent(getApplicationContext(), MainActivity.class);
+                                            } else {
+                                                intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                            }
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            startActivity(intent);
+                                            break;
+                                        case NET_BROKEN:
+                                            Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
+                                            break;
+                                        case CONNECTING:
 //                                    Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
-                                    break;
-                                case LOGINING:
+                                            break;
+                                        case LOGINING:
 //                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
-                                    break;
-                            }
+                                            break;
+                                    }
+                                }
+                            }, true);
+                    NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
+                        @Override
+                        public void onEvent(CustomNotification message) {
+                            // 在这里处理自定义通知。
                         }
                     }, true);
-            NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
-                @Override
-                public void onEvent(CustomNotification message) {
-                    // 在这里处理自定义通知。
                 }
-            }, true);
-        }
+            }
+        }.run();
     }
 
     /**

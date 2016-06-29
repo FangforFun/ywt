@@ -1,6 +1,8 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -12,10 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.DensityUtil;
 
 /**
  * 新闻详情页
@@ -27,9 +31,10 @@ public class NewsDetailActivity extends BaseActivity {
     private String webUrl;
     private int type;
 
-    private LinearLayout rl_comment;
+    private LinearLayout ll_comment;
     private EditText et_comment;
     private Button bt_comment;
+    private TextView tv_comments;
 
     // 评论内容
     private String comment_content;
@@ -39,9 +44,13 @@ public class NewsDetailActivity extends BaseActivity {
         View view = View.inflate(this, R.layout.activity_news_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
         fl_loading = (FrameLayout) view.findViewById(R.id.fl_loading);
-        rl_comment = (LinearLayout) view.findViewById(R.id.rl_comment);
+        ll_comment = (LinearLayout) view.findViewById(R.id.ll_comment);
         et_comment = (EditText) view.findViewById(R.id.et_comment);
         bt_comment = (Button) view.findViewById(R.id.bt_comment);
+        tv_comments = (TextView) view.findViewById(R.id.tv_comments);
+        Drawable[] drawables = tv_comments.getCompoundDrawables();
+        drawables[0].setBounds(7, 0, DensityUtil.dip2px(this, 20), DensityUtil.dip2px(this, 20));
+        tv_comments.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         return view;
     }
 
@@ -68,19 +77,33 @@ public class NewsDetailActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 fl_loading.setVisibility(View.GONE);
+                ll_comment.setVisibility(View.VISIBLE);
                 super.onPageFinished(view, url);
             }
         });
         bt_comment.setOnClickListener(this);
+        tv_comments.setOnClickListener(this);
+        et_comment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    bt_comment.setVisibility(View.VISIBLE);
+                    tv_comments.setVisibility(View.GONE);
+                }else {
+                    bt_comment.setVisibility(View.GONE);
+                    tv_comments.setVisibility(View.VISIBLE);
+                }
+            }
+        });
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK && wv_news_detail.canGoBack()){
+    public void onBackPressed() {
+        if(wv_news_detail.canGoBack()){
             wv_news_detail.goBack();
-            return true;
+        }else {
+            super.onBackPressed();
         }
-        return super.onKeyDown(keyCode, event);
     }
 
     private Handler handler = new Handler();
@@ -109,6 +132,11 @@ public class NewsDetailActivity extends BaseActivity {
                         et_comment.setText("");
                     }
                 }, 1000);
+                break;
+            case R.id.tv_comments:
+//                showToastMsgShort("评论");
+                Intent intent = new Intent(this, CommentsDetailsActivity.class);
+                startActivity(intent);
                 break;
             default:
                 break;

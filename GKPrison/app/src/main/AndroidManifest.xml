@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.gkzxhn.gkprison"
           xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:versionCode="1"
-          android:versionName="1.0">
-
-    <uses-sdk android:minSdkVersion="4"/>
+          xmlns:tools="http://schemas.android.com/tools">
 
     <uses-feature android:name="android.hardware.camera"/>
     <uses-feature android:name="android.hardware.camera.autofocus"/>
@@ -63,7 +59,7 @@
         <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720"/>
-
+d
         <activity
             android:name=".welcome.SplashActivity"
             android:launchMode="singleTop"
@@ -301,9 +297,7 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-
         <activity android:name=".userport.activity.CommentsDetailsActivity">
         </activity>
     </application>
-
 </manifest>
