@@ -8,7 +8,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
@@ -22,6 +21,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
 import com.lidroid.xutils.HttpUtils;
@@ -32,12 +32,12 @@ import com.lidroid.xutils.http.client.HttpRequest;
 
 import java.io.File;
 
-
 /**
  * 版本更新页面
  */
 public class VersionUpdateActivity extends BaseActivity {
 
+    private static final java.lang.String TAG = "VersionUpdateActivity";
     private ImageView iv_check_update;
     private Button bt_update;// 检查更新&更新按钮
     private TextView tv_version_code;// 当前版本号
@@ -126,36 +126,44 @@ public class VersionUpdateActivity extends BaseActivity {
             //sd卡可用，用于存放下载的apk
             //1.下载
             HttpUtils httpUtils = new HttpUtils();
-            httpUtils.download(Constants.NEW_VERSION_APK_URL, Environment.getExternalStorageDirectory() + "/ywt_newVersion.apk", new RequestCallBack<File>() {
-                @Override
-                public void onSuccess(ResponseInfo<File> responseInfo) {
-                    //2.安装apk
-                    download_successed = true;
-                    Log.i("变啦", "变啦" + download_successed);
-                    handler.postDelayed(install_apk_task, 1000);
-                    dialog.dismiss();
-                    bt_update.setClickable(true);
-                }
+            String APK_URL = Constants.NEW_VERSION_APK_URL + "yuwutong-" + versionInfo.getVersion_name() + ".apk";
+            Log.i(TAG, APK_URL);
+            File file = new File(Environment.getExternalStorageDirectory() + "/yuwutong-" + versionInfo.getVersion_name() + ".apk");
+            // 若文件已下载则直接安装
+            if(!file.exists()) {
+                httpUtils.download(APK_URL, Environment.getExternalStorageDirectory() + "/yuwutong-" + versionInfo.getVersion_name() + ".apk", new RequestCallBack<File>() {
+                    @Override
+                    public void onSuccess(ResponseInfo<File> responseInfo) {
+                        //2.安装apk
+                        download_successed = true;
+                        Log.i("变啦", "变啦" + download_successed);
+                        dialog.dismiss();
+                        handler.postDelayed(install_apk_task, 1000);
+                        bt_update.setClickable(true);
+                    }
 
-                @Override
-                public void onFailure(HttpException e, String s) {
-                    e.printStackTrace();
-                    Log.i("版本更新...", e.getMessage() + "----" + s);
-                    Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                    bt_update.setClickable(true);
-                }
+                    @Override
+                    public void onFailure(HttpException e, String s) {
+                        e.printStackTrace();
+                        Log.i("版本更新...", e.getMessage() + "----" + s);
+                        Toast.makeText(VersionUpdateActivity.this, "网络不好，下载失败啦", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        bt_update.setClickable(true);
+                    }
 
-                @Override
-                public void onLoading(long total, long current, boolean isUploading) {
-                    super.onLoading(total, current, isUploading);
-                    int progress = (int) (current * 100 / total);
-                    pb_update.setMax(100);
-                    pb_update.setProgress(progress);
-                    tv_progress.setText(progress + "%");
-                    Log.i("下载进度", current + "----" + progress + "---" + total);
-                }
-            });
+                    @Override
+                    public void onLoading(long total, long current, boolean isUploading) {
+                        super.onLoading(total, current, isUploading);
+                        int progress = (int) (current * 100 / total);
+                        pb_update.setMax(100);
+                        pb_update.setProgress(progress);
+                        tv_progress.setText(progress + "%");
+                        Log.i("下载进度", current + "----" + progress + "---" + total);
+                    }
+                });
+            }else {
+                handler.postDelayed(install_apk_task, 1000);
+            }
         } else {
             //sd卡不可用
             Toast.makeText(VersionUpdateActivity.this, "sdcard不可用, 下载失败", Toast.LENGTH_SHORT).show();
@@ -170,7 +178,6 @@ public class VersionUpdateActivity extends BaseActivity {
          intent.setData(content_url);
          startActivity(intent);
          */
-
     }
 
     /**
@@ -179,10 +186,10 @@ public class VersionUpdateActivity extends BaseActivity {
     private Runnable install_apk_task = new Runnable() {
         @Override
         public void run() {
-        Intent intent = new Intent("android.intent.action.VIEW");
-        intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
-                "application/vnd.android.package-archive");
-        startActivity(intent);
+            Intent intent = new Intent("android.intent.action.VIEW");
+            intent.setDataAndType(Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "/ywt_newVersion.apk")),
+                    "application/vnd.android.package-archive");
+            startActivity(intent);
         }
     };
 

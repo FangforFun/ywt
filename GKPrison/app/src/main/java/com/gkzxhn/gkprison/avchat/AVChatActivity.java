@@ -14,9 +14,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.bean.VideoEntity;
-import com.gkzxhn.gkprison.avchat.bean.VideoFileName;
-import com.gkzxhn.gkprison.avchat.bean.VideoType;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.utils.Log;
@@ -39,13 +36,6 @@ import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatOnlineAckEvent;
 
 import java.io.File;
-//import org.ksoap2.SoapEnvelope;
-//import org.ksoap2.serialization.MarshalBase64;
-//import org.ksoap2.serialization.SoapObject;
-//import org.ksoap2.serialization.SoapSerializationEnvelope;
-//import org.ksoap2.transport.HttpTransportSE;
-//import org.xmlpull.v1.XmlPullParserException;
-
 import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
@@ -519,69 +509,6 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
                 avChatUI.resetRecordTip();
             }
         }
-    }
-
-    /**
-     * 发送视频文件至服务器
-     * @param fileName
-     * @param videoFile
-     */
-    private void sendVideoToServer(final String fileName, final File videoFile) {
-        new Thread(){
-            @Override
-            public void run() {
-//                try {
-//                    String nameSpace = "http://impl.service.com/";
-//                    String methodName = "uploadFile";
-//                    // EndPoint
-//                    String endPoint = "http://192.168.0.108:8081/service?wsdl";
-//                    // SOAP Action
-//                    String soapAction = "http://impl.service.com/uploadFile";
-//
-//                    // 指定webservice命名空间和调用方法
-//                    SoapObject rpc = new SoapObject(nameSpace, methodName);
-//                    byte[] fileContent = null
-////                            Utils.serialize(videoFile)
-//                            ;
-//                    // 设置需调用WebService接口需要传入的两个参数mobileCode、userId
-//                    VideoEntity entity = new VideoEntity(fileContent);
-//                    VideoType type = new VideoType("one");
-//                    VideoFileName videoFileName = new VideoFileName(fileName);
-//
-//                    rpc.addProperty("fileName", videoFileName);
-//                    rpc.addProperty("type", type);
-//                    rpc.addProperty("fileContent", entity);
-//                    Log.i("params ---> ", videoFileName.getFileName() + "---" + type.getType() + "---" + entity.getFileContent().length);
-//
-//                    // 生成调用WebService方法的SOAP请求信息  并指定SOAP的版本
-//                    SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
-////                    envelope.addMapping(nameSpace, "fileContent", entity.getClass());
-////                    envelope.addMapping(nameSpace, "type", type.getClass());
-////                    envelope.addMapping(nameSpace, "fileName", videoFileName.getClass());
-//                    envelope.bodyOut = rpc;
-//                    // 设置是否调用的是dotNet开发的WebService
-//                    envelope.dotNet = false;
-//                    // 等价于envelope.bodyOut = rpc;
-////                    envelope.setOutputSoapObject(rpc);
-//                    (new MarshalBase64()).register(envelope);
-//                    HttpTransportSE transportSE = new HttpTransportSE(endPoint);
-//                    transportSE.debug = true;
-//                    try {
-//                        transportSE.call(soapAction, envelope);
-//                    } catch (XmlPullParserException e) {
-//                        e.printStackTrace();
-//                    }
-//                    if(envelope.getResponse() != null) {
-//                        SoapObject object = (SoapObject) envelope.bodyIn;
-//                        String result = object.getProperty(0).toString();
-//                        Log.i("connect webService result", result);
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                    Log.e("connect webService exception", e.getMessage());
-//                }
-            }
-        }.start();
     }
 
     /****************************** 连接建立处理 ********************/

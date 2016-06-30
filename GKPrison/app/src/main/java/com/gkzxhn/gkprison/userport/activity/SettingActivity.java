@@ -130,9 +130,9 @@ public class SettingActivity extends BaseActivity {
         Intent intent;
         switch (v.getId()){
             case R.id.rl_version_update:
-//                intent = new Intent(this, VersionUpdateActivity.class);
-//                startActivity(intent);
-                showToastMsgShort("当前版本：" + SystemUtil.getVersionName(this));
+                intent = new Intent(this, VersionUpdateActivity.class);
+                startActivity(intent);
+//                showToastMsgShort("当前版本：" + SystemUtil.getVersionName(this));
                 break;
             case R.id.tv_agreement:
                 AlertDialog.Builder agreement_builder = new AlertDialog.Builder(this);

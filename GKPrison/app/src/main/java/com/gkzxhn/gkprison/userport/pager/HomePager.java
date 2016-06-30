@@ -258,6 +258,7 @@ public class HomePager extends BasePager {
                     intent.putExtra("id", i);
                     intent.putExtra("type", 0);// 0是轮播图   1是新闻
                     intent.putExtra("index", position + 1);
+                    intent.putExtra("has_comment", false);
                     context.startActivity(intent);
                 }else {
                     showToastMsgShort("抱歉，没有数据...");
@@ -594,6 +595,7 @@ public class HomePager extends BasePager {
             case R.id.ll_home_news1:
                 intent = new Intent(context, NewsDetailActivity.class);
                 intent.putExtra("type", 1);// 0是轮播图   1是新闻
+                intent.putExtra("has_comment", true);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_1.getId());
                 }else {
@@ -605,6 +607,7 @@ public class HomePager extends BasePager {
             case R.id.ll_home_news2:
                 intent = new Intent(context, NewsDetailActivity.class);
                 intent.putExtra("type", 0);// 0是轮播图   1是新闻
+                intent.putExtra("has_comment", true);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_2.getId());
                 }else {
@@ -616,6 +619,7 @@ public class HomePager extends BasePager {
             case R.id.ll_home_news3:
                 intent = new Intent(context, NewsDetailActivity.class);
                 intent.putExtra("type", 0);// 0是轮播图   1是新闻
+                intent.putExtra("has_comment", true);
                 if(is_request_foucs_news_successed) {
                     intent.putExtra("id", focus_news_3.getId());
                 }else {

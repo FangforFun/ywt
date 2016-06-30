@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -20,6 +19,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Log;
 
 /**
  * 新闻详情页
@@ -38,6 +38,7 @@ public class NewsDetailActivity extends BaseActivity {
 
     // 评论内容
     private String comment_content;
+    private boolean has_comment = true;
 
     @Override
     protected View initView() {
@@ -59,8 +60,10 @@ public class NewsDetailActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         int id = getIntent().getIntExtra("id",-1);
-        // type=0 轮播图  type=1 新闻  默认为1
+        // type=0 首页轮播图  type=1 新闻  默认为1
         type = getIntent().getIntExtra("type", 1);
+        has_comment = getIntent().getBooleanExtra("has_comment", true);
+        Log.i("------------", has_comment + "");
         if(type == 1) {
             webUrl = Constants.RESOURSE_HEAD + "/news/" + id;
         }else {
@@ -77,7 +80,9 @@ public class NewsDetailActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 fl_loading.setVisibility(View.GONE);
-                ll_comment.setVisibility(View.VISIBLE);
+                if(!has_comment) {
+                    ll_comment.setVisibility(View.VISIBLE);
+                }
                 super.onPageFinished(view, url);
             }
         });
@@ -86,15 +91,18 @@ public class NewsDetailActivity extends BaseActivity {
         et_comment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus){
+                if (hasFocus) {
                     bt_comment.setVisibility(View.VISIBLE);
                     tv_comments.setVisibility(View.GONE);
-                }else {
+                } else {
                     bt_comment.setVisibility(View.GONE);
                     tv_comments.setVisibility(View.VISIBLE);
                 }
             }
         });
+        if(!has_comment) {
+            ll_comment.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -134,7 +142,6 @@ public class NewsDetailActivity extends BaseActivity {
                 }, 1000);
                 break;
             case R.id.tv_comments:
-//                showToastMsgShort("评论");
                 Intent intent = new Intent(this, CommentsDetailsActivity.class);
                 startActivity(intent);
                 break;

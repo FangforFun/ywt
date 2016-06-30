@@ -166,6 +166,7 @@ public class PrisonOpenActivity extends BaseActivity {
                 Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
                 intent.putExtra("type", 1);// 0是轮播图   1是新闻
                 intent.putExtra("id", i);
+                intent.putExtra("has_comment", true);
                 startActivity(intent);
             }
         });
@@ -228,6 +229,7 @@ public class PrisonOpenActivity extends BaseActivity {
                     Intent intent = new Intent(PrisonOpenActivity.this, NewsDetailActivity.class);
                     intent.putExtra("type", 1);// 0是轮播图   1是新闻
                     intent.putExtra("id", i);
+                    intent.putExtra("has_comment", true);
                     startActivity(intent);
                 }
             }

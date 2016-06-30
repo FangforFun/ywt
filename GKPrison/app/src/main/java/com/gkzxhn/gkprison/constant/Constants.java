@@ -1,5 +1,9 @@
 package com.gkzxhn.gkprison.constant;
 
+import com.facebook.rebound.ui.Util;
+import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.utils.SystemUtil;
+
 /**
  * Created by zhengneng on 2016/1/7.
  * 常量类
@@ -19,6 +23,6 @@ public class Constants {
     // 视频审核
     public static final String VIDEO_EXAMIME = "notifications";
     // 新版本apk地址
-    public static final String NEW_VERSION_APK_URL = "https://www.fushuile.com/dist/android/1.0.0/app-release.apk";
+    public static final String NEW_VERSION_APK_URL = "https://www.fushuile.com/apps/"; // 后加apk文件名
 }
 

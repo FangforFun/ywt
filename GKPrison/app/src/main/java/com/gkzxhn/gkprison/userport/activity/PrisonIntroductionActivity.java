@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.KeyEvent;
 import android.view.View;
@@ -8,18 +7,11 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 监狱简介
@@ -44,7 +36,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
         setTitle("");
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        id = sp.getInt("jail_id",-1);
+        id = sp.getInt("jail_id",1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/" + id);
         Log.i("jail_id is :", id + "");
         fl_loading.setVisibility(View.VISIBLE);
@@ -70,4 +62,3 @@ public class PrisonIntroductionActivity extends BaseActivity {
         return super.onKeyDown(keyCode, event);
     }
 }
-

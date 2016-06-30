@@ -1,23 +1,12 @@
 package com.gkzxhn.gkprison.login;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.utils.DensityUtil;
-import com.gkzxhn.gkprison.utils.Utils;
 
 import java.util.Arrays;
 import java.util.LinkedList;

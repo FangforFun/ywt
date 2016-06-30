@@ -163,7 +163,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/laws_item_height"
-                android:text="版本信息"
+                android:text="版本更新"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
