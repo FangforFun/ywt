@@ -126,7 +126,7 @@ public class VersionUpdateActivity extends BaseActivity {
             //sd卡可用，用于存放下载的apk
             //1.下载
             HttpUtils httpUtils = new HttpUtils();
-            String APK_URL = Constants.NEW_VERSION_APK_URL + "yuwutong-" + versionInfo.getVersion_name() + ".apk";
+            String APK_URL = Constants.NEW_VERSION_APK_URL + "yuwutong.apk";
             Log.i(TAG, APK_URL);
             File file = new File(Environment.getExternalStorageDirectory() + "/yuwutong-" + versionInfo.getVersion_name() + ".apk");
             // 若文件已下载则直接安装

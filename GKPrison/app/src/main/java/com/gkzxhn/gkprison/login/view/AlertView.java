@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bigkoo.alertview.*;
+import com.gkzxhn.gkprison.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -103,16 +103,16 @@ public class AlertView {
     protected void initViews(){
         LayoutInflater layoutInflater = LayoutInflater.from(context);
         decorView = (ViewGroup) ((Activity)context).getWindow().getDecorView().findViewById(android.R.id.content);
-        rootView = (ViewGroup) layoutInflater.inflate(com.bigkoo.alertview.R.layout.layout_alertview, decorView, false);
+        rootView = (ViewGroup) layoutInflater.inflate(R.layout.layout_alertview, decorView, false);
         rootView.setLayoutParams(new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT
         ));
-        contentContainer = (ViewGroup) rootView.findViewById(com.bigkoo.alertview.R.id.content_container);
+        contentContainer = (ViewGroup) rootView.findViewById(R.id.content_container);
         int margin_alert_left_right = 0;
         switch (style){
             case ActionSheet:
                 params.gravity = Gravity.BOTTOM;
-                margin_alert_left_right = context.getResources().getDimensionPixelSize(com.bigkoo.alertview.R.dimen.margin_actionsheet_left_right);
+                margin_alert_left_right = context.getResources().getDimensionPixelSize(R.dimen.margin_actionsheet_left_right);
                 params.setMargins(margin_alert_left_right,0,margin_alert_left_right,margin_alert_left_right);
                 contentContainer.setLayoutParams(params);
                 gravity = Gravity.BOTTOM;
@@ -120,7 +120,7 @@ public class AlertView {
                 break;
             case Alert:
                 params.gravity = Gravity.CENTER;
-                margin_alert_left_right = context.getResources().getDimensionPixelSize(com.bigkoo.alertview.R.dimen.margin_alert_left_right);
+                margin_alert_left_right = context.getResources().getDimensionPixelSize(R.dimen.margin_alert_left_right);
                 params.setMargins(margin_alert_left_right,0,margin_alert_left_right,0);
                 contentContainer.setLayoutParams(params);
                 gravity = Gravity.CENTER;
@@ -129,10 +129,10 @@ public class AlertView {
         }
     }
     protected void initHeaderView(ViewGroup viewGroup){
-        loAlertHeader = (ViewGroup) viewGroup.findViewById(com.bigkoo.alertview.R.id.loAlertHeader);
+        loAlertHeader = (ViewGroup) viewGroup.findViewById(R.id.loAlertHeader);
         //标题和消息
-        TextView tvAlertTitle = (TextView) viewGroup.findViewById(com.bigkoo.alertview.R.id.tvAlertTitle);
-        TextView tvAlertMsg = (TextView) viewGroup.findViewById(com.bigkoo.alertview.R.id.tvAlertMsg);
+        TextView tvAlertTitle = (TextView) viewGroup.findViewById(R.id.tvAlertTitle);
+        TextView tvAlertMsg = (TextView) viewGroup.findViewById(R.id.tvAlertMsg);
         if(title != null) {
             tvAlertTitle.setText(title);
         }else{
@@ -145,16 +145,16 @@ public class AlertView {
         }
     }
     protected void initListView(){
-        ListView alertButtonListView = (ListView) contentContainer.findViewById(com.bigkoo.alertview.R.id.alertButtonListView);
+        ListView alertButtonListView = (ListView) contentContainer.findViewById(R.id.alertButtonListView);
         //把cancel作为footerView
         if(cancel != null && style == Style.Alert){
-            View itemView = LayoutInflater.from(context).inflate(com.bigkoo.alertview.R.layout.item_alertbutton, null);
-            TextView tvAlert = (TextView) itemView.findViewById(com.bigkoo.alertview.R.id.tvAlert);
+            View itemView = LayoutInflater.from(context).inflate(R.layout.item_alertbutton, null);
+            TextView tvAlert = (TextView) itemView.findViewById(R.id.tvAlert);
             tvAlert.setText(cancel);
             tvAlert.setClickable(true);
             tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
-            tvAlert.setTextColor(context.getResources().getColor(com.bigkoo.alertview.R.color.textColor_alert_button_cancel));
-            tvAlert.setBackgroundResource(com.bigkoo.alertview.R.drawable.bg_alertbutton_bottom);
+            tvAlert.setTextColor(context.getResources().getColor(R.color.textColor_alert_button_cancel));
+            tvAlert.setBackgroundResource(R.drawable.bg_alertbutton_bottom);
             tvAlert.setOnClickListener(new OnTextClickListener(CANCELPOSITION));
             alertButtonListView.addFooterView(itemView);
         }
@@ -169,11 +169,11 @@ public class AlertView {
         });
     }
     protected void initActionSheetViews(LayoutInflater layoutInflater) {
-        ViewGroup viewGroup = (ViewGroup) layoutInflater.inflate(com.bigkoo.alertview.R.layout.layout_alertview_actionsheet,contentContainer);
+        ViewGroup viewGroup = (ViewGroup) layoutInflater.inflate(R.layout.layout_alertview_actionsheet,contentContainer);
         initHeaderView(viewGroup);
 
         initListView();
-        TextView tvAlertCancel = (TextView) contentContainer.findViewById(com.bigkoo.alertview.R.id.tvAlertCancel);
+        TextView tvAlertCancel = (TextView) contentContainer.findViewById(R.id.tvAlertCancel);
         if(cancel != null){
             tvAlertCancel.setVisibility(View.VISIBLE);
             tvAlertCancel.setText(cancel);
@@ -182,37 +182,37 @@ public class AlertView {
     }
     protected void initAlertViews(LayoutInflater layoutInflater) {
 
-        ViewGroup viewGroup = (ViewGroup) layoutInflater.inflate(com.bigkoo.alertview.R.layout.layout_alertview_alert, contentContainer);
+        ViewGroup viewGroup = (ViewGroup) layoutInflater.inflate(R.layout.layout_alertview_alert, contentContainer);
         initHeaderView(viewGroup);
 
         int position = 0;
         //如果总数据小于等于HORIZONTAL_BUTTONS_MAXCOUNT，则是横向button
         if(mDatas.size()<=HORIZONTAL_BUTTONS_MAXCOUNT){
-            ViewStub viewStub = (ViewStub) contentContainer.findViewById(com.bigkoo.alertview.R.id.viewStubHorizontal);
+            ViewStub viewStub = (ViewStub) contentContainer.findViewById(R.id.viewStubHorizontal);
             viewStub.inflate();
-            LinearLayout loAlertButtons = (LinearLayout) contentContainer.findViewById(com.bigkoo.alertview.R.id.loAlertButtons);
+            LinearLayout loAlertButtons = (LinearLayout) contentContainer.findViewById(R.id.loAlertButtons);
             for (int i = 0; i < mDatas.size(); i ++) {
                 //如果不是第一个按钮
                 if (i != 0){
                     //添加上按钮之间的分割线
                     View divier = new View(context);
-                    divier.setBackgroundColor(context.getResources().getColor(com.bigkoo.alertview.R.color.bgColor_divier));
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)context.getResources().getDimension(com.bigkoo.alertview.R.dimen.size_divier), LinearLayout.LayoutParams.MATCH_PARENT);
+                    divier.setBackgroundColor(context.getResources().getColor(R.color.bgColor_divier));
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams((int)context.getResources().getDimension(R.dimen.size_divier), LinearLayout.LayoutParams.MATCH_PARENT);
                     loAlertButtons.addView(divier,params);
                 }
-                View itemView = LayoutInflater.from(context).inflate(com.bigkoo.alertview.R.layout.item_alertbutton, null);
-                TextView tvAlert = (TextView) itemView.findViewById(com.bigkoo.alertview.R.id.tvAlert);
+                View itemView = LayoutInflater.from(context).inflate(R.layout.item_alertbutton, null);
+                TextView tvAlert = (TextView) itemView.findViewById(R.id.tvAlert);
                 tvAlert.setClickable(true);
 
                 //设置点击效果
                 if(mDatas.size() == 1){
-                    tvAlert.setBackgroundResource(com.bigkoo.alertview.R.drawable.bg_alertbutton_bottom);
+                    tvAlert.setBackgroundResource(R.drawable.bg_alertbutton_bottom);
                 }
                 else if(i == 0){//设置最左边的按钮效果
-                    tvAlert.setBackgroundResource(com.bigkoo.alertview.R.drawable.bg_alertbutton_left);
+                    tvAlert.setBackgroundResource(R.drawable.bg_alertbutton_left);
                 }
                 else if(i == mDatas.size() - 1){//设置最右边的按钮效果
-                    tvAlert.setBackgroundResource(com.bigkoo.alertview.R.drawable.bg_alertbutton_right);
+                    tvAlert.setBackgroundResource(R.drawable.bg_alertbutton_right);
                 }
                 String data = mDatas.get(i);
                 tvAlert.setText(data);
@@ -220,13 +220,13 @@ public class AlertView {
                 //取消按钮的样式
                 if (data == cancel){
                     tvAlert.setTypeface(Typeface.DEFAULT_BOLD);
-                    tvAlert.setTextColor(context.getResources().getColor(com.bigkoo.alertview.R.color.textColor_alert_button_cancel));
+                    tvAlert.setTextColor(context.getResources().getColor(R.color.textColor_alert_button_cancel));
                     tvAlert.setOnClickListener(new OnTextClickListener(CANCELPOSITION));
                     position = position - 1;
                 }
                 //高亮按钮的样式
                 else if (mDestructive!= null && mDestructive.contains(data)){
-                    tvAlert.setTextColor(context.getResources().getColor(com.bigkoo.alertview.R.color.textColor_alert_button_destructive));
+                    tvAlert.setTextColor(context.getResources().getColor(R.color.textColor_alert_button_destructive));
                 }
 
                 tvAlert.setOnClickListener(new OnTextClickListener(position));
@@ -236,7 +236,7 @@ public class AlertView {
             }
         }
         else{
-            ViewStub viewStub = (ViewStub) contentContainer.findViewById(com.bigkoo.alertview.R.id.viewStubVertical);
+            ViewStub viewStub = (ViewStub) contentContainer.findViewById(R.id.viewStubVertical);
             viewStub.inflate();
             initListView();
         }
@@ -275,7 +275,7 @@ public class AlertView {
      * @return 如果视图已经存在该View返回true
      */
     public boolean isShowing() {
-        View view = decorView.findViewById(com.bigkoo.alertview.R.id.outmost_container);
+        View view = decorView.findViewById(R.id.outmost_container);
         return view != null;
     }
     public void dismiss() {

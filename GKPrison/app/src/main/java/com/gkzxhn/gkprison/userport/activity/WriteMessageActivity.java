@@ -18,10 +18,10 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Letter;
+import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * created by huangzhengneng on 2016/2/1

@@ -114,4 +114,9 @@
     <dimen name="textSize_alert_button">18sp</dimen>
     <!--圆角-->
     <dimen name="radius_alertview">15px</dimen>
+
+    <!-- sweet-alert-dialog -->
+    <dimen name="alert_width">290dp</dimen>
+    <dimen name="common_circle_width">3dp</dimen>
+    <dimen name="progress_circle_radius">34dp</dimen>
 </resources>

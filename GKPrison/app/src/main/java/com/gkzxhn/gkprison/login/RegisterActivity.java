@@ -42,6 +42,7 @@ import com.gkzxhn.gkprison.login.view.OnItemClickListener;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Register;
 import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
+import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Base64;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.ImageTools;
@@ -65,7 +66,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 /**
  * created by huangzhengneng 2015/12/15

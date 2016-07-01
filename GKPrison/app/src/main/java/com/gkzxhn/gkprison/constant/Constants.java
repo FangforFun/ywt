@@ -1,9 +1,5 @@
 package com.gkzxhn.gkprison.constant;
 
-import com.facebook.rebound.ui.Util;
-import com.gkzxhn.gkprison.application.MyApplication;
-import com.gkzxhn.gkprison.utils.SystemUtil;
-
 /**
  * Created by zhengneng on 2016/1/7.
  * 常量类
