@@ -330,7 +330,7 @@ public class MainActivity extends BaseActivity {
                 }.start();
 
                 String type = "微信支付";
-                String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '"+times+"'";
+                String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '" + times + "'";
                 db.execSQL(sql);
             }
         }else {
@@ -634,27 +634,18 @@ public class MainActivity extends BaseActivity {
         }
     }
 
-    /**
-     * 按兩次返回退出程序   add by hzn
-     * @param keyCode
-     * @param event
-     * @return
-     */
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
-                drawerLayout.closeDrawer(Gravity.LEFT);
-            }else {
-                if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                    mExitTime = System.currentTimeMillis();
-                } else {
-                    finish();
-                }
+    @Override
+    public void onBackPressed() {
+        if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
+            drawerLayout.closeDrawer(Gravity.LEFT);
+        }else {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+            } else {
+                super.onBackPressed();
             }
-            return true;
         }
-        return super.onKeyDown(keyCode, event);
     }
 
     /**

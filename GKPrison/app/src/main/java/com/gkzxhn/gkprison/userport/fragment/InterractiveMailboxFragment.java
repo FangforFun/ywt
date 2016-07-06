@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
-
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -103,8 +102,7 @@ public class InterractiveMailboxFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_interractive_mailbox, null);
         elv_my_mailbox_list = (ExpandableListView) view.findViewById(R.id.elv_my_mailbox_list);
         nonotice = (TextView) view.findViewById(R.id.tv_nothing);
@@ -120,7 +118,6 @@ public class InterractiveMailboxFragment extends Fragment {
         Log.d("个人ID", token);
         url = Constants.URL_HEAD + "comments?access_token=" + token + "&family_id=" + family_id;
         getReply();
-
         Log.d("个人信息", family_id + "");
         Log.d("个人信息", token);
     }

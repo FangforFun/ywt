@@ -12,11 +12,13 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
@@ -26,7 +28,6 @@ import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.weiwangcn.betterspinner.library.BetterSpinner;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -44,11 +45,13 @@ public class RemoteMeetPager extends BasePager {
     private TextView tv_meeting_request_id_num;// 会见申请身份证
     private TextView tv_meeting_request_relationship;// 会见申请人与服刑人员关系
     private TextView tv_meeting_request_phone;// 会见申请电话号码
-    private BetterSpinner bs_meeting_request_time;// 会见申请时间
+    private Spinner bs_meeting_request_time;// 会见申请时间
+    private String meeting_request_time = ""; // 会见申请时间
     private TextView tv_meeting_last_time;// 上次会见时间
     private Button bt_commit_request;// 提交会见申请按钮
     private SharedPreferences sp;
-    private BetterSpinner bs_visit_request_time;// 探监申请时间
+    private Spinner bs_visit_request_time;// 探监申请时间
+    private String visit_request_time = "";
     private TextView tv_visit_request_name;// 探监申请姓名
     private TextView tv_visit_request_relationship;// 探监申请又服刑人员关系
     private TextView tv_visit_request_id_num;// 探监申请身份证
@@ -111,7 +114,7 @@ public class RemoteMeetPager extends BasePager {
                         bt_commit_request.setEnabled(true);
                         String committed_meeting_time = sp.getString("committed_meeting_time", "");
                         SharedPreferences.Editor editor = sp.edit();
-                        editor.putString("committed_meeting_time", committed_meeting_time + bs_meeting_request_time.getText().toString() + "/");
+                        editor.putString("committed_meeting_time", committed_meeting_time + meeting_request_time + "/");
                         editor.commit();
                     }else {
                         try {
@@ -167,7 +170,7 @@ public class RemoteMeetPager extends BasePager {
                     bt_commit_request_visit.setEnabled(true);
                     String committed_time = sp.getString("committed_time", "");
                     SharedPreferences.Editor editor_ = sp.edit();
-                    editor_.putString("committed_time", committed_time + bs_visit_request_time.getText().toString() + "/");
+                    editor_.putString("committed_time", committed_time + visit_request_time + "/");
                     editor_.commit();
                     break;
                 case 4: // 发送探监申请失败
@@ -207,12 +210,12 @@ public class RemoteMeetPager extends BasePager {
         tv_meeting_request_id_num = (TextView) view.findViewById(R.id.tv_meeting_request_id_num);
         tv_meeting_request_relationship = (TextView) view.findViewById(R.id.tv_meeting_request_relationship);
         tv_meeting_request_phone = (TextView) view.findViewById(R.id.tv_meeting_request_phone);
-        bs_meeting_request_time = (BetterSpinner) view.findViewById(R.id.bs_meeting_request_time);
+        bs_meeting_request_time = (Spinner) view.findViewById(R.id.bs_meeting_request_time);
         bt_commit_request = (Button) view.findViewById(R.id.bt_commit_request);
         tv_meeting_last_time = (TextView) view.findViewById(R.id.tv_meeting_last_time);
         rl_meeting = (RelativeLayout) view.findViewById(R.id.rl_meeting);
         rl_visit = (RelativeLayout) view.findViewById(R.id.rl_visit);
-        bs_visit_request_time = (BetterSpinner) view.findViewById(R.id.bs_visit_request_time);
+        bs_visit_request_time = (Spinner) view.findViewById(R.id.bs_visit_request_time);
         tv_visit_request_name = (TextView) view.findViewById(R.id.tv_visit_request_name);
         tv_visit_request_relationship = (TextView) view.findViewById(R.id.tv_visit_request_relationship);
         tv_visit_request_id_num = (TextView) view.findViewById(R.id.tv_visit_request_id_num);
@@ -256,6 +259,28 @@ public class RemoteMeetPager extends BasePager {
         bs_visit_request_time.setAdapter(visit_adapter);
         bt_commit_request.setOnClickListener(this);
         bt_commit_request_visit.setOnClickListener(this);
+        bs_meeting_request_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                meeting_request_time = REQUEST_TIME[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+//                meeting_request_time = "";
+            }
+        });
+        bs_visit_request_time.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                visit_request_time = REQUEST_TIME[position];
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         rg_top_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -364,9 +389,9 @@ public class RemoteMeetPager extends BasePager {
                     return;
                 }
                 if(isCommonUser) {
-                    if(!TextUtils.isEmpty(bs_meeting_request_time.getText().toString())) {
+                    if(!TextUtils.isEmpty(meeting_request_time)) {
                         String committed_meeting_time = sp.getString("committed_meeting_time", "");
-                        if(committed_meeting_time.contains(bs_meeting_request_time.getText().toString())){
+                        if(committed_meeting_time.contains(meeting_request_time)){
                             showToastMsgLong("您已申请过当日远程探监，请选择其他日期。");
                             return;
                         }else if (vedionum == 0){
@@ -388,9 +413,9 @@ public class RemoteMeetPager extends BasePager {
                     return;
                 }
                 if(isCommonUser) {
-                    if(!TextUtils.isEmpty(bs_visit_request_time.getText().toString())) {
+                    if(!TextUtils.isEmpty(visit_request_time)) {
                         String committed_time = sp.getString("committed_time", "");
-                        if(committed_time.contains(bs_visit_request_time.getText().toString())){
+                        if(committed_time.contains(visit_request_time)){
                             showToastMsgLong("您已申请过当日实地探监，请选择其他日期。");
                             return;
                         }else {
@@ -423,7 +448,7 @@ public class RemoteMeetPager extends BasePager {
                 @Override
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + bs_visit_request_time.getText().toString() + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
+                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + visit_request_time + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
                     try {
                         String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
                         Message msg = handler.obtainMessage();
@@ -466,7 +491,7 @@ public class RemoteMeetPager extends BasePager {
                 public void run() {
                     String prisoner_number = sp.getString("prisoner_number", "4000002");
                     String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
-                            sp.getString("password", "") + "\",\"app_date\":\"" + bs_meeting_request_time.getText().toString()
+                            sp.getString("password", "") + "\",\"app_date\":\"" + meeting_request_time
                             + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
                             + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\""
                             + prisoner_number + "\",\"type_id\":1}}";

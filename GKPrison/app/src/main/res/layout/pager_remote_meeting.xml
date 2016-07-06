@@ -276,7 +276,7 @@
                         android:layout_gravity="center_vertical"
                         android:textSize="@dimen/meeting_info_tv_size"/>
 
-                    <com.weiwangcn.betterspinner.library.BetterSpinner
+                    <Spinner
                         android:id="@+id/bs_meeting_request_time"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
@@ -446,7 +446,7 @@
                         android:layout_gravity="center_vertical"
                         android:textSize="@dimen/meeting_info_tv_size"/>
 
-                    <com.weiwangcn.betterspinner.library.BetterSpinner
+                    <Spinner
                         android:id="@+id/bs_visit_request_time"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
