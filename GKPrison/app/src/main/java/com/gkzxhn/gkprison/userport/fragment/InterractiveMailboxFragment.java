@@ -2,9 +2,9 @@ package com.gkzxhn.gkprison.userport.fragment;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +17,8 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Reply;
-import com.gkzxhn.gkprison.utils.Log;
-import com.umeng.analytics.MobclickAgent;
+import com.gkzxhn.gkprison.utils.Utils;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,9 +29,14 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 /**
- * A simple {@link Fragment} subclass.
- * 监狱长信箱 --> 互动信箱
+ * 监狱长信箱 --> 投诉反馈
  */
 public class InterractiveMailboxFragment extends Fragment {
     private String url = "";
@@ -46,40 +45,8 @@ public class InterractiveMailboxFragment extends Fragment {
     private String token = "";
     private TextView nonotice;
     private List<Reply> replies = new ArrayList<Reply>();
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String message = (String) msg.obj;
-                    if (message.equals("error")) {
-                        Toast.makeText(getActivity(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                    } else if (message.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String result = bundle.getString("result");
-                        replies = analysisReply(result);
-                        Collections.sort(replies, new Comparator<Reply>() {
-                            @Override
-                            public int compare(Reply lhs, Reply rhs) {
-                                int heat1 = lhs.getId();
-                                int heat2 = rhs.getId();
-                                if (heat1 < heat2) {
-                                    return 1;
-                                }
-                                return -1;
-                            }
-                        });
-                        if (replies.size() == 0) {
-                            nonotice.setVisibility(View.VISIBLE);
-                        } else {
-                            nonotice.setVisibility(View.GONE);
-                        }
-                        elv_my_mailbox_list.setAdapter(new MyAdapter());
-                    }
-                    break;
-            }
-        }
-    };
+    private SwipeRefreshLayout srl_refresh;
+    private MyAdapter myAdapter;
 
     private ExpandableListView elv_my_mailbox_list;
     private List<String> my_mailbox_list_title = new ArrayList<String>() {
@@ -90,69 +57,99 @@ public class InterractiveMailboxFragment extends Fragment {
     };
 
     @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onPageStart("InterractiveMailboxFragment"); //统计页面，"MainScreen"为页面名称，可自定义
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPageEnd("InterractiveMailboxFragment");
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_interractive_mailbox, null);
         elv_my_mailbox_list = (ExpandableListView) view.findViewById(R.id.elv_my_mailbox_list);
+        srl_refresh = (SwipeRefreshLayout) view.findViewById(R.id.srl_refresh);
         nonotice = (TextView) view.findViewById(R.id.tv_nothing);
-        initData();
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        initData();
+        super.onActivityCreated(savedInstanceState);
     }
 
     private void initData() {
         sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
         family_id = sp.getInt("family_id", 1);
-        Log.d("个人ID", family_id + "");
         token = sp.getString("token", "");
-        Log.d("个人ID", token);
         url = Constants.URL_HEAD + "comments?access_token=" + token + "&family_id=" + family_id;
         getReply();
-        Log.d("个人信息", family_id + "");
-        Log.d("个人信息", token);
-    }
-
-    private void getReply() {
-        new Thread() {
+        srl_refresh.setColorSchemeResources(R.color.theme, R.color.theme, R.color.theme, R.color.theme);
+        srl_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void run() {
-                Message msg = handler.obtainMessage();
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpGet get = new HttpGet(url);
-                try {
-                    HttpResponse response = httpClient.execute(get);
-                    if (response.getStatusLine().getStatusCode() == 200) {
-                        String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    } else {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            public void onRefresh() {
+                getReply();
             }
-        }.start();
+        });
     }
 
+    /**
+     * 获取列表
+     */
+    private void getReply() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (srl_refresh.isRefreshing())
+                            srl_refresh.setRefreshing(false);
+                        Toast.makeText(getActivity(), "刷新失败,请稍后再试", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                replies = analysisReply(response.body().string());
+                Collections.sort(replies, new Comparator<Reply>() {
+                    @Override
+                    public int compare(Reply lhs, Reply rhs) {
+                        int heat1 = lhs.getId();
+                        int heat2 = rhs.getId();
+                        if (heat1 < heat2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (replies.size() == 0) {
+                            nonotice.setVisibility(View.VISIBLE);
+                        } else {
+                            nonotice.setVisibility(View.GONE);
+                        }
+                        if (srl_refresh.isRefreshing())
+                            srl_refresh.setRefreshing(false);
+                        if (myAdapter == null) {
+                            myAdapter = new MyAdapter();
+                            elv_my_mailbox_list.setAdapter(myAdapter);
+                        } else {
+                            myAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * 解析
+     * @param s
+     * @return
+     */
     private List<Reply> analysisReply(String s) {
-        List<Reply> replies = new ArrayList<Reply>();
+        List<Reply> replies = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);
             for (int i = 0; i < jsonArray.length(); i++) {

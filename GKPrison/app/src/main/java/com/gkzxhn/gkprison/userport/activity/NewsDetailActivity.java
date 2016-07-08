@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 
@@ -27,10 +29,11 @@ import com.gkzxhn.gkprison.utils.Log;
 public class NewsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
-    private FrameLayout fl_loading;
+    private NumberProgressBar npb_loading;
     private String webUrl;
     private int type;
 
+    // 评论相关
     private LinearLayout ll_comment;
     private EditText et_comment;
     private Button bt_comment;
@@ -38,13 +41,12 @@ public class NewsDetailActivity extends BaseActivity {
 
     // 评论内容
     private String comment_content;
-    private boolean has_comment = true;
 
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_news_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
-        fl_loading = (FrameLayout) view.findViewById(R.id.fl_loading);
+        npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
         ll_comment = (LinearLayout) view.findViewById(R.id.ll_comment);
         et_comment = (EditText) view.findViewById(R.id.et_comment);
         bt_comment = (Button) view.findViewById(R.id.bt_comment);
@@ -62,8 +64,6 @@ public class NewsDetailActivity extends BaseActivity {
         int id = getIntent().getIntExtra("id",-1);
         // type=0 首页轮播图  type=1 新闻  默认为1
         type = getIntent().getIntExtra("type", 1);
-        has_comment = getIntent().getBooleanExtra("has_comment", true);
-        Log.i("------------", has_comment + "");
         if(type == 1) {
             webUrl = Constants.RESOURSE_HEAD + "/news/" + id;
         }else {
@@ -74,16 +74,29 @@ public class NewsDetailActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(true);
         webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
         webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
+        webSettings.setSupportZoom(true);
         wv_news_detail.loadUrl(webUrl);
-        fl_loading.setVisibility(View.VISIBLE);
+        npb_loading.setVisibility(View.VISIBLE);
+        npb_loading.setReachedBarHeight(10);
+        npb_loading.setUnreachedBarHeight(8);
+        npb_loading.setProgressTextSize(24);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                fl_loading.setVisibility(View.GONE);
-                if(!has_comment) {
+                if(type == 1)
                     ll_comment.setVisibility(View.VISIBLE);
-                }
                 super.onPageFinished(view, url);
+            }
+        });
+        wv_news_detail.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                npb_loading.setProgress(newProgress);
+                Log.i("loading web view progress ", newProgress + "");
+                if(newProgress == 100){
+                    npb_loading.setVisibility(View.GONE);
+                }
+                super.onProgressChanged(view, newProgress);
             }
         });
         bt_comment.setOnClickListener(this);
@@ -100,9 +113,6 @@ public class NewsDetailActivity extends BaseActivity {
                 }
             }
         });
-        if(!has_comment) {
-            ll_comment.setVisibility(View.GONE);
-        }
     }
 
     @Override

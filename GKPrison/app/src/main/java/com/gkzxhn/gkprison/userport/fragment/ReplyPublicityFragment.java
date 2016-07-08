@@ -7,7 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,10 +39,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 /**
- * A simple {@link Fragment} subclass.
+ * 公示信息
  */
 public class ReplyPublicityFragment extends Fragment {
+
+    private SwipeRefreshLayout srl_refresh;
     private ListView reply_list;
     private MyAdapter adapter;
     private String url = "";
@@ -89,13 +99,25 @@ public class ReplyPublicityFragment extends Fragment {
         View  view = inflater.inflate(R.layout.fragment_reply_publicity,null);
         reply_list = (ListView)view.findViewById(R.id.reply_list);
         nonotice = (TextView)view.findViewById(R.id.tv_nothing);
-        adapter = new MyAdapter();
+        srl_refresh = (SwipeRefreshLayout) view.findViewById(R.id.srl_refresh);
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id",0);
         url = Constants.URL_HEAD + "news?jail_id="+jail_id;
         getNews();
         initdate();
-        return view;
+        srl_refresh.setColorSchemeResources(R.color.theme);
+        srl_refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getNews();
+            }
+        });
+        super.onActivityCreated(savedInstanceState);
     }
 
     /**
@@ -112,49 +134,56 @@ public class ReplyPublicityFragment extends Fragment {
                 startActivity(intent);
             }
         });
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        MobclickAgent.onPageStart("ReplyPublicityFragment"); //统计页面，"MainScreen"为页面名称，可自定义
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        MobclickAgent.onPageEnd("ReplyPublicityFragment");
     }
 
     private void getNews() {
         if(Utils.isNetworkAvailable()) {
-            new Thread() {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(url)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void run() {
-                    Message msg = handler.obtainMessage();
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpGet Get = new HttpGet(url);
-                    try {
-                        HttpResponse response = httpClient.execute(Get);
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
+                public void onFailure(Call call, IOException e) {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(srl_refresh.isRefreshing())
+                                srl_refresh.setRefreshing(false);
+                            Toast.makeText(getActivity().getApplicationContext(), "刷新数据失败", Toast.LENGTH_SHORT).show();
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    });
                 }
-            }.start();
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    allnews = analysisNews(response.body().string());
+                    for (int i = 0;i < allnews.size();i++){
+                        News news = allnews.get(i);
+                        if (news.getType_id() == 3){
+                            replys.add(news);
+                        }
+                    }
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (replys.size() == 0){
+                                nonotice.setVisibility(View.VISIBLE);
+                            }else {
+                                nonotice.setVisibility(View.GONE);
+                            }
+                            if(srl_refresh.isRefreshing())
+                                srl_refresh.setRefreshing(false);
+                            if(adapter == null){
+                                adapter = new MyAdapter();
+                                reply_list.setAdapter(adapter);
+                            }else {
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
+                    });
+                }
+            });
         }else {
            Toast.makeText(getActivity().getApplicationContext(),"没有网络",Toast.LENGTH_SHORT).show();
         }

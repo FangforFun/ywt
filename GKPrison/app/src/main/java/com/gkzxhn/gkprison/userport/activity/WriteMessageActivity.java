@@ -3,12 +3,7 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.os.Handler;
-import android.os.Message;
-import android.os.SystemClock;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,12 +11,20 @@ import android.widget.EditText;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Letter;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * created by huangzhengneng on 2016/2/1
@@ -40,50 +43,6 @@ public class WriteMessageActivity extends BaseActivity {
     private String token;
     private int family_id = 0;
     private SweetAlertDialog pDialog;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:// 发送成功(200)
-                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
-                    pDialog.setTitleText("提交成功，感谢您的反馈！")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                        @Override
-                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                            sweetAlertDialog.dismiss();
-                            WriteMessageActivity.this.finish();
-                        }
-                    });
-                    break;
-                case 1:// 发送失败(不是200)
-                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-                    pDialog.setTitleText("提交失败，请稍后再试！")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                    break;
-                case 2://不支持的编码异常
-                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-                    pDialog.setTitleText("提交异常，请稍后再试！")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                    break;
-                case 3://客户端协议异常
-                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-                    pDialog.setTitleText("提交异常，请稍后再试！")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                    break;
-                case 4:// io异常  服务器未开启
-                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-                    pDialog.setTitleText("提交异常，请稍后再试！")
-                            .setConfirmText("确定")
-                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                    break;
-            }
-        }
-    };
 
     @Override
     protected View initView() {
@@ -162,6 +121,7 @@ public class WriteMessageActivity extends BaseActivity {
                 .setTitleText("正在提交,请稍候...");
         pDialog.setCancelable(false);
         pDialog.show();
+
         Letter letter = new Letter();
         letter.setTheme(theme);
         letter.setContents(contents);
@@ -169,41 +129,62 @@ public class WriteMessageActivity extends BaseActivity {
         letter.setFamily_id(family_id);
         gson = new Gson();
         String message = gson.toJson(letter);
-        final String sendmessage = "{\"message\":" + message + "}";
-        new Thread() {
+
+        String send_message = "{\"message\":" + message + "}";
+        String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), send_message);
+        Request request = new Request.Builder()
+                .url(url + token)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-                try {
-                    String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
-                    String result = HttpRequestUtil.doHttpsPost(url + token, sendmessage);
-                    if (result.contains("StatusCode is ")) {
-                        Log.d("写信失败", result);
-                        Message msg = handler.obtainMessage();
-                        msg.what = 1;
-                        msg.obj = result;
-                        handler.sendMessage(msg);
-                        SystemClock.sleep(500);// 模拟网络差的情景
-                    } else {
-                        Log.d("写信成功", result);
-                        Message msg = handler.obtainMessage();
-                        msg.what = 0;
-                        msg.obj = result;
-                        handler.sendMessage(msg);
-                        SystemClock.sleep(500);// 模拟网络差的情景
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        pDialog.setTitleText("提交失败，请稍后再试！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    SystemClock.sleep(500);// 模拟网络差的情景
-                    handler.sendEmptyMessage(2);
-                    Log.i("写信异常", "异常1");
-                }
+                });
             }
-        }.start();
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+                        pDialog.setTitleText("提交成功，感谢您的反馈！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                WriteMessageActivity.this.finish();
+                            }
+                        });
+                    }
+                });
+            }
+        });
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
+    public void onBackPressed() {
+        if(pDialog != null && pDialog.isShowing()){
+            // 正在show时屏蔽返回键
+        }else {
             contents = et_content.getText().toString().trim();
             theme = et_theme.getText().toString().trim();
             if (!TextUtils.isEmpty(contents) || !TextUtils.isEmpty(theme)) {
@@ -225,11 +206,8 @@ public class WriteMessageActivity extends BaseActivity {
                 AlertDialog dialog = builder.create();
                 dialog.show();
             } else {
-                WriteMessageActivity.this.finish();
+                super.onBackPressed();
             }
-            return true;
-        } else {
-            return super.onKeyDown(keyCode, event);
         }
     }
 }

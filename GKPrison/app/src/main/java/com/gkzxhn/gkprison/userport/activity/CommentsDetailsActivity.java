@@ -37,6 +37,7 @@ public class CommentsDetailsActivity extends BaseActivity {
         lv_wonderful_comments = (ListView) view.findViewById(R.id.lv_wonderful_comments);
         tv_newest_comments = (TextView) view.findViewById(R.id.tv_newest_comments);
         lv_newest_comments = (ListView) view.findViewById(R.id.lv_newest_comments);
+        srl_refresh = (SwipeRefreshLayout) view.findViewById(R.id.srl_refresh);
         return view;
     }
 

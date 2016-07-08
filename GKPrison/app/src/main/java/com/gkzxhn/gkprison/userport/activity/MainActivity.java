@@ -1,10 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -16,13 +12,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
@@ -41,7 +35,6 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
-import com.gkzxhn.gkprison.userport.db.SQLitehelp;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -52,26 +45,14 @@ import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
 
-import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -84,6 +65,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import okhttp3.Call;
+import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -117,6 +100,8 @@ import okhttp3.Response;
                             佛祖保佑       永无BUG
  */
 public class MainActivity extends BaseActivity {
+
+    private static final String TAG = "MainActivity";
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
     private LazyViewPager home_viewPager;
@@ -143,7 +128,6 @@ public class MainActivity extends BaseActivity {
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.parse("application/xml; charset=utf-8");
-
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -153,7 +137,7 @@ public class MainActivity extends BaseActivity {
                     if (m.equals("success")){
                         Bundle bundle = msg.getData();
                         String commodity = bundle.getString("result");
-                        commodityList = analysiscommodity(commodity);
+                        commodityList = analysis_commodity(commodity);
                         if (commodityList.size() != 0){
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
@@ -178,8 +162,6 @@ public class MainActivity extends BaseActivity {
                     break;
                 case 5:
                     // 用户信息为空
-
-
                     break;
                 case 4: // 获取用户信息失败   提示重新登录
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
@@ -246,7 +228,7 @@ public class MainActivity extends BaseActivity {
             RequestCallback callback = new RequestCallback() {
                 @Override
                 public void onSuccess(Object o) {
-                    Log.i("MainActivity", "MainActivity重新登录了");
+                    Log.i(TAG, "MainActivity重新登录了");
                 }
 
                 @Override
@@ -285,7 +267,7 @@ public class MainActivity extends BaseActivity {
                 @Override
                 public void onException(Throwable throwable) {
                     showToastMsgShort("登录异常");
-                    Log.i("MainActivity", "MainActivity重新登录异常" + throwable.getMessage());
+                    Log.i(TAG, "MainActivity重新登录异常" + throwable.getMessage());
                 }
             };
             LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
@@ -322,13 +304,12 @@ public class MainActivity extends BaseActivity {
                         try {
                             Response response = client.newCall(request).execute();
                             String result = response.body().string();
-                            Log.d("MainActivity",result);
+                            Log.d(TAG, result);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }.start();
-
                 String type = "微信支付";
                 String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '" + times + "'";
                 db.execSQL(sql);
@@ -561,19 +542,23 @@ public class MainActivity extends BaseActivity {
      */
     private void getUserInfo() {
         if(Utils.isNetworkAvailable()) {
-            new Thread() {
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""))
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void run() {
-                    try {
-                        String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""));
-                        Log.i("请求成功", result);
-                        parseUserInfoResult(result);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
-                    }
+                public void onFailure(Call call, IOException e) {
+                    handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
                 }
-            }.start();
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    Log.i("请求成功", result);
+                    parseUserInfoResult(result);
+                }
+            });
         }else {
             showToastMsgShort("没有网络");
         }
@@ -720,7 +705,7 @@ public class MainActivity extends BaseActivity {
      * @param s
      * @return
      */
-    private List<Commodity> analysiscommodity(String s){
+    private List<Commodity> analysis_commodity(String s){
         List<Commodity> commodities = new ArrayList<>();
         try {
             JSONArray jsonArray = new JSONArray(s);

@@ -1,7 +1,7 @@
 package com.gkzxhn.gkprison.userport.bean;
 
 /**
- * Created by admin on 2016/1/6.
+ * Created by zhangjia on 2016/1/6.
  */
 public class Laws {
 

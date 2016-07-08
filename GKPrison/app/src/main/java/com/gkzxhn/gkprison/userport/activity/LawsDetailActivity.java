@@ -1,31 +1,31 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
+import com.gkzxhn.gkprison.utils.Log;
 
+/**
+ * 法律法规详情页
+ */
 public class LawsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
-    private FrameLayout fl_loading;
+    private NumberProgressBar npb_loading;
     private int id;
 
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_laws_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
-        fl_loading = (FrameLayout) view.findViewById(R.id.fl_loading);
+        npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
         return view;
     }
 
@@ -35,11 +35,9 @@ public class LawsDetailActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         id = getIntent().getIntExtra("id", 1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/laws/" + id + "");
-        fl_loading.setVisibility(View.VISIBLE);
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
             public void onPageFinished(WebView view, String url) {
-                fl_loading.setVisibility(View.GONE);
                 super.onPageFinished(view, url);
             }
         });
@@ -47,14 +45,29 @@ public class LawsDetailActivity extends BaseActivity {
         webSettings.setJavaScriptEnabled(true);
 //        webSettings.setBuiltInZoomControls(true);
 //        webSettings.setSupportZoom(true);
+        npb_loading.setVisibility(View.VISIBLE);
+        npb_loading.setReachedBarHeight(10);
+        npb_loading.setUnreachedBarHeight(8);
+        npb_loading.setProgressTextSize(24);
+        wv_news_detail.setWebChromeClient(new WebChromeClient(){
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                npb_loading.setProgress(newProgress);
+                Log.i("loading web view progress ", newProgress + "");
+                if(newProgress == 100){
+                    npb_loading.setVisibility(View.GONE);
+                }
+                super.onProgressChanged(view, newProgress);
+            }
+        });
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK && wv_news_detail.canGoBack()) {
+    public void onBackPressed() {
+        if(wv_news_detail.canGoBack()){
             wv_news_detail.goBack();
-            return true;
+        }else {
+            super.onBackPressed();
         }
-        return super.onKeyDown(keyCode, event);
     }
 }

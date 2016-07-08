@@ -30,6 +30,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * created by hzn 2016/1/16
  * 意见反馈
@@ -44,28 +54,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
     private SharedPreferences sp;
     private String token;
     private boolean isFinish = false;
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 0:
-                    commit_dialog.setMessage("提交成功，谢谢您的反馈，我们会做的更好。");
-                    isFinish = true;
-                    handler.postDelayed(dismiss_dialog_delay_task, 2000);
-                    break;
-                case 1:
-                    commit_dialog.setMessage("糟糕，提交失败了，歇会儿再试吧！");
-                    isFinish = false;
-                    handler.postDelayed(dismiss_dialog_delay_task, 2000);
-                    break;
-                case 2:
-                    commit_dialog.setMessage("糟糕，提交异常了，歇会儿再试吧！");
-                    isFinish = false;
-                    handler.postDelayed(dismiss_dialog_delay_task, 2000);
-                    break;
-            }
-        }
-    };
+    private Handler handler = new Handler();
 
     @Override
     protected View initView() {
@@ -158,42 +147,28 @@ public class OpinionFeedbackActivity extends BaseActivity {
      */
     private void sendOpinionsToServer(final String mopinion_content) {
         showDialog();
-        new Thread(){
+        String opinion = "{\"feedback\":{\"contents\":\"" + mopinion_content + "\"}}";
+        OkHttpClient client = new OkHttpClient();
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), opinion);
+        Request request = new Request.Builder()
+                .url(Constants.URL_HEAD + Constants.FEEDBACK + token)
+                .post(body)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
-                String opinion = "{\"feedback\":{\"contents\":\"" + mopinion_content + "\"}}";
-                Log.i("反馈内容", opinion);
-//                HttpClient hc = new DefaultHttpClient();
-//                HttpPost post = new HttpPost(Constants.URL_HEAD + Constants.FEEDBACK + token);
-//                StringEntity entity = null;
-                try {
-//                    entity = new StringEntity(opinion, HTTP.UTF_8);
-//                    entity.setContentType("application/json");
-//                    post.setEntity(entity);
-//                    HttpResponse response = hc.execute(post);
-//                    if(response.getStatusLine().getStatusCode() == 200){
-//                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-//                        Log.i("意见反馈返回", result);
-//                        handler.sendEmptyMessage(0);
-//                    }else {
-//                        String result = EntityUtils.toString(response.getEntity(), "utf-8");
-//                        Log.i("意见反馈返回", result);
-//                        handler.sendEmptyMessage(1);
-//                    }
-                    String result = HttpRequestUtil.doHttpsPost(Constants.URL_HEAD + Constants.FEEDBACK + token, opinion);
-                    if(result.contains("StatusCode is ")){
-                        Log.i("意见反馈失败", result);
-                        handler.sendEmptyMessage(1);
-                    }else {
-                        Log.i("意见反馈返回成功", result);
-                        handler.sendEmptyMessage(0);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    handler.sendEmptyMessage(2);
-                }
+            public void onFailure(Call call, IOException e) {
+                commit_dialog.setMessage("提交成功，谢谢您的反馈，我们会做的更好。");
+                isFinish = true;
+                handler.postDelayed(dismiss_dialog_delay_task, 2000);
             }
-        }.start();
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                commit_dialog.setMessage("糟糕，提交失败了，歇会儿再试吧！");
+                isFinish = false;
+                handler.postDelayed(dismiss_dialog_delay_task, 2000);
+            }
+        });
     }
 
     /**
@@ -222,33 +197,28 @@ public class OpinionFeedbackActivity extends BaseActivity {
     };
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            opinion_content = et_content.getText().toString().trim();
-            if(!TextUtils.isEmpty(opinion_content)){
-                AlertDialog.Builder builder = new AlertDialog.Builder(OpinionFeedbackActivity.this);
-                builder.setMessage("放弃反馈？");
-                builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        OpinionFeedbackActivity.this.finish();
-                    }
-                });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }else {
-                OpinionFeedbackActivity.this.finish();
-            }
-            return true;
+    public void onBackPressed() {
+        opinion_content = et_content.getText().toString().trim();
+        if(!TextUtils.isEmpty(opinion_content)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(OpinionFeedbackActivity.this);
+            builder.setMessage("放弃反馈？");
+            builder.setPositiveButton("放弃", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                    OpinionFeedbackActivity.this.finish();
+                }
+            });
+            builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }else {
-            return super.onKeyDown(keyCode, event);
+            super.onBackPressed();
         }
     }
 }

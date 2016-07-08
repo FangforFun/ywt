@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Laws;
+import com.gkzxhn.gkprison.utils.Log;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -32,6 +34,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 /**
  * 法律法规页面
  */
@@ -43,19 +51,24 @@ public class LawsRegulationsActivity extends BaseActivity {
     private String token = "";
     private String url = "";
     private int jail_id;
+    private ProgressDialog dialog;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 1:
-                    String messge = (String) msg.obj;
-                    if (messge.equals("sucess")) {
+                    String message = (String) msg.obj;
+                    if (message.equals("success")) {
                         Bundle bundle = msg.getData();
                         String laws = bundle.getString("result");
                         lawses = analysisLaws(laws);
                         lv_laws_regulations.setAdapter(new MyAdapter());
-                    } else if (messge.equals("error")) {
-                        Toast.makeText(getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
+                        if(dialog != null && dialog.isShowing())
+                            dialog.dismiss();
+                    } else if (message.equals("error")) {
+                        Toast.makeText(getApplicationContext(), "获取数据失败，请稍后再试", Toast.LENGTH_SHORT).show();
+                        if(dialog != null && dialog.isShowing())
+                            dialog.dismiss();
                     }
                     break;
             }
@@ -89,35 +102,48 @@ public class LawsRegulationsActivity extends BaseActivity {
         });
     }
 
+    /**
+     * 获取法律法规
+     */
     private void getLaws() {
-        new Thread() {
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        dialog = new ProgressDialog(this);
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        dialog.show();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
+            public void onFailure(Call call, IOException e) {
                 Message msg = handler.obtainMessage();
-                HttpClient httpClient = new DefaultHttpClient();
-                HttpGet Get = new HttpGet(url);
-                try {
-                    HttpResponse Response = httpClient.execute(Get);
-                    if (Response.getStatusLine().getStatusCode() == 200) {
-                        String result = EntityUtils.toString(Response.getEntity(), "utf-8");
-                        msg.obj = "sucess";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    } else {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                msg.obj = "error";
+                msg.what = 1;
+                handler.sendMessage(msg);
             }
-        }.start();
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                Message msg = handler.obtainMessage();
+                msg.obj = "success";
+                Bundle bundle = new Bundle();
+                String result = response.body().string();
+                bundle.putString("result", result);
+                Log.i("request result is ", result);
+                msg.setData(bundle);
+                msg.what = 1;
+                handler.sendMessage(msg);
+            }
+        });
     }
 
+    /**
+     * 解析
+     * @param s
+     * @return
+     */
     private List<Laws> analysisLaws(String s) {
         List<Laws> lawsList = new ArrayList<>();
         try {

@@ -33,6 +33,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 /**
  * Created by hzn on 2015/12/3.
  * 探监pager
@@ -136,11 +146,6 @@ public class RemoteMeetPager extends BasePager {
                     }
                     break;
                 case 1: // 发送会见申请失败
-                    showToastMsgLong("提交失败，请稍后再试");
-                    bt_commit_request.setEnabled(true);
-                    dialog.dismiss();
-                    break;
-                case 2:// 发送会见申请异常
                     showToastMsgLong("提交异常，请稍后再试");
                     bt_commit_request.setEnabled(true);
                     dialog.dismiss();
@@ -194,7 +199,7 @@ public class RemoteMeetPager extends BasePager {
                         float a = Float.parseFloat(num);
                         int n = (int)a;
                         vedionum = n/5;
-                        tv_remotly_num.setText(vedionum+"");
+                        tv_remotly_num.setText(vedionum + "");
                     }
                     break;
             }
@@ -342,35 +347,60 @@ public class RemoteMeetPager extends BasePager {
      * 获取申请会见可用余额
      */
     private void getBalance() {
-        new Thread(){
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(url + family_id)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
             @Override
-            public void run() {
+            public void onFailure(Call call, IOException e) {
                 Message msg = handler.obtainMessage();
-                Looper.prepare();
-                try {
-                    String result = HttpRequestUtil.doHttpsGet(url + family_id);
-                    if (result.contains("StatusCode is")){
-                        msg.obj = "error";
-                        msg.what = 6;
-                        handler.sendMessage(msg);
-                    }else {
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result",result);
-                        msg.setData(bundle);
-                        msg.what = 6;
-                        handler.sendMessage(msg);
-                    }
-                } catch (Exception e) {
-                    msg.obj = "error";
-                    msg.what = 6;
-                    handler.sendMessage(msg);
-                    e.printStackTrace();
-                }finally {
-                    Looper.loop();
-                }
+                msg.obj = "error";
+                msg.what = 6;
+                handler.sendMessage(msg);
             }
-        }.start();
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                String result = response.body().string();
+                Message msg = handler.obtainMessage();
+                Bundle bundle = new Bundle();
+                bundle.putString("result", result);
+                msg.setData(bundle);
+                msg.what = 6;
+                msg.obj = "success";
+                handler.sendMessage(msg);
+            }
+        });
+//        new Thread(){
+//            @Override
+//            public void run() {
+//                Message msg = handler.obtainMessage();
+//                Looper.prepare();
+//                try {
+//                    String result = HttpRequestUtil.doHttpsGet();
+//                    if (result.contains("StatusCode is")){
+//                        msg.obj = "error";
+//                        msg.what = 6;
+//                        handler.sendMessage(msg);
+//                    }else {
+//                        msg.obj = "success";
+//                        Bundle bundle = new Bundle();
+//                        bundle.putString("result",result);
+//                        msg.setData(bundle);
+//                        msg.what = 6;
+//                        handler.sendMessage(msg);
+//                    }
+//                } catch (Exception e) {
+//                    msg.obj = "error";
+//                    msg.what = 6;
+//                    handler.sendMessage(msg);
+//                    e.printStackTrace();
+//                }finally {
+//                    Looper.loop();
+//                }
+//            }
+//        }.start();
     }
 
     /**
@@ -444,31 +474,30 @@ public class RemoteMeetPager extends BasePager {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setMessage("正在提交，请稍后");
             dialog.show();
-            new Thread() {
+            String prisoner_number = sp.getString("prisoner_number", "4000002");
+            String param = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + visit_request_time + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
+            OkHttpClient client = new OkHttpClient();
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), param);
+            Request request = new Request.Builder()
+                    .url(MEETING_REQUEST_URL + sp.getString("token", ""))
+                    .post(body)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void run() {
-                    String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" + sp.getString("password", "") + "\",\"app_date\":\"" + visit_request_time + "\",\"name\":\"" + tv_visit_request_name.getText().toString() + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
-                    try {
-                        String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
-                        Message msg = handler.obtainMessage();
-                        if(result.contains("StatusCode is ")){
-                            msg.obj = result;
-                            msg.what = 4;
-                            handler.sendMessage(msg);
-                            Log.d("发送失败", result);
-                        }else {
-                            msg.obj = result;
-                            msg.what = 3;
-                            handler.sendMessage(msg);
-                            Log.d("发送成功", result);
-                        }
-                    } catch (Exception e) {
-                        Log.d("发送异常", e.getMessage());
-                        handler.sendEmptyMessage(5);
-                    }
+                public void onFailure(Call call, IOException e) {
+                    handler.sendEmptyMessage(5);
                 }
-            }.start();
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    Message msg = handler.obtainMessage();
+                    msg.obj = result;
+                    msg.what = 3;
+                    handler.sendMessage(msg);
+                    Log.d("发送成功", result);
+                }
+            });
         }else {
             showToastMsgShort("没有网络");
         }
@@ -486,35 +515,35 @@ public class RemoteMeetPager extends BasePager {
             dialog.setCanceledOnTouchOutside(false);
             dialog.setMessage("正在提交，请稍后");
             dialog.show();
-            new Thread() {
+            String prisoner_number = sp.getString("prisoner_number", "4000002");
+            String param = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
+                    sp.getString("password", "") + "\",\"app_date\":\"" + meeting_request_time
+                    + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
+                    + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\""
+                    + prisoner_number + "\",\"type_id\":1}}";
+            OkHttpClient client = new OkHttpClient();
+            RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), param);
+            Request request = new Request.Builder()
+                    .url(MEETING_REQUEST_URL + sp.getString("token", ""))
+                    .post(body)
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
                 @Override
-                public void run() {
-                    String prisoner_number = sp.getString("prisoner_number", "4000002");
-                    String body = "{\"apply\":{\"phone\":\"" + sp.getString("username", "") + "\",\"uuid\":\"" +
-                            sp.getString("password", "") + "\",\"app_date\":\"" + meeting_request_time
-                            + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
-                            + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":" + sp.getInt("jail_id", 1) + ",\"prisoner_number\":\""
-                            + prisoner_number + "\",\"type_id\":1}}";
-                    try {
-                        String result = HttpRequestUtil.doHttpsPost(MEETING_REQUEST_URL + sp.getString("token", ""), body);
-                        Message msg = handler.obtainMessage();
-                        if(result.contains("StatusCode is ")){
-                            msg.obj = result;
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                            Log.d("发送失败", result);
-                        }else {
-                            msg.obj = result;
-                            msg.what = 0;
-                            handler.sendMessage(msg);
-                            Log.d("发送成功", result);
-                        }
-                    } catch (Exception e) {
-                        Log.d("发送异常", e.getMessage());
-                        handler.sendEmptyMessage(2);
-                    }
+                public void onFailure(Call call, IOException e) {
+                    handler.sendEmptyMessage(1);
                 }
-            }.start();
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+                    String result = response.body().string();
+                    Log.i("request response ", result);
+                    Message msg = handler.obtainMessage();
+                    msg.obj = result;
+                    msg.what = 0;
+                    handler.sendMessage(msg);
+                    Log.d("发送成功", result);
+                }
+            });
         }else {
             showToastMsgShort("没有网络");
         }
