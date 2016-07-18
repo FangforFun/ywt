@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,6 +21,7 @@ import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -82,8 +82,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         setContentView(R.layout.pay_result);
         api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
-
-
     }
 
 
@@ -117,6 +115,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         tv_sendgoods = (TextView) findViewById(R.id.tv_send_goods);
 
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
+            Log.i("wxpay_errCode", resp.errCode + "----" + resp.errStr);
             if (resp.errCode == 0) {
                 sp = getSharedPreferences("config", MODE_PRIVATE);
                 token = sp.getString("token", "");
@@ -127,7 +126,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                 new Thread() {
                     @Override
                     public void run() {
-
                         Looper.prepare();
                         Message msg = handler.obtainMessage();
                         HttpClient httpClient = new DefaultHttpClient();

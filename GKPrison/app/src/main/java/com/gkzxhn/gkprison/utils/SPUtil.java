@@ -19,7 +19,7 @@ public class SPUtil {
     /**
      * sp保存的文件名
      */
-    public static final String FILE_NAME = "share_data";
+    public static final String FILE_NAME = "config";
 
     /**
      * 保存数据的方法，可传入String,int,boolean,float,long

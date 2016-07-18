@@ -119,4 +119,5 @@
     <dimen name="alert_width">290dp</dimen>
     <dimen name="common_circle_width">3dp</dimen>
     <dimen name="progress_circle_radius">34dp</dimen>
+    <dimen name="register_edittext_height_">42dp</dimen>
 </resources>

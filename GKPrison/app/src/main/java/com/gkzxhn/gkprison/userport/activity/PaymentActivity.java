@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +28,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.PayResult;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.RSAUtil;
 import com.gkzxhn.gkprison.utils.SignUtils;
@@ -53,7 +53,9 @@ import java.net.URLEncoder;
 import java.util.LinkedList;
 import java.util.List;
 
-
+/**
+ * 支付方式选择
+ */
 public class PaymentActivity extends BaseActivity {
     private ListView lv_pay_way;
     private Button bt_pay;
@@ -115,7 +117,7 @@ public class PaymentActivity extends BaseActivity {
                     } else if (result.equals("success")) {
                         Bundle bundle = msg.getData();
                         String type = bundle.getString("result");
-                        int code = getResultcode(type);
+                        int code = getResultCode(type);
                         Log.d("订单类型", payment_type);
                         if (code == 200) {
                             if (payment_type.equals("alipay")) {
@@ -148,7 +150,6 @@ public class PaymentActivity extends BaseActivity {
                                 //intent.putExtra("outorderno",TradeNo);
                                 timeStamp = gettimestamp(type);
                                 //PaymentActivity.this.startActivity(intent);
-
                                 weixinPay();
                             } else if (payment_type.equals("unionpay")) {
                                 /**
@@ -161,7 +162,6 @@ public class PaymentActivity extends BaseActivity {
                                 UPPayAssistEx.startPay(PaymentActivity.this, null, null, tn, mode);
                             }
                         }
-
                     }
                     break;
                 case SDK_PAY_FLAG: {
@@ -183,20 +183,16 @@ public class PaymentActivity extends BaseActivity {
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         PaymentActivity.this.startActivity(intent);
                         finish();
-
-
                     } else {
                         // 判断resultStatus 为非“9000”则代表可能支付失败
                         // “8000”代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
                         if (TextUtils.equals(resultStatus, "8000")) {
                             Toast.makeText(PaymentActivity.this, "支付结果确认中",
                                     Toast.LENGTH_SHORT).show();
-
                         } else {
                             // 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
                             Toast.makeText(PaymentActivity.this, "支付失败",
                                     Toast.LENGTH_SHORT).show();
-
                         }
                     }
                     break;
@@ -212,7 +208,12 @@ public class PaymentActivity extends BaseActivity {
         }
     };
 
-    private int getResultcode(String type) {
+    /**
+     * 获取结果码
+     * @param type
+     * @return
+     */
+    private int getResultCode(String type) {
         int a = 0;
         try {
             JSONObject jsonObject = new JSONObject(type);
@@ -551,7 +552,6 @@ public class PaymentActivity extends BaseActivity {
                 handler.sendMessage(msg);
             }
         };
-
         // 必须异步调用
         Thread payThread = new Thread(payRunnable);
         payThread.start();
@@ -612,7 +612,6 @@ public class PaymentActivity extends BaseActivity {
         // orderInfo += "&paymethod=\"expressGateway\"";
         Log.d("MainActivity", "aaa:" + orderInfo);
         return orderInfo;
-
     }
 
     public String sign(String content) {
@@ -657,20 +656,19 @@ public class PaymentActivity extends BaseActivity {
 
     private String genAppSign(List<NameValuePair> params) {
         sb = new StringBuffer();
-
         for (int i = 0; i < params.size(); i++) {
             sb.append(params.get(i).getName());
             sb.append('=');
             sb.append(params.get(i).getValue());
             sb.append('&');
         }
-        com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
+        Log.d("sa", sb.toString());
         sb.append("key=");
         sb.append("d75699d893882dea526ea05e9c7a4090");
-        com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
+        Log.d("dd", sb.toString());
         //  sb.append("sign str\n" + sb.toString() + "\n\n");
         String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
-        com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
+        Log.d("orion1", appSign);
         return appSign;
     }
 }

@@ -11,7 +11,6 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -32,10 +31,9 @@ import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
-import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
-import com.netease.nim.uikit.common.util.string.StringUtil;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
@@ -51,6 +49,9 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 
+/**
+ * 家属服务
+ */
 public class FamilyServiceActivity extends BaseActivity {
     private ExpandableListView el_messge;
     private MyAdapter adapter;
@@ -68,7 +69,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private TextView prison_crimes;
     private TextView prison_start_time;
     private TextView prison_end_time;
-    private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
+    private List<line_items_attributes> line_items_attributes = new ArrayList<>();
     private int jail_id;
     private String url1 = Constants.URL_HEAD + "services?access_token=";
     private Handler handler = new Handler() {
@@ -97,19 +98,23 @@ public class FamilyServiceActivity extends BaseActivity {
                 case 2:
                     String ording = (String) msg.obj;
                     if (ording.equals("error")) {
-                        showToastMsgShort("上传数据失败，请检查网络");
+                        showToastMsgShort("操作失败，请稍后再试！");
                     } else if (ording.equals("success")) {
                         Bundle bundle = msg.getData();
                         String code = bundle.getString("result");
-                        TradeNo = getResultTradeno(code);
-                        int passcode = getResultcode(code);
-                        if (passcode == 200) {
+                        int pass_code = getResultcode(code);
+                        if (pass_code == 200) {
+                            TradeNo = getResultTradeno(code);
                             Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
                             intent.putExtra("totalmoney", money);
                             intent.putExtra("times", times);
                             intent.putExtra("TradeNo", TradeNo);
                             intent.putExtra("saletype", "汇款");
                             startActivity(intent);
+                        }else {
+                            // 其他情况就是等于500  超出每月800额度
+                            // {"code":500,"msg":"Create order failed","errors":{"order":["超出每月800元限额"]}}
+                            showToastMsgLong("抱歉，您本月汇款总额已超出800元限额！");
                         }
                     }
                     break;
@@ -192,7 +197,7 @@ public class FamilyServiceActivity extends BaseActivity {
     protected void initData() {
         setTitle("家属服务");
         setBackVisibility(View.VISIBLE);
-        // setRemittanceVisibility(View.VISIBLE);
+        setRemittanceVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
         ip = getLocalHostIp();
@@ -406,6 +411,11 @@ public class FamilyServiceActivity extends BaseActivity {
         }.start();
     }
 
+    /**
+     * 获取结果码
+     * @param result
+     * @return
+     */
     private int getResultcode(String result) {
         int a = 0;
         try {
@@ -417,6 +427,10 @@ public class FamilyServiceActivity extends BaseActivity {
         return a;
     }
 
+    /**
+     * 获取本地hostIP
+     * @return
+     */
     public String getLocalHostIp() {
         String ipaddress = "";
         try {
@@ -435,14 +449,12 @@ public class FamilyServiceActivity extends BaseActivity {
                         return ipaddress = ip.getHostAddress();
                     }
                 }
-
             }
         } catch (SocketException e) {
             Log.e("feige", "获取本地ip地址失败");
             e.printStackTrace();
         }
         return ipaddress;
-
     }
 
     private class MyAdapter extends BaseExpandableListAdapter {

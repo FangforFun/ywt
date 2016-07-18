@@ -41,6 +41,8 @@ import javax.net.ssl.X509TrustManager;
  */
 public class HttpRequestUtil {
 
+    private static final int time_out = 100000;
+
     /**
      * Post请求连接Https服务
      * @param serverURL  请求地址
@@ -52,9 +54,9 @@ public class HttpRequestUtil {
         // 参数
         HttpParams httpParameters = new BasicHttpParams();
         // 设置连接超时
-        HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+        HttpConnectionParams.setConnectionTimeout(httpParameters, time_out);
         // 设置socket超时
-        HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+        HttpConnectionParams.setSoTimeout(httpParameters, time_out);
         // 获取HttpClient对象 （认证）
         HttpClient hc = initHttpClient(httpParameters);
         HttpPost post = new HttpPost(serverURL);
@@ -131,9 +133,9 @@ public class HttpRequestUtil {
         // 参数
         HttpParams httpParameters = new BasicHttpParams();
         // 设置连接超时
-        HttpConnectionParams.setConnectionTimeout(httpParameters, 5000);
+        HttpConnectionParams.setConnectionTimeout(httpParameters, time_out);
         // 设置socket超时
-        HttpConnectionParams.setSoTimeout(httpParameters, 5000);
+        HttpConnectionParams.setSoTimeout(httpParameters, time_out);
         // 获取HttpClient对象 （认证）
         HttpClient hc = initHttpClient(httpParameters);
         HttpGet get = new HttpGet(serverURL);

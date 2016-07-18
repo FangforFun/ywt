@@ -19,10 +19,23 @@ android {
         versionName "1.2.0"
     }
 
+    signingConfigs {
+        release {
+            storeFile file('gkprison.jks')
+            storePassword '123456'
+            keyAlias 'gkhn'
+            keyPassword '123456'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
         }
     }
 

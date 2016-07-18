@@ -372,35 +372,6 @@ public class RemoteMeetPager extends BasePager {
                 handler.sendMessage(msg);
             }
         });
-//        new Thread(){
-//            @Override
-//            public void run() {
-//                Message msg = handler.obtainMessage();
-//                Looper.prepare();
-//                try {
-//                    String result = HttpRequestUtil.doHttpsGet();
-//                    if (result.contains("StatusCode is")){
-//                        msg.obj = "error";
-//                        msg.what = 6;
-//                        handler.sendMessage(msg);
-//                    }else {
-//                        msg.obj = "success";
-//                        Bundle bundle = new Bundle();
-//                        bundle.putString("result",result);
-//                        msg.setData(bundle);
-//                        msg.what = 6;
-//                        handler.sendMessage(msg);
-//                    }
-//                } catch (Exception e) {
-//                    msg.obj = "error";
-//                    msg.what = 6;
-//                    handler.sendMessage(msg);
-//                    e.printStackTrace();
-//                }finally {
-//                    Looper.loop();
-//                }
-//            }
-//        }.start();
     }
 
     /**

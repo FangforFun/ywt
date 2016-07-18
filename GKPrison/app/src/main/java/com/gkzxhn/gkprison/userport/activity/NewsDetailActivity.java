@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -22,16 +21,32 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * 新闻详情页
  */
 public class NewsDetailActivity extends BaseActivity {
 
+    private static final String TAG = "NewsDetailActivity";
     private WebView wv_news_detail;
     private NumberProgressBar npb_loading;
     private String webUrl;
     private int type;
+    private int id;// 新闻id
 
     // 评论相关
     private LinearLayout ll_comment;
@@ -61,7 +76,7 @@ public class NewsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        int id = getIntent().getIntExtra("id",-1);
+        id = getIntent().getIntExtra("id",-1);
         // type=0 首页轮播图  type=1 新闻  默认为1
         type = getIntent().getIntExtra("type", 1);
         if(type == 1) {
@@ -124,8 +139,6 @@ public class NewsDetailActivity extends BaseActivity {
         }
     }
 
-    private Handler handler = new Handler();
-
     @Override
     public void onClick(View v) {
         super.onClick(v);
@@ -142,17 +155,71 @@ public class NewsDetailActivity extends BaseActivity {
                 dialog.setCanceledOnTouchOutside(false);
                 dialog.setMessage("正在提交...");
                 dialog.show();
-                handler.postDelayed(new Runnable() {
+                OkHttpClient client = new OkHttpClient();
+                String param = "{\"family_id\":" + SPUtil.get(this, "family_id", -1) + ",\"content\":\"" + comment_content + "\"}";
+                Log.i(TAG, param);
+                RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), param);
+                Request request = new Request.Builder()
+                        .url(Constants.URL_HEAD + "news/" + id + "/comments?access_token=" + SPUtil.get(this, "token", ""))
+                        .post(body)
+                        .build();
+                client.newCall(request).enqueue(new Callback() {
                     @Override
-                    public void run() {
-                        dialog.dismiss();
-                        showToastMsgShort("评论成功");
-                        et_comment.setText("");
+                    public void onFailure(Call call, final IOException e) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                dialog.dismiss();
+                                showToastMsgShort("评论失败，请稍后再试");
+                                Log.i(TAG, e.getMessage());
+                            }
+                        });
                     }
-                }, 1000);
+
+                    @Override
+                    public void onResponse(Call call, Response response) {
+                        try {
+                            String result = response.body().string();
+                            /**
+                             * {"code":200,"msg":"Comment success"}
+                             */
+                            Log.i(TAG, result);
+                            JSONObject jsonObject = new JSONObject(result);
+                            int code = jsonObject.getInt("code");
+                            if(code == 200){
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        showToastMsgShort("评论成功！");
+                                        et_comment.setText("");
+                                    }
+                                });
+                            }else {
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        dialog.dismiss();
+                                        showToastMsgShort("评论失败，请稍后再试");
+                                    }
+                                });
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    dialog.dismiss();
+                                    showToastMsgShort("评论失败，请稍后再试");
+                                }
+                            });
+                        }
+                    }
+                });
                 break;
             case R.id.tv_comments:
                 Intent intent = new Intent(this, CommentsDetailsActivity.class);
+                intent.putExtra("news_id", id);
                 startActivity(intent);
                 break;
             default:

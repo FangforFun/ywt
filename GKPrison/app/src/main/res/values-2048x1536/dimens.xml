@@ -112,4 +112,5 @@
     <dimen name="textSize_alert_button">18sp</dimen>
     <!--圆角-->
     <dimen name="radius_alertview">15px</dimen>
+    <dimen name="register_edittext_height_">66dp</dimen>
 </resources>
