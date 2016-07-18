@@ -449,12 +449,14 @@ public class FamilyServiceActivity extends BaseActivity {
                         return ipaddress = ip.getHostAddress();
                     }
                 }
+
             }
         } catch (SocketException e) {
             Log.e("feige", "获取本地ip地址失败");
             e.printStackTrace();
         }
         return ipaddress;
+
     }
 
     private class MyAdapter extends BaseExpandableListAdapter {
