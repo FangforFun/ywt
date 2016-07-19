@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
@@ -150,6 +151,7 @@ public class AVChatUI implements AVChatUIListener {
      * 来电
      */
     public void inComingCalling(AVChatData avChatData) {
+        Log.i(TAG, DensityUtil.getScreenWidthHeight(context)[0] + "---" + DensityUtil.getScreenWidthHeight(context)[1]);
         this.avChatData = avChatData;
         receiverId = avChatData.getAccount();
         if (avChatData.getChatType() == AVChatType.AUDIO) {

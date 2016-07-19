@@ -116,18 +116,18 @@ public class NewsDetailActivity extends BaseActivity {
         });
         bt_comment.setOnClickListener(this);
         tv_comments.setOnClickListener(this);
-        et_comment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    bt_comment.setVisibility(View.VISIBLE);
-                    tv_comments.setVisibility(View.GONE);
-                } else {
-                    bt_comment.setVisibility(View.GONE);
-                    tv_comments.setVisibility(View.VISIBLE);
-                }
-            }
-        });
+//        et_comment.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+//            @Override
+//            public void onFocusChange(View v, boolean hasFocus) {
+//                if (hasFocus) {
+//                    bt_comment.setVisibility(View.VISIBLE);
+//                    tv_comments.setVisibility(View.GONE);
+//                } else {
+//                    bt_comment.setVisibility(View.GONE);
+//                    tv_comments.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
     }
 
     @Override
