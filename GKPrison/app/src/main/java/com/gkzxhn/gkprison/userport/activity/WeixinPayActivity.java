@@ -9,7 +9,6 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.utils.Log;
-import com.gkzxhn.gkprison.utils.MD5;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;

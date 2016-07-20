@@ -230,7 +230,7 @@ public class PersonLoadingFragment extends BaseFragment {
      * 登录成功
      */
     private void loginSuccessed() {
-        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
         sadDialog.setTitleText("登录成功！")
                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
         SharedPreferences.Editor editor = sp.edit();
