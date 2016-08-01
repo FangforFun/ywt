@@ -3,20 +3,21 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/rl_title"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/title_bar_height"
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true"
     android:background="@color/theme">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/title_bar_height"
+        android:layout_height="wrap_content"
         android:background="@color/theme"
-        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:theme="@style/ThemeOverlay.AppCompat.ActionBar">
+        app:theme="@style/ThemeOverlay.AppCompat.Dark">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/title_bar_height" >
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical">
 
             <RelativeLayout
                 android:id="@+id/rl_home_menu"
@@ -76,7 +77,6 @@
                     android:src="@drawable/write_message"
                     android:layout_centerInParent="true"
                     android:layout_centerVertical="true"/>
-
             </RelativeLayout>
 
             <RelativeLayout

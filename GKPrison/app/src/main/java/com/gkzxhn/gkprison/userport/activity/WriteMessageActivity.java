@@ -12,7 +12,9 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Letter;
+import com.gkzxhn.gkprison.userport.requests.WriteMessage;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
@@ -25,6 +27,13 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * created by huangzhengneng on 2016/2/1
@@ -32,6 +41,7 @@ import okhttp3.Response;
  */
 public class WriteMessageActivity extends BaseActivity {
 
+    private static final java.lang.String TAG = "WriteMessageActivity";
     private EditText et_theme;
     private EditText et_content;
     private Button bt_commit_write_message;
@@ -123,61 +133,108 @@ public class WriteMessageActivity extends BaseActivity {
         pDialog.show();
 
         Letter letter = new Letter();
-        letter.setTheme(theme);
-        letter.setContents(contents);
-        letter.setJail_id(jail_id);
-        letter.setFamily_id(family_id);
+        Letter.LetterBean bean = letter.new LetterBean();
+        bean.setTheme(theme);
+        bean.setContents(contents);
+        bean.setJail_id(jail_id);
+        bean.setFamily_id(family_id);
         gson = new Gson();
         String message = gson.toJson(letter);
 
-        String send_message = "{\"message\":" + message + "}";
-        String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), send_message);
-        Request request = new Request.Builder()
-                .url(url + token)
-                .post(body)
+        Retrofit retrofit = new Retrofit.Builder()
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .baseUrl(Constants.URL_HEAD)
                 .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-                        pDialog.setTitleText("提交失败，请稍后再试！")
-                                .setConfirmText("确定")
-                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
-                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                            }
-                        });
-                    }
-                });
-            }
+        WriteMessage writeMessage = retrofit.create(WriteMessage.class);
+        writeMessage.sendMessage(jail_id, token, message)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(new Observer<String>() {
+                @Override
+                public void onCompleted() {
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
-                        pDialog.setTitleText("提交成功，感谢您的反馈！")
-                                .setConfirmText("确定")
-                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
-                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                sweetAlertDialog.dismiss();
-                                WriteMessageActivity.this.finish();
-                            }
-                        });
-                    }
-                });
-            }
-        });
+                }
+
+                @Override
+                public void onError(Throwable e) {
+                    Log.e(TAG, e.getMessage());
+                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                    pDialog.setTitleText("提交失败，请稍后再试！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                        }
+                    });
+                }
+
+                @Override
+                public void onNext(String result) {
+                    Log.i(TAG, result);
+                    pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+                    pDialog.setTitleText("提交成功，感谢您的反馈！")
+                            .setConfirmText("确定")
+                            .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                    pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            sweetAlertDialog.dismiss();
+                            WriteMessageActivity.this.finish();
+                        }
+                    });
+                }
+            });
+
+//        String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
+//        OkHttpClient client = new OkHttpClient();
+//        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), message);
+//        Request request = new Request.Builder()
+//                .url(url + token)
+//                .post(body)
+//                .build();
+//        client.newCall(request).enqueue(new Callback() {
+//            @Override
+//            public void onFailure(Call call, IOException e) {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+//                        pDialog.setTitleText("提交失败，请稍后再试！")
+//                                .setConfirmText("确定")
+//                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+//                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                            @Override
+//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                sweetAlertDialog.dismiss();
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onResponse(Call call, Response response) throws IOException {
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+//                        pDialog.setTitleText("提交成功，感谢您的反馈！")
+//                                .setConfirmText("确定")
+//                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+//                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+//                            @Override
+//                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+//                                sweetAlertDialog.dismiss();
+//                                WriteMessageActivity.this.finish();
+//                            }
+//                        });
+//                    }
+//                });
+//            }
+//        });
     }
 
     @Override

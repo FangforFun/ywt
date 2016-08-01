@@ -83,9 +83,7 @@ dependencies {
     compile files('libs/json-simple-1.1.1.jar')
     compile files('libs/cosinesdk.jar')
     compile files('libs/badgeview.jar')
-    compile files('libs/gson-2.5.jar')
     compile files('libs/nineoldandroids-2.4.0.jar')
-    compile files('libs/okhttp-3.2.0.jar')
     compile project(':libraries:uikit')
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
@@ -97,4 +95,8 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'me.biubiubiu.justifytext:library:1.1'
     compile 'com.umeng.analytics:analytics:latest.integration'
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'io.reactivex:rxandroid:1.1.0'
 }

@@ -25,7 +25,7 @@
             android:id="@+id/rg_bottom_guide"
             android:layout_width="match_parent"
             android:layout_gravity="bottom"
-            android:background="@color/bg"
+            android:background="@color/white"
             android:layout_height="@dimen/main_tab_height"
             android:gravity="center_vertical"
             android:orientation="horizontal" >

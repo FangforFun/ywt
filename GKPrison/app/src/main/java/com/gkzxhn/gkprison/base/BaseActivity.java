@@ -1,9 +1,13 @@
 package com.gkzxhn.gkprison.base;
 
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -42,6 +46,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_base);
         ly_title_bar = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);

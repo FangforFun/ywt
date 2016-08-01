@@ -15,7 +15,6 @@ import android.support.v4.view.PagerAdapter;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +34,7 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
+import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
@@ -43,8 +43,11 @@ import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.gkzxhn.gkprison.userport.requests.GetUserInfo;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
@@ -65,13 +68,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * created by huangzhengneng on 2015/12/22
@@ -164,33 +172,40 @@ public class MainActivity extends BaseActivity {
                     // 用户信息为空
                     break;
                 case 4: // 获取用户信息失败   提示重新登录
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle("提示");
-                    builder.setMessage("获取用户信息失败，请重新登录");
-                    builder.setCancelable(false);
-                    builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            if(isRegisteredUser) {
-                                Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                SharedPreferences.Editor editor = sp.edit();
-                                editor.clear();
-                                editor.commit();
-                                startActivity(intent);
-                                NIMClient.getService(AuthService.class).logout();
-                            }else {
-                                Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-                        }
-                    });
-                    builder.create().show();
+                    reLogin();
                     break;
             }
         }
     };
+
+    /**
+     *  获取用户信息失败   提示重新登录
+     */
+    private void reLogin() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("提示");
+        builder.setMessage("获取用户信息失败，请重新登录");
+        builder.setCancelable(false);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if(isRegisteredUser) {
+                    Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    SharedPreferences.Editor editor = sp.edit();
+                    editor.clear();
+                    editor.commit();
+                    startActivity(intent);
+                    NIMClient.getService(AuthService.class).logout();
+                }else {
+                    Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
+            }
+        });
+        builder.create().show();
+    }
 
     @Override
     protected View initView() {
@@ -292,28 +307,7 @@ public class MainActivity extends BaseActivity {
             if(sp.getBoolean("has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
             }
-            times = getIntent().getStringExtra("times");
-            if (times != null){
-                final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
-                final String str = getXml();
-                new Thread(){
-                    @Override
-                    public void run() {
-                        RequestBody body = RequestBody.create(JSON, str);
-                        Request request = new Request.Builder().url(url).post(body).build();
-                        try {
-                            Response response = client.newCall(request).execute();
-                            String result = response.body().string();
-                            Log.d(TAG, result);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-                String type = "微信支付";
-                String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '" + times + "'";
-                db.execSQL(sql);
-            }
+            doWXPayController();
         }else {
             pagerList.clear();
             pagerList.add(new HomePager(this));
@@ -333,6 +327,34 @@ public class MainActivity extends BaseActivity {
                 .replace(R.id.fl_drawer, menuFragment, "MENU").commit();
         rl_home_menu.setOnClickListener(this);
         rl_message.setOnClickListener(this);
+    }
+
+    /**
+     * 更新微信支付订单
+     */
+    private void doWXPayController() {
+        times = getIntent().getStringExtra("times");
+        if (times != null){
+            final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
+            final String str = getXml();
+            new Thread(){
+                @Override
+                public void run() {
+                    RequestBody body = RequestBody.create(JSON, str);
+                    Request request = new Request.Builder().url(url).post(body).build();
+                    try {
+                        Response response = client.newCall(request).execute();
+                        String result = response.body().string();
+                        Log.d(TAG, result);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+            String type = "微信支付";
+            String sql = "update Cart set isfinish = 1,payment_type = '"+type+"' where time = '" + times + "'";
+            db.execSQL(sql);
+        }
     }
 
     /**
@@ -537,61 +559,68 @@ public class MainActivity extends BaseActivity {
         dialog.show();
     }
 
+    private CompositeSubscription mSubscriptions = new CompositeSubscription();
+
     /**
      * 获取用户信息
      */
     private void getUserInfo() {
         if(Utils.isNetworkAvailable()) {
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(Constants.URL_HEAD + "prisoner?phone=" + sp.getString("username", "") + "&uuid=" + sp.getString("password", ""))
+            Retrofit retrofit = new Retrofit.Builder()
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .baseUrl(Constants.URL_HEAD)
                     .build();
-            client.newCall(request).enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
-                }
+            GetUserInfo repo = retrofit.create(GetUserInfo.class);
+            Map<String, String> map = new HashMap<>();
+            map.put("uuid", sp.getString("password", ""));
+            mSubscriptions.add(
+                repo.getUserInfo(sp.getString("username", ""), map)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<PrisonerUserInfo>() {
+                        @Override
+                        public void onCompleted() {
 
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String result = response.body().string();
-                    Log.i("请求成功", result);
-                    parseUserInfoResult(result);
-                }
-            });
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
+                            Log.i(TAG, e.getMessage());
+                        }
+
+                        @Override
+                        public void onNext(PrisonerUserInfo prisonerUserInfo) {
+                            Log.i(TAG, prisonerUserInfo.getResult().toString());
+                            savePrisonerInfo(prisonerUserInfo);
+                            jail_id = sp.getInt("jail_id",0);
+                            handler.sendEmptyMessage(3);
+                        }
+                    })
+            );
         }else {
             showToastMsgShort("没有网络");
         }
     }
 
     /**
-     * 解析用户和囚犯关系信息
+     * 保存囚犯信息
+     * @param prisonerUserInfo
      */
-    private void parseUserInfoResult(String json) {
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            JSONArray jsonArray = jsonObject.getJSONArray("result");
-            for(int i = 0; i < jsonArray.length(); i++){
-                JSONObject jsonObject1 = jsonArray.getJSONObject(i);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putString("prison_term_started_at", jsonObject1.getString("prison_term_started_at"));
-                editor.putString("prison_term_ended_at", jsonObject1.getString("prison_term_ended_at"));
-                editor.putString("gender", jsonObject1.getString("gender"));
-                editor.putString("prisoner_name", jsonObject1.getString("name"));
-                editor.putInt("jail_id", jsonObject1.getInt("jail_id"));
-                editor.putString("prisoner_number", jsonObject1.getString("prisoner_number"));
-                editor.commit();
-                jail_id = sp.getInt("jail_id",0);
-               // getCommodity();// 获取商品
-            }
-//            if(jsonArray.length() == 0){
-//                handler.sendEmptyMessage(5);
-//            }else {
-                handler.sendEmptyMessage(3);
-//            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+    private void savePrisonerInfo(PrisonerUserInfo prisonerUserInfo) {
+        SPUtil.put(MainActivity.this, "prison_term_started_at",
+                prisonerUserInfo.getResult().get(0).getPrison_term_started_at());
+        SPUtil.put(MainActivity.this, "prison_term_ended_at",
+                prisonerUserInfo.getResult().get(0).getPrison_term_ended_at());
+        SPUtil.put(MainActivity.this, "gender",
+                prisonerUserInfo.getResult().get(0).getGender());
+        SPUtil.put(MainActivity.this, "prisoner_name",
+                prisonerUserInfo.getResult().get(0).getName());
+        SPUtil.put(MainActivity.this, "jail_id",
+                prisonerUserInfo.getResult().get(0).getJail_id());
+        SPUtil.put(MainActivity.this, "prisoner_number",
+                prisonerUserInfo.getResult().get(0).getPrisoner_number());
     }
 
     private class MyPagerAdapter extends PagerAdapter {
@@ -662,43 +691,6 @@ public class MainActivity extends BaseActivity {
         super.onClick(v);
     }
 
-    /**
-     * 获取商品列表
-     */
-    private void getCommodity(){
-        if(Utils.isNetworkAvailable()) {
-            new Thread() {
-                @Override
-                public void run() {
-                    Message msg = handler.obtainMessage();
-                    String token = sp.getString("token", "");
-                    try {
-                        url = Constants.URL_HEAD + "items?jail_id=" + jail_id + "&access_token=";
-                        String result = HttpRequestUtil.doHttpsGet(url + token);
-                        if(result.contains("StatusCode is ")){
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }else {
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                }
-            }.start();
-        }else {
-            showToastMsgShort("没有网络");
-        }
-    }
 
     /**
      *  解析商品列表
