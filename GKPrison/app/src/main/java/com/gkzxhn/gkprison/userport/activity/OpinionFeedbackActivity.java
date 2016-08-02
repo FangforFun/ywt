@@ -5,12 +5,9 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,26 +16,21 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
+import com.gkzxhn.gkprison.userport.bean.Opinion;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
+import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.google.gson.Gson;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * created by hzn 2016/1/16
@@ -46,6 +38,7 @@ import okhttp3.Response;
  */
 public class OpinionFeedbackActivity extends BaseActivity {
 
+    private static final java.lang.String TAG = "OpinionFeedbackActivity";
     private EditText et_content;
     private String opinion_content;
     private TextView surplus_count;
@@ -55,6 +48,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
     private String token;
     private boolean isFinish = false;
     private Handler handler = new Handler();
+    private SweetAlertDialog pDialog;
 
     @Override
     protected View initView() {
@@ -145,56 +139,73 @@ public class OpinionFeedbackActivity extends BaseActivity {
     /**
      * 发送意见反馈内容至服务端
      */
-    private void sendOpinionsToServer(final String mopinion_content) {
+    private void sendOpinionsToServer(String mopinion_content) {
         showDialog();
-        String opinion = "{\"feedback\":{\"contents\":\"" + mopinion_content + "\"}}";
-        OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), opinion);
-        Request request = new Request.Builder()
-                .url(Constants.URL_HEAD + Constants.FEEDBACK + token)
-                .post(body)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                commit_dialog.setMessage("提交成功，谢谢您的反馈，我们会做的更好。");
-                isFinish = true;
-                handler.postDelayed(dismiss_dialog_delay_task, 2000);
-            }
+        Opinion opinion = new Opinion();
+        Opinion.OpinionBean bean = opinion.new OpinionBean();
+        bean.setContents(mopinion_content);
+        opinion.setFeedback(bean);
+        Gson gson = new Gson();
+        String sendOpinion = gson.toJson(opinion);
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                commit_dialog.setMessage("糟糕，提交失败了，歇会儿再试吧！");
-                isFinish = false;
-                handler.postDelayed(dismiss_dialog_delay_task, 2000);
-            }
-        });
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiRequest feed = retrofit.create(ApiRequest.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset-utf-8"), sendOpinion);
+        feed.sendOpinion(token, body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<Object>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG, "send opinion failed : " + e.getMessage());
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                        pDialog.setTitleText("提交失败，请稍后再试！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onNext(Object o) {
+                        Log.i(TAG, "send opinion success : " + o.toString());
+                        pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
+                        pDialog.setTitleText("提交成功，感谢您的反馈！")
+                                .setConfirmText("确定")
+                                .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
+                        pDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                sweetAlertDialog.dismiss();
+                                OpinionFeedbackActivity.this.finish();
+                            }
+                        });
+                    }
+                });
     }
 
     /**
      * 进度对话框
      */
     private void showDialog(){
-        commit_dialog = new ProgressDialog(this);
-        commit_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        commit_dialog.setCancelable(false);
-        commit_dialog.setCanceledOnTouchOutside(false);
-        commit_dialog.setMessage("正在提交...");
-        commit_dialog.show();
+        pDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE)
+                .setTitleText("正在提交,请稍候...");
+        pDialog.setCancelable(false);
+        pDialog.show();
     }
-
-    /**
-     * 消去对话框任务
-     */
-    private Runnable dismiss_dialog_delay_task = new Runnable() {
-        @Override
-        public void run() {
-            commit_dialog.dismiss();
-            if(isFinish){
-                OpinionFeedbackActivity.this.finish();
-            }
-        }
-    };
 
     @Override
     public void onBackPressed() {

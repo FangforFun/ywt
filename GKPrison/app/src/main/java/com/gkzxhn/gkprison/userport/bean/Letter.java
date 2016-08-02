@@ -5,26 +5,28 @@ package com.gkzxhn.gkprison.userport.bean;
  */
 public class Letter {
 
-    private LetterBean message;
+    /**
+     * contents : 哈哈没事
+     * family_id : 33
+     * jail_id : 11
+     * theme : 主题:呵呵
+     */
 
-    public class LetterBean {
-        /**
-         * theme : 主题
-         * content : 信件内容
-         */
+    private MessageBean message;
 
-        private String theme;
+    public MessageBean getMessage() {
+        return message;
+    }
+
+    public void setMessage(MessageBean message) {
+        this.message = message;
+    }
+
+    public class MessageBean {
         private String contents;
-        private  int jail_id;
-        private  int family_id;
-
-        public int getFamily_id() {
-            return family_id;
-        }
-
-        public void setFamily_id(int family_id) {
-            this.family_id = family_id;
-        }
+        private int family_id;
+        private int jail_id;
+        private String theme;
 
         public String getContents() {
             return contents;
@@ -32,6 +34,14 @@ public class Letter {
 
         public void setContents(String contents) {
             this.contents = contents;
+        }
+
+        public int getFamily_id() {
+            return family_id;
+        }
+
+        public void setFamily_id(int family_id) {
+            this.family_id = family_id;
         }
 
         public int getJail_id() {
@@ -42,24 +52,23 @@ public class Letter {
             this.jail_id = jail_id;
         }
 
-        public void setTheme(String theme) {
-            this.theme = theme;
-        }
-
-
-
         public String getTheme() {
             return theme;
         }
 
+        public void setTheme(String theme) {
+            this.theme = theme;
+        }
+
         @Override
         public String toString() {
-            return "LetterBean{" +
-                    "theme='" + theme + '\'' +
-                    ", contents='" + contents + '\'' +
-                    ", jail_id=" + jail_id +
-                    ", family_id=" + family_id +
-                    '}';
+            return "{\"contents\":\"" + contents + "\", \"family_id\":" + family_id
+                    + ", \"jail_id\":" + jail_id + ", \"theme\": \"" + theme + "\"}";
         }
+    }
+
+    @Override
+    public String toString() {
+        return "{\"message\":" + message.toString() + "}";
     }
 }

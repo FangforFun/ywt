@@ -40,6 +40,7 @@ import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.pager.CanteenPager;
 import com.gkzxhn.gkprison.userport.pager.HomePager;
 import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -47,7 +48,6 @@ import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.gkzxhn.gkprison.userport.requests.GetUserInfo;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
@@ -571,7 +571,7 @@ public class MainActivity extends BaseActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(Constants.URL_HEAD)
                     .build();
-            GetUserInfo repo = retrofit.create(GetUserInfo.class);
+            ApiRequest repo = retrofit.create(ApiRequest.class);
             Map<String, String> map = new HashMap<>();
             map.put("uuid", sp.getString("password", ""));
             mSubscriptions.add(
@@ -660,15 +660,6 @@ public class MainActivity extends BaseActivity {
                 super.onBackPressed();
             }
         }
-    }
-
-    /**
-     * 获取测拉菜单Fragment对象
-     * @return
-     */
-    public MenuFragment getMenuFragment() {
-        return (MenuFragment) getSupportFragmentManager().findFragmentByTag(
-                "MENU");
     }
 
     @Override

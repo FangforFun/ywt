@@ -12,26 +12,18 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Letter;
-import com.gkzxhn.gkprison.userport.requests.WriteMessage;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
-import java.io.IOException;
-
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observer;
-import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -133,24 +125,27 @@ public class WriteMessageActivity extends BaseActivity {
         pDialog.show();
 
         Letter letter = new Letter();
-        Letter.LetterBean bean = letter.new LetterBean();
+        Letter.MessageBean bean = letter.new MessageBean();
         bean.setTheme(theme);
         bean.setContents(contents);
         bean.setJail_id(jail_id);
         bean.setFamily_id(family_id);
+        letter.setMessage(bean);
         gson = new Gson();
         String message = gson.toJson(letter);
 
         Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(Constants.URL_HEAD)
                 .build();
-        WriteMessage writeMessage = retrofit.create(WriteMessage.class);
-        writeMessage.sendMessage(jail_id, token, message)
+        ApiRequest writeMessage = retrofit.create(ApiRequest.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), message);
+        Log.i(TAG, message);
+        writeMessage.sendMessage(jail_id, token, body)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(new Observer<String>() {
+            .subscribe(new Observer<Object>() {
                 @Override
                 public void onCompleted() {
 
@@ -158,7 +153,7 @@ public class WriteMessageActivity extends BaseActivity {
 
                 @Override
                 public void onError(Throwable e) {
-                    Log.e(TAG, e.getMessage());
+                    Log.e(TAG, "send failed : " + e.getMessage());
                     pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
                     pDialog.setTitleText("提交失败，请稍后再试！")
                             .setConfirmText("确定")
@@ -172,8 +167,8 @@ public class WriteMessageActivity extends BaseActivity {
                 }
 
                 @Override
-                public void onNext(String result) {
-                    Log.i(TAG, result);
+                public void onNext(Object result) {
+                    Log.i(TAG, "send success : " + result.toString());
                     pDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.gplus_color_1));
                     pDialog.setTitleText("提交成功，感谢您的反馈！")
                             .setConfirmText("确定")
@@ -191,6 +186,7 @@ public class WriteMessageActivity extends BaseActivity {
 //        String url = Constants.URL_HEAD + "mail_boxes?jail_id=" + jail_id + "&access_token=";
 //        OkHttpClient client = new OkHttpClient();
 //        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), message);
+//        Log.i(TAG, sendMessage);
 //        Request request = new Request.Builder()
 //                .url(url + token)
 //                .post(body)
