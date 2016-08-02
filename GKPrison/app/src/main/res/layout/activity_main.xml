@@ -5,30 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <com.gkzxhn.gkprison.userport.view.LazyViewPager
-            android:id="@+id/layout_content"
+        <FrameLayout
+            android:id="@+id/fl_main_content"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1px"
-            android:background="@color/et_hint"/>
+            android:layout_height="match_parent"/>
 
         <RadioGroup
             android:id="@+id/rg_bottom_guide"
             android:layout_width="match_parent"
-            android:layout_gravity="bottom"
             android:background="@color/white"
             android:layout_height="@dimen/main_tab_height"
             android:gravity="center_vertical"
-            android:orientation="horizontal" >
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true">
 
             <RadioButton
                 android:id="@+id/rb_bottom_guide_home"
@@ -54,7 +47,13 @@
                 android:text="电子商务"
                 android:textSize="@dimen/main_tab_text_size"/>
         </RadioGroup>
-    </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1px"
+            android:background="@color/et_hint"
+            android:layout_above="@id/rg_bottom_guide"/>
+    </RelativeLayout>
 
     <!-- 抽屉的布局   方向取决于 android:layout_gravity="left" -->
     <FrameLayout

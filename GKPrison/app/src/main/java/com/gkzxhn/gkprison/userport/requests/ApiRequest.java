@@ -1,7 +1,9 @@
 package com.gkzxhn.gkprison.userport.requests;
 
+import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 
+import java.util.List;
 import java.util.Map;
 
 import okhttp3.RequestBody;
@@ -54,4 +56,12 @@ public interface ApiRequest {
             @Query("jail_id") int id,
             @Query("access_token") String access_token,
             @Body RequestBody msg);
+
+    /**
+     * 获取新闻
+     * @param jail_id
+     * @return
+     */
+    @GET("news")
+    Observable<List<News>> getNews(@Query("jail_id") int jail_id);
 }

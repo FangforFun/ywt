@@ -120,7 +120,7 @@ public class PrisonLoadingFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_prison_loading, null);
+        View view = View.inflate(context, R.layout.fragment_prison_loading, null);
         btn_login = (Button) view.findViewById(R.id.btn_login);
         et_username = (EditText) view.findViewById(R.id.et_username);
         et_password = (EditText) view.findViewById(R.id.et_password);

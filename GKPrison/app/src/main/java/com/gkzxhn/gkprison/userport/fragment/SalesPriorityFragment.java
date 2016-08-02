@@ -174,7 +174,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_sales_priority, null);
+        View view = View.inflate(context, R.layout.fragment_sales_priority, null);
         lv_sale = (ListView) view.findViewById(R.id.lv_sales);
         loadmore = View.inflate(context, R.layout.bottom, null);
         iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);

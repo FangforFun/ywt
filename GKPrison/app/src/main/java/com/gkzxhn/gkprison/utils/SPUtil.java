@@ -67,6 +67,8 @@ public class SPUtil {
             return sp.getFloat(key, (Float) defaultObject);
         }else if(defaultObject instanceof Long){
             return sp.getLong(key, (Long) defaultObject);
+        }else if(defaultObject instanceof Boolean){
+            return sp.getBoolean(key, (Boolean) defaultObject);
         }
         return null;
     }

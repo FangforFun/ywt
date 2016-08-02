@@ -47,7 +47,7 @@ public class MenuFragment extends BaseFragment{
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_menu, null);
+        View view = View.inflate(context, R.layout.fragment_menu, null);
         lv_home_menu = (ListView) view.findViewById(R.id.lv_home_menu);
         rl_header_info = (RelativeLayout) view.findViewById(R.id.rl_header_info);
         iv_user_icon = (ImageView) view.findViewById(R.id.iv_user_icon);
@@ -160,18 +160,6 @@ public class MenuFragment extends BaseFragment{
                 }
             }
         });
-    }
-
-    /**
-     * 返回view视图
-     * @return
-     */
-    public View getContentView(){
-        if(view != null) {
-            return view;
-        }else {
-            return null;
-        }
     }
 
     private class MenuAdapter extends BaseAdapter {

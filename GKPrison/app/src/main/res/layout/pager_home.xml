@@ -13,11 +13,12 @@
             android:layout_height="match_parent"
             android:background="@color/bg">
 
-            <RelativeLayout
+            <include
                 android:id="@+id/rl_carousel"
+                layout="@layout/layout_roll_view"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/roll_height" >
-            </RelativeLayout>
+            </include>
 
             <GridView
                 android:id="@+id/gv_home_options"

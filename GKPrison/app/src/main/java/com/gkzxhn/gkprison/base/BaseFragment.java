@@ -16,7 +16,6 @@ import com.umeng.analytics.MobclickAgent;
  */
 public abstract class BaseFragment extends Fragment {
 
-    public View view;
     public Context context;
 
     @Override
@@ -29,7 +28,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = initView();
+        View view = initView();
         return view;
     }
 

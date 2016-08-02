@@ -157,7 +157,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_all_classification, null);
+        View view = View.inflate(context, R.layout.fragment_all_classification, null);
         lv_allclass = (ListView) view.findViewById(R.id.lv_allclassification);
         loadmore = View.inflate(context, R.layout.bottom, null);
         iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);

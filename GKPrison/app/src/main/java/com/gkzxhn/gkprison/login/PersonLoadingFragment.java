@@ -262,7 +262,7 @@ public class PersonLoadingFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_person_loading, null);
+        View view = View.inflate(context, R.layout.fragment_person_loading, null);
         bt_register = (Button) view.findViewById(R.id.bt_register);
         btn_login = (Button) view.findViewById(R.id.btn_login);
         et_login_username = (EditText) view.findViewById(R.id.et_login_username);

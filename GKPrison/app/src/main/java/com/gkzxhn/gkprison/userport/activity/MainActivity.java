@@ -11,13 +11,13 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.PagerAdapter;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BasePager;
+import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
@@ -36,13 +36,12 @@ import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
+import com.gkzxhn.gkprison.userport.fragment.CanteenBaseFragment;
+import com.gkzxhn.gkprison.userport.fragment.HomeFragment;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
-import com.gkzxhn.gkprison.userport.pager.CanteenPager;
-import com.gkzxhn.gkprison.userport.pager.HomePager;
-import com.gkzxhn.gkprison.userport.pager.RemoteMeetPager;
+import com.gkzxhn.gkprison.userport.fragment.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
-import com.gkzxhn.gkprison.userport.view.LazyViewPager;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
@@ -68,6 +67,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -110,32 +111,36 @@ import rx.subscriptions.CompositeSubscription;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "MainActivity";
+    public static final MediaType JSON = MediaType.parse("application/xml; charset=utf-8");
+
+    @BindView(R.id.fl_main_content) FrameLayout fl_main_content;// 主布局内容
+    @BindView(R.id.rg_bottom_guide) RadioGroup rg_bottom_guide; // 底部导航栏组
+    @BindView(R.id.rb_bottom_guide_home) RadioButton rb_bottom_guide_home; // 首页
+    @BindView(R.id.rb_bottom_guide_visit) RadioButton rb_bottom_guide_visit; // 探监
+    @BindView(R.id.rb_bottom_guide_canteen) RadioButton rb_bottom_guide_canteen; // 电子商务
+    @BindView(R.id.drawer_layout) CustomDrawerLayout drawerLayout; // 侧拉菜单
+    @BindView(R.id.fl_drawer) FrameLayout fl_drawer; // 侧拉菜单底层帧布局
+
+    private List<BaseFragment> fragments = new ArrayList<>();
+    private FragmentManager manager;
+    private FragmentTransaction transaction = null;
+    private HomeFragment homeFragment = null;
+    private RemoteMeetFragment remoteMeetFragment = null;
+    private CanteenBaseFragment canteenBaseFragment = null;
+
     private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
-    private LazyViewPager home_viewPager;
-    private RadioGroup rg_bottom_guide; // 底部导航栏组
-    private List<BasePager> pagerList;
-    private RadioButton rb_bottom_guide_home; // 首页
-    private RadioButton rb_bottom_guide_visit; // 探监
-    private RadioButton rb_bottom_guide_canteen; // 电子商务
     private long mExitTime;//add by hzn 退出按键时间间隔
-    private CustomDrawerLayout drawerLayout; // 侧拉菜单
-    private ActionBarDrawerToggle toggle;
-    private FrameLayout fl_drawer; // 侧拉菜单底层帧布局
-    private SharedPreferences sp;
     private boolean isRegisteredUser; // 是否注册登录用户
-    private MyPagerAdapter adapter;
+    private int jail_id;  // 监狱id
+    private ActionBarDrawerToggle toggle;
     private String times;
     private AutoCompleteTextView actv_prison_choose; // 监狱选择
     private AutoTextAdapater autoTextAdapater;
     private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map; // 服务器返回的监狱列表存储需要的集合
-    private int jail_id;  // 监狱id
-    private String url; // 商品列表url
-    OkHttpClient client = new OkHttpClient();
-    public static final MediaType JSON
-            = MediaType.parse("application/xml; charset=utf-8");
+    private OkHttpClient client = new OkHttpClient();
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -150,22 +155,22 @@ public class MainActivity extends BaseActivity {
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
                             for (int i = 0;i < commodityList.size();i++){
-                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("+commodityList.get(i).getId()+",'"+commodityList.get(i).getTitle()+"','"+commodityList.get(i).getDescription()+"','"+ commodityList.get(i).getPrice()+"','"+ commodityList.get(i).getAvatar_url()+"',"+commodityList.get(i).getCategory_id()+","+commodityList.get(i).getRanking()+")";
+                                String sql1 = "insert into Items (id,title,description,price,avatar_url,category_id,ranking) values ("
+                                        + commodityList.get(i).getId() + ",'" + commodityList.get(i).getTitle() + "','"
+                                        + commodityList.get(i).getDescription() + "','" + commodityList.get(i).getPrice()
+                                        + "','" + commodityList.get(i).getAvatar_url() + "'," + commodityList.get(i).getCategory_id()
+                                        + "," + commodityList.get(i).getRanking() + ")";
                                 db.execSQL(sql1);
                             }
                         }
                     }else if (m.equals("error")){
-                        Toast.makeText(getApplicationContext(),"同步数据失败",Toast.LENGTH_SHORT).show();
+                        showToastMsgShort("同步数据失败");
                     }
                     break;
                 case 2:// 无账号快捷登录监狱选择没有网络
                     showToastMsgShort("没有网络,请检查网络设置");
                     break;
                 case 3:
-                    pagerList.clear();
-                    pagerList.add(new HomePager(MainActivity.this));
-                    pagerList.add(new RemoteMeetPager(MainActivity.this));
-                    pagerList.add(new CanteenPager(MainActivity.this));
                     layoutMain();
                     break;
                 case 5:
@@ -192,9 +197,7 @@ public class MainActivity extends BaseActivity {
                 if(isRegisteredUser) {
                     Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.clear();
-                    editor.commit();
+                    SPUtil.clear(MainActivity.this);
                     startActivity(intent);
                     NIMClient.getService(AuthService.class).logout();
                 }else {
@@ -210,28 +213,39 @@ public class MainActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_main, null);
-        home_viewPager = (LazyViewPager) view.findViewById(R.id.layout_content);
-        rg_bottom_guide = (RadioGroup) view.findViewById(R.id.rg_bottom_guide);
-        rb_bottom_guide_home = (RadioButton) view.findViewById(R.id.rb_bottom_guide_home);
-        rb_bottom_guide_visit = (RadioButton) view.findViewById(R.id.rb_bottom_guide_visit);
-        rb_bottom_guide_canteen = (RadioButton) view.findViewById(R.id.rb_bottom_guide_canteen);
-        drawerLayout = (CustomDrawerLayout) view.findViewById(R.id.drawer_layout);
-        fl_drawer = (FrameLayout) view.findViewById(R.id.fl_drawer);
-        Drawable[] drawables = rb_bottom_guide_home.getCompoundDrawables();
-        drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
-        rb_bottom_guide_home.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-        Drawable[] drawables2 = rb_bottom_guide_visit.getCompoundDrawables();
-        drawables2[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
-        rb_bottom_guide_visit.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
-        Drawable[] drawables3 = rb_bottom_guide_canteen.getCompoundDrawables();
-        drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5), getResources().getDimensionPixelSize(R.dimen.home_tab_width), getResources().getDimensionPixelSize(R.dimen.home_tab_height));
-        rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
+        ButterKnife.bind(this, view);
+        adjustmentIcon(); // 调整底部导航栏图标
         return view;
     }
 
+    /**
+     * 调整底部导航栏图标
+     */
+    private void adjustmentIcon() {
+        Drawable[] drawables = rb_bottom_guide_home.getCompoundDrawables();
+        drawables[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_width),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_height));
+        rb_bottom_guide_home.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+        Drawable[] drawables2 = rb_bottom_guide_visit.getCompoundDrawables();
+        drawables2[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_width),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_height));
+        rb_bottom_guide_visit.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
+        Drawable[] drawables3 = rb_bottom_guide_canteen.getCompoundDrawables();
+        drawables3[1].setBounds(0, DensityUtil.dip2px(getApplicationContext(), 5),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_width),
+                getResources().getDimensionPixelSize(R.dimen.home_tab_height));
+        rb_bottom_guide_canteen.setCompoundDrawables(drawables3[0], drawables3[1], drawables3[2], drawables3[3]);
+    }
+
+    /**
+     * 更新上次会见时间
+     * @param event
+     */
     public void onEvent(MeetingTimeEvent event){
-        RemoteMeetPager remoteMeetPager = (RemoteMeetPager) pagerList.get(1);
-        remoteMeetPager.setLastMeetingTime();
+        RemoteMeetFragment remoteMeetFragment = (RemoteMeetFragment) fragments.get(1);
+        remoteMeetFragment.setLastMeetingTime();
     }
 
     /**
@@ -285,7 +299,8 @@ public class MainActivity extends BaseActivity {
                     Log.i(TAG, "MainActivity重新登录异常" + throwable.getMessage());
                 }
             };
-            LoginInfo info = new LoginInfo(sp.getString("token", ""), sp.getString("token", "")); // config...
+            String mToken = SPUtil.get(MainActivity.this, "token", "") + "";
+            LoginInfo info = new LoginInfo(mToken, mToken); // config...
             NIMClient.getService(AuthService.class).login(info)
                     .setCallback(callback);
         }
@@ -295,36 +310,43 @@ public class MainActivity extends BaseActivity {
     protected void initData() {
         StatusCode statusCode = NIMClient.getStatus();
         Log.i("云信id状态...", statusCode.toString());
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        isRegisteredUser = (Boolean) SPUtil.get(MainActivity.this, "isRegisteredUser", false);
         if(isRegisteredUser && statusCode != StatusCode.LOGINED && statusCode != StatusCode.KICKOUT){
             // 如果是注册用户并且不是被其他端踢掉的未上线就重新登录
             handler.post(reLoginTask);
         }
-        pagerList = new ArrayList<>();
         if(isRegisteredUser) {
             getUserInfo();// 获取当前登录用户的信息
-            if(sp.getBoolean("has_new_notification", false)){
+            if((Boolean)SPUtil.get(MainActivity.this, "has_new_notification", false)){
                 view_red_point.setVisibility(View.VISIBLE);
             }
             doWXPayController();
         }else {
-            pagerList.clear();
-            pagerList.add(new HomePager(this));
+            manager = getSupportFragmentManager();
+            transaction = manager.beginTransaction();
+            if(homeFragment.isAdded()){
+                transaction.remove(homeFragment);
+            }
+            transaction.add(R.id.fl_main_content, homeFragment);
+            transaction.commit();
             prison_map = new HashMap<>();
             showPrisonDialog();// 弹出监狱选择框
         }
         if(statusCode == StatusCode.KICKOUT){
             showKickoutDialog();// 其他设备登录
         }
-        setMessageVisibility(View.VISIBLE);
+        setMessageVisibility(View.VISIBLE); // 显示系统消息图标
+
         setSupportActionBar(tool_bar);
         toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
+
+        // 侧拉栏
         MenuFragment menuFragment = new MenuFragment();
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_drawer, menuFragment, "MENU").commit();
+
         rl_home_menu.setOnClickListener(this);
         rl_message.setOnClickListener(this);
     }
@@ -361,37 +383,24 @@ public class MainActivity extends BaseActivity {
      * 布局
      */
     private void layoutMain() {
-        adapter = new MyPagerAdapter();
-        home_viewPager.setAdapter(adapter);
+        initFragment();
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
                     case R.id.rb_bottom_guide_home: // 首页
-                        home_viewPager.setCurrentItem(0);
-                        setTitle("首页");
-                        setMenuVisibility(View.VISIBLE);
-                        setActionBarGone(View.VISIBLE);
-                        setMessageVisibility(View.VISIBLE);
+                        switchUI(0, "首页", View.VISIBLE, View.VISIBLE, View.VISIBLE);
                         break;
                     case R.id.rb_bottom_guide_visit: // 远程会见
                         if (isRegisteredUser) {
-                            home_viewPager.setCurrentItem(1);
-                            setTitle("探监");
-                            setMenuVisibility(View.GONE);
-                            setActionBarGone(View.VISIBLE);
-                            setMessageVisibility(View.GONE);
+                            switchUI(1, "探监", View.GONE, View.VISIBLE, View.GONE);
                         } else {
                             showToastMsgShort(getString(R.string.enable_logined));
                         }
                         break;
                     case R.id.rb_bottom_guide_canteen: // 小卖部
                         if (isRegisteredUser) {
-                            home_viewPager.setCurrentItem(2);
-                            setTitle("电子商务");
-                            setMenuVisibility(View.GONE);
-                            setActionBarGone(View.VISIBLE);
-                            setMessageVisibility(View.GONE);
+                            switchUI(2, "电子商务", View.GONE, View.VISIBLE, View.GONE);
                         } else {
                             showToastMsgShort(getString(R.string.enable_logined));
                         }
@@ -400,40 +409,75 @@ public class MainActivity extends BaseActivity {
             }
         });
         rg_bottom_guide.check(R.id.rb_bottom_guide_home); // 默认选择首页
-        home_viewPager.setOnPageChangeListener(new LazyViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+    }
 
+    /**
+     * 切换并设置相关ui
+     * @param index
+     * @param title
+     * @param menuVisibility
+     * @param ActionBarVisibility
+     * @param messageVisibility
+     */
+    private void switchUI(int index, String title, int menuVisibility,
+                          int ActionBarVisibility, int messageVisibility) {
+        switchFragment(index); // 切换fragment
+        setTitle(title);// 设置标题
+        setMenuVisibility(menuVisibility); // 设置菜单图标
+        setActionBarGone(ActionBarVisibility); // 设置标题栏
+        setMessageVisibility(messageVisibility);// 设置消息图标
+    }
+
+    /**
+     * 切换fragment
+     * @param index 索引
+     */
+    private void switchFragment(int index) {
+        transaction = manager.beginTransaction();
+        for (int i = 0; i < fragments.size(); i++) {
+            if(index == i) {
+                transaction.show(fragments.get(index));
+            }else {
+                transaction.hide(fragments.get(i));
             }
+        }
+        transaction.commit();
+    }
 
-            @Override
-            public void onPageSelected(int position) {
-                if (position == 0) {
-                    rg_bottom_guide.check(R.id.rb_bottom_guide_home);
-                    setTitle("首页");
-                    setMenuVisibility(View.VISIBLE);
-                    setActionBarGone(View.VISIBLE);
-                    setMessageVisibility(View.VISIBLE);
-                } else if (position == 1) {
-                    rg_bottom_guide.check(R.id.rb_bottom_guide_visit);
-                    setTitle("探监");
-                    setMenuVisibility(View.GONE);
-                    setActionBarGone(View.VISIBLE);
-                    setMessageVisibility(View.GONE);
-                } else if (position == 2) {
-                    rg_bottom_guide.check(R.id.rb_bottom_guide_canteen);
-                    setTitle("电子商务");
-                    setMenuVisibility(View.GONE);
-                    setActionBarGone(View.VISIBLE);
-                    setMessageVisibility(View.GONE);
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
+    /**
+     * 初始化fragment
+     */
+    private void initFragment() {
+        fragments.clear();
+        manager = getSupportFragmentManager();
+        transaction = manager.beginTransaction();
+        if(homeFragment == null) {
+            homeFragment = new HomeFragment();
+            fragments.add(homeFragment);
+        }
+        if(homeFragment.isAdded()){
+            transaction.remove(homeFragment);
+        }
+        transaction.add(R.id.fl_main_content, homeFragment);
+        if(remoteMeetFragment == null) {
+            remoteMeetFragment = new RemoteMeetFragment();
+            fragments.add(remoteMeetFragment);
+        }
+        if(remoteMeetFragment.isAdded()){
+            transaction.remove(remoteMeetFragment);
+        }
+        transaction.add(R.id.fl_main_content, remoteMeetFragment);
+        if(canteenBaseFragment == null) {
+            canteenBaseFragment = new CanteenBaseFragment();
+            fragments.add(canteenBaseFragment);
+        }
+        if(remoteMeetFragment.isAdded()){
+            transaction.remove(remoteMeetFragment);
+        }
+        transaction.add(R.id.fl_main_content, canteenBaseFragment);
+        transaction.show(homeFragment).hide(remoteMeetFragment)
+                .hide(canteenBaseFragment);
+        transaction.commitAllowingStateLoss();
     }
 
     /**
@@ -450,9 +494,7 @@ public class MainActivity extends BaseActivity {
         actv_prison_choose.setThreshold(1);
         actv_prison_choose.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -461,9 +503,7 @@ public class MainActivity extends BaseActivity {
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         });
         final AlertDialog dialog = builder.create();
         bt_ok.setOnClickListener(new View.OnClickListener() {
@@ -476,9 +516,7 @@ public class MainActivity extends BaseActivity {
                 } else {
                     if (prison_map.containsKey(content)) {
                         int jail_id = prison_map.get(content);
-                        SharedPreferences.Editor editor = sp.edit();
-                        editor.putInt("jail_id", jail_id);
-                        editor.commit();
+                        SPUtil.put(MainActivity.this, "jail_id", jail_id);
                         dialog.dismiss();
                         layoutMain();// 布局
                     } else {
@@ -541,16 +579,15 @@ public class MainActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("账号下线提示");
         builder.setCancelable(false);
-        builder.setMessage("您的账号" + sp.getString("token", "") + "在其他设备登录，点击重新登录。");
+        builder.setMessage("您的账号" + SPUtil.get(MainActivity.this, "token", "") + "在其他设备登录，点击重新登录。");
         builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.putBoolean("is_first", false); // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
-                editor.commit();
+                SPUtil.clear(MainActivity.this);
+                // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
+                SPUtil.put(MainActivity.this, "is_first", false);
                 startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();
             }
@@ -573,16 +610,13 @@ public class MainActivity extends BaseActivity {
                     .build();
             ApiRequest repo = retrofit.create(ApiRequest.class);
             Map<String, String> map = new HashMap<>();
-            map.put("uuid", sp.getString("password", ""));
+            map.put("uuid", (String) SPUtil.get(MainActivity.this, "password", ""));
             mSubscriptions.add(
-                repo.getUserInfo(sp.getString("username", ""), map)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
+                repo.getUserInfo((String) SPUtil.get(MainActivity.this, "username", ""), map)
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<PrisonerUserInfo>() {
                         @Override
-                        public void onCompleted() {
-
-                        }
+                        public void onCompleted() {}
 
                         @Override
                         public void onError(Throwable e) {
@@ -594,7 +628,7 @@ public class MainActivity extends BaseActivity {
                         public void onNext(PrisonerUserInfo prisonerUserInfo) {
                             Log.i(TAG, prisonerUserInfo.getResult().toString());
                             savePrisonerInfo(prisonerUserInfo);
-                            jail_id = sp.getInt("jail_id",0);
+                            jail_id = (int) SPUtil.get(MainActivity.this, "jail_id",0);
                             handler.sendEmptyMessage(3);
                         }
                     })
@@ -621,31 +655,6 @@ public class MainActivity extends BaseActivity {
                 prisonerUserInfo.getResult().get(0).getJail_id());
         SPUtil.put(MainActivity.this, "prisoner_number",
                 prisonerUserInfo.getResult().get(0).getPrisoner_number());
-    }
-
-    private class MyPagerAdapter extends PagerAdapter {
-
-        @Override
-        public int getCount() {
-            return pagerList.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object o) {
-            return (view == o);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(pagerList.get(position).getView());
-            pagerList.get(position).initData();
-            return pagerList.get(position).getView();
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((View) object);
-        }
     }
 
     @Override

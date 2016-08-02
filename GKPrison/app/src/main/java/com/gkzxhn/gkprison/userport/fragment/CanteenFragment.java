@@ -88,7 +88,6 @@ public class CanteenFragment extends BaseFragment {
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
     private Bundle data;
-    private View image_buycar;
     private int count = 0;
     private String ip;
     private BadgeView badgeView;
@@ -114,6 +113,7 @@ public class CanteenFragment extends BaseFragment {
     private int jail_id;
     private FrameLayout salsechoose;
     private AllchooseAdapter allchooseAdapter;
+    private View image_buycar;
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -197,7 +197,7 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        view = View.inflate(context, R.layout.fragment_canteen, null);
+        View view = View.inflate(context, R.layout.fragment_canteen, null);
         settlement = (Button) view.findViewById(R.id.bt_shopping_cart_commit);
         rl_allclass = (RelativeLayout) view.findViewById(R.id.rl_allclass);
         rl_sales = (RelativeLayout) view.findViewById(R.id.rl_sales);
@@ -222,6 +222,7 @@ public class CanteenFragment extends BaseFragment {
         badgeView.setTextSize(6);
         badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
         badgeView.setBadgeGravity(Gravity.TOP | Gravity.RIGHT);
+        image_buycar = view.findViewById(R.id.image_buycar);
         return view;
     }
 
@@ -246,7 +247,6 @@ public class CanteenFragment extends BaseFragment {
         }
         data = new Bundle();
         data.putString("times", times);
-        View image_buycar = view.findViewById(R.id.image_buycar);
         EventBus.getDefault().register(this);
         sp_allclass.setEnabled(true);
         sp_allclass.setFocusable(true);

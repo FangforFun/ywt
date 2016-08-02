@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.pager;
+package com.gkzxhn.gkprison.userport.fragment;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -8,7 +8,6 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,9 +21,8 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BasePager;
+import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -44,10 +42,13 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
- * Created by hzn on 2015/12/3.
- * 探监pager
+ * author:huangzhengneng
+ * email:943852572@qq.com
+ * date: 2016/8/2.
+ * function:
  */
-public class RemoteMeetPager extends BasePager {
+
+public class RemoteMeetFragment extends BaseFragment implements View.OnClickListener{
 
     private RelativeLayout rl_meeting;// 会见
     private RelativeLayout rl_visit;// 探监
@@ -83,9 +84,6 @@ public class RemoteMeetPager extends BasePager {
     private String url = Constants.URL_HEAD + "families/";
     private int vedionum;
 
-    public RemoteMeetPager(Context context) {
-        super(context);
-    }
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -206,11 +204,9 @@ public class RemoteMeetPager extends BasePager {
         }
     };
 
-
-
     @Override
-    public View initView() {
-        view = View.inflate(context, R.layout.pager_remote_meeting, null);
+    protected View initView() {
+        View view = View.inflate(context, R.layout.pager_remote_meeting, null);
         tv_meeting_request_name = (TextView) view.findViewById(R.id.tv_meeting_request_name);
         tv_meeting_request_id_num = (TextView) view.findViewById(R.id.tv_meeting_request_id_num);
         tv_meeting_request_relationship = (TextView) view.findViewById(R.id.tv_meeting_request_relationship);
@@ -241,7 +237,7 @@ public class RemoteMeetPager extends BasePager {
     }
 
     @Override
-    public void initData() {
+    protected void initData() {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         id_num = sp.getString("password", "");
         family_id = sp.getInt("family_id", 1);
@@ -383,7 +379,6 @@ public class RemoteMeetPager extends BasePager {
 
     @Override
     public void onClick(View v) {
-        super.onClick(v);
         switch (v.getId()){
             case R.id.bt_commit_request:
                 if(Utils.isFastClick()){

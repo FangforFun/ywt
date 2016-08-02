@@ -49,7 +49,7 @@ public class IntellingentSortingFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        view = View.inflate(context,R.layout.fragment_intellingent_sorting,null);
+        View view = View.inflate(context,R.layout.fragment_intellingent_sorting,null);
         lv_intelling = (ListView)view.findViewById(R.id.lv_intllingent);
         return view;
     }
