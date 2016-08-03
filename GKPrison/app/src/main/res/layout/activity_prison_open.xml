@@ -4,12 +4,6 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/rl_carousel"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="160dp">-->
-    <!--</RelativeLayout>-->
-
     <ListView
         android:id="@+id/lv_prison_open"
         android:layout_width="match_parent"

@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
@@ -62,32 +63,50 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * created by hzn 2015.12.22
  * 平板端会见列表页面
  */
 public class DateMeetingListActivity extends BaseActivity implements CalendarCard.OnCellClickListener {
 
-    private ViewPager mViewPager;
+    @BindView(R.id.pb_loading)
+    ProgressBar pb_loading;
+    @BindView(R.id.tv_loading)
+    TextView tv_loading;
+    @BindView(R.id.ll_loading)
+    LinearLayout ll_loading;
+    @BindView(R.id.btnPreMonth)
+    ImageButton preImgBtn;
+    @BindView(R.id.btnNextMonth)
+    ImageButton nextImgBtn;
+    @BindView(R.id.tvCurrentMonth)
+    TextView monthText;
+    @BindView(R.id.vp_calendar)
+    ViewPager mViewPager;
+    @BindView(R.id.ll_calendar)
+    LinearLayout ll_calendar;
+    @BindView(R.id.tv_meeting_num)
+    TextView tv_meeting_num;
+    @BindView(R.id.lv_meeting_list)
+    ListView lv_meeting_list;
+    @BindView(R.id.tv_no_list)
+    TextView tv_no_list;
+    @BindView(R.id.fl_transparent)
+    FrameLayout fl_transparent;
+    @BindView(R.id.scrollView)
+    ScrollView scrollView;
     private int mCurrentIndex = 498;
     private CalendarCard[] mShowViews;
     private CalendarViewAdapter<CalendarCard> adapter;
     private SildeDirection mDirection = SildeDirection.NO_SILDE;
-    private ListView lv_meeting_list;
     private MeetingListAdapter meetingListAdapter;
-    private LinearLayout ll_calendar;
-    private ImageButton preImgBtn, nextImgBtn;
-    private TextView monthText;
     private long mExitTime;//add by hzn 退出按键时间间隔
-    private LinearLayout ll_loading;// 刷新
-    private FrameLayout fl_transparent;// 防暴力点击帧布局
-    private ProgressBar pb_loading;
-    private TextView tv_loading;
     private CalendarCard[] views;
-    private ScrollView scrollView;
     private SharedPreferences sp;
     private CustomDate mDate;
-    private TextView tv_no_list;
     private RotateAnimation ra;
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
@@ -128,13 +147,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     try {
                         JSONObject jsonObject = new JSONObject(cancel_result);
                         int result_code = jsonObject.getInt("code");
-                        if(result_code == 200){
+                        if (result_code == 200) {
                             //成功
 //                            showToastMsgShort("取消成功");
                             progressDialog.setMessage("取消成功");
                             handler.postDelayed(dismissProgressDialogTask, 1500);
                             meetingListAdapter.notifyDataSetChanged();
-                        }else {
+                        } else {
                             // 失败 code为500
                             showToastMsgLong("取消失败，请稍后再试");
                         }
@@ -184,7 +203,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         meetingInfos.clear();
         try {
             JSONArray jsonArray = new JSONArray(result);
-            for (int i = 0; i < jsonArray.length(); i++){
+            for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonObject = jsonArray.getJSONObject(i);
                 MeetingInfo meetingInfo = new MeetingInfo();
                 meetingInfo.setId(jsonObject.getInt("id"));
@@ -228,25 +247,15 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     protected View initView() {
         screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
         View view;
-        if(screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
+        if (screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
             view = View.inflate(this, R.layout.activity_date_meeting_list, null);
-        }else {
+            ButterKnife.bind(this, view);
+        } else {
             view = View.inflate(this, R.layout.activity_date_meeting_list_tablet, null);
+            ButterKnife.bind(this, view);
         }
-        mViewPager = (ViewPager) view.findViewById(R.id.vp_calendar);
-        preImgBtn = (ImageButton) view.findViewById(R.id.btnPreMonth);
-        nextImgBtn = (ImageButton) view.findViewById(R.id.btnNextMonth);
-        monthText = (TextView) view.findViewById(R.id.tvCurrentMonth);
-        ll_calendar = (LinearLayout) view.findViewById(R.id.ll_calendar);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, DensityUtil.getScreenWidthHeight(this)[0]);
         ll_calendar.setLayoutParams(params);
-        lv_meeting_list = (ListView) view.findViewById(R.id.lv_meeting_list);
-        ll_loading = (LinearLayout) view.findViewById(R.id.ll_loading);
-        pb_loading = (ProgressBar) view.findViewById(R.id.pb_loading);
-        tv_loading = (TextView) view.findViewById(R.id.tv_loading);
-        scrollView = (ScrollView) view.findViewById(R.id.scrollView);
-        tv_no_list = (TextView) view.findViewById(R.id.tv_no_list);
-        fl_transparent = (FrameLayout) view.findViewById(R.id.fl_transparent);
         return view;
     }
 
@@ -274,7 +283,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         Date date = new Date(currentDate);
         final String formatDate = format.format(date);
-        if(code == StatusCode.LOGINED) {// 已登录状态才刷新数据
+        if (code == StatusCode.LOGINED) {// 已登录状态才刷新数据
             requestData(formatDate);// 请求数据
         }
         Log.i("时间", (CalendarCard.mShowDate.getDay() + "") + "---" + (formatDate.substring(formatDate.length() - 3, formatDate.length())));
@@ -303,17 +312,17 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      * 判断当前云信id状态
      */
     private void checkStatusCode(StatusCode code) {
-        if(code == StatusCode.KICKOUT){// 被其他端挤掉
+        if (code == StatusCode.KICKOUT) {// 被其他端挤掉
             showKickoutDialog();
-        }else if(code == StatusCode.CONNECTING){// 正在连接
+        } else if (code == StatusCode.CONNECTING) {// 正在连接
             showToastMsgShort("正在连接...");
-        }else if(code == StatusCode.LOGINING){// 正在登录
+        } else if (code == StatusCode.LOGINING) {// 正在登录
             showToastMsgShort("正在登录...");
-        }else if(code == StatusCode.NET_BROKEN){ // 网络连接已断开
+        } else if (code == StatusCode.NET_BROKEN) { // 网络连接已断开
             showToastMsgLong("网络连接已断开，请检查网络设置");
-        }else if(code == StatusCode.UNLOGIN){// 未登录
+        } else if (code == StatusCode.UNLOGIN) {// 未登录
             showToastMsgShort("未登录");
-        }else {
+        } else {
 
         }
     }
@@ -540,7 +549,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             holder.tv_meeting_name.setText(meetingInfos.get(position).getName());
             String meeting_time_start = meetingInfos.get(position).getMeeting_started();
             String meeting_time_finished = meetingInfos.get(position).getMeeting_finished();
-            Log.i("会见时间段",meeting_time_start.split(" ")[1].substring(0, meeting_time_start.split(" ")[1].lastIndexOf(":")) + "-" + meeting_time_finished.split(" ")[1].substring(0, meeting_time_finished.split(" ")[1].lastIndexOf(":")));
+            Log.i("会见时间段", meeting_time_start.split(" ")[1].substring(0, meeting_time_start.split(" ")[1].lastIndexOf(":")) + "-" + meeting_time_finished.split(" ")[1].substring(0, meeting_time_finished.split(" ")[1].lastIndexOf(":")));
             holder.tv_meeting_time.setText(meeting_time_start.split(" ")[1].substring(0, meeting_time_start.split(" ")[1].lastIndexOf(":")) + "-" + meeting_time_finished.split(" ")[1].substring(0, meeting_time_finished.split(" ")[1].lastIndexOf(":")));
             holder.tv_meeting_prison_area.setText(meetingInfos.get(position).getPrison_area());
             holder.iv_delete.setOnClickListener(new View.OnClickListener() {

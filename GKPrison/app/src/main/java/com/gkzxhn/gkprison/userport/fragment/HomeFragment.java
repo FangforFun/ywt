@@ -27,7 +27,7 @@ import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonIntroductionActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonOpenActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
-import com.gkzxhn.gkprison.userport.activity.VisitingServiceActivity;
+import com.gkzxhn.gkprison.userport.activity.WorkDynamicActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
@@ -191,7 +191,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                         focus_news_list = new ArrayList<>();
                         allnews = new ArrayList<>();
                         for (News news : newses) {
-                            Log.i(TAG, "news : " + news.toString());
+//                            Log.i(TAG, "news : " + news.toString());
                             if(news.getIsFocus()){
                                 focus_news_list.add(news);
                             }
@@ -492,7 +492,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                                     context.startActivity(intent);
                                     break;
                                 case 3:
-                                    intent = new Intent(context, VisitingServiceActivity.class);
+                                    intent = new Intent(context, WorkDynamicActivity.class);
                                     context.startActivity(intent);
                                     break;
                                 case 5:

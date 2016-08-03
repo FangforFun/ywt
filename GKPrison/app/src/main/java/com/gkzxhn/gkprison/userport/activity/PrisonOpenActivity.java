@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Html;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -24,8 +23,11 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.News;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.squareup.picasso.Picasso;
 
@@ -38,22 +40,28 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * 狱务公开页面
  */
 public class PrisonOpenActivity extends BaseActivity {
 
-    private ListView lv_prison_open;
-    //    private RelativeLayout rl_carousel;
+    private static final java.lang.String TAG = "PrisonOpenActivity";
+    @BindView(R.id.lv_prison_open) ListView lv_prison_open;
     private RollViewPager vp_carousel;
     private View layout_roll_view;
     private LinearLayout dots_ll;
     private TextView top_news_title;
     private LinearLayout top_news_viewpager;
     private final List<String> list_news_title = new ArrayList<>();
-    private String url = "";
-    private SharedPreferences sp;
-    private String token;
     private int jail_id;
     private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
@@ -63,65 +71,23 @@ public class PrisonOpenActivity extends BaseActivity {
     private View footerLayout;
     private TextView textMore;
     private ProgressBar progressBar;
-
-
     private boolean isLoadingMore = false;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String tag = (String) msg.obj;
-                    if (tag.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String result = bundle.getString("result");
-                        allnews = analysisNews(result);
-                        newsList.clear();
-                        for (int i = 0; i < allnews.size(); i++) {
-                            News news = allnews.get(i);
-                            if (news.getType_id() == 1) {
-                                newsList.add(news);
-                            }
-                        }
-                        Collections.sort(newsList, new Comparator<News>() {
-                            @Override
-                            public int compare(News lhs, News rhs) {
-                                int heat1 = lhs.getId();
-                                int heat2 = rhs.getId();
-                                if (heat1 < heat2) {
-                                    return 1;
-                                }
-                                return -1;
-                            }
-                        });
-                        List<String> imgurl_list = new ArrayList<>();
-                        setCarousel(imgurl_list);
-                        if (myAdapter == null) {
-                            myAdapter = new MyAdapter();
-                            lv_prison_open.setAdapter(myAdapter);
-                        } else {
-                            myAdapter.notifyDataSetChanged();
-                        }
-                    } else if (tag.equals("error")) {
-                        Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
-                        if (getNews_Dialog.isShowing()) {
-                            getNews_Dialog.dismiss();
-                        }
-                    }
-                    if (mRefreshLayout.isRefreshing()) {
-                        mRefreshLayout.setRefreshing(false);
-                    }
-                    if (isLoadingMore) {
-                        mRefreshLayout.setLoading(false);
-                        textMore.setVisibility(View.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        Toast.makeText(PrisonOpenActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
-                        isLoadingMore = false;
-                    }
-                    break;
-            }
+
+    /**
+     * 相关ui操作
+     */
+    private void checkUI() {
+        if (mRefreshLayout.isRefreshing()) {
+            mRefreshLayout.setRefreshing(false);
         }
-    };
+        if (isLoadingMore) {
+            mRefreshLayout.setLoading(false);
+            textMore.setVisibility(View.GONE);
+            progressBar.setVisibility(View.GONE);
+            showToastMsgShort("加载完成");
+            isLoadingMore = false;
+        }
+    }
 
     /**
      * 设置轮播图
@@ -187,6 +153,7 @@ public class PrisonOpenActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
+        ButterKnife.bind(this, view);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
         mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
 //        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
@@ -204,10 +171,7 @@ public class PrisonOpenActivity extends BaseActivity {
         lv_prison_open.addFooterView(footerLayout);
         mRefreshLayout.setChildView(lv_prison_open);
 
-        mRefreshLayout.setColorSchemeResources(R.color.theme,
-                R.color.theme,
-                R.color.theme,
-                R.color.theme);
+        mRefreshLayout.setColorSchemeResources(R.color.theme);
         return view;
     }
 
@@ -215,11 +179,8 @@ public class PrisonOpenActivity extends BaseActivity {
     protected void initData() {
         setTitle("狱务公开");
         setBackVisibility(View.VISIBLE);
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        token = sp.getString("token", "");
-        jail_id = sp.getInt("jail_id", 0);
-        url = Constants.URL_HEAD + "news?jail_id=" + jail_id;
-        getNews(0);
+        jail_id = (int) SPUtil.get(this, "jail_id", 0);
+        getNews(0);// 获取新闻
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -255,73 +216,93 @@ public class PrisonOpenActivity extends BaseActivity {
     /**
      * 获取新闻
      */
-    private void getNews(int getType) {
+    private void getNews(final int getType) {
         if (Utils.isNetworkAvailable()) {
             if (getType == 0) {// 进入页面
-                getNews_Dialog = new ProgressDialog(this);
-                getNews_Dialog.setMessage("正在加载...");
-                getNews_Dialog.setCanceledOnTouchOutside(false);
-                getNews_Dialog.setCancelable(false);
-                getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                getNews_Dialog.show();
-            } else if (getType == 1) {  // 下拉刷新
-
-            } else if (getType == 2) {// 上拉加载
+                showProgressDialog();
+            }else if (getType == 2) {// 上拉加载
                 textMore.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
                 isLoadingMore = true;
             }
-            new Thread() {
-                @Override
-                public void run() {
-                    Message msg = handler.obtainMessage();
-                    try {
-                        String result = HttpRequestUtil.doHttpsGet(url);
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                        Log.i("狱务公开", result);
-                    } catch (Exception e) {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.URL_HEAD)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ApiRequest api = retrofit.create(ApiRequest.class);
+            api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<News>>() {
+                        @Override
+                        public void onCompleted() {}
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "get news failed : " + e.getMessage());
+                            Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
+                            if (getNews_Dialog.isShowing()) {
+                                getNews_Dialog.dismiss();
+                            }
+                            checkUI();// 相关ui操作
+                        }
+
+                        @Override
+                        public void onNext(List<News> newses) {
+                            newsList.clear();
+                            for (News news : newses){
+                                Log.i(TAG, news.toString());
+                                allnews.add(news);
+                                if(news.getType_id() == 1){
+                                    newsList.add(news);
+                                }
+                            }
+                            sortNews();// 将新闻按新闻id排序
+                            List<String> imgurl_list = new ArrayList<>();
+                            setCarousel(imgurl_list); // 设置轮播
+                            if (myAdapter == null) {
+                                myAdapter = new MyAdapter();
+                                lv_prison_open.setAdapter(myAdapter);
+                            } else {
+                                myAdapter.notifyDataSetChanged();
+                            }
+                            checkUI();// 相关ui操作
+                            if(getType == 1){
+                                showToastMsgShort("刷新成功");
+                            }
+                        }
+                    });
         } else {
             showToastMsgShort("没有网络");
         }
     }
 
     /**
-     * 解析新闻
-     *
-     * @param s
-     * @return
+     * 将新闻按id排序
      */
-    private List<News> analysisNews(String s) {
-        List<News> newses = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                News news = new News();
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                news.setId(jsonObject.getInt("id"));
-                news.setTitle(jsonObject.getString("title"));
-                news.setContents(jsonObject.getString("contents"));
-                news.setJail_id(jsonObject.getInt("jail_id"));
-                news.setImage_url(jsonObject.getString("image_url"));
-                news.setType_id(jsonObject.getInt("type_id"));
-                newses.add(news);
+    private void sortNews() {
+        Collections.sort(newsList, new Comparator<News>() {
+            @Override
+            public int compare(News lhs, News rhs) {
+                int heat1 = lhs.getId();
+                int heat2 = rhs.getId();
+                if (heat1 < heat2) {
+                    return 1;
+                }
+                return -1;
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return newses;
+        });
+    }
+
+    /**
+     * 初始化并显示进度条对话框
+     */
+    private void showProgressDialog() {
+        getNews_Dialog = new ProgressDialog(this);
+        getNews_Dialog.setMessage("正在加载...");
+        getNews_Dialog.setCanceledOnTouchOutside(false);
+        getNews_Dialog.setCancelable(false);
+        getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        getNews_Dialog.show();
     }
 
     /**
@@ -396,10 +377,4 @@ public class PrisonOpenActivity extends BaseActivity {
         TextView tv_home_news_content;
         ImageView iv_home_news_go;
     }
-
-//    @Override
-//    public void onBackPressed() {
-//        super.onBackPressed();
-//        moveTaskToBack(true);
-//    }
 }

@@ -91,7 +91,7 @@ d
             android:name=".userport.activity.LawsRegulationsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.VisitingServiceActivity"
+            android:name=".userport.activity.WorkDynamicActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.PrisonWardenActivity"
@@ -297,7 +297,5 @@ d
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
-        <activity android:name=".userport.activity.CommentsDetailsActivity">
-        </activity>
     </application>
 </manifest>

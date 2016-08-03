@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.requests;
 
+import com.gkzxhn.gkprison.userport.bean.Balance;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 
@@ -7,10 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
@@ -64,4 +67,24 @@ public interface ApiRequest {
      */
     @GET("news")
     Observable<List<News>> getNews(@Query("jail_id") int jail_id);
+
+    /**
+     * 获取剩余可会见次数
+     * @param f_id
+     * @return
+     */
+    @GET("families/{family_id}")
+    Observable<Balance> getBalance(@Path("family_id") int f_id);
+
+    /**
+     * 发送远程会见申请
+     * @param token
+     * @param body
+     * @return
+     */
+    @Headers({"Content-Type:application/json", "Accept:application/json"})
+    @POST("apply")
+    Observable<ResponseBody> sendMeetingRequest(
+            @Query("access_token") String token,
+            @Body RequestBody body);
 }
