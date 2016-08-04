@@ -113,7 +113,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
 
     @Override
     protected View initView() {
-        View view = View.inflate(context, R.layout.pager_home, null);
+        View view = View.inflate(context, R.layout.fragment_home, null);
         ButterKnife.bind(this, view);
         srl_refresh.setColorSchemeResources(R.color.theme);
         return view;

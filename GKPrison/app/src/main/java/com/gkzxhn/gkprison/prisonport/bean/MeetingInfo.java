@@ -68,4 +68,17 @@ public class MeetingInfo {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "MeetingInfo{" +
+                "name='" + name + '\'' +
+                ", prison_area='" + prison_area + '\'' +
+                ", meeting_started='" + meeting_started + '\'' +
+                ", meeting_finished='" + meeting_finished + '\'' +
+                ", prisoner_number='" + prisoner_number + '\'' +
+                ", family_id=" + family_id +
+                ", id=" + id +
+                '}';
+    }
 }

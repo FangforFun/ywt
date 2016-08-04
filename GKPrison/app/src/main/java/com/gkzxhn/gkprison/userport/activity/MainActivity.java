@@ -171,6 +171,7 @@ public class MainActivity extends BaseActivity {
                     showToastMsgShort("没有网络,请检查网络设置");
                     break;
                 case 3:
+                    initFragment();
                     layoutMain();
                     break;
                 case 5:
@@ -278,9 +279,9 @@ public class MainActivity extends BaseActivity {
                         case 403:
                             Toast.makeText(MainActivity.this, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
                             break;
-                        case 200:
-                            Toast.makeText(MainActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
-                            break;
+//                        case 200:
+//                            Toast.makeText(MainActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
+//                            break;
                         case 422:
                             Toast.makeText(MainActivity.this, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
                             break;
@@ -322,13 +323,6 @@ public class MainActivity extends BaseActivity {
             }
             doWXPayController();
         }else {
-            manager = getSupportFragmentManager();
-            transaction = manager.beginTransaction();
-            if(homeFragment.isAdded()){
-                transaction.remove(homeFragment);
-            }
-            transaction.add(R.id.fl_main_content, homeFragment);
-            transaction.commit();
             prison_map = new HashMap<>();
             showPrisonDialog();// 弹出监狱选择框
         }
@@ -383,7 +377,6 @@ public class MainActivity extends BaseActivity {
      * 布局
      */
     private void layoutMain() {
-        initFragment();
         rg_bottom_guide.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -518,6 +511,7 @@ public class MainActivity extends BaseActivity {
                         int jail_id = prison_map.get(content);
                         SPUtil.put(MainActivity.this, "jail_id", jail_id);
                         dialog.dismiss();
+                        addHomeFragment();
                         layoutMain();// 布局
                     } else {
                         showToastMsgShort("抱歉，暂未开通此监狱");
@@ -527,6 +521,22 @@ public class MainActivity extends BaseActivity {
             }
         });
         dialog.show();
+    }
+
+    /**
+     * 添加主Fragment
+     */
+    private void addHomeFragment() {
+        manager = getSupportFragmentManager();
+        transaction = manager.beginTransaction();
+        if(homeFragment != null && homeFragment.isAdded()){
+            transaction.remove(homeFragment);
+        }
+        if(homeFragment == null){
+            homeFragment = new HomeFragment();
+        }
+        transaction.add(R.id.fl_main_content, homeFragment);
+        transaction.commit();
     }
 
     /**

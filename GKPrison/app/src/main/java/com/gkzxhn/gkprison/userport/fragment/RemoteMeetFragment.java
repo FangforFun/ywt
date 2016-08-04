@@ -3,10 +3,7 @@ package com.gkzxhn.gkprison.userport.fragment;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.Message;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -36,13 +33,8 @@ import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -214,7 +206,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
 
     @Override
     protected View initView() {
-        View view = View.inflate(context, R.layout.pager_remote_meeting, null);
+        View view = View.inflate(context, R.layout.fragment_remote_meeting, null);
         ButterKnife.bind(this, view);
         Drawable[] drawables = rb_top_guide_meeting.getCompoundDrawables();
         drawables[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));

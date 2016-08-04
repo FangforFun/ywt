@@ -1,9 +1,7 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 import android.webkit.WebChromeClient;
@@ -23,7 +21,6 @@ import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -217,11 +214,11 @@ public class NewsDetailActivity extends BaseActivity {
                     }
                 });
                 break;
-            case R.id.tv_comments:
-                Intent intent = new Intent(this, CommentsDetailsActivity.class);
-                intent.putExtra("news_id", id);
-                startActivity(intent);
-                break;
+//            case R.id.tv_comments:
+//                Intent intent = new Intent(this, CommentsDetailsActivity.class);
+//                intent.putExtra("news_id", id);
+//                startActivity(intent);
+//                break;
             default:
                 break;
         }

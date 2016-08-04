@@ -116,5 +116,29 @@ public class FamilyMeetingInfo {
         public void setImage_url(String image_url) {
             this.image_url = image_url;
         }
+
+        @Override
+        public String toString() {
+            return "Family{" +
+                    "id=" + id +
+                    ", prisoner_id=" + prisoner_id +
+                    ", name='" + name + '\'' +
+                    ", uuid='" + uuid + '\'' +
+                    ", phone='" + phone + '\'' +
+                    ", relationship='" + relationship + '\'' +
+                    ", created_at='" + created_at + '\'' +
+                    ", updated_at='" + updated_at + '\'' +
+                    ", image_url='" + image_url + '\'' +
+                    '}';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "FamilyMeetingInfo{" +
+                "code=" + code +
+                ", family=" + family.toString() +
+                ", accid='" + accid + '\'' +
+                '}';
     }
 }

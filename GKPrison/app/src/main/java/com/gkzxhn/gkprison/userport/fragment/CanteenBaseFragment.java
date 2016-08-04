@@ -16,7 +16,7 @@ public class CanteenBaseFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        View view = View.inflate(context, R.layout.pager_cannteen, null);
+        View view = View.inflate(context, R.layout.fragment_cannteen, null);
         return view;
     }
 

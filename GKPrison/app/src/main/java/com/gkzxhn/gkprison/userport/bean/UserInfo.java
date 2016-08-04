@@ -139,4 +139,15 @@ public class UserInfo {
                     '}';
         }
     }
+
+    @Override
+    public String toString() {
+        return "UserInfo{" +
+                "code=" + code +
+                ", token='" + token + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", jail='" + jail + '\'' +
+                ", user=" + user.toString() +
+                '}';
+    }
 }

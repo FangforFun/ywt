@@ -33,7 +33,7 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
  * created by hzn 2015/12/14
  * 监狱用户登录界面
  */
-public class PrisonLoadingFragment extends BaseFragment {
+public class PrisonLoginFragment extends BaseFragment {
 
     private SweetAlertDialog sadDialog;
     private Button btn_login;
@@ -152,7 +152,7 @@ public class PrisonLoadingFragment extends BaseFragment {
                             new RequestCallback<LoginInfo>() {
                                 @Override
                                 public void onSuccess(LoginInfo loginInfo) {
-                                    Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
+//                                    Toast.makeText(context, "登录成功", Toast.LENGTH_SHORT).show();
                                     handler.sendEmptyMessage(0);
                                     Looper.loop();
                                 }

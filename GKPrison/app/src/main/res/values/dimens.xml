@@ -3,7 +3,7 @@
     <dimen name="home_tab_width">70px</dimen>
     <dimen name="home_tab_height">85px</dimen>
     <dimen name="visit_tab_height">70px</dimen>
-    <dimen name="dot_radius">30px</dimen>
+    <dimen name="dot_radius">20px</dimen>
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="av_small_size_width">64dp</dimen>

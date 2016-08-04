@@ -12,7 +12,8 @@
         <FrameLayout
             android:id="@+id/fl_main_content"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/main_tab_height"/>
 
         <RadioGroup
             android:id="@+id/rg_bottom_guide"

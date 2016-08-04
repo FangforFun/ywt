@@ -44,6 +44,7 @@ public class MenuFragment extends BaseFragment{
     private RelativeLayout ll_root;
     private Button bt_logout;
     private BitmapUtils bitmapUtils;
+    private AlertDialog dialog;
 
     @Override
     protected View initView() {
@@ -131,7 +132,7 @@ public class MenuFragment extends BaseFragment{
                     View logout_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
                     builder.setView(logout_dialog_view);
                     TextView tv_cancel = (TextView) logout_dialog_view.findViewById(R.id.tv_cancel);
-                    final AlertDialog dialog = builder.create();
+                    dialog = builder.create();
                     tv_cancel.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -160,6 +161,15 @@ public class MenuFragment extends BaseFragment{
                 }
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        if(dialog != null && dialog.isShowing()){
+            dialog.dismiss();
+            dialog = null;
+        }
+        super.onDestroy();
     }
 
     private class MenuAdapter extends BaseAdapter {

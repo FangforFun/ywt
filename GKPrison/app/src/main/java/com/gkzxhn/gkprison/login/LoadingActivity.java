@@ -1,12 +1,11 @@
 package com.gkzxhn.gkprison.login;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.utils.SPUtil;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -17,10 +16,9 @@ import java.util.List;
  * 登录页面
  */
 public class LoadingActivity extends BaseActivity {
-    private String token;
-    private PersonLoadingFragment personLoadingFragment;
-    private PrisonLoadingFragment prisonLoadingFragment;
-    private SharedPreferences sp;
+
+    private PersonLoginFragment personLoginFragment;
+    private PrisonLoginFragment prisonLoginFragment;
 
     @Override
     protected View initView() {
@@ -40,24 +38,20 @@ public class LoadingActivity extends BaseActivity {
                 switch (position) {
                     case 0:
                         ns_login_type.setText("个人用户");
-                        LoadingActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoadingFragment).commit();
+                        LoadingActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fl_load, personLoginFragment).commit();
                         break;
                     case 1:
                         ns_login_type.setText("监狱用户");
-                        prisonLoadingFragment = new PrisonLoadingFragment();
-                        LoadingActivity.this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, prisonLoadingFragment).commit();
+                        prisonLoginFragment = new PrisonLoginFragment();
+                        LoadingActivity.this.getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fl_load, prisonLoginFragment).commit();
                         break;
                 }
             }
         });
-        Bundle date = new Bundle();
-        date.putString("token", token);
-        personLoadingFragment = new PersonLoadingFragment();
-        personLoadingFragment.setArguments(date);
-        this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoadingFragment).commit();
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("is_first", false);
-        editor.commit();
+        personLoginFragment = new PersonLoginFragment();
+        this.getSupportFragmentManager().beginTransaction().replace(R.id.fl_load, personLoginFragment).commit();
+        SPUtil.put(this, "is_first", false);
     }
 }

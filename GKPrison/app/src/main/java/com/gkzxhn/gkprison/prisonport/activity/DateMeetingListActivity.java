@@ -5,10 +5,8 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -34,14 +32,15 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
+import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
@@ -61,10 +60,21 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * created by hzn 2015.12.22
@@ -72,6 +82,7 @@ import butterknife.ButterKnife;
  */
 public class DateMeetingListActivity extends BaseActivity implements CalendarCard.OnCellClickListener {
 
+    private static final java.lang.String TAG = "DateMeetingListActivity";
     @BindView(R.id.pb_loading)
     ProgressBar pb_loading;
     @BindView(R.id.tv_loading)
@@ -111,76 +122,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
     private AlertDialog cancel_meeting_dialog;// 取消会见对话框
-    private int[] screenWidthHeight;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 0:
-                    String result = (String) msg.obj;
-                    if (!TextUtils.isEmpty(result)) {
-                        parseResult(result);
-                        showToastMsgShort("刷新成功");
-                        ll_loading.setVisibility(View.GONE);
-                        if (meetingListAdapter == null) {
-                            meetingListAdapter = new MeetingListAdapter();
-                            lv_meeting_list.setAdapter(meetingListAdapter);
-                        } else {
-                            meetingListAdapter.notifyDataSetChanged();
-                        }
-                        if (meetingInfos.size() == 0) {
-                            tv_no_list.setVisibility(View.VISIBLE);
-                        } else {
-                            tv_no_list.setVisibility(View.GONE);
-                        }
-                        DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
-                        lv_meeting_list.setVisibility(View.VISIBLE);
-                        for (int i = 0; i < 3; i++) {
-                            views[i].setEnabled(true);
-                        }
-                    }
-                    ra.cancel();
-                    fl_transparent.setVisibility(View.GONE); // 刷新完数据隐藏
-                    break;
-                case 1: // 取消视频成功
-                    String cancel_result = (String) msg.obj;
-                    try {
-                        JSONObject jsonObject = new JSONObject(cancel_result);
-                        int result_code = jsonObject.getInt("code");
-                        if (result_code == 200) {
-                            //成功
-//                            showToastMsgShort("取消成功");
-                            progressDialog.setMessage("取消成功");
-                            handler.postDelayed(dismissProgressDialogTask, 1500);
-                            meetingListAdapter.notifyDataSetChanged();
-                        } else {
-                            // 失败 code为500
-                            showToastMsgLong("取消失败，请稍后再试");
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-                case 2:// 取消视频失败
-                    showToastMsgLong("发送取消失败，请稍后再试");
-                    break;
-                case 3:// 视频取消异常
-                    showToastMsgLong("取消异常，请稍后再试");
-                    break;
-                case 4:// 刷新数据失败
-                    showToastMsgShort("刷新数据失败");
-                    tv_loading.setText("点击刷新");
-                    pb_loading.setVisibility(View.GONE);
-                    ll_loading.setOnClickListener(DateMeetingListActivity.this);
-                    fl_transparent.setVisibility(View.GONE);
-                    for (int i = 0; i < 3; i++) {
-                        views[i].setEnabled(true);
-                    }
-                    ra.cancel(); // 取消刷新图标的旋转任务
-                    break;
-            }
-        }
-    };
+    private int[] screenWidthHeight;// 屏幕宽带
+    private Handler handler = new Handler();
 
     private Runnable dismissProgressDialogTask = new Runnable() {
         @Override
@@ -194,31 +137,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             requestData(formatDate);// 请求数据
         }
     };
-
-    /**
-     * 解析结果
-     */
-    private void parseResult(String result) {
-        meetingInfos = new ArrayList<>();
-        meetingInfos.clear();
-        try {
-            JSONArray jsonArray = new JSONArray(result);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                MeetingInfo meetingInfo = new MeetingInfo();
-                meetingInfo.setId(jsonObject.getInt("id"));
-                meetingInfo.setFamily_id(jsonObject.getInt("family_id"));
-                meetingInfo.setMeeting_started(jsonObject.getString("meeting_started"));
-                meetingInfo.setMeeting_finished(jsonObject.getString("meeting_finished"));
-                meetingInfo.setName(jsonObject.getString("name"));
-                meetingInfo.setPrison_area(TextUtils.isEmpty(jsonObject.getString("prison_area")) ? "默认监区" : jsonObject.getString("prison_area"));
-                meetingInfo.setPrisoner_number(jsonObject.getString("prisoner_number"));
-                meetingInfos.add(meetingInfo);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void clickDate(CustomDate date) {
@@ -262,9 +180,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     @Override
     protected void initData() {
         sp = getSharedPreferences("config", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("is_first", false);
-        editor.commit();
+        SPUtil.put(this, "is_first", false);
         setRefreshVisibility(View.VISIBLE);
         StatusCode code = NIMClient.getStatus();
         checkStatusCode(code);// 判断当前用户状态方法
@@ -370,7 +286,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     /**
      * 请求会见列表数据
      */
-    private void requestData(final String date) {
+    private void requestData(String date) {
         if (Utils.isNetworkAvailable()) {
             handler.post(rotateTask);
             ll_loading.setVisibility(View.VISIBLE);
@@ -380,27 +296,75 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             for (int i = 0; i < 3; i++) {
                 views[i].setEnabled(false);
             }
-            new Thread() {
-                @Override
-                public void run() {
-                    SystemClock.sleep(500);// 休眠1秒  模拟网络环境
-                    Message msg = handler.obtainMessage();
-                    try {
-                        String result = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD +
-                                Constants.PRISON_PORT_MEETING_LIST_URL + sp.getString("username", "") + "&app_date=" + date);
-                        Log.i("请求成功", result);
-                        msg.obj = result;
-                        msg.what = 0;
-                        handler.sendMessage(msg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.i("请求失败", e.getMessage().toString());
-                        handler.sendEmptyMessage(4);// 刷新数据失败
-                    }
-                }
-            }.start();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.URL_HEAD)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ApiService api = retrofit.create(ApiService.class);
+            Map<String, String> map = new HashMap<>();
+            map.put("app_date", date);
+            String accid = (String) SPUtil.get(this, "username", "");
+            Log.i(TAG, date + "---" + accid);
+            api.getMeetingList(accid, map)
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<List<MeetingInfo>>() {
+                        @Override
+                        public void onCompleted() {}
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "request meeting list failed ：" + e.getMessage());
+                            showToastMsgShort("刷新数据失败");
+                            tv_loading.setText("点击刷新");
+                            pb_loading.setVisibility(View.GONE);
+                            ll_loading.setOnClickListener(DateMeetingListActivity.this);
+                            fl_transparent.setVisibility(View.GONE);
+                            for (int i = 0; i < 3; i++) {
+                                views[i].setEnabled(true);
+                            }
+                            ra.cancel(); // 取消刷新图标的旋转任务
+                        }
+
+                        @Override
+                        public void onNext(List<MeetingInfo> infos) {
+                            meetingInfos = new ArrayList<>();
+                            meetingInfos.clear();
+                            for (MeetingInfo info : infos){
+                                meetingInfos.add(info);
+                                Log.i(TAG, info.toString());
+                            }
+                            showToastMsgShort("刷新成功");
+                            checkDataSize();// 检查数据判断是否为空
+                            DensityUtil.setListViewHeightBasedOnChildren(lv_meeting_list);
+                            ll_loading.setVisibility(View.GONE);
+                            lv_meeting_list.setVisibility(View.VISIBLE);
+                            for (int i = 0; i < 3; i++) {
+                                views[i].setEnabled(true);
+                            }
+                            ra.cancel();
+                            fl_transparent.setVisibility(View.GONE); // 刷新完数据隐藏
+                        }
+                    });
         } else {
             showToastMsgShort("没有网络");
+        }
+    }
+
+    /**
+     * 检查数据是否为空  显示UI
+     */
+    private void checkDataSize() {
+        if (meetingInfos.size() == 0) {
+            tv_no_list.setVisibility(View.VISIBLE);
+        } else {
+            tv_no_list.setVisibility(View.GONE);
+        }
+        if (meetingListAdapter == null) {
+            meetingListAdapter = new MeetingListAdapter();
+            lv_meeting_list.setAdapter(meetingListAdapter);
+        } else {
+            meetingListAdapter.notifyDataSetChanged();
         }
     }
 
@@ -410,7 +374,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private void setViewPager() {
         mViewPager.setAdapter(adapter);
         mViewPager.setCurrentItem(498);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override
             public void onPageSelected(int position) {
@@ -419,14 +383,10 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             }
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
-
-            }
+            public void onPageScrolled(int arg0, float arg1, int arg2) {}
 
             @Override
-            public void onPageScrollStateChanged(int arg0) {
-
-            }
+            public void onPageScrollStateChanged(int arg0) {}
         });
     }
 
@@ -549,40 +509,12 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             holder.tv_meeting_name.setText(meetingInfos.get(position).getName());
             String meeting_time_start = meetingInfos.get(position).getMeeting_started();
             String meeting_time_finished = meetingInfos.get(position).getMeeting_finished();
-            Log.i("会见时间段", meeting_time_start.split(" ")[1].substring(0, meeting_time_start.split(" ")[1].lastIndexOf(":")) + "-" + meeting_time_finished.split(" ")[1].substring(0, meeting_time_finished.split(" ")[1].lastIndexOf(":")));
             holder.tv_meeting_time.setText(meeting_time_start.split(" ")[1].substring(0, meeting_time_start.split(" ")[1].lastIndexOf(":")) + "-" + meeting_time_finished.split(" ")[1].substring(0, meeting_time_finished.split(" ")[1].lastIndexOf(":")));
             holder.tv_meeting_prison_area.setText(meetingInfos.get(position).getPrison_area());
             holder.iv_delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(DateMeetingListActivity.this);
-                    View cancel_dialog = View.inflate(DateMeetingListActivity.this, R.layout.cancel_meeting_dialog, null);
-                    TextView tv_cancel_name = (TextView) cancel_dialog.findViewById(R.id.tv_cancel_name);
-                    tv_cancel_name.setText(holder.tv_meeting_name.getText().toString().trim());
-                    final EditText et_cancel_reason = (EditText) cancel_dialog.findViewById(R.id.et_cancel_reason);
-                    TextView tv_cancel = (TextView) cancel_dialog.findViewById(R.id.tv_cancel);
-                    TextView tv_ok = (TextView) cancel_dialog.findViewById(R.id.tv_ok);
-                    cancel_meeting_dialog = builder.create();
-                    cancel_meeting_dialog.setView(cancel_dialog);
-                    tv_ok.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            String reason = et_cancel_reason.getText().toString().trim();
-                            if (!TextUtils.isEmpty(reason)) {
-                                sendCancelMeetingToServer(position, meetingInfos.get(position).getId(), reason);
-                                cancel_meeting_dialog.dismiss();
-                            } else {
-                                showToastMsgShort("请输入理由");
-                            }
-                        }
-                    });
-                    tv_cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            cancel_meeting_dialog.dismiss();
-                        }
-                    });
-                    cancel_meeting_dialog.show();
+                    showCancelDialog(holder, position);
                 }
             });
             return convertView;
@@ -590,52 +522,100 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     }
 
     /**
+     * 取消会见对话框
+     * @param holder
+     * @param position
+     */
+    private void showCancelDialog(ViewHolder holder, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DateMeetingListActivity.this);
+        View cancel_dialog = View.inflate(DateMeetingListActivity.this, R.layout.cancel_meeting_dialog, null);
+        TextView tv_cancel_name = (TextView) cancel_dialog.findViewById(R.id.tv_cancel_name);
+        tv_cancel_name.setText(holder.tv_meeting_name.getText().toString().trim());
+        final EditText et_cancel_reason = (EditText) cancel_dialog.findViewById(R.id.et_cancel_reason);
+        TextView tv_cancel = (TextView) cancel_dialog.findViewById(R.id.tv_cancel);
+        TextView tv_ok = (TextView) cancel_dialog.findViewById(R.id.tv_ok);
+        cancel_meeting_dialog = builder.create();
+        cancel_meeting_dialog.setView(cancel_dialog);
+        tv_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String reason = et_cancel_reason.getText().toString().trim();
+                if (!TextUtils.isEmpty(reason)) {
+                    sendCancelMeetingToServer(position, meetingInfos.get(position).getId(), reason);
+                    cancel_meeting_dialog.dismiss();
+                } else {
+                    showToastMsgShort("请输入理由");
+                }
+            }
+        });
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                cancel_meeting_dialog.dismiss();
+            }
+        });
+        cancel_meeting_dialog.show();
+    }
+
+    /**
      * 发送取消会见至服务器
      */
-    private void sendCancelMeetingToServer(final int position, final int id, final String reason) {
+    private void sendCancelMeetingToServer(final int position, int id, String reason) {
         if (Utils.isNetworkAvailable()) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            progressDialog.setCancelable(false);
-            progressDialog.setCanceledOnTouchOutside(false);
-            progressDialog.setMessage("正在提交，请稍后");
-            progressDialog.show();
-            new Thread() {
-                @Override
-                public void run() {
-                    HttpClient httpClient = new DefaultHttpClient();
-                    HttpPatch httpPatch = new HttpPatch(Constants.URL_HEAD + "applies/" + id);
-                    try {
-                        StringEntity entity = new StringEntity("{\"accept_apply\":{\"status\":\"cancel\",\"reason\":\"" + reason + "\"}}", HTTP.UTF_8);
-                        entity.setContentType("application/json");
-                        httpPatch.setEntity(entity);
-                        HttpResponse response = httpClient.execute(httpPatch);
-                        Log.i("取消会见", "{\"accept_apply\":{\"status\":\"cancel\",\"reason\":\"" + reason + "\"}}");
-                        if (response.getStatusLine().getStatusCode() == 200) {
-                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                            Log.i("取消会见2", result);
-                            meetingInfos.remove(meetingInfos.get(position));
-                            Message message = handler.obtainMessage();
-                            message.what = 1;
-                            message.obj = result;
-                            handler.sendMessage(message);
-                        } else {
-                            String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                            Log.i("取消会见1", result);
-                            Message message = handler.obtainMessage();
-                            message.what = 2;
-                            message.obj = result;
-                            handler.sendMessage(message);
+            initAndShowDialog();
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.URL_HEAD)
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+            ApiService apiService = retrofit.create(ApiService.class);
+            String msg = "{\"accept_apply\":{\"status\":\"cancel\",\"reason\":\"" + reason + "\"}}";
+            RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), msg);
+            apiService.cancelMeeting(id, body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<ResponseBody>() {
+                        @Override
+                        public void onCompleted() {}
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(TAG, "cancel meeting failed : " + e.getMessage());
+                            showToastMsgLong("取消失败，请稍后再试");
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        handler.sendEmptyMessage(3);
-                    }
-                }
-            }.start();
+
+                        @Override
+                        public void onNext(ResponseBody responseBody) {
+                            meetingInfos.remove(meetingInfos.get(position));
+                            try {
+                                String cancel_result = responseBody.string();
+                                JSONObject jsonObject = new JSONObject(cancel_result);
+                                int result_code = jsonObject.getInt("code");
+                                Log.i(TAG, "cancel meeting : " + cancel_result);
+                                if (result_code == 200) {
+                                    //成功
+                                    progressDialog.setMessage("取消成功");
+                                    handler.postDelayed(dismissProgressDialogTask, 1500);
+                                    meetingListAdapter.notifyDataSetChanged();
+                                } else {
+                                    // 失败 code为500
+                                    showToastMsgLong("取消失败，请稍后再试");
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
         } else {
             showToastMsgShort("没有网络");
         }
+    }
+
+    private void initAndShowDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("正在提交，请稍后");
+        progressDialog.show();
     }
 
     private static class ViewHolder {
@@ -645,23 +625,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         ImageView iv_delete;
     }
 
-    /**
-     * 按兩次返回退出程序   add by hzn
-     *
-     * @param keyCode
-     * @param event
-     * @return
-     */
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();
-            } else {
-                finish();
-            }
-            return true;
+    @Override
+    public void onBackPressed() {
+        if ((System.currentTimeMillis() - mExitTime) > 2000) {
+            Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+            mExitTime = System.currentTimeMillis();
+        } else {
+            super.onBackPressed();
         }
-        return super.onKeyDown(keyCode, event);
     }
 }
