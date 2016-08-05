@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
@@ -51,8 +52,6 @@ import java.util.List;
  */
 public class MyApplication extends Application {
 
-    private SharedPreferences sp;
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -64,7 +63,6 @@ public class MyApplication extends Application {
         new Runnable(){
             @Override
             public void run() {
-                sp = getSharedPreferences("config", MODE_PRIVATE);
                 DemoCache.setContext(getApplicationContext());
                 NIMClient.init(MyApplication.this, loginInfo(), options()); // 初始化
                 // 初始化全局异常捕获
@@ -83,7 +81,7 @@ public class MyApplication extends Application {
                                     switch (status) {
                                         case KICKOUT:
                                             Intent intent;
-                                            if (sp.getBoolean("isCommonUser", true)) {
+                                            if ((Boolean)SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
                                                 intent = new Intent(getApplicationContext(), MainActivity.class);
                                             } else {
                                                 intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
@@ -93,12 +91,6 @@ public class MyApplication extends Application {
                                             break;
                                         case NET_BROKEN:
                                             Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case CONNECTING:
-//                                    Toast.makeText(getApplicationContext(), "正在连接...", Toast.LENGTH_SHORT).show();
-                                            break;
-                                        case LOGINING:
-//                                    Toast.makeText(getApplicationContext(), "正在登录...", Toast.LENGTH_SHORT).show();
                                             break;
                                     }
                                 }
@@ -303,12 +295,9 @@ public class MyApplication extends Application {
 
     private LoginInfo getLoginInfo() {
         // 从本地读取上次登录成功时保存的用户登录信息
-//        String account = sp.getString("username", "");
-//        String token = tokenFromPassword(sp.getString("password", ""));
-//        Log.i("application", account + "---" + token + "---" + sp.getString("password", ""));
-        String token = sp.getString("token", "");
-        Log.i("自动登录...", token);
-        if(sp.getBoolean("isCommonUser", true)) {
+        String token = (String) SPUtil.get(getApplicationContext(), "token", "");
+        String password = (String) SPUtil.get(getApplicationContext(), "password", "");
+        if((Boolean)SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(token)) {
                 DemoCache.setAccount(token.toLowerCase());
                 return new LoginInfo(token, token);
@@ -316,9 +305,9 @@ public class MyApplication extends Application {
                 return null;
             }
         }else {
-            if (!TextUtils.isEmpty(sp.getString("token", "")) && !TextUtils.isEmpty(sp.getString("password", ""))) {
-                DemoCache.setAccount(sp.getString("token", "").toLowerCase());
-                return new LoginInfo(sp.getString("token", ""), sp.getString("password", ""));
+            if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(password)) {
+                DemoCache.setAccount(token.toLowerCase());
+                return new LoginInfo(token, password);
             } else {
                 return null;
             }

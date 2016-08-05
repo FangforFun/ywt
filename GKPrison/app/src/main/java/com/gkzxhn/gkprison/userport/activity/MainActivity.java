@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
@@ -85,28 +84,6 @@ import rx.subscriptions.CompositeSubscription;
 /**
  * created by huangzhengneng on 2015/12/22
  * 主activity
- *
- *
- *                                  _ooOoo_
-                                   o8888888o
-                                   88" . "88
-                                   (| -_- |)
-                                   O\  =  /O
-                                ____/`---'\____
-                              .'  \\|     |//  `.
-                             /  \\|||  :  |||//  \
-                            /  _||||| -:- |||||-  \
-                           |   | \\\  -  /// |    |
-                           | \_|  ''\---/''  |   |
-                           \  .-\__  `-`  ___/-. /
-                         ___`. .'  /--.--\  `. . __
-                       ."" '<  `.___\_<|>_/___.'  >'"".
-                      | | :  `- \`.;`\ _ /`;.`/ - ` : | |
-                      \  \ `-.   \_ __\ /__ _/   .-` /  /
-                 ======`-.____`-.___\_____/___.-`____.-'======
-                                    `=---='
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-                            佛祖保佑       永无BUG
  */
 public class MainActivity extends BaseActivity {
 
@@ -259,46 +236,24 @@ public class MainActivity extends BaseActivity {
         @Override
         public void run() {
             RequestCallback callback = new RequestCallback() {
-                @Override
-                public void onSuccess(Object o) {
+                @Override public void onSuccess(Object o) {
                     Log.i(TAG, "MainActivity重新登录了");
                 }
 
-                @Override
-                public void onFailed(int i) {
+                @Override public void onFailed(int i) {
                     switch (i) {
-                        case 302:
-                            Toast.makeText(MainActivity.this, "手机号或者身份证号错误", Toast.LENGTH_SHORT).show();
-                            break;
-                        case 503:
-                            Toast.makeText(MainActivity.this, "服务器繁忙", Toast.LENGTH_SHORT).show();
-                            break;
-                        case 415:
-                            Toast.makeText(MainActivity.this, "网络出错，请检查网络", Toast.LENGTH_SHORT).show();
-                            break;
-                        case 408:
-                            Toast.makeText(MainActivity.this, "请求超时，请稍后再试", Toast.LENGTH_SHORT).show();
-                            break;
-                        case 403:
-                            Toast.makeText(MainActivity.this, "非法操作或没有权限", Toast.LENGTH_SHORT).show();
-                            break;
-//                        case 200:
-//                            Toast.makeText(MainActivity.this, "操作成功", Toast.LENGTH_SHORT).show();
-//                            break;
-                        case 422:
-                            Toast.makeText(MainActivity.this, "您的账号已被禁用", Toast.LENGTH_SHORT).show();
-                            break;
-                        case 500:
-                            Toast.makeText(MainActivity.this, "服务器错误", Toast.LENGTH_SHORT).show();
-                            break;
-                        default:
-                            Toast.makeText(MainActivity.this, "登录失败", Toast.LENGTH_SHORT).show();
-                            break;
+                        case 302:showToastMsgShort("手机号或者身份证号错误");break;
+                        case 503:showToastMsgShort("服务器繁忙");break;
+                        case 415:showToastMsgShort("网络出错，请检查网络");break;
+                        case 408:showToastMsgShort("请求超时，请稍后再试");break;
+                        case 403:showToastMsgShort("非法操作或没有权限");break;
+                        case 422:showToastMsgShort("您的账号已被禁用");break;
+                        case 500:showToastMsgShort("服务器错误");break;
+                        default:showToastMsgShort("登录失败");break;
                     }
                 }
 
-                @Override
-                public void onException(Throwable throwable) {
+                @Override public void onException(Throwable throwable) {
                     showToastMsgShort("登录异常");
                     Log.i(TAG, "MainActivity重新登录异常" + throwable.getMessage());
                 }
@@ -622,26 +577,26 @@ public class MainActivity extends BaseActivity {
             Map<String, String> map = new HashMap<>();
             map.put("uuid", (String) SPUtil.get(MainActivity.this, "password", ""));
             mSubscriptions.add(
-                repo.getUserInfo((String) SPUtil.get(MainActivity.this, "username", ""), map)
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<PrisonerUserInfo>() {
-                        @Override
-                        public void onCompleted() {}
+                    repo.getUserInfo((String) SPUtil.get(MainActivity.this, "username", ""), map)
+                            .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Observer<PrisonerUserInfo>() {
+                                @Override
+                                public void onCompleted() {}
 
-                        @Override
-                        public void onError(Throwable e) {
-                            handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
-                            Log.i(TAG, e.getMessage());
-                        }
+                                @Override
+                                public void onError(Throwable e) {
+                                    handler.sendEmptyMessage(4); // 获取用户信息失败  则显示无账号快捷登录界面
+                                    Log.i(TAG, e.getMessage());
+                                }
 
-                        @Override
-                        public void onNext(PrisonerUserInfo prisonerUserInfo) {
-                            Log.i(TAG, prisonerUserInfo.getResult().toString());
-                            savePrisonerInfo(prisonerUserInfo);
-                            jail_id = (int) SPUtil.get(MainActivity.this, "jail_id",0);
-                            handler.sendEmptyMessage(3);
-                        }
-                    })
+                                @Override
+                                public void onNext(PrisonerUserInfo prisonerUserInfo) {
+                                    Log.i(TAG, prisonerUserInfo.getResult().toString());
+                                    savePrisonerInfo(prisonerUserInfo);
+                                    jail_id = (int) SPUtil.get(MainActivity.this, "jail_id",0);
+                                    handler.sendEmptyMessage(3);
+                                }
+                            })
             );
         }else {
             showToastMsgShort("没有网络");

@@ -1,10 +1,7 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
-
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +21,10 @@ import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
-import com.lidroid.xutils.BitmapUtils;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
+import com.squareup.picasso.Picasso;
 
 /**
  * 左侧侧滑菜单fragment
@@ -36,14 +34,12 @@ public class MenuFragment extends BaseFragment{
     private ListView lv_home_menu;
     private final String[] menu_options_tv = {"账号信息", "汇款记录", "购物记录", "设置"};
     private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.setting};
-    private SharedPreferences sp;
     private boolean isRegisteredUser;
     private RelativeLayout rl_header_info;
     private ImageView iv_user_icon;
     private TextView tv_menu_user_name;
     private RelativeLayout ll_root;
     private Button bt_logout;
-    private BitmapUtils bitmapUtils;
     private AlertDialog dialog;
 
     @Override
@@ -60,19 +56,18 @@ public class MenuFragment extends BaseFragment{
 
     @Override
     protected void initData() {
-        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
-        isRegisteredUser = sp.getBoolean("isRegisteredUser", false);
+        isRegisteredUser = (boolean) SPUtil.get(getActivity(), "isRegisteredUser", false);
         if(!isRegisteredUser){
             iv_user_icon.setImageResource(R.drawable.default_icon);
             tv_menu_user_name.setText("用户名");
             bt_logout.setText("登录");
         }else {
             bt_logout.setText("注销登录");
-            tv_menu_user_name.setText(sp.getString("name", ""));
-            String ICON_URL = sp.getString("avatar", "");
+            tv_menu_user_name.setText(SPUtil.get(getActivity(), "name", "") + "");
+            String ICON_URL = (String) SPUtil.get(getActivity(), "avatar", "");
             if(!TextUtils.isEmpty(ICON_URL)){
-                bitmapUtils = new BitmapUtils(context);
-                bitmapUtils.display(iv_user_icon, Constants.RESOURSE_HEAD + ICON_URL);
+                Picasso.with(getActivity()).load(Constants.RESOURSE_HEAD + ICON_URL)
+                        .error(R.drawable.default_icon).into(iv_user_icon);
             }
         }
         lv_home_menu.setAdapter(new MenuAdapter());
@@ -128,32 +123,7 @@ public class MenuFragment extends BaseFragment{
             @Override
             public void onClick(View v) {
                 if(isRegisteredUser) { // 注册用户弹提示
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    View logout_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
-                    builder.setView(logout_dialog_view);
-                    TextView tv_cancel = (TextView) logout_dialog_view.findViewById(R.id.tv_cancel);
-                    dialog = builder.create();
-                    tv_cancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-                    TextView tv_ok = (TextView) logout_dialog_view.findViewById(R.id.tv_ok);
-                    tv_ok.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(context, LoadingActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                            SharedPreferences.Editor editor = sp.edit();
-                            editor.clear();
-                            editor.putBoolean("is_first", false); // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
-                            editor.commit();
-                            startActivity(intent);
-                            NIMClient.getService(AuthService.class).logout();
-                        }
-                    });
-                    dialog.show();
+                    showConfirmDialog();
                 }else {// 非注册用户直接跳到登录
                     Intent intent = new Intent(context, LoadingActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -161,6 +131,36 @@ public class MenuFragment extends BaseFragment{
                 }
             }
         });
+    }
+
+    /**
+     * 显示确认对话框
+     */
+    private void showConfirmDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View logout_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+        builder.setView(logout_dialog_view);
+        TextView tv_cancel = (TextView) logout_dialog_view.findViewById(R.id.tv_cancel);
+        dialog = builder.create();
+        tv_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+        TextView tv_ok = (TextView) logout_dialog_view.findViewById(R.id.tv_ok);
+        tv_ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, LoadingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                SPUtil.clear(getActivity());
+                SPUtil.put(getActivity(), "is_first", false);
+                startActivity(intent);
+                NIMClient.getService(AuthService.class).logout();
+            }
+        });
+        dialog.show();
     }
 
     @Override
