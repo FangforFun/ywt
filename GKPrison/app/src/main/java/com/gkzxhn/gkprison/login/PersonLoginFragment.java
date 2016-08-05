@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -18,21 +17,16 @@ import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.requests.LoginService;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -47,10 +41,9 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-
 /**
- * A simple {@link Fragment} subclass.
- * 个人用户登录界面
+ * created by huangzhengneng on 2016.1.12
+ * description:个人用户登录界面
  */
 public class PersonLoginFragment extends BaseFragment {
 
@@ -74,16 +67,15 @@ public class PersonLoginFragment extends BaseFragment {
     @BindView(R.id.bt_fast_login)
     Button bt_fast_login;
     private SweetAlertDialog sadDialog;
-    private String username;
-    private String ic_card_num;
+    private String username;// 用户名(手机号)
+    private String ic_card_num;// 身份证
     private String identifying_code;// 验证码
     private boolean isRunning = false;// 倒计时任务正在执行
-    private boolean isOK = false;// 服务器登录返回的是0才变成true
-    private int countdown = 60;
-    private int successCode = 0;
-    private UserInfo userInfo;
-    private RequestCallback<LoginInfo> callback;
-    private LoginInfo info;
+    private int countdown = 60;// 倒计时
+    private int successCode = 0;// 登录成功码  先等于自己服务器  成功之后加1登录云信服务器  等于2才算登录成功
+    private UserInfo userInfo;// 用户信息
+    private RequestCallback<LoginInfo> callback; // 云信id登录回调
+    private LoginInfo info;// 云信id登录信息
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -91,7 +83,7 @@ public class PersonLoginFragment extends BaseFragment {
                 case 0:// 云信登录成功
                     successCode++;
                     if (successCode == 2) {
-                        loginSuccessed();
+                        loginSuccess();
                     }
                     break;
                 case 1:// 云信id登录失败
@@ -105,7 +97,7 @@ public class PersonLoginFragment extends BaseFragment {
     /**
      * 登录成功
      */
-    private void loginSuccessed() {
+    private void loginSuccess() {
         sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.success_stroke_color));
         sadDialog.setTitleText("登录成功！")
                 .changeAlertType(SweetAlertDialog.SUCCESS_TYPE);
@@ -194,11 +186,9 @@ public class PersonLoginFragment extends BaseFragment {
                 // 判断手机号码是否合法
                 if (TextUtils.isEmpty(username)) {
                     showToastMsgShort("手机号为空");
-                    return;
                 } else {
                     if (!Utils.isMobileNO(username)) {
                         showToastMsgShort("请输入正确的用户名");
-                        return;
                     } else {
                         if (Utils.isNetworkAvailable()) {
                             final String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
@@ -222,7 +212,6 @@ public class PersonLoginFragment extends BaseFragment {
                 identifying_code = et_identifying_code.getText().toString().trim();
                 if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
-                    return;
                 } else {
                     if (Utils.isNetworkAvailable()) {
                         initAndShowDialog("正在登录...");
@@ -378,7 +367,7 @@ public class PersonLoginFragment extends BaseFragment {
                             Log.i(TAG, "login verification code : " + result);
                         }catch (Exception e){
                             e.printStackTrace();
-                            setFailedUI("验证码请求失败，请稍后再试！");
+                            setFailedUI("验证码请求异常，请稍后再试！");
                         }
                     }
                 });

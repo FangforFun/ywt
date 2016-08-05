@@ -141,6 +141,9 @@ public class MainActivity extends BaseActivity {
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map; // 服务器返回的监狱列表存储需要的集合
     private OkHttpClient client = new OkHttpClient();
+
+    private AlertDialog fastLoginDialog;// 快速登录弹窗
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -486,19 +489,16 @@ public class MainActivity extends BaseActivity {
         actv_prison_choose = (AutoCompleteTextView) prison_choose.findViewById(R.id.actv_prison_choose);
         actv_prison_choose.setThreshold(1);
         actv_prison_choose.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String newText = s.toString();
                 new GetSuggestData().execute(newText);
             }
 
-            @Override
-            public void afterTextChanged(Editable s) {}
+            @Override public void afterTextChanged(Editable s) {}
         });
-        final AlertDialog dialog = builder.create();
+        fastLoginDialog = builder.create();
         bt_ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -510,7 +510,7 @@ public class MainActivity extends BaseActivity {
                     if (prison_map.containsKey(content)) {
                         int jail_id = prison_map.get(content);
                         SPUtil.put(MainActivity.this, "jail_id", jail_id);
-                        dialog.dismiss();
+                        fastLoginDialog.dismiss();
                         addHomeFragment();
                         layoutMain();// 布局
                     } else {
@@ -520,7 +520,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         });
-        dialog.show();
+        fastLoginDialog.show();
     }
 
     /**
@@ -669,14 +669,20 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if(drawerLayout.isDrawerOpen(Gravity.LEFT)){
-            drawerLayout.closeDrawer(Gravity.LEFT);
+        if(fastLoginDialog != null && fastLoginDialog.isShowing()){
+            // 快速登录
+            fastLoginDialog.dismiss();
+            finish();
         }else {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();
+            if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+                drawerLayout.closeDrawer(Gravity.LEFT);
             } else {
-                super.onBackPressed();
+                if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                    mExitTime = System.currentTimeMillis();
+                } else {
+                    super.onBackPressed();
+                }
             }
         }
     }

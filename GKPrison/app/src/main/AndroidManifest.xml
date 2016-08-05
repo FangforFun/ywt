@@ -119,6 +119,7 @@ d
             android:screenOrientation="portrait"/>
         <activity
             android:name=".login.RegisterActivity"
+            android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.ApplyResultActivity"

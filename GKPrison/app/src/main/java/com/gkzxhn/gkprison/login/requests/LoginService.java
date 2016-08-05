@@ -36,4 +36,24 @@ public interface LoginService {
     Observable<UserInfo> loginPersonAccount(
             @Body RequestBody body
     );
+
+    /**
+     * 判断验证码
+     * @param body
+     * @return
+     */
+    @POST("verify_code")
+    Observable<ResponseBody> judgeVerificationCode(
+            @Body RequestBody body
+    );
+
+    /**
+     * 注册
+     * @param body
+     * @return
+     */
+    @POST("apply")
+    Observable<ResponseBody> register(
+            @Body RequestBody body
+    );
 }

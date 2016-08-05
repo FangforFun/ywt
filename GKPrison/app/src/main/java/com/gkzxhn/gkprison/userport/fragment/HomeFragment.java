@@ -167,14 +167,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiRequest api = retrofit.create(ApiRequest.class);
-        api.getNews(jail_id)
-                .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<List<News>>() {
-                    @Override
-                    public void onCompleted() {}
+                    @Override public void onCompleted() {}
 
-                    @Override
-                    public void onError(Throwable e) {
+                    @Override public void onError(Throwable e) {
                         Log.e(TAG, e.getMessage());
                         if(dialog.isShowing()) {
                             dialog.dismiss();
@@ -186,8 +183,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
                         }
                     }
 
-                    @Override
-                    public void onNext(List<News> newses) {
+                    @Override public void onNext(List<News> newses) {
                         focus_news_list = new ArrayList<>();
                         allnews = new ArrayList<>();
                         for (News news : newses) {
