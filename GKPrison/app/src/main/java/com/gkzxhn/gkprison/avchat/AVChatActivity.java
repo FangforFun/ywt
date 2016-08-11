@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.avchat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.shapes.Shape;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -17,8 +16,8 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
-import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -36,7 +35,6 @@ import com.netease.nimlib.sdk.avchat.model.AVChatData;
 import com.netease.nimlib.sdk.avchat.model.AVChatOnlineAckEvent;
 
 import java.io.File;
-import java.io.IOException;
 
 import de.greenrobot.event.EventBus;
 
@@ -198,25 +196,13 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
         registerNetCallObserver(false);
         cancelCallingNotifier();
         needFinish = true;
-        if(sp == null){
-            sp = getSharedPreferences("config", MODE_PRIVATE);
-        }
-        if(sp.getBoolean("isCommonUser", true)){
+        if((boolean)SPUtil.get(AVChatActivity.this, "isCommonUser", true)){
             // 如果是普通用户  视频结束恢复未审查状态
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("is_can_video", false);
-//            editor.putString("current_ms", 900 + "");// 保存会见时长
-            // 保存会见时间
-            editor.putString("last_meeting_time", StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
-            editor.commit();
-
-            new Thread(){
-                @Override
-                public void run() {
-                    //通知RemoteMeetingPager修改上次会见时间文本
-                    EventBus.getDefault().post(new MeetingTimeEvent());
-                }
-            }.start();
+            SPUtil.put(AVChatActivity.this, "is_can_video", false);
+            SPUtil.put(AVChatActivity.this, "last_meeting_time",
+                    StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd"));
+            //通知RemoteMeetingPager修改上次会见时间文本
+            EventBus.getDefault().post(new MeetingTimeEvent());
         }
         EventBus.getDefault().unregister(this);
     }

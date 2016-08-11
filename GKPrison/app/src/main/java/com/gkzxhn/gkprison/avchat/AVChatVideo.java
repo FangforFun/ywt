@@ -12,6 +12,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleListener;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleState;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleView;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nimlib.sdk.avchat.AVChatManager;
@@ -366,16 +367,12 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
     public void onTimeComplete() {
         Toast.makeText(context, "会话结束", Toast.LENGTH_SHORT).show();
         listener.onHangUp();// 时间到自动挂断
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("current_ms", "上次通话已完成");
-        editor.commit();
+        SPUtil.put(context, "current_ms", "上次通话已完成");
     }
 
     @Override
     public void onTimeChanged(long s) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("current_ms", s + "");
-        editor.commit();// 保存当前剩余时间
+        SPUtil.put(context, "current_ms", s + "");// 保存剩余时间
         if(s <= 180) { //剩余会话时间小于3分钟时间颜色报红
             time.setTextColor(context.getResources().getColor(R.color.tv_red));
             tv_shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));

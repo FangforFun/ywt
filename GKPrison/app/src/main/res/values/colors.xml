@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">#00000000</color>
-    <color name="transparent1">#00000066</color>
     <color name="half_transparent">#4000</color>
     <color name="theme">#6495ed</color>
     <color name="black">#000000</color>
@@ -18,43 +17,12 @@
     <color name="et_hint">#dadada</color>
     <color name="item_press">#eeeeee</color>
     <color name="orange_bg">#FD5D2B</color>
-    <color name="Indigo_colorPrimaryDark">#303f9f</color>
-    <color name="Indigo_nav_color">#4675FF</color>
     <color name="canlendar_text_color">#323232</color>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
     <color name="color_c2364b">#C2364B</color>
     <color name="color_f5455e">#F5455E</color>
-    <color name="light_gray">#fff5f5f5</color>
-    <color name="ripple">#F06292</color>
     <color name="navpage">#FFE1E8EB</color>
-    <integer-array name="my_colors">
-        <item>@color/gplus_color_1</item>
-        <item>@color/gplus_color_2</item>
-        <item>@color/gplus_color_3</item>
-        <item>@color/gplus_color_4</item>
-    </integer-array>
 
     <color name="gplus_color_1">#3e802f</color>
-    <color name="gplus_color_2">#f4b400</color>
-    <color name="gplus_color_3">#427fed</color>
-    <color name="gplus_color_4">#b23424</color>
-
-    <color name="red_dark_primary_color">#D32F2F</color>
-    <color name="red_primary_color">#F44336</color>
-    <color name="red_light_primary_color">#FFCDD2</color>
-    <color name="red_text_icon_color">#FFFFFF</color>
-
-    <color name="blue_primary_color">#2196F3</color>
-    <color name="blue_light_primary_color">#BBDEFB</color>
-    <color name="blue_dark_primary_color">#1976D2</color>
-    <color name="blue_text_icon_color">#FFFFFF</color>
-
-    <color name="green_dark_primary_color">#388E3C</color>
-    <color name="green_primary_color">#4CAF50</color>
-    <color name="green_light_primary_color">#C8E6C9</color>
-    <color name="green_text_icon_color">#FFFFFF</color>
 
     <!-- 底部弹出框 -->
     <!--覆盖颜色-->
@@ -95,10 +63,4 @@
     <color name="success_stroke_color">#6495ed</color><!-- #A5DC86 -->
     <color name="trans_success_stroke_color">#33A5DC86</color>
     <color name="warning_stroke_color">#F8BB86</color>
-    <color name="text_color">#575757</color>
-    <color name="material_blue_grey_80">#ff37474f</color>
-    <color name="material_blue_grey_90">#ff263238</color>
-    <color name="material_blue_grey_95">#ff21272b</color>
-    <color name="material_deep_teal_20">#6495ed</color><!-- #ff80cbc4 -->
-    <color name="material_deep_teal_50">#6495ed</color><!-- #ff009688 -->
 </resources>

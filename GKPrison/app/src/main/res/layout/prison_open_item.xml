@@ -40,8 +40,7 @@
             <TextView
                 android:id="@+id/tv_home_news_content"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
                 android:maxLines="3"
                 android:textColor="@color/tv_mid"

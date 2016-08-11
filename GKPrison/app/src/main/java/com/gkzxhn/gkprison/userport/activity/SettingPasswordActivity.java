@@ -2,50 +2,55 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.os.Handler;
-import android.view.KeyEvent;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.jungly.gridpasswordview.GridPasswordView;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 设置密码
  */
 public class SettingPasswordActivity extends BaseActivity {
 
-    private TextView tv_please_input_pwd;
-    private GridPasswordView gpv_pwd;
-    private GridPasswordView gpv_confirm_pwd;
+    @BindView(R.id.tv_please_input_pwd)
+    TextView tv_please_input_pwd;
+    @BindView(R.id.gpv_pwd)
+    GridPasswordView gpv_pwd;
+    @BindView(R.id.gpv_confirm_pwd)
+    GridPasswordView gpv_confirm_pwd;
+    @BindView(R.id.gpv_cancel_pwd)
+    GridPasswordView gpv_cancel_pwd;
+    @BindView(R.id.rl_pwd)
+    RelativeLayout rl_pwd;
+    @BindView(R.id.tv_not_match_pwd)
+    TextView tv_not_match_pwd;
     private String pwd;
     private String confirm_pwd;
     private AlertDialog dialog;
-    private SharedPreferences sp;
     private Handler handler = new Handler();
-    private TextView tv_not_match_pwd;
-    private GridPasswordView gpv_cancel_pwd;
 
     @Override
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_setting_password, null);
-        tv_please_input_pwd = (TextView) view.findViewById(R.id.tv_please_input_pwd);
-        gpv_pwd = (GridPasswordView) view.findViewById(R.id.gpv_pwd);
-        gpv_confirm_pwd = (GridPasswordView) view.findViewById(R.id.gpv_confirm_pwd);
-        tv_not_match_pwd = (TextView) view.findViewById(R.id.tv_not_match_pwd);
-        gpv_cancel_pwd = (GridPasswordView) view.findViewById(R.id.gpv_cancel_pwd);
+        ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
         setTitle("设置密码");
         setBackVisibility(View.VISIBLE);
         String type = getIntent().getStringExtra("type");
-        if(type.equals("close")){
+        if (type.equals("close")) {
             gpv_cancel_pwd.setVisibility(View.VISIBLE);
             gpv_pwd.setVisibility(View.GONE);
             gpv_confirm_pwd.setVisibility(View.GONE);
@@ -53,18 +58,15 @@ public class SettingPasswordActivity extends BaseActivity {
         gpv_cancel_pwd.setOnPasswordChangedListener(new GridPasswordView.OnPasswordChangedListener() {
             @Override
             public void onTextChanged(String psw) {
-
             }
 
             @Override
             public void onInputFinish(String psw) {
-                if(psw.equals(sp.getString("app_password", ""))){
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putString("app_password", "canceled");
-                    editor.putBoolean("isLock", false);
-                    editor.commit();
+                if (psw.equals(SPUtil.get(SettingPasswordActivity.this, "app_password", "") + "")) {
+                    SPUtil.put(SettingPasswordActivity.this, "app_password", "canceled");
+                    SPUtil.put(SettingPasswordActivity.this, "isLock", false);
                     handler.postDelayed(show_dialog_task, 500);
-                }else {
+                } else {
                     tv_not_match_pwd.setVisibility(View.VISIBLE);
                     tv_not_match_pwd.setText("密码错误，请重新输入");
                     gpv_cancel_pwd.clearPassword();
@@ -92,13 +94,11 @@ public class SettingPasswordActivity extends BaseActivity {
             @Override
             public void onInputFinish(String psw) {
                 confirm_pwd = psw;
-                if(pwd.equals(confirm_pwd)){
-                    SharedPreferences.Editor editor = sp.edit();
-                    editor.putBoolean("isLock", true);
-                    editor.putString("app_password", pwd);
-                    editor.commit();
+                if (pwd.equals(confirm_pwd)) {
+                    SPUtil.put(SettingPasswordActivity.this, "isLock", true);
+                    SPUtil.put(SettingPasswordActivity.this, "app_password", pwd);
                     handler.postDelayed(show_dialog_task, 500);
-                }else {
+                } else {
                     handler.postDelayed(delay_dismiss_confirm_pwd, 1000);
                 }
             }
@@ -154,15 +154,11 @@ public class SettingPasswordActivity extends BaseActivity {
     };
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if(keyCode == KeyEvent.KEYCODE_BACK){
-            if(dialog != null && dialog.isShowing()){
-                return false;
-            } else {
-                return super.onKeyDown(keyCode, event);
-            }
-        }else {
-            return super.onKeyDown(keyCode, event);
+    public void onBackPressed() {
+        if (dialog != null && dialog.isShowing()) {
+            dialog.dismiss();
+        } else {
+            super.onBackPressed();
         }
     }
 }

@@ -52,6 +52,8 @@ import java.util.List;
  */
 public class MyApplication extends Application {
 
+    private static final String TAG = "MyApplication";
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -95,15 +97,32 @@ public class MyApplication extends Application {
                                     }
                                 }
                             }, true);
-                    NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
-                        @Override
-                        public void onEvent(CustomNotification message) {
-                            // 在这里处理自定义通知。
-                        }
-                    }, true);
+
+                    observeCustomNotification();
                 }
             }
         }.run();
+    }
+
+    /**
+     * 监听系统通知
+     */
+    private void observeCustomNotification() {
+        NIMClient.getService(MsgServiceObserve.class).observeCustomNotification(new Observer<CustomNotification>() {
+            @Override
+            public void onEvent(CustomNotification customNotification) {
+                Log.i(TAG, "custom notification ApnsText : " + customNotification.getApnsText());
+                Log.i(TAG, "custom notification Content : " + customNotification.getContent());
+                Log.i(TAG, "custom notification FromAccount : " + customNotification.getFromAccount());
+                Log.i(TAG, "custom notification SessionId : " + customNotification.getSessionId());
+                Log.i(TAG, "custom notification Time : " + customNotification.getTime());
+                Log.i(TAG, "custom notification SessionType : " + customNotification.getSessionType());
+                Log.i(TAG, "custom notification PushPayload : " + customNotification.getPushPayload().size());
+                Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
+                Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
+                Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
+            }
+        }, true);
     }
 
     /**

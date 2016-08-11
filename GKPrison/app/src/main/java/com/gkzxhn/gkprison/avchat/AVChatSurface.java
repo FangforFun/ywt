@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapDisplayConfig;
 import com.lidroid.xutils.bitmap.callback.BitmapLoadCallBack;
@@ -264,18 +265,19 @@ public class AVChatSurface {
                 Log.i("当前网络状态", "------------" + network_type);
                 switch (network_type){
                     case "2G":
-                        Toast.makeText(context, "目前网络处于2G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        ToastUtil.showShortToast(context, context.getString(R.string.network_2g));
                         break;
                     case "3G":
-                        Toast.makeText(context, "目前网络处于3G状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        ToastUtil.showShortToast(context, context.getString(R.string.network_3g));
                         break;
                     case "4G":
-                        Toast.makeText(context, "目前网络处于4G状态，请尽快切换到wifi，否则可能会产生高额流量费！", Toast.LENGTH_SHORT);
+                        ToastUtil.showShortToast(context, context.getString(R.string.network_4g));
                         break;
-                    case "WIFI":Toast.makeText(context, "目前网络处于wifi状态，请保持网络畅通，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                    case "WIFI":
+                        ToastUtil.showShortToast(context, context.getString(R.string.network_wifi));
                         break;
                     default:
-                        Toast.makeText(context, "目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！", Toast.LENGTH_SHORT);
+                        ToastUtil.showShortToast(context, context.getString(R.string.network_default));
                         break;
                 }
                 break;

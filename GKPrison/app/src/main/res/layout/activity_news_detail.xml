@@ -98,6 +98,6 @@
                     android:visibility="gone"
                     android:drawableLeft="@drawable/comments"/>
             </RelativeLayout>
-        </LinearLayout>x
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

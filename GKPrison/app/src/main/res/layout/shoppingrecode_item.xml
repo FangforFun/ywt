@@ -71,9 +71,7 @@
             android:id="@+id/fenge1"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/tv_shopping_mongey1"
-            android:background="#dadada"
-            />
+            android:background="#dadada"/>
 
         <com.gkzxhn.gkprison.userport.view.CustomListView
             android:id="@+id/lv_recode"
@@ -81,49 +79,6 @@
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:divider="@color/transparent"></com.gkzxhn.gkprison.userport.view.CustomListView>
-
-<!--
-        <TextView
-            android:id="@+id/tv_shopping_desciption"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:lineSpacingExtra="5dp"
-            android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"
-            android:textColor="@color/tv_bg"/>
-        <TextView
-            android:id="@+id/tv_shopping_mongey"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:textColor="@color/tv_bg"
-            android:layout_gravity="right"
-            android:text="¥ 29.90 × 1"/>
-
-        <TextView
-            android:id="@+id/tv_shopping_desciption1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_shopping_mongey"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:lineSpacingExtra="5dp"
-            android:text="天禧玻璃杯带过滤便携男女士茶杯创意可爱运动情侣透明水杯杯子"
-            android:textColor="@color/tv_bg"/>
-        <TextView
-            android:id="@+id/tv_shopping_mongey1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:layout_gravity="right"
-            android:textColor="@color/tv_bg"
-            android:text="¥ 29.90 × 1"/>
-
--->
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -146,7 +101,7 @@
                 android:textSize="12sp"
                 android:text="3"/>
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="件商品"
                 android:layout_weight="1"
@@ -192,7 +147,6 @@
             android:id="@+id/fenge"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_below="@+id/tv_shopping_mongey1"
             android:background="#dadada"
             />
 

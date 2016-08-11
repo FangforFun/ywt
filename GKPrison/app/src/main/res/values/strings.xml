@@ -1,15 +1,9 @@
 <resources>
     <string name="app_name">狱务通</string>
 
-    <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_base">BaseActivity</string>
-    <string name="title_activity_prison_introduction">PrisonIntroductionActivity</string>
-    <string name="title_activity_laws_regulations">LawsRegulationsActivity</string>
-    <string name="title_activity_visiting_service">VisitingServiceActivity</string>
-    <string name="title_activity_prison_warden">PrisonWardenActivity</string>
     <string name="drawer_open">打开抽屉</string>
     <string name="drawer_close">关闭抽屉</string>
+    <string name="alarm_reminder_msg">闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="agreement">&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;国科狱务公开APP是由国科政信科技（北京）股份有限公司开发的一款监狱类软件，用于服刑人员家属、社会各界人士知悉服刑情况和监狱狱务情况。请您在使用本软件前仔细阅读如下条款。您的安装使用行为将视为对本《协议》的接受，并同意接受本《协议》各项条款的约束。\n
@@ -21,15 +15,7 @@
 您不得对本软件产品进行反向工程、反向编译和反向汇编，不得删除本软件及其他副本上一切关于版权的信息，不得制作和提供该软件的注册机及破解程序。除非适用法律明文允许上述活动，否则您必须遵守此协议限制。
 最终解释权归国科政信科技（北京）股份有限公司所有。
 </string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title_activity_family_service">FamilyServiceActivity</string>
-    <string name="title_activity_remittance">RemittanceActivity</string>
-    <string name="title_activity_shopping_recoder">ShoppingRecoderActivity</string>
-    <string name="title_activity_splash">SplashActivity</string>
-    <string name="title_activity_agreement">AgreementActivity</string>
-    <string name="title_activity_apply_barcode">ApplyBarcodeActivity</string>
     <string name="tanjian_notice">探监须知：\n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供方便快捷的探监申请服务，申请通过后，您即可在约定的时间内前往监狱探监。\n1、根据规定，服刑人员每月只能接受两次及以内的探视服务。\n2、部分服刑人员不提供探视服务。\n3、狱务通探监服务暂时只对直系近亲属开放，请谅解。\n4、本服务端每月只能提交3次探监申请，请勿无故提交，以免浪费机会。</string>
-    <string name="title_activity_apply_result">ApplyResultActivity</string>
 
     <string name="sunday">日</string>
     <string name="monday">一</string>
@@ -42,14 +28,12 @@
 
     <string name="avchat_hangup">结束通话</string>
     <string name="avchat_switch_to_video">切换视频</string>
-    <string name="avchat_switch_to_audio">切换语音</string>
     <string name="avchat_video_call_request">请求视频聊天…</string>
     <string name="avchat_audio_call_wifi_unavailable_tip">当前非WiFi环境，每分钟将产生约0.5M的流量</string>
     <string name="avchat_network_grade_0">网络通畅：</string>
     <string name="avchat_network_grade_1">网络正常：</string>
     <string name="avchat_network_grade_2">网络一般：</string>
     <string name="avchat_network_grade_3">网络较差：</string>
-    <string name="avchat_refuse">拒绝</string>
     <string name="avchat_receive">开启</string>
     <string name="avchat_pickup">接听</string>
     <string name="avchat_net_error_then_quit">网络异常，通话结束</string>
@@ -64,36 +48,21 @@
     <string name="avchat_audio_call_request">请求通话</string>
     <string name="avchat_connecting">连接中…</string>
     <string name="avchat_audio_to_video_invitation">对方邀请你开启视频聊天…</string>
-    <string name="avchat_cannot_establish_connection">无法和对方建立连接</string>
-    <string name="avchat_network_unstable_notificaton">当前网络不稳定</string>
     <string name="avchat_peer_close_camera">对方关闭了摄像头</string>
     <string name="avchat_local_close_camera">你关闭了摄像头</string>
     <string name="avchat_audio_to_video_wait">正在等待对方开启摄像头…</string>
-    <string name="avchat_no_pick_up">未接听</string>
     <string name="avchat_no_response">无人接听</string>
-    <string name="avchat_buddy_reject">对方正忙</string>
-    <string name="avchat_cancel">已取消</string>
     <string name="avchat_switch_video_reject">对方不同意音频切换为视频！</string>
     <string name="avchat_notification">正在与%1$s通话中，点击继续</string>
-    <string name="avchat_hangup_notificaion">%1$s:【网络通话】</string>
     <string name="avchat_call">网络通话</string>
     <string name="avchat_no_pickup_call">未接听</string>
-    <string name="avchat_call_failed">发起通话失败</string>
     <string name="avchat_in_switch">请耐心等待！</string>
     <string name="avchat_device_no_ready">音视频设备未准备好</string>
-    <string name="title_activity_laws_detail">LawsDetailActivity</string>
     <string name="meeting_note">会见须知： \n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供远程探监服务，您可以通过狱务通申请探监，并通过手机视频和服刑人员进行远程探视。 在申请远程探监前，请您详细阅读以下注意事项：\n1、服刑人员每月可远程探监次数不限。 \n2、部分服刑人员不提供探视服务。 \n3、狱务通软件暂时只提供直系亲属远程探视，请谅解。 \n4、根据安全要求，您的会见信息可能会被记录。 \n5、每次会见需缴纳一定费用，请勿无故提交远程探监申请。</string>
     <string name="alarm_remind"><![CDATA[        温馨提示：您与德山监狱的远程视频会见即将开始，请连接好网络做好准备。]]></string>
 
 
     <!--下拉刷新-->
-    <string name="pull_to_refresh">下拉可以刷新</string>
-    <string name="release_to_refresh">释放立即刷新</string>
-    <string name="refreshing">正在刷新…</string>
-    <string name="not_updated_yet">暂未更新过</string>
-    <string name="updated_at">上次更新于%1$s前</string>
-    <string name="updated_just_now">刚刚更新</string>
-    <string name="time_error">时间有问题</string>
     <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
@@ -102,15 +71,13 @@
     <string name="enable_logined">登录后可用</string>
 
 
-    <!--微信支付-->
-    <string name="pay_result_tip">界面</string>
-    <string name="app_tip">提示</string>
-    <string name="pay_result_callback_msg" formatted="false">微信支付结果：%s</string>
-
     <!-- sweet-alert-dialog -->
     <string name="dialog_default_title">Here\'s a message!</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="LOADING">Loading...</string>
-    <string name="default_progressbar">Default Progressbar:</string>
+    <string name="network_2g">目前网络处于2G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="network_3g">目前网络处于3G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="network_4g">目前网络处于4G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="network_wifi">目前网络处于wifi状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="network_default">目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
 </resources>

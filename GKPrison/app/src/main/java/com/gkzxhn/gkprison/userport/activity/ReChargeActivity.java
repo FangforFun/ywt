@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 
 public class ReChargeActivity extends BaseActivity {
     private Button btn_recharge;
@@ -113,7 +114,7 @@ public class ReChargeActivity extends BaseActivity {
                     return;
                 }
                 long time = System.currentTimeMillis();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 Date date = new Date(time);
                 times = format.format(date);
                 sendOrderToServer();

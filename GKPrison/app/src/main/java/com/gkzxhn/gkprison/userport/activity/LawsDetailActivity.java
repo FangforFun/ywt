@@ -41,14 +41,14 @@ public class LawsDetailActivity extends BaseActivity {
                 super.onPageFinished(view, url);
             }
         });
-        WebSettings webSettings = wv_news_detail.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-//        webSettings.setBuiltInZoomControls(true);
-//        webSettings.setSupportZoom(true);
         npb_loading.setVisibility(View.VISIBLE);
         npb_loading.setReachedBarHeight(10);
         npb_loading.setUnreachedBarHeight(8);
         npb_loading.setProgressTextSize(24);
+        WebSettings webSettings = wv_news_detail.getSettings();
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
+        webSettings.setSupportZoom(true);
         wv_news_detail.setWebChromeClient(new WebChromeClient(){
             @Override
             public void onProgressChanged(WebView view, int newProgress) {

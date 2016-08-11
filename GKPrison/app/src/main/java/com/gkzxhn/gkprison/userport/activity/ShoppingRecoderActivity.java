@@ -26,7 +26,8 @@ public class ShoppingRecoderActivity extends BaseActivity {
     private ListView lv_shoppingrecoder;
     private ShoppingAdapter adapter;
     private List<Cart> carts = new ArrayList<Cart>();
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
 
     @Override
     protected View initView() {

@@ -18,6 +18,7 @@ import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -46,6 +47,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -198,9 +200,7 @@ public class AVChatUI implements AVChatUIListener {
                 canSwitchCamera = true;
 //                }
                 Log.d(TAG, "success" + AVChatManager.getInstance().hasMultipleCameras() + "---" + canSwitchCamera + AVChatManager.getInstance().isFrontCamera());
-                SharedPreferences.Editor editor = sp.edit();
-                editor.putBoolean("is_can_video", true);
-                editor.commit();
+                SPUtil.put(context, "is_can_video", true);
             }
 
             @Override
@@ -638,10 +638,8 @@ public class AVChatUI implements AVChatUIListener {
             avChatVideo.setTopRoot(true);// 设置顶部栏可见
             avChatVideo.setVisibilityToggle(true);// 设置底部开关可用
             avChatSurface.setThroughtVisibility(View.GONE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("is_can_video", true);
-            editor.putString("current_ms", 900 + "");
-            editor.commit();
+            SPUtil.put(context, "is_can_video", true);
+            SPUtil.put(context, "current_ms", 900 + "");
         } else if (!TextUtils.isEmpty(msg) && msg.equals("审核未通过")) {
             // 审核未通过  自动挂断  家属端提示审核未通过
             hangUp(AVChatExitCode.HANGUP);
@@ -784,7 +782,7 @@ public class AVChatUI implements AVChatUIListener {
 
                             try {
                                 //用于格式化日期,作为日志文件名的一部分
-                                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
+                                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss", Locale.getDefault());
                                 String time = formatter.format(new Date());
                                 String fileName = "审核异常日志文件" + time + "-" + ".txt";
                                 if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {

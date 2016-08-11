@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 家属服务
@@ -57,7 +58,8 @@ public class FamilyServiceActivity extends BaseActivity {
     private MyAdapter adapter;
     private String TradeNo;
     private String times = "";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String datebase_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
     private SharedPreferences sp;
     private String ip;
     private String money = "";
@@ -270,7 +272,7 @@ public class FamilyServiceActivity extends BaseActivity {
                 // intent = new Intent(this, RemittanceWaysActivity.class);
                 //startActivity(intent);
                 long time = System.currentTimeMillis();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
                 Date date = new Date(time);
                 times = format.format(date);
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);

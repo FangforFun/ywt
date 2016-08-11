@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.R;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * created by huangzhengneng on 2016/2/2
@@ -264,7 +265,7 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
 	private String getDataTime() {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+				"yyyy-MM-dd HH:mm:ss", Locale.getDefault());
 		Date date = new Date();
 		return dateFormat.format(date);
 	}

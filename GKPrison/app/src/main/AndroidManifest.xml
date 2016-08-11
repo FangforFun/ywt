@@ -266,25 +266,17 @@ d
 
         <!-- 声明自定义通知的广播接收器，第三方 APP 集成时，action 中的 com.netease.nim.demo 请替换为自己的包名 -->
         <!-- 需要权限声明 <uses-permission android:name="com.netease.nim.demo.permission.RECEIVE_MSG"/> -->
-        <receiver
-            android:name=".userport.receiver.CustomNotificationReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_CUSTOM_NOTIFICATION"/>
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".userport.receiver.CustomNotificationReceiver"-->
+            <!--android:enabled="true"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_CUSTOM_NOTIFICATION"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
         <receiver
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote"/>
-
-        <service
-            android:name="com.umeng.update.net.DownloadingService"
-            android:process=":DownloadingService"/>
-
-        <activity
-            android:name="com.umeng.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
 
         <receiver android:name=".userport.activity.AppRegister">
             <intent-filter>

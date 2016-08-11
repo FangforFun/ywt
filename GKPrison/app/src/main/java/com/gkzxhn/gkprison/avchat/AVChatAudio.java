@@ -13,6 +13,7 @@ import com.gkzxhn.gkprison.avchat.toggleview.ToggleListener;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleState;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleView;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -373,9 +374,7 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
 
     @Override
     public void onTimeChanged(long ms) {
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString("current_ms", ms + "");
-        editor.commit();// 保存当前剩余时间
+        SPUtil.put(context, "current_ms", ms + "");// 保存当前剩余时间
         if(ms <= 180) { //剩余会话时间小于3分钟时间颜色报红
             shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));
             tv_shengyu_time.setTextColor(context.getResources().getColor(R.color.tv_red));
@@ -387,7 +386,6 @@ public class AVChatAudio implements View.OnClickListener, ToggleListener, Anticl
      * @param visible
      */
     public void setSTime(boolean visible){
-//        Toast.makeText(context, "开始进行视频通话，您只有15分钟，请抓紧时间", Toast.LENGTH_SHORT).show();
         shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         tv_shengyu_time.setVisibility(visible ? View.VISIBLE : View.GONE);
         if(visible){

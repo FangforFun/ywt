@@ -21,7 +21,7 @@
 
         <TextView
             android:id="@+id/tv_messge"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="刑期变动"
             android:textColor="@color/tv_bg"

@@ -62,6 +62,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -131,7 +132,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             progressDialog.dismiss();
             // 重新刷新数据
             long currentDate = System.currentTimeMillis();
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             Date date = new Date(currentDate);
             String formatDate = format.format(date);
             requestData(formatDate);// 请求数据
@@ -196,7 +197,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         setViewPager();
         mDate = CalendarCard.mShowDate;
         long currentDate = System.currentTimeMillis();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date(currentDate);
         final String formatDate = format.format(date);
         if (code == StatusCode.LOGINED) {// 已登录状态才刷新数据
@@ -256,10 +257,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                SharedPreferences.Editor editor = sp.edit();
-                editor.clear();
-                editor.putBoolean("is_first", false); // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
-                editor.commit();
+                // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
+                SPUtil.put(DateMeetingListActivity.this, "is_first", false);
                 startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();
             }
@@ -431,6 +430,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                     public void onClick(View v) {
                         Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        SPUtil.clear(DateMeetingListActivity.this);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.clear();
                         editor.commit();

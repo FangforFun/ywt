@@ -50,7 +50,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="剩余时间："
-                android:layout_below="@+id/avchat_video_switch_audio"
                 android:textColor="@color/white"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
@@ -61,13 +60,10 @@
                 android:id="@+id/avchat_video_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/avchat_video_switch_audio"
                 android:textColor="@color/white"
                 android:layout_marginTop="5dp"
-                android:layout_toRightOf="@+id/tv_shengyu_time"
                 android:textSize="13sp"
                 android:visibility="visible" />
-
         </LinearLayout>
 
         <com.netease.nim.uikit.common.ui.imageview.HeadImageView

@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.google.gson.Gson;
 import com.netease.nimlib.sdk.NimIntent;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
 
@@ -45,10 +47,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = context.getPackageName() + NimIntent.ACTION_RECEIVE_CUSTOM_NOTIFICATION;
         if (action.equals(intent.getAction())) {
-            sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
-            SharedPreferences.Editor editor = sp.edit();
-            editor.putBoolean("has_new_notification", true);
-            editor.commit();
+            SPUtil.put(context, "has_new_notification", true);
             // 从 intent 中取出自定义通知， intent 中只包含了一个 CustomNotification 对象
             CustomNotification notification = (CustomNotification)
                     intent.getSerializableExtra(NimIntent.EXTRA_BROADCAST_MSG);
@@ -88,7 +87,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * @param formId
      */
     public void sendNotification(Context context, String content, String formId){
-        saveToDataBase(content);// 系统通知保存至数据库
+        saveToDataBase(context, content);// 系统通知保存至数据库
         if(sp.getBoolean("isMsgRemind", false)) {
             setRemindAlarm(context, content);
         }
@@ -122,7 +121,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
             Log.i("meeting_time", meeting_time);
             String start_time = meeting_time.substring(0, meeting_time.indexOf(" ") + 9);
             Log.i("start_time", start_time);
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
             long pre_alarm_time = format.parse(start_time).getTime();
             alarm_time = pre_alarm_time - 1800000;
             Log.i("alarm_time", alarm_time + "---" + StringUtils.formatTime(alarm_time, "yyyy-MM-dd HH:mm:ss"));
@@ -147,9 +146,10 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      * 保存至数据库
      * @param content
      */
-    private void saveToDataBase(String content) {
+    private void saveToDataBase(Context context, String content) {
         // 保存至数据库
-        SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/files/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+        String datebase_path = context.getFilesDir().getPath() + "/databases/chaoshi.db";
+        SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
         Gson gson = new Gson();
         SystemMessage systemMessage = gson.fromJson(content, SystemMessage.class);
         ContentValues values = new ContentValues();

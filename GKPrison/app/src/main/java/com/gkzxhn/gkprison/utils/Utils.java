@@ -48,6 +48,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,7 +112,7 @@ public class Utils {
      * @return 格式化后的日期显示
      */
     public static String dateFormat(String sdate, String format) {
-        SimpleDateFormat formatter = new SimpleDateFormat(format);
+        SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
         java.sql.Date date = java.sql.Date.valueOf(sdate);
         String dateString = formatter.format(date);
         return dateString;
@@ -192,7 +193,7 @@ public class Utils {
         List<String> list = new ArrayList<>();
         for(int i = 1; i <= n; i++) {
             Calendar c = Calendar.getInstance();
-            DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             c.setTime(new Date());
             c.add(Calendar.DATE, i);
             Date d2 = c.getTime();
@@ -279,12 +280,12 @@ public class Utils {
         String strYear = Ai.substring(6, 10);// 年份
         String strMonth = Ai.substring(10, 12);// 月份
         String strDay = Ai.substring(12, 14);// 月份
-        if (isDataFormat(strYear + "-" + strMonth + "-" + strDay) == false) {
+        if (!isDataFormat(strYear + "-" + strMonth + "-" + strDay)) {
             errorInfo = "身份证生日无效。";
             return errorInfo;
         }
         GregorianCalendar gc = new GregorianCalendar();
-        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat s = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         if ((gc.get(Calendar.YEAR) - Integer.parseInt(strYear)) > 150
                 || (gc.getTime().getTime() - s.parse(
                 strYear + "-" + strMonth + "-" + strDay).getTime()) < 0) {

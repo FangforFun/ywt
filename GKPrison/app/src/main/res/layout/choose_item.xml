@@ -6,7 +6,7 @@
         android:id="@+id/tv_fenlei"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:textColor="#666666"
         android:text="全部分类"
         android:gravity="center_vertical"

@@ -6,7 +6,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:fillViewport="true">
 
         <LinearLayout
@@ -104,7 +104,7 @@
                 android:textColor="@color/tv_bg"
                 android:textCursorDrawable="@null"
                 android:textSize="@dimen/register_sex_tv_size"
-                android:inputType="number"
+                android:inputType="phone"
                 android:padding="10dp"
                 android:textColorHint="@color/tv_gray"
                 android:background="@drawable/et_shape_search"/>

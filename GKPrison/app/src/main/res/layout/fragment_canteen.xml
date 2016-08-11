@@ -12,6 +12,7 @@
         android:layout_height="@dimen/canteen_tab_height"
         android:orientation="horizontal"
         android:background="@color/white">
+
         <RelativeLayout
             android:id="@+id/rl_allclass"
             android:layout_width="0dp"
@@ -19,6 +20,7 @@
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:layout_weight="1">
+
             <TextView
                 android:id="@+id/tv_allclass"
                 android:layout_width="wrap_content"
@@ -27,6 +29,7 @@
                 android:textSize="@dimen/canteen_tab_tv_size"
                 android:textColor="@color/tv_bg"
                 android:layout_centerInParent="true"/>
+
             <Spinner
                 android:id="@+id/sp_allclass"
                 android:layout_width="@dimen/canteen_tab_spinner_size"
@@ -34,9 +37,8 @@
                 android:layout_toRightOf="@+id/tv_allclass"
                 android:layout_alignBottom="@+id/tv_allclass"
                 android:layout_marginLeft="5dp"
-                android:background="@drawable/spinner"
-                />
-    </RelativeLayout>
+                android:background="@drawable/spinner"/>
+         </RelativeLayout>
         <View
             android:layout_width="1dp"
             android:layout_height="30dp"
@@ -65,44 +67,16 @@
                 android:background="@drawable/spinner"
                 />
         </RelativeLayout>
-        <!--
-        <View
-            android:layout_width="1dp"
-            android:layout_height="30dp"
-            android:background="@color/bg"
-            android:layout_gravity="center_vertical"/>
-        <RelativeLayout
-            android:id="@+id/rl_zhineng"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-            <TextView
-                android:id="@+id/tv_zhineng"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="智能排序"
-                android:textSize="@dimen/canteen_tab_tv_size"
-                android:textColor="@color/tv_bg"
-                android:layout_centerInParent="true"/>
-            <Spinner
-                android:id="@+id/sp_zhineng"
-                android:layout_width="@dimen/canteen_tab_spinner_size"
-                android:layout_height="@dimen/canteen_tab_spinner_size"
-                android:layout_toRightOf="@+id/tv_zhineng"
-                android:layout_alignBottom="@+id/tv_zhineng"
-                android:layout_marginLeft="5dp"
-                android:background="@drawable/spinner"
-                />
-        </RelativeLayout>
-        -->
     </LinearLayout>
+
     <View
-    android:id="@+id/fenjie"
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:layout_below="@+id/ll_navigation"
-    android:background="@color/et_hint"
-    android:layout_centerHorizontal="true"/>
+        android:id="@+id/fenjie"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ll_navigation"
+        android:background="@color/et_hint"
+        android:layout_centerHorizontal="true"/>
+
     <FrameLayout
         android:id="@+id/fl_commodity"
         android:layout_width="match_parent"
@@ -129,9 +103,8 @@
                 android:layout_marginLeft="20dp"
                 android:layout_gravity="center_vertical" />
             <RelativeLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:gravity="center_vertical">
                 <TextView
                     android:id="@+id/tv_total"
@@ -191,13 +164,13 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/white">
+
         <LinearLayout
             android:id="@+id/ll_biaoti"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/canteen_tab_height"
-            >
+            android:layout_height="@dimen/canteen_tab_height">
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="购物车"
                 android:textSize="16sp"
@@ -210,29 +183,30 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:layout_marginRight="10dp"
-                >
+                android:layout_marginRight="10dp">
+
                 <ImageView
                     android:id="@+id/image_clear"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:src="@drawable/clearbuycar"
-                    />
+                    android:src="@drawable/clearbuycar"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toRightOf="@+id/image_clear"
                     android:text="清空购物车"
-                    android:layout_centerVertical="true"
-                    />
+                    android:layout_centerVertical="true"/>
+
             </RelativeLayout>
         </LinearLayout>
+
         <ListView
             android:id="@+id/lv_buycar"
             android:layout_below="@+id/ll_biaoti"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            ></ListView>
+            android:layout_height="wrap_content"/>
+
         </RelativeLayout>
     </FrameLayout>
 
@@ -243,6 +217,7 @@
         android:layout_below="@+id/fenjie"
         android:background="@color/half_transparent"
         android:visibility="gone">
+
         <ListView
             android:id="@+id/lv_allchoose_item"
             android:layout_width="match_parent"
@@ -251,7 +226,6 @@
             android:dividerHeight="1dp"
             android:background="@color/white">
         </ListView>
-
     </FrameLayout>
     <FrameLayout
         android:id="@+id/fl_saleschoose"
@@ -260,6 +234,7 @@
         android:layout_below="@+id/fenjie"
         android:background="@color/half_transparent"
         android:visibility="gone">
+
         <ListView
             android:id="@+id/lv_saleschoose_item"
             android:layout_width="match_parent"
@@ -268,6 +243,5 @@
             android:dividerHeight="1dp"
             android:background="@color/white">
         </ListView>
-
     </FrameLayout>
 </RelativeLayout>

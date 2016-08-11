@@ -72,7 +72,8 @@ public class PaymentActivity extends BaseActivity {
     private int jail_id;
     StringBuffer sb;
     PayReq req = new PayReq();
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";

@@ -1,6 +1,5 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,8 +20,6 @@ import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.userport.adapter.CommidtyAdapter;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
@@ -38,7 +35,9 @@ import java.util.Locale;
 import java.util.Random;
 
 public class ZhifubaoPayActivity extends FragmentActivity {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+
+    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";

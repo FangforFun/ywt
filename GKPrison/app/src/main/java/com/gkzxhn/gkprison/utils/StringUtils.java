@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.utils;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by huangzhengneng on 2016/1/21.
@@ -17,7 +18,7 @@ public class StringUtils {
      */
     public static String formatTime(long time, String pattern){
         Date date = new Date(time);
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
         return format.format(date);
     }
 
@@ -29,7 +30,7 @@ public class StringUtils {
      * @throws ParseException
      */
     public static long formatToMill(String time, String pattern) throws ParseException{
-        SimpleDateFormat format = new SimpleDateFormat(pattern);
+        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
         return format.parse(time).getTime();
     }
 

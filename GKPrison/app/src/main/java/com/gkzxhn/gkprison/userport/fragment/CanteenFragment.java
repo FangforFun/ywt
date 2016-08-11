@@ -66,7 +66,8 @@ import okhttp3.OkHttpClient;
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String datebase_path = getActivity().getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
     private RelativeLayout rl_zhineng;
@@ -234,7 +235,7 @@ public class CanteenFragment extends BaseFragment {
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
         long time = System.currentTimeMillis();
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
         final Date date = new Date(time);
         times = format.format(date);
         String sql = "insert into Cart (time,isfinish,remittance) values ('" + times + "',0,0)";

@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -104,8 +105,8 @@ public class MainActivity extends BaseActivity {
     private HomeFragment homeFragment = null;
     private RemoteMeetFragment remoteMeetFragment = null;
     private CanteenBaseFragment canteenBaseFragment = null;
-
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String datebase_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
     private List<Commodity> commodityList = new ArrayList<>();
     private long mExitTime;//add by hzn 退出按键时间间隔
     private boolean isRegisteredUser; // 是否注册登录用户
@@ -383,6 +384,7 @@ public class MainActivity extends BaseActivity {
      * 切换fragment
      * @param index 索引
      */
+    @SuppressLint("CommitTransaction")
     private void switchFragment(int index) {
         transaction = manager.beginTransaction();
         for (int i = 0; i < fragments.size(); i++) {
@@ -398,6 +400,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 初始化fragment
      */
+    @SuppressLint("CommitTransaction")
     private void initFragment() {
         fragments.clear();
         manager = getSupportFragmentManager();
@@ -481,6 +484,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 添加主Fragment
      */
+    @SuppressLint("CommitTransaction")
     private void addHomeFragment() {
         manager = getSupportFragmentManager();
         transaction = manager.beginTransaction();

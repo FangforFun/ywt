@@ -5,7 +5,6 @@ import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
@@ -31,6 +30,7 @@ public class PrisonIntroductionActivity extends BaseActivity {
         return view;
     }
     // http://10.93.1.10:3000/api/v1/news?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1
+
     @Override
     protected void initData() {
         setTitle("");
@@ -39,16 +39,10 @@ public class PrisonIntroductionActivity extends BaseActivity {
         id = sp.getInt("jail_id",1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/" + id);
         Log.i("jail_id is :", id + "");
-        wv_news_detail.setWebViewClient(new WebViewClient() {
-            @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-            }
-        });
         WebSettings webSettings = wv_news_detail.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-//        webSettings.setBuiltInZoomControls(true);
-//        webSettings.setSupportZoom(true);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
+        webSettings.setDomStorageEnabled(true);// 开启Dom storage API 功能
+        webSettings.setSupportZoom(true);
         npb_loading.setVisibility(View.VISIBLE);
         npb_loading.setReachedBarHeight(10);
         npb_loading.setUnreachedBarHeight(8);

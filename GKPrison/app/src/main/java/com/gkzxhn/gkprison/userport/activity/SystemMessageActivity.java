@@ -2,7 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.ContentValues;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 
 import java.text.ParseException;
@@ -32,10 +32,10 @@ public class SystemMessageActivity extends BaseActivity {
     private ListView lv_system_msg;
     private final String[] LEFT_TVS = {"您的探监申请已通过", "您的探监申请未通过", "您的会见申请已通过", "您的会见申请未通过", "系统更新", "监狱长信箱有新的回复"};
     private List<SystemMessage> messageList = new ArrayList<>();
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase("/data/data/com.gkzxhn.gkprison/databases/chaoshi.db", null, SQLiteDatabase.OPEN_READWRITE);
+    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
+    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
     private SystemMsgAdapter msgAdapter;
     private ImageView iv_no_system_message;
-    private SharedPreferences sp;
 
     @Override
     protected View initView() {
@@ -47,10 +47,7 @@ public class SystemMessageActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putBoolean("has_new_notification", false);
-        editor.commit();
+        SPUtil.put(this, "has_new_notification", false);
         messageList.clear();
         setTitle("系统消息");
         setBackVisibility(View.VISIBLE);
@@ -90,7 +87,7 @@ public class SystemMessageActivity extends BaseActivity {
             String reason = cursor.getString(cursor.getColumnIndex("reason"));
             String receive_time = cursor.getString(cursor.getColumnIndex("receive_time"));
             String user_id = cursor.getString(cursor.getColumnIndex("user_id"));
-            if (user_id.equals(sp.getString("username", ""))) {
+            if (user_id.equals(SPUtil.get(SystemMessageActivity.this, "username", "") + "")) {
                 systemMessage.setMsg_receive_time(receive_time);
                 systemMessage.setReason(reason);
                 systemMessage.setName(name);

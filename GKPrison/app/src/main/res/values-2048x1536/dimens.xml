@@ -6,13 +6,10 @@
     <dimen name="dot_radius">30px</dimen>
     <dimen name="av_small_size_width">128dp</dimen>
     <dimen name="av_small_size_height">196dp</dimen>
-    <dimen name="anticlockwise_size">26sp</dimen>
     <dimen name="title_bar_height">70dp</dimen>
     <dimen name="text_size_20">30sp</dimen>
     <dimen name="small_title_size">18sp</dimen>
     <dimen name="iv_back_height_width">25dp</dimen>
-    <dimen name="login_choose_size">20dp</dimen>
-    <dimen name="login_choose_width">70dp</dimen>
     <dimen name="three_grid_unit">48dp</dimen>
     <dimen name="one_and_a_half_grid_unit">24dp</dimen>
     <dimen name="tv_apply_meeting_call">30sp</dimen>

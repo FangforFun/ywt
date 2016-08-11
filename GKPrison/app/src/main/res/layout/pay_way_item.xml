@@ -11,17 +11,16 @@
         android:padding="5dp"
         android:src="@drawable/pay_way_bank_card"/>
 
-        <TextView
-            android:id="@+id/tv_pay_way"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="支付宝支付"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/iv_pay_way_icon"
-            android:paddingLeft="10dp"
-            android:textSize="@dimen/setting_item_tv_size"
-            android:textColor="@color/tv_bg"/>
+    <TextView
+        android:id="@+id/tv_pay_way"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="支付宝支付"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/iv_pay_way_icon"
+        android:paddingLeft="10dp"
+        android:textSize="@dimen/setting_item_tv_size"
+        android:textColor="@color/tv_bg"/>
 
     <CheckBox
         android:id="@+id/cb_pay_way"

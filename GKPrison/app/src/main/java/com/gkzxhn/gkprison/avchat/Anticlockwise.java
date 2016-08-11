@@ -6,6 +6,7 @@ import android.widget.Chronometer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by zhengneng on 2015/12/30.
@@ -15,7 +16,7 @@ public class Anticlockwise extends Chronometer{
     public Anticlockwise(Context context, AttributeSet attrs) {
         super(context, attrs);
         // 自动生成的构造函数存根
-        mTimeFormat = new SimpleDateFormat("mm:ss");
+        mTimeFormat = new SimpleDateFormat("mm:ss", Locale.getDefault());
         this.setOnChronometerTickListener(listener);
         mContext = context;
     }
@@ -70,7 +71,7 @@ public class Anticlockwise extends Chronometer{
      *            计时格式
      */
     public void setTimeFormat(String pattern) {
-        mTimeFormat = new SimpleDateFormat(pattern);
+        mTimeFormat = new SimpleDateFormat(pattern, Locale.getDefault());
     }
 
     public void setOnTimeCompleteListener(OnTimeCompleteListener l) {
