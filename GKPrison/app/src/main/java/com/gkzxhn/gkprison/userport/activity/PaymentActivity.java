@@ -32,6 +32,7 @@ import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.RSAUtil;
 import com.gkzxhn.gkprison.utils.SignUtils;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
@@ -72,8 +73,7 @@ public class PaymentActivity extends BaseActivity {
     private int jail_id;
     StringBuffer sb;
     PayReq req = new PayReq();
-    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";

@@ -85,5 +85,4 @@ public class ShoppingAdapter extends BaseAdapter {
         TextView tv_qty;
         CustomListView lv_recode;
     }
-
 }

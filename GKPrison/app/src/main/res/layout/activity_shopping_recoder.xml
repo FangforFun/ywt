@@ -2,24 +2,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/lv_shopping_recode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@null"
-        android:scrollbars="none" />
-
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/bg">
 
-        <ImageView
-            android:id="@+id/iv_nothing"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
-            android:visibility="gone"
-            android:src="@drawable/no_shopping_record"
-            android:layout_centerInParent="true"
-            android:paddingBottom="100dp"/>
+        <ListView
+            android:id="@+id/lv_shopping_recode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@null"
+            android:scrollbars="none" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/iv_nothing"
+                android:layout_width="260dp"
+                android:layout_height="260dp"
+                android:visibility="gone"
+                android:src="@drawable/no_shopping_record"
+                android:layout_centerInParent="true"
+                android:paddingBottom="100dp"/>
+        </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

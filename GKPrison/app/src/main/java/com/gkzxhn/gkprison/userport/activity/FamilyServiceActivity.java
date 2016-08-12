@@ -32,6 +32,7 @@ import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
@@ -58,8 +59,7 @@ public class FamilyServiceActivity extends BaseActivity {
     private MyAdapter adapter;
     private String TradeNo;
     private String times = "";
-    private String datebase_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
     private SharedPreferences sp;
     private String ip;
     private String money = "";

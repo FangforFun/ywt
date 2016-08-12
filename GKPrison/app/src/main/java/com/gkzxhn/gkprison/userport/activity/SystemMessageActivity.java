@@ -32,8 +32,7 @@ public class SystemMessageActivity extends BaseActivity {
     private ListView lv_system_msg;
     private final String[] LEFT_TVS = {"您的探监申请已通过", "您的探监申请未通过", "您的会见申请已通过", "您的会见申请未通过", "系统更新", "监狱长信箱有新的回复"};
     private List<SystemMessage> messageList = new ArrayList<>();
-    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
     private SystemMsgAdapter msgAdapter;
     private ImageView iv_no_system_message;
 

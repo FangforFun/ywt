@@ -58,40 +58,7 @@ public class ReplyPublicityFragment extends Fragment {
     private SharedPreferences sp;
     private TextView nonotice;
     private List<News> allnews = new ArrayList<>();
-    private List<News> replys = new ArrayList<News>();
-    private Handler handler = new Handler(){
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what){
-                case 1:
-                    String tag = (String)msg.obj;
-                    if (tag.equals("success")){
-                        Bundle bundle = msg.getData();
-                        String result = bundle.getString("result");
-                        allnews = analysisNews(result);
-                        for (int i = 0;i < allnews.size();i++){
-                            News news = allnews.get(i);
-                            if (news.getType_id() == 3){
-                                replys.add(news);
-                            }
-                        }
-                        if (replys.size() == 0){
-                            nonotice.setVisibility(View.VISIBLE);
-                        }else {
-                            nonotice.setVisibility(View.GONE);
-                        }
-                        reply_list.setAdapter(adapter);
-                    }else if (tag.equals("error")){
-                        Toast.makeText(getActivity().getApplicationContext(), "同步数据失败", Toast.LENGTH_SHORT).show();
-                    }
-                    break;
-            }
-        }
-    };
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    private List<News> replys = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -158,6 +125,7 @@ public class ReplyPublicityFragment extends Fragment {
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     allnews = analysisNews(response.body().string());
+                    replys.clear();
                     for (int i = 0;i < allnews.size();i++){
                         News news = allnews.get(i);
                         if (news.getType_id() == 3){

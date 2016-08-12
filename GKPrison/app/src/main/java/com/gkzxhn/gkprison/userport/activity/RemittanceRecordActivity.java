@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.Remittance;
+import com.gkzxhn.gkprison.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,8 +28,7 @@ public class RemittanceRecordActivity extends BaseActivity {
     private List<Remittance> remittances = new ArrayList<Remittance>();
     private ImageView iv_recode;
     private  String prisonname;
-    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
 
 
     @Override

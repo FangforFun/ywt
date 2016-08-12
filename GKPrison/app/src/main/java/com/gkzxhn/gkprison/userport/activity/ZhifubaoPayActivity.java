@@ -23,6 +23,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 
 import java.io.UnsupportedEncodingException;
@@ -36,8 +37,7 @@ import java.util.Random;
 
 public class ZhifubaoPayActivity extends FragmentActivity {
 
-    private String database_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(database_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
     public static final String PARTNER = "2088121417397335";
     // 商户收款账号
     public static final String SELLER = "130146668@qq.com";

@@ -148,8 +148,7 @@ public class CustomNotificationReceiver extends BroadcastReceiver {
      */
     private void saveToDataBase(Context context, String content) {
         // 保存至数据库
-        String datebase_path = context.getFilesDir().getPath() + "/databases/chaoshi.db";
-        SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
+        SQLiteDatabase db = StringUtils.getSQLiteDB(context);
         Gson gson = new Gson();
         SystemMessage systemMessage = gson.fromJson(content, SystemMessage.class);
         ContentValues values = new ContentValues();

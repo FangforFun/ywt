@@ -27,6 +27,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -48,8 +49,7 @@ import okhttp3.Response;
  */
 public class AllClassificationFragment extends BaseFragment implements AbsListView.OnScrollListener {
 
-    private String datebase_path = getActivity().getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();

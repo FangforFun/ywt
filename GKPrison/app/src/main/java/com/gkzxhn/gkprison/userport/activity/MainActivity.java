@@ -46,6 +46,7 @@ import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
@@ -105,8 +106,8 @@ public class MainActivity extends BaseActivity {
     private HomeFragment homeFragment = null;
     private RemoteMeetFragment remoteMeetFragment = null;
     private CanteenBaseFragment canteenBaseFragment = null;
-    private String datebase_path = getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private String datebase_path;
+    private SQLiteDatabase db;
     private List<Commodity> commodityList = new ArrayList<>();
     private long mExitTime;//add by hzn 退出按键时间间隔
     private boolean isRegisteredUser; // 是否注册登录用户
@@ -268,6 +269,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected void initData() {
+        db = StringUtils.getSQLiteDB(this);
         StatusCode statusCode = NIMClient.getStatus();
         Log.i("云信id状态...", statusCode.toString());
         isRegisteredUser = (Boolean) SPUtil.get(MainActivity.this, "isRegisteredUser", false);

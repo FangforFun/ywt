@@ -38,6 +38,7 @@ import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
@@ -66,8 +67,7 @@ import okhttp3.OkHttpClient;
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-    private String datebase_path = getActivity().getFilesDir().getPath() + "/databases/chaoshi.db";
-    private SQLiteDatabase db = SQLiteDatabase.openDatabase(datebase_path, null, SQLiteDatabase.OPEN_READWRITE);
+    private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
     private RelativeLayout rl_zhineng;

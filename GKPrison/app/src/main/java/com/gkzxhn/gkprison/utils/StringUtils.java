@@ -1,5 +1,8 @@
 package com.gkzxhn.gkprison.utils;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -54,5 +57,15 @@ public class StringUtils {
         String today = formatTime(System.currentTimeMillis(), "yyyy");
         String time = formatTime(mills, "yyyy");
         return today.equals(time);
+    }
+
+    /**
+     * 获取数据库对象
+     * @param context
+     * @return
+     */
+    public static SQLiteDatabase getSQLiteDB(Context context){
+        String path = "/data/data/com.gkzxhn.gkprison/databases/chaoshi.db";
+        return SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
     }
 }
