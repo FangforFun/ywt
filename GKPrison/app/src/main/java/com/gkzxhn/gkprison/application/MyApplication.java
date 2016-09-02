@@ -22,6 +22,7 @@ import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.netease.nim.uikit.BuildConfig;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
@@ -70,6 +71,12 @@ public class MyApplication extends Application {
                 // 初始化全局异常捕获
                 CrashHandler crashHandler = CrashHandler.getInstance();
                 crashHandler.init(getApplicationContext());
+
+                if(!BuildConfig.BUILD_TYPE.equals("debug")){
+                    Log.isDebug = true;
+                }else {
+                    Log.isDebug = false;
+                }
 
                 if (inMainProcess()) {
                     // 初始化UIKit模块

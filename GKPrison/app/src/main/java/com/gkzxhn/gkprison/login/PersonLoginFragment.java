@@ -241,12 +241,12 @@ public class PersonLoginFragment extends BaseFragment {
      * 登录个人用户
      * @param str
      */
-    private void loginPersonAccount(String str) {
+    private void loginPersonAccount(String userInfo) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.URL_HEAD).addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create()).build();
         LoginService login = retrofit.create(LoginService.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), str);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), userInfo);
         login.loginPersonAccount(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<UserInfo>() {
                     @Override public void onCompleted() {}

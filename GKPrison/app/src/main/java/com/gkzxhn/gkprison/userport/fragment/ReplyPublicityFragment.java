@@ -1,19 +1,16 @@
 package com.gkzxhn.gkprison.userport.fragment;
 
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
+import android.widget.AdapterView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,13 +21,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.umeng.analytics.MobclickAgent;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
