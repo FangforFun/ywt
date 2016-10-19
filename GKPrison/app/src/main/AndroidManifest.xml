@@ -153,9 +153,7 @@ d
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
                 <category android:name="android.intent.category.DEFAULT"/>
-
                 <data android:scheme="wx4973a8b575999262"/>
             </intent-filter>
         </activity>
@@ -174,7 +172,8 @@ d
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.NewsDetailActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity
             android:name=".userport.activity.LawsDetailActivity"
             android:screenOrientation="portrait"/>
