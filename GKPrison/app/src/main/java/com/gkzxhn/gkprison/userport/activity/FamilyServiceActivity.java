@@ -210,7 +210,7 @@ public class FamilyServiceActivity extends BaseActivity {
     }
 
     private void getPrisonIformation() {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             new Thread() {
                 String token = sp.getString("token", "");
                 Message msg = handler.obtainMessage();

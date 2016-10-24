@@ -286,7 +286,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      * 请求会见列表数据
      */
     private void requestData(String date) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             handler.post(rotateTask);
             ll_loading.setVisibility(View.VISIBLE);
             tv_loading.setText("正在刷新...");
@@ -561,7 +561,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      * 发送取消会见至服务器
      */
     private void sendCancelMeetingToServer(final int position, int id, String reason) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             initAndShowDialog();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(Constants.URL_HEAD)

@@ -96,7 +96,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
             case R.id.bt_commit_opinions:
                 opinion_content = et_content.getText().toString().trim();
                 if(!TextUtils.isEmpty(opinion_content) && !(opinion_content.length() > 255)){
-                    if(Utils.isNetworkAvailable()) {
+                    if(Utils.isNetworkAvailable(this)) {
                         sendOpinionsToServer(opinion_content);
                     }else {
                         showToastMsgShort("没有网络");

@@ -288,7 +288,7 @@ public class RegisterActivity extends BaseActivity {
                     if (!Utils.isMobileNO(phone_num)) {
                         showToastMsgShort("请输入正确的手机号码");
                     } else {
-                        if (Utils.isNetworkAvailable()) {
+                        if (Utils.isNetworkAvailable(this)) {
                             String phone_str = "{\"apply\":{\"phone\":\"" + phone_num + "\"}}";
                             initAndShowDialog("正在发送...");
                             getVerificationCode(phone_str);
@@ -320,7 +320,7 @@ public class RegisterActivity extends BaseActivity {
                 // 判断是否上传身份证正反面照
                 // 判断是否上传头像
                 if (judgeNullInput()) return;
-                if (Utils.isNetworkAvailable()) {
+                if (Utils.isNetworkAvailable(this)) {
                     showConfirmDialog();
                 } else {
                     showToastMsgShort("没有网络");
@@ -575,7 +575,7 @@ public class RegisterActivity extends BaseActivity {
             String newText = key[0];
             newText = newText.trim();
             newText = newText.replace(" ", "+");
-            if (Utils.isNetworkAvailable()) {
+            if (Utils.isNetworkAvailable(RegisterActivity.this)) {
                 try {
                     data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
                     suggest = new ArrayList<>();

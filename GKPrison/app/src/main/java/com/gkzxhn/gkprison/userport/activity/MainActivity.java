@@ -518,7 +518,7 @@ public class MainActivity extends BaseActivity {
             newText = newText.trim();
             newText = newText.replace(" ", "+");
             suggest = new ArrayList<>();
-            if(Utils.isNetworkAvailable()) {
+            if(Utils.isNetworkAvailable(MainActivity.this)) {
                 try {
                     data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
                     Log.i("监狱。。。。", data);
@@ -573,7 +573,7 @@ public class MainActivity extends BaseActivity {
      * 获取用户信息
      */
     private void getUserInfo() {
-        if(Utils.isNetworkAvailable()) {
+        if(Utils.isNetworkAvailable(MainActivity.this)) {
             Retrofit retrofit = new Retrofit.Builder()
                     .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                     .addConverterFactory(GsonConverterFactory.create())

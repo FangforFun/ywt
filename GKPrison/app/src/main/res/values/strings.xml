@@ -80,4 +80,5 @@
     <string name="network_4g">目前网络处于4G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
     <string name="network_wifi">目前网络处于wifi状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
     <string name="network_default">目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="net_broken">网络连接已断开，请检查网络</string>
 </resources>

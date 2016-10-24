@@ -13,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.requests.LoginService;
@@ -112,7 +111,6 @@ public class PersonLoginFragment extends BaseFragment {
             SPUtil.put(getActivity(), "jail", userInfo.getJail());
         }
         SPUtil.put(getActivity(), "isRegisteredUser", true);
-        DemoCache.setAccount(userInfo.getToken());
         handler.postDelayed(new Runnable() {
             @Override public void run() {
                 if (sadDialog != null && sadDialog.isShowing()) {
@@ -190,7 +188,7 @@ public class PersonLoginFragment extends BaseFragment {
                     if (!Utils.isMobileNO(username)) {
                         showToastMsgShort("请输入正确的用户名");
                     } else {
-                        if (Utils.isNetworkAvailable()) {
+                        if (Utils.isNetworkAvailable(getActivity())) {
                             final String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
                             initAndShowDialog("正在发送...");
                             getVerificationCode(phone_str);
@@ -213,7 +211,7 @@ public class PersonLoginFragment extends BaseFragment {
                 if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                 } else {
-                    if (Utils.isNetworkAvailable()) {
+                    if (Utils.isNetworkAvailable(getActivity())) {
                         initAndShowDialog("正在登录...");
                         setNIMLoginCallBack();// 设置云信id登录回调
                         String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\""
@@ -239,7 +237,6 @@ public class PersonLoginFragment extends BaseFragment {
 
     /**
      * 登录个人用户
-     * @param str
      */
     private void loginPersonAccount(String userInfo) {
         Retrofit retrofit = new Retrofit.Builder()

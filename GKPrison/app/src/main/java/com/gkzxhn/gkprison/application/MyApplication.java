@@ -8,20 +8,14 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.AVChatActivity;
-import com.gkzxhn.gkprison.avchat.AVChatProfile;
-import com.gkzxhn.gkprison.avchat.DemoCache;
-import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
@@ -33,6 +27,7 @@ import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.netease.nim.uikit.BuildConfig;
 import com.netease.nim.uikit.ImageLoaderKit;
@@ -48,9 +43,6 @@ import com.netease.nimlib.sdk.StatusBarNotificationConfig;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthServiceObserver;
 import com.netease.nimlib.sdk.auth.LoginInfo;
-import com.netease.nimlib.sdk.avchat.AVChatManager;
-import com.netease.nimlib.sdk.avchat.model.AVChatData;
-import com.netease.nimlib.sdk.avchat.model.AVChatRingerConfig;
 import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
@@ -65,8 +57,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
-
-import de.greenrobot.event.EventBus;
 
 /**
  * Created by zhengneng on 2015/12/23.
@@ -86,7 +76,6 @@ public class MyApplication extends Application {
         new Runnable(){
             @Override
             public void run() {
-                DemoCache.setContext(getApplicationContext());
                 NIMClient.init(MyApplication.this, loginInfo(), options()); // 初始化
                 // 初始化全局异常捕获
                 CrashHandler crashHandler = CrashHandler.getInstance();
@@ -101,34 +90,35 @@ public class MyApplication extends Application {
                 if (inMainProcess()) {
                     // 初始化UIKit模块
                     initUIKit();
-                    // 注册网络通话来电
-                    enableAVChat();
                     NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
                             new Observer<StatusCode>() {
                                 public void onEvent(StatusCode status) {
                                     Log.i("tag", "User status changed to: " + status);
                                     switch (status) {
                                         case KICKOUT:
-                                            Intent intent;
-                                            if ((Boolean)SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
-                                                intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            } else {
-                                                intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
-                                            }
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
+                                            toMain();
                                             break;
                                         case NET_BROKEN:
-                                            Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();
+                                            ToastUtil.showShortToast(getApplicationContext(), getString(R.string.net_broken));
                                             break;
                                     }
                                 }
                             }, true);
-
                     observeCustomNotification();
                 }
             }
         }.run();
+    }
+
+    private void toMain() {
+        Intent intent;
+        if ((Boolean) SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        } else {
+            intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+        }
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     /**
@@ -172,9 +162,7 @@ public class MyApplication extends Application {
             JSONObject jsonObject = new JSONObject(content);
             String result = jsonObject.getString("result");
             if(!TextUtils.isEmpty(result) && result.equals("审核通过")){
-                EventBus.getDefault().post(new ExamineEvent("审核通过"));
             }else {
-                EventBus.getDefault().post(new ExamineEvent("审核未通过"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -205,7 +193,6 @@ public class MyApplication extends Application {
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.defaults = Notification.DEFAULT_SOUND;
         manager.notify(1, notification);
-//        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
     }
 
     /**
@@ -266,48 +253,8 @@ public class MyApplication extends Application {
         db.close();
     }
 
-    /**
-     * 音视频通话配置与监听
-     */
-    private void enableAVChat() {
-        setupAVChat();
-        registerAVChatIncomingCallObserver(true);
-    }
-
-    private void setupAVChat() {
-        AVChatRingerConfig config = new AVChatRingerConfig();
-        config.res_connecting = R.raw.avchat_connecting;
-        config.res_no_response = R.raw.avchat_no_response;
-        config.res_peer_busy = R.raw.avchat_peer_busy;
-        config.res_peer_reject = R.raw.avchat_peer_reject;
-        config.res_ring = R.raw.avchat_ring;
-        AVChatManager.getInstance().setRingerConfig(config); // 设置铃声配置
-    }
-
-    private void registerAVChatIncomingCallObserver(boolean register) {
-        AVChatManager.getInstance().observeIncomingCall(new Observer<AVChatData>() {
-            @Override
-            public void onEvent(AVChatData data) {
-                // 有网络来电打开AVChatActivity
-                AVChatProfile.getInstance().setAVChatting(true);
-                AVChatActivity.launch(DemoCache.getContext(), data, AVChatActivity.FROM_BROADCASTRECEIVER);
-                Log.i("----------------", data.getAccount() + "---" + data.toString());
-            }
-        }, register);
-    }
-
     private void initUIKit() {
-        // 初始化，需要传入用户信息提供者
         NimUIKit.init(this, infoProvider, contactProvider);
-
-        // 设置地理位置提供者。如果需要发送地理位置消息，该参数必须提供。如果不需要，可以忽略。
-//        NimUIKit.setLocationProvider(new NimDemoLocationProvider());
-
-        // 会话窗口的定制初始化。
-//        SessionHelper.init();
-
-        // 通讯录列表定制初始化
-//        ContactHelper.init();
     }
 
     private UserInfoProvider infoProvider = new UserInfoProvider(){
@@ -459,14 +406,12 @@ public class MyApplication extends Application {
         String password = (String) SPUtil.get(getApplicationContext(), "password", "");
         if((Boolean)SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(token)) {
-                DemoCache.setAccount(token.toLowerCase());
                 return new LoginInfo(token, token);
             } else {
                 return null;
             }
         }else {
             if (!TextUtils.isEmpty(token) && !TextUtils.isEmpty(password)) {
-                DemoCache.setAccount(token.toLowerCase());
                 return new LoginInfo(token, password);
             } else {
                 return null;

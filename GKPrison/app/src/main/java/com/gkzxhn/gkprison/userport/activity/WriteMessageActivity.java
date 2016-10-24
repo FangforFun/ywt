@@ -80,7 +80,7 @@ public class WriteMessageActivity extends BaseActivity {
                     showToastMsgShort("请输入内容");
                     return;
                 } else {
-                    if (Utils.isNetworkAvailable()) {
+                    if (Utils.isNetworkAvailable(this)) {
                         sendMessage();
                     } else {
                         showToastMsgShort("没有网络,请检查网络设置");

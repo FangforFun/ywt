@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.DemoCache;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
@@ -100,7 +99,6 @@ public class PrisonLoginFragment extends BaseFragment {
         SPUtil.put(getActivity(), "username", username);
         SPUtil.put(getActivity(), "password", password);
         SPUtil.put(getActivity(), "isCommonUser", false);
-        DemoCache.setAccount(username);// 设置云信id缓存
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -185,7 +183,7 @@ public class PrisonLoginFragment extends BaseFragment {
 
     @OnClick(R.id.btn_login)
     public void onClick() {
-        if (!Utils.isNetworkAvailable()) {
+        if (!Utils.isNetworkAvailable(getActivity())) {
             showToastMsgShort("网络不可用，请检查网络设置");
             return;
         }

@@ -217,7 +217,7 @@ public class PrisonOpenActivity extends BaseActivity {
      * 获取新闻
      */
     private void getNews(final int getType) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             if (getType == 0) {// 进入页面
                 showProgressDialog();
             }else if (getType == 2) {// 上拉加载

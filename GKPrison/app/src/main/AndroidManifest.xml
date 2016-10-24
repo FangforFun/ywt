@@ -165,9 +165,6 @@ d
             android:name=".prisonport.activity.CallUserActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".avchat.AVChatActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".welcome.WelcomeActivity"
             android:screenOrientation="portrait"/>
         <activity

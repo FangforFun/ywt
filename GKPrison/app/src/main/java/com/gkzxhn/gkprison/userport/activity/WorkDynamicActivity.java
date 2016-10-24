@@ -213,7 +213,7 @@ public class WorkDynamicActivity extends BaseActivity {
      * 获取新闻
      */
     private void getNews(final int getType) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             if (getType == 0) {// 进入页面
                 getNews_dialog = new ProgressDialog(this);
                 getNews_dialog.setMessage("正在加载...");

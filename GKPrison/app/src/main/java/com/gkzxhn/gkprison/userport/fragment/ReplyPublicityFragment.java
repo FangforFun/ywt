@@ -95,7 +95,7 @@ public class ReplyPublicityFragment extends Fragment {
     }
 
     private void getNews() {
-        if(Utils.isNetworkAvailable()) {
+        if(Utils.isNetworkAvailable(getActivity())) {
             OkHttpClient client = new OkHttpClient();
             Request request = new Request.Builder()
                     .url(url)

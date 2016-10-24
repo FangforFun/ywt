@@ -1,9 +1,5 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -12,23 +8,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.prisonport.requests.ApiService;
-import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.lidroid.xutils.BitmapUtils;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -138,11 +125,9 @@ public class CallUserActivity extends BaseActivity {
 
     @OnClick(R.id.bt_call)
     public void onClick() {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             SPUtil.put(CallUserActivity.this, "family_accid", familyMeetingInfo.getAccid());
             Log.i(TAG, "Call User Activity ---> " + familyMeetingInfo.getAccid());
-            AVChatActivity.start(this, familyMeetingInfo.getAccid()
-                    , 2, AVChatActivity.FROM_INTERNAL); // 2 视频通话  1语音
         } else {
             showToastMsgShort("没有网络，请检查网络设置");
         }

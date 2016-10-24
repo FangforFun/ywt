@@ -406,7 +406,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
      * 发送探监申请至服务器
      */
     private void sendVisitRequestToServer() {
-        if(Utils.isNetworkAvailable()) {
+        if(Utils.isNetworkAvailable(getActivity())) {
             bt_commit_request_visit.setEnabled(false);
             showProgressDialog();
             String prisoner_number = (String) SPUtil.get(context, "prisoner_number", "4000002");
@@ -460,7 +460,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
      * 发送会见申请至服务器
      */
     private void sendMeetingRequestToServer() {
-        if(Utils.isNetworkAvailable()) {
+        if(Utils.isNetworkAvailable(getActivity())) {
             bt_commit_request.setEnabled(false);
             showProgressDialog();
             String prisoner_number = (String) SPUtil.get(context, "prisoner_number", "");

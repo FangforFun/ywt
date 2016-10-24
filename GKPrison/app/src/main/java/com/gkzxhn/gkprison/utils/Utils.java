@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.gkzxhn.gkprison.avchat.DemoCache;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
@@ -209,8 +207,7 @@ public class Utils {
      * 网络是否可用
      * @return
      */
-    public static boolean isNetworkAvailable(){
-        Context context = DemoCache.getContext();
+    public static boolean isNetworkAvailable(Context context){
         ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
@@ -230,8 +227,7 @@ public class Utils {
      *
      * @return
      */
-    public static int getStatusHeight() {
-        Context context = DemoCache.getContext();
+    public static int getStatusHeight(Context context) {
         int statusHeight = -1;
         try {
             Class clazz = Class.forName("com.android.internal.R$dimen");
