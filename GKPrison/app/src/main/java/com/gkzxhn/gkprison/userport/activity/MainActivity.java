@@ -708,13 +708,13 @@ public class MainActivity extends BaseActivity {
             sb.append(params.get(i).getValue());
             sb.append('&');
         }
-        com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
+        Log.d("sa", sb.toString());
         sb.append("key=");
         sb.append("d75699d893882dea526ea05e9c7a4090");
-        com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
+        Log.d("dd", sb.toString());
         //  sb.append("sign str\n" + sb.toString() + "\n\n");
         String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
-        com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
+        Log.d("orion1", appSign);
         return appSign;
     }
 

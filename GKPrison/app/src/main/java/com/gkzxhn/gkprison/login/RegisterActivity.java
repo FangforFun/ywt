@@ -265,7 +265,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     @OnClick({R.id.bt_send_identifying_code, R.id.bt_register,R.id.tv_software_protocol,R.id.tv_read,
-            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon})
+            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon, R.id.rl_back})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_read:
@@ -324,6 +324,22 @@ public class RegisterActivity extends BaseActivity {
                     showConfirmDialog();
                 } else {
                     showToastMsgShort("没有网络");
+                }
+                break;
+            case R.id.rl_back:
+                getEditTextContent();
+                if (dialog != null && dialog.isShowing()) {
+                    // 没反应
+                } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
+                    // 没反应
+                } else if (alertView != null && alertView.isShowing()) {
+                    alertView.dismiss();
+                } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+                        || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
+                    setReminder();// 弹出对话框提醒
+                } else {
+                    super.onBackPressed();
                 }
                 break;
         }
@@ -395,7 +411,7 @@ public class RegisterActivity extends BaseActivity {
         builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                sendRegisterToServer(); // 发送注册信息至服务器
+                verificationCode(); // 发送注册信息至服务器
                 String prisoner_name = actv_prison_choose.getText().toString();
                 SPUtil.put(getApplication(), "prisonname", prisoner_name);
                 dialog.dismiss();
@@ -623,7 +639,7 @@ public class RegisterActivity extends BaseActivity {
                                 showFailedDialog("验证码错误！");
                             }else if(code == 501){
                                 JSONObject errors = jsonObject.getJSONObject("errors");
-                                JSONArray apply_create = errors.getJSONArray(result.contains("phone") ? "phone" : "apply_create");
+                                JSONArray apply_create = errors.getJSONArray(result.contains("apply_create") ? "apply_create" : "phone");
                                 showFailedDialog(apply_create.getString(0));
                             }else {
                                 showFailedDialog("注册失败！");
@@ -682,6 +698,9 @@ public class RegisterActivity extends BaseActivity {
         return register;
     }
 
+    /**
+     * 获取压缩图片并转换base64
+     */
     private void getZipPicture() {
         ByteArrayOutputStream bao1 = new ByteArrayOutputStream();
         newBitmap1.compress(Bitmap.CompressFormat.PNG, 100, bao1);
@@ -710,7 +729,7 @@ public class RegisterActivity extends BaseActivity {
     /**
      * 发送手机号码和验证码
      */
-    private void sendRegisterToServer() {
+    private void verificationCode() {
         initAndShowDialog("正在注册...");
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.URL_HEAD).addCallAdapterFactory(RxJavaCallAdapterFactory.create())

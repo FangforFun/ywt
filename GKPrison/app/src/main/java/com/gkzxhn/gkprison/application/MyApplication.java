@@ -1,9 +1,15 @@
 package com.gkzxhn.gkprison.application;
 
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -15,13 +21,20 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.AVChatActivity;
 import com.gkzxhn.gkprison.avchat.AVChatProfile;
 import com.gkzxhn.gkprison.avchat.DemoCache;
+import com.gkzxhn.gkprison.avchat.event.ExamineEvent;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.activity.SystemMessageActivity;
+import com.gkzxhn.gkprison.userport.bean.SystemMessage;
+import com.gkzxhn.gkprison.userport.receiver.AlarmReceiver;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.google.gson.Gson;
+import com.netease.nim.uikit.BuildConfig;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
@@ -44,8 +57,16 @@ import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+
+import de.greenrobot.event.EventBus;
 
 /**
  * Created by zhengneng on 2015/12/23.
@@ -70,6 +91,12 @@ public class MyApplication extends Application {
                 // 初始化全局异常捕获
                 CrashHandler crashHandler = CrashHandler.getInstance();
                 crashHandler.init(getApplicationContext());
+
+                if(!BuildConfig.BUILD_TYPE.equals("debug")){
+                    Log.isDebug = true;
+                }else {
+                    Log.isDebug = false;
+                }
 
                 if (inMainProcess()) {
                     // 初始化UIKit模块
@@ -121,8 +148,122 @@ public class MyApplication extends Application {
                 Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
                 Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
                 Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
+
+                SPUtil.put(MyApplication.this, "has_new_notification", true);
+                // 第三方 APP 在此处理自定义通知：存储，处理，展示给用户等
+                Log.i("收到通知啦....", "receive custom notification: " + customNotification.getContent()
+                        + " from :" + customNotification.getSessionId() + "/" + customNotification.getSessionType());
+                customNotification.getFromAccount();
+                if(customNotification.getContent().contains("type_id")) {
+                    sendNotification(MyApplication.this, customNotification.getContent(), customNotification.getSessionId());
+                }else if(customNotification.getContent().contains("审核")){
+                    doExamineResult(customNotification.getContent());
+                }
+                Log.i("接受者的通知", customNotification.getContent());
             }
         }, true);
+    }
+
+    /**
+     * 操作审核结果
+     */
+    private void doExamineResult(String content) {
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            String result = jsonObject.getString("result");
+            if(!TextUtils.isEmpty(result) && result.equals("审核通过")){
+                EventBus.getDefault().post(new ExamineEvent("审核通过"));
+            }else {
+                EventBus.getDefault().post(new ExamineEvent("审核未通过"));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 发送通知
+     * @param content
+     * @param formId
+     */
+    public void sendNotification(Context context, String content, String formId){
+        saveToDataBase(context, content);// 系统通知保存至数据库
+        if((boolean)SPUtil.get(MyApplication.this, "isMsgRemind", false)) {
+            setRemindAlarm(context, content);
+        }
+        NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(context, SystemMessageActivity.class);
+        Log.i("gongju通知", content);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        Notification notification = new Notification.Builder(context)
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setTicker("您有新的消息，点击查看")
+                .setContentTitle("狱务通提醒")
+                .setContentText("您有来自" + SPUtil.get(MyApplication.this, "jail", "德山监狱") +"新的消息，点击查看")
+                .setContentIntent(pendingIntent).setNumber(1).build();
+        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+        notification.defaults = Notification.DEFAULT_SOUND;
+        manager.notify(1, notification);
+//        SharedPreferences sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+    }
+
+    /**
+     * 设置闹钟
+     */
+    private void setRemindAlarm(Context context, String content) {
+        String meeting_date = "";
+        long alarm_time = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            meeting_date = jsonObject.getString("meeting_date");
+            String meeting_time = meeting_date.substring(0, meeting_date.lastIndexOf("-"));
+            Log.i("meeting_time", meeting_time);
+            String start_time = meeting_time.substring(0, meeting_time.indexOf(" ") + 9);
+            Log.i("start_time", start_time);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+            long pre_alarm_time = format.parse(start_time).getTime();
+            alarm_time = pre_alarm_time - 1800000;
+            Log.i("alarm_time", alarm_time + "---" + StringUtils.formatTime(alarm_time, "yyyy-MM-dd HH:mm:ss"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        String time = StringUtils.formatTime(System.currentTimeMillis(), "HH:mm:ss");
+        calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.split(":")[0]));
+        calendar.set(Calendar.MINUTE, Integer.parseInt(time.split(":")[1]));
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Intent intent = new Intent(context, AlarmReceiver.class);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent, 0);
+        AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        am.set(AlarmManager.RTC_WAKEUP, alarm_time, sender);
+    }
+
+    /**
+     * 保存至数据库
+     * @param content
+     */
+    private void saveToDataBase(Context context, String content) {
+        // 保存至数据库
+        SQLiteDatabase db = StringUtils.getSQLiteDB(context);
+        Gson gson = new Gson();
+        SystemMessage systemMessage = gson.fromJson(content, SystemMessage.class);
+        ContentValues values = new ContentValues();
+        values.put("apply_date", systemMessage.getApply_date());
+        values.put("type_id", systemMessage.getType_id());
+        values.put("name", systemMessage.getName());
+        values.put("is_read", systemMessage.is_read());
+        values.put("result", systemMessage.getResult());
+        values.put("meeting_date", systemMessage.getMeeting_date());
+        values.put("reason", systemMessage.getReason());
+        values.put("user_id", (String) SPUtil.get(MyApplication.this, "username", ""));
+        String msg_reveice_time = StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
+        values.put("receive_time", msg_reveice_time);
+        db.insert("sysmsg", null, values);
+        db.close();
     }
 
     /**
