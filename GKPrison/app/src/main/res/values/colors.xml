@@ -63,4 +63,117 @@
     <color name="success_stroke_color">#6495ed</color><!-- #A5DC86 -->
     <color name="trans_success_stroke_color">#33A5DC86</color>
     <color name="warning_stroke_color">#F8BB86</color>
+
+    // keda
+    <color name="red">#FF0000</color>
+    <color name="gold">#b89766</color>
+
+    <!-- green -->
+    <color name="green_1a992c">#FF1A992C</color>
+
+    <!-- gray -->
+    <color name="gray_878888">#878888</color>
+    <color name="gray_484848">#484848</color>
+    <color name="gray_787878">#ff787878</color>
+    <color name="gray_494949">#ff494949</color>
+    <color name="gray_909090">#ff909090</color>
+    <color name="lightgrey">#ff888888</color>
+
+    <!-- black -->
+    <color name="darkgrey">#ff404040</color>
+
+    <!-- blue -->
+    <color name="blue_creator">#006ACA</color>
+
+    <!-- color -->
+    <color name="color_9BD6F4">#FF9BD6F4</color>
+    <color name="color_494949">#FF494949</color>
+    <color name="color_40808080">#40808080</color>
+
+    <!-- c -->
+    <color name="toasterro">#ff9fd524</color>
+    <color name="main_bg">#ffffffff</color>
+    <color name="devider_line_horizontal">#FFECECEC</color>
+    <color name="devider_line_vertical">#FF608498</color>
+
+    <!-- meeting list -->
+    <color name="meet_time">#FF4A4A4A</color>
+    <color name="meet_time_blue">#FF008CCD</color>
+    <color name="meet_blue">#FF008CCD</color>
+    <color name="meet_clash">#FFC52205</color>
+
+    <color name="grey">#ff58616d</color>
+    <color name="blue">#ff0000ff</color>
+    <color name="green">#FF00FF00</color>
+
+    <!-- black -->
+    <color name="black_35">#FF353535</color>
+    <color name="black_overlay">#66000000</color>
+
+    <!-- green -->
+    <color name="green_00a918">#FF00A918</color>
+
+    <!-- blue -->
+    <color name="blue_09c">#FF0099CC</color>
+    <color name="blue_17a2fb">#FF17A2FB</color>
+    <color name="blue_33b5e5c">#FF33b5e5</color>
+    <color name="blue_008ccd">#008ccd</color>
+
+
+    <!-- gray -->
+    <color name="gray_666666">#FF666666</color>
+    <color name="gray_888888">#FF888888</color>
+
+    <!-- color -->
+    <color name="color_8a">#FF8a8a8a</color>
+    <color name="color_78">#FF787878</color>
+    <color name="color_a1">#FFa1a1a1</color>
+    <color name="color_45">#FF454545</color>
+    <color name="color_a8a8a8">#FFa8a8a8</color>
+    <color name="color_4e4e4e">#FF4e4e4e</color>
+
+    <!-- red -->
+    <color name="red_221">#D00</color>
+    <color name="red_221_half">#7FDD0000</color>
+
+    <color name="white_half">#7FFFFFFF</color>
+    <color name="black_half">#7f000000</color>
+
+    <color name="my_holo_half_gray_light">#7F999999</color>
+    <color name="my_holo_gray">#999999</color>
+    <!-- A light Holo shade of blue -->
+    <color name="my_holo_blue_light">#ff33b5e5</color>
+    <!-- A light Holo shade of gray -->
+    <color name="my_holo_gray_light">#33999999</color>
+    <!-- A light Holo shade of green -->
+    <color name="my_holo_green_light">#ff99cc00</color>
+    <!-- A light Holo shade of red -->
+    <color name="my_holo_red_light">#ffff4444</color>
+    <!-- A dark Holo shade of blue -->
+    <color name="my_holo_blue_dark">#ff0099cc</color>
+    <!-- A dark Holo shade of green -->
+    <color name="my_holo_green_dark">#ff669900</color>
+    <!-- A dark Holo shade of red -->
+    <color name="my_holo_red_dark">#ffcc0000</color>
+    <!-- A Holo shade of purple -->
+    <color name="my_holo_purple">#ffaa66cc</color>
+    <!-- A light Holo shade of orange -->
+    <color name="my_holo_orange_light">#ffffbb33</color>
+    <!-- A dark Holo shade of orange -->
+    <color name="my_holo_orange_dark">#ffff8800</color>
+    <!-- A really bright Holo shade of blue -->
+    <color name="my_holo_blue_bright">#ff00ddff</color>
+    <!-- A really bright Holo shade of gray -->
+    <color name="my_holo_gray_bright">#33CCCCCC</color>
+    <color name="my_bright_foreground_dark">@android:color/background_light</color>
+    <color name="my_bright_foreground_light">@android:color/background_dark</color>
+    <color name="my_bright_foreground_dark_disabled">#80ffffff</color>
+    <color name="my_bright_foreground_light_disabled">#80000000</color>
+    <color name="my_hint_foreground_light">#808080</color>
+    <color name="my_highlighted_text_dark">#9983CC39</color>
+    <color name="my_highlighted_text_light">#9983CC39</color>
+    <color name="my_link_text_dark">#5c5cff</color>
+    <color name="my_link_text_light">#0000ee</color>
+    <color name="my_highlighted_text_holo_dark">#6633b5e5</color>
+    <color name="my_highlighted_text_holo_light">#6633b5e5</color>
 </resources>

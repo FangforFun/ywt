@@ -6,6 +6,7 @@ import android.widget.AdapterView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -17,13 +18,21 @@ import java.util.List;
  */
 public class LoadingActivity extends BaseActivity {
 
-    private PersonLoginFragment personLoginFragment;
-    private PrisonLoginFragment prisonLoginFragment;
+    public PersonLoginFragment personLoginFragment;
+    public PrisonLoginFragment prisonLoginFragment;
+    public static boolean isPerson = true;
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this,R.layout.activity_loading,null);
         return view;
+    }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
     }
 
     @Override
@@ -40,12 +49,14 @@ public class LoadingActivity extends BaseActivity {
                         ns_login_type.setText("个人用户");
                         LoadingActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fl_load, personLoginFragment).commit();
+                        isPerson = true;
                         break;
                     case 1:
                         ns_login_type.setText("监狱用户");
                         prisonLoginFragment = new PrisonLoginFragment();
                         LoadingActivity.this.getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fl_load, prisonLoginFragment).commit();
+                        isPerson = false;
                         break;
                 }
             }

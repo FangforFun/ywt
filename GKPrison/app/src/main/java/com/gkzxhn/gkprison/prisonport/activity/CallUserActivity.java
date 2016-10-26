@@ -15,6 +15,7 @@ import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.vconf.dialog.P2PCallDialog;
 import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
@@ -128,6 +129,8 @@ public class CallUserActivity extends BaseActivity {
         if (Utils.isNetworkAvailable(this)) {
             SPUtil.put(CallUserActivity.this, "family_accid", familyMeetingInfo.getAccid());
             Log.i(TAG, "Call User Activity ---> " + familyMeetingInfo.getAccid());
+            // 呼叫
+            new P2PCallDialog(this).show();
         } else {
             showToastMsgShort("没有网络，请检查网络设置");
         }

@@ -12,12 +12,14 @@ android {
     compileSdkVersion 22  
     buildToolsVersion "22.0.1"
 
+
     defaultConfig {
         applicationId "com.gkzxhn.gkprison"
         minSdkVersion 17
         targetSdkVersion 21
         versionCode 6
         versionName "1.2.0"
+        multiDexEnabled true
     }
 
     lintOptions {
@@ -106,4 +108,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.jakewharton:butterknife:8.2.1'
     apt 'com.jakewharton:butterknife-compiler:8.2.1'
+    compile files('libs/kdmediasdk.jar')
+    compile files('libs/kdmobilesdk-V5.0.0.2.1.jar')
+    compile 'com.android.support:multidex:1.0.0'
 }

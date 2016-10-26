@@ -22,6 +22,7 @@ import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.squareup.picasso.Picasso;
@@ -158,6 +159,7 @@ public class MenuFragment extends BaseFragment{
                 SPUtil.put(getActivity(), "is_first", false);
                 startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();
+                TruetouchGlobal.logOff();
             }
         });
         dialog.show();

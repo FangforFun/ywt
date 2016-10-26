@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black" >
+
+    <com.pc.ui.layout.SimpleGestureDetectorRelative
+        android:id="@+id/pic_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center" >
+
+        <android.opengl.GLSurfaceView
+            android:id="@+id/gl_SV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical" >
+        </android.opengl.GLSurfaceView>
+
+        <ImageView
+            android:id="@+id/staticpic_Img"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:background="@color/black"
+            android:contentDescription="@null"
+            android:scaleType="center"
+            android:src="@drawable/camera_big"
+            android:visibility="visible" >
+        </ImageView>
+    </com.pc.ui.layout.SimpleGestureDetectorRelative>
+
+</FrameLayout>

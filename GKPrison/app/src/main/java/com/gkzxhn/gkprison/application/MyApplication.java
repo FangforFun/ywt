@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.application;
 
 import android.app.AlarmManager;
-import android.app.Application;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +12,8 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.support.multidex.MultiDex;
+import android.support.multidex.MultiDexApplication;
 import android.text.TextUtils;
 
 import com.gkzxhn.gkprison.R;
@@ -29,6 +30,15 @@ import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
+import com.keda.callback.MyMtcCallback;
+import com.keda.sky.app.TruetouchGlobal;
+import com.kedacom.kdv.mt.api.Base;
+import com.kedacom.kdv.mt.api.Configure;
+import com.kedacom.kdv.mt.bean.TMtH323PxyCfg;
+import com.kedacom.kdv.mt.bean.TagTNetUsedInfoApi;
+import com.kedacom.kdv.mt.constant.EmMtModel;
+import com.kedacom.kdv.mt.constant.EmNetAdapterWorkType;
+import com.kedacom.truetouch.audio.AudioDeviceAndroid;
 import com.netease.nim.uikit.BuildConfig;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
@@ -48,10 +58,16 @@ import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
 import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
+import com.pc.utils.FormatTransfer;
+import com.pc.utils.NetWorkUtils;
+import com.pc.utils.VConfStaticPic;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -61,13 +77,35 @@ import java.util.Locale;
 /**
  * Created by zhengneng on 2015/12/23.
  */
-public class MyApplication extends Application {
+public class MyApplication extends MultiDexApplication {
 
     private static final String TAG = "MyApplication";
+
+    public final static String ID = "id";
+    public final static String JID = "jid";
+    public final static String NAME = "name";
+    public final static String IPAddr = "ipAddr";
+    public final static String ALIAS = "alias";
+    public final static String E164NUM = "e164Num";
+    public final static String USER_NAME = "username";
+    public final static String RESULT = "result";
+
+    public boolean isH323 = true;
+
+    public static MyApplication mOurApplication;
+
+    public static Context getContext() {
+        return mOurApplication.getApplicationContext();
+    }
+
+    public static MyApplication getApplication() {
+        return (MyApplication) mOurApplication;
+    }
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     @Override
@@ -108,6 +146,25 @@ public class MyApplication extends Application {
                 }
             }
         }.run();
+
+        mOurApplication = this;
+        android.util.Log.i(MyApplication.class.getSimpleName(), "onCreate..." + android.os.Build.MODEL + "  package:" + getPackageName());
+        Base.mtStart(EmMtModel.emSkyAndroidPhone, TruetouchGlobal.MTINFO_SKYWALKER, "5.0", getMediaLibDir()
+                + File.separator, MyMtcCallback.getInstance(), "kedacom"); // 启动业务终端，开始接受回调
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                parseH323();
+                // 设音视频上下文置
+                AudioDeviceAndroid.initialize(getContext());
+                setUserdNetInfo();
+                // 启动Service
+                Base.initService();
+                android.util.Log.w("Test", "开始终端服务 SYSStartService: agent/misc/mtmp/rest/upgrade/im/mtpa");
+                VConfStaticPic.checkStaticPic(MyApplication.getContext(), getTempDir() + File.separator);
+            }
+        }).start();
     }
 
     private void toMain() {
@@ -417,5 +474,96 @@ public class MyApplication extends Application {
                 return null;
             }
         }
+    }
+
+    public void parseH323() {
+        // 从数据库获取当前 是否注册了代理
+        StringBuffer H323PxyStringBuf = new StringBuffer();
+        Configure.getH323PxyCfg(H323PxyStringBuf);
+        String h323Pxy = H323PxyStringBuf.toString();
+        TMtH323PxyCfg tmtH323Pxy = new Gson().fromJson(h323Pxy, TMtH323PxyCfg.class);
+        // { "achNumber" : "", "achPassword" : "", "bEnable" : true, "dwSrvIp" : 1917977712, "dwSrvPort" : 2776 }
+        if (null != tmtH323Pxy) {
+            isH323 = tmtH323Pxy.bEnable;
+            isH323 = true;
+        }
+    }
+
+    public String getMediaLibDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/mediaLib" + File.separator);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir.getAbsolutePath();
+    }
+
+    public String getTempDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/mediaLib/temp" + File.separator);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        return dir.getAbsolutePath();
+    }
+
+    public static String getTmpDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/.tmp" + File.separator);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        return dir.getAbsolutePath();
+    }
+
+    // 保存截图的路径(绝对路径)
+    public static String getPictureDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/.picture" + File.separator);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        return dir.getAbsolutePath();
+    }
+
+    // 图片保存文件夹绝对路径
+    public static String getSaveDir() {
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/save" + File.separator);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        return dir.getAbsolutePath();
+    }
+
+    /**
+     * 设置正在使用的网络信息
+     */
+    public void setUserdNetInfo() {
+        String ip = NetWorkUtils.getIpAddr(MyApplication.getContext(), true);
+
+        TagTNetUsedInfoApi netInfo = new TagTNetUsedInfoApi();
+        netInfo.emUsedType = EmNetAdapterWorkType.emNetAdapterWorkType_Wifi_Api;
+        // netInfo.dwIp = NetWorkUtils.getFirstWiFiIpAddres(TruetouchApplication.getContext());
+        try {
+            netInfo.dwIp = FormatTransfer.lBytesToLong(InetAddress.getByName(ip).getAddress());
+        } catch (Exception e) {
+            netInfo.dwIp = FormatTransfer.reverseInt((int) NetWorkUtils.ip2int(ip));
+        }
+        if (NetWorkUtils.isMobile(MyApplication.getContext())) {
+            netInfo.emUsedType = EmNetAdapterWorkType.emNetAdapterWorkType_MobileData_Api;
+        }
+        String dns = NetWorkUtils.getDns(MyApplication.getContext());
+        try {
+            if (!com.pc.utils.StringUtils.isNull(dns)) {
+                netInfo.dwDns = FormatTransfer.lBytesToLong(InetAddress.getByName(dns).getAddress());
+            } else {
+                netInfo.dwDns = 0;
+            }
+        } catch (UnknownHostException e) {
+            android.util.Log.e("Test", "dwDns: " + dns + "--" + netInfo.dwDns);
+        }
+
+        android.util.Log.e("Test", "ip: " + ip + "--" + netInfo.dwIp);
+
+        Configure.sendUsedNetInfoNtf(netInfo);
     }
 }

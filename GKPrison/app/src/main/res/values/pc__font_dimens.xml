@@ -1,0 +1,36 @@
+<resources>
+
+    <!-- Text Size -->
+    <!-- TextSize最大30.0dip -->
+    <dimen name="XLargestTextSize">40.0dip</dimen>
+    <dimen name="LargestTextSize">30.0dip</dimen>
+    <dimen name="XXLargeTextSize">22.0dip</dimen>
+    <dimen name="XLargeTextSize">20.0dip</dimen>
+    <dimen name="LargerTextSize">17.0dip</dimen>
+
+    <!-- TitleTextSize默认18.0dip -->
+    <dimen name="TitleTextSize">18.0dip</dimen>
+
+    <!-- TT TextSize大部分使用16.0dip -->
+    <dimen name="LargeTextSize">16.0dip</dimen>
+
+    <!-- TextSize默认15.0dip -->
+    <dimen name="BasicTextSize">15.0dip</dimen>
+    <dimen name="SmallTextSize">14.0dip</dimen>
+    <dimen name="SmallerTextSize">13.0dip</dimen>
+
+    <!-- TextSize最小12.0dip -->
+    <dimen name="SmallestTextSize">12.0dip</dimen>
+    <dimen name="Tiny_LTextSize">11.0dip</dimen>
+    <dimen name="Tiny_TextSize">10.0dip</dimen>
+    <dimen name="Least_TextSize">8.0dip</dimen>
+    <dimen name="Medium_TextSize">20.0dip</dimen>
+    <dimen name="ChattingTextSize">16.0dip</dimen>
+    <dimen name="LargeAvatarSize">52.0dip</dimen>
+    <dimen name="TTTwinButtonMinSize">50.0dip</dimen>
+    <dimen name="Large_TextSize">30.0dip</dimen>
+    <dimen name="Big_TextSize">23.0dip</dimen>
+    <dimen name="gif_bg_width">70.0dip</dimen>
+    <dimen name="dot_padding">20.0dip</dimen>
+
+</resources>

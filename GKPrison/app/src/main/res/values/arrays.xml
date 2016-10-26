@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    <string-array name="del_cancel">
+        <item>@string/delete</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <!-- 退出 -->
+    <string-array name="settings_log_off">
+        <item>@string/settings_log_off_app</item>
+        <item>@string/settings_log_off</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="about_call">
+        <item>@string/call_up</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="delete_and_cancel">
+        <item>@string/delete</item>
+        <item>@string/cancel</item>
+    </string-array>
+
+
+
+    <!-- 视频会议 -->
+    <!-- 入会方式：视频、音频、电话、会议详情、取消 -->
+    <string-array name="vconf_join_way">
+        <item>@string/video</item>
+        <item>@string/audio</item>
+        <item>@string/phone</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <!-- 入会方式：视频、音频、会议详情、取消 -->
+    <string-array name="vconf_join_way2">
+        <item>@string/video</item>
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <!-- 入会方式：音频、会议详情、取消 -->
+    <string-array name="vconf_join_way3">
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="vconf_invite_way">
+        <item>@string/add_vconf_person</item>
+        <item>@string/add_vconf_person_for_phone</item>
+        <item>@string/add_by_call_up</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="vconf_invite_way_h323">
+        <item>@string/add_vconf_person</item>
+        <item>@string/add_by_call_up</item>
+        <item>@string/cancel</item>
+    </string-array>
+
+    <!-- 召集会议 -->
+    <string-array name="vconf_convene_way">
+        <item>@string/video</item>
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <!-- 召集会议 -->
+    <string-array name="vconf_convene_way_audio">
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <!-- 召开会议 -->
+    <string-array name="vconf_convene">
+        <item>@string/vconf_convene_now</item>
+        <item>@string/vconf_convene_edit</item>
+        <item>@string/cancel</item>
+    </string-array>
+
+    <!-- 呼叫方式 -->
+    <string-array name="call_up_way">
+        <item>@string/video</item>
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="call_up_way_audio">
+        <item>@string/audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="call_vconf_audio">
+        <item>@string/vconf_ring_audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="call_vconf_video">
+        <item>@string/vconf_ring_video</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="call_vconf_video_audio">
+        <item>@string/vconf_ring_video</item>
+        <item>@string/vconf_ring_audio</item>
+        <item>@string/cancel</item>
+    </string-array>
+    <string-array name="clear_vconf_history">
+        <item>@string/clear</item>
+        <item>@string/cancel</item>
+    </string-array>
+</resources>
