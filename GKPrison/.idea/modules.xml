@@ -5,7 +5,11 @@
       <module fileurl="file://$PROJECT_DIR$/GKPrison.iml" filepath="$PROJECT_DIR$/GKPrison.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/ToggleButtonLib/ToggleButtonLib.iml" filepath="$PROJECT_DIR$/libraries/ToggleButtonLib/ToggleButtonLib.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/camera/camera.iml" filepath="$PROJECT_DIR$/camera/camera.iml" />
+      <module fileurl="file://$PROJECT_DIR$/cameratest/cameratest.iml" filepath="$PROJECT_DIR$/cameratest/cameratest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/facerecognition/facerecognition.iml" filepath="$PROJECT_DIR$/facerecognition/facerecognition.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/libraries.iml" filepath="$PROJECT_DIR$/libraries/libraries.iml" />
+      <module fileurl="file://$PROJECT_DIR$/mytest/mytest.iml" filepath="$PROJECT_DIR$/mytest/mytest.iml" />
       <module fileurl="file://$PROJECT_DIR$/libraries/uikit/uikit.iml" filepath="$PROJECT_DIR$/libraries/uikit/uikit.iml" />
     </modules>
   </component>
