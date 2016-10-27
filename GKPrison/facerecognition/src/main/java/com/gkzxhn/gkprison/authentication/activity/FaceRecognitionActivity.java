@@ -33,20 +33,14 @@ import java.io.File;
 
 public class FaceRecognitionActivity extends AppCompatActivity {
 
+    public static final String FACE_URL = "faceUrl";
+    public static final String CONFIDENCE_RESULT = "confidence_result";
     private static final int CAMERA_REQUEST_CODE = 1;
     private Button mButton;
     private FaceSurfaceView mCameraSurfaceView;
-
     private FrameLayout mFrameLayout;
-
     private int PICK_IMAGE_REQUEST = 1;
-
     private File imageFile;
-
-    public static final String FACE_URL = "faceUrl";
-
-    public static final String CONFIDENCE_RESULT = "confidence_result";
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,9 +67,9 @@ public class FaceRecognitionActivity extends AppCompatActivity {
             }
         });
 
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             requestPermission();
-        }else{
+        } else {
             Logger.e("小于23");
             initSurfaceView();
         }
@@ -93,11 +87,11 @@ public class FaceRecognitionActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //                mCameraSurfaceView.setOldFaceFile(new File(getExternalCacheDir() + "/" + "test.jpg"));
-//                String faceUrl = getIntent().getStringExtra(FACE_URL);
-                String faceUrl = "http://img5.duitang.com/uploads/item/201408/23/20140823145710_iwdLQ.jpeg";
-                Logger.e("faceUrl = "+faceUrl);
-                if(TextUtils.isEmpty(faceUrl)){
+                mCameraSurfaceView.setOldFaceFile(new File(getExternalCacheDir() + "/" + "test.jpg"));
+                String faceUrl = getIntent().getStringExtra(FACE_URL);
+                //                String faceUrl = "http://img5.duitang.com/uploads/item/201408/23/20140823145710_iwdLQ.jpeg";
+                Logger.e("faceUrl = " + faceUrl);
+                if (TextUtils.isEmpty(faceUrl)) {
                     setResult(RESULT_CANCELED);
                     onBackPressed();
                     return;
