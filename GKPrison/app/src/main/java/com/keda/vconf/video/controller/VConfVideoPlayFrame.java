@@ -13,19 +13,26 @@ import android.graphics.PixelFormat;
 import android.graphics.PointF;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.google.gson.Gson;
 import com.keda.vconf.controller.VConfVideoUI;
 import com.keda.vconf.manager.VConferenceManager;
+import com.keda.vconf.reqs.Exam;
+import com.keda.vconf.reqs.ExamReq;
 import com.kedacom.truetouch.video.player.EGLConfigChooser;
 import com.kedacom.truetouch.video.player.EGLContextFactory;
 import com.kedacom.truetouch.video.player.EGLWindowSurfaceFactory;
@@ -35,6 +42,13 @@ import com.pc.ui.layout.ISimpleTouchListener;
 import com.pc.ui.layout.SimpleGestureDetectorRelative;
 import com.pc.utils.TerminalUtils;
 
+import java.io.IOException;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import rx.Subscriber;
+
 /**
   * 视频播放界面
   * 
@@ -42,7 +56,7 @@ import com.pc.utils.TerminalUtils;
   * @date 2014-9-4
   */
 
-public class VConfVideoPlayFrame extends Fragment {
+public class VConfVideoPlayFrame extends Fragment implements View.OnClickListener{
 
 	// 视频会议管理界面
 	private VConfVideoUI mVConfVideoUI;
@@ -57,6 +71,12 @@ public class VConfVideoPlayFrame extends Fragment {
 
 	private VConfVideoFrame mVConfContentFrame;
 
+	private ImageView iv_example;
+	private ImageView iv_meeting_ic_card;
+	private ImageView iv_meeting_icon;
+	private Button bt_through_examine;
+	private Button bt_not_through_examine;
+
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
@@ -69,19 +89,19 @@ public class VConfVideoPlayFrame extends Fragment {
 		}
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
 	@SuppressLint("InflateParams")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		Log.i("VConfVideo", "VConfVideoPlayFrame-->onCreateView ");
-		return inflater.inflate(R.layout.vconf_video_play, null);
+		View view = inflater.inflate(R.layout.vconf_video_play, null);
+		iv_example = (ImageView) view.findViewById(R.id.iv_example);
+		iv_meeting_ic_card = (ImageView) view.findViewById(R.id.iv_meeting_ic_card);
+		iv_meeting_icon = (ImageView) view.findViewById(R.id.iv_meeting_icon);
+		bt_through_examine = (Button) view.findViewById(R.id.bt_through_examine);
+		bt_not_through_examine = (Button) view.findViewById(R.id.bt_not_through_examine);
+		return view;
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onViewCreated(android.view.View, android.os.Bundle)
-	 */
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		Log.i("VConfVideo", "VConfVideoPlayFrame-->onViewCreated ");
@@ -102,9 +122,6 @@ public class VConfVideoPlayFrame extends Fragment {
 		super.onStart();
 	};
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onResume()
-	 */
 	@Override
 	public void onResume() {
 		Log.i("VConfVideo", "VConfVideoPlayFrame-->onResume ");
@@ -134,9 +151,6 @@ public class VConfVideoPlayFrame extends Fragment {
 
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onConfigurationChanged(android.content.res.Configuration)
-	 */
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
@@ -189,6 +203,23 @@ public class VConfVideoPlayFrame extends Fragment {
 	 * </pre>
 	 */
 	private void initPlayGLSurfaceView() {
+		// ToDo 显示正在审核图片
+		String logined_account = (String) SPUtil.get(getActivity(), "username", "");
+//		if(!TextUtils.isEmpty(logined_account)){ // 已登录(几乎是肯定的)
+//			if (Utils.isNumeric(logined_account)){ // 全数字组成即手机号登陆的  家属用户
+//				// 家属用户显示正在审核
+//				iv_example.setVisibility(View.VISIBLE);
+//			}else {
+//				// 监狱用户  显示头像身份证照  审核按钮
+//				iv_meeting_ic_card.setVisibility(View.VISIBLE);
+//				iv_meeting_icon.setVisibility(View.VISIBLE);
+//				bt_not_through_examine.setVisibility(View.VISIBLE);
+//				bt_through_examine.setVisibility(View.VISIBLE);
+//				bt_through_examine.setOnClickListener(VConfVideoPlayFrame.this);
+//				bt_not_through_examine.setOnClickListener(VConfVideoPlayFrame.this);
+//			}
+//		}
+
 		Log.i("VConfVideo", "VConfVideoPlayFrame-->initPlayGLSurfaceView ");
 		// 播放大窗口的装载布局
 		SimpleGestureDetectorRelative playPicFrame = (SimpleGestureDetectorRelative) getView().findViewById(R.id.pic_frame);
@@ -408,10 +439,6 @@ public class VConfVideoPlayFrame extends Fragment {
 	public void registerListeners() {
 
 	}
-
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onPause()
-	 */
 	@Override
 	public void onPause() {
 		Log.w("VConfVideo", "VConfVideoPlayFrame-->onPause ");
@@ -422,10 +449,6 @@ public class VConfVideoPlayFrame extends Fragment {
 		super.onPause();
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onStop()
-	 */
-
 	@Override
 	public void onStop() {
 		Log.w("VConfVideo", "VConfVideoPlayFrame-->onStop ");
@@ -435,27 +458,17 @@ public class VConfVideoPlayFrame extends Fragment {
 		super.onStop();
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDetach()
-	 */
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		Log.w("VConfVideo", "VConfVideoPlayFrame-->onDetach ");
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDestroyView()
-	 */
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
 		Log.w("VConfVideo", "VConfVideoPlayFrame-->onDestroyView ");
 	}
-
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDestroy()
-	 */
 	@Override
 	public void onDestroy() {
 		Log.w("VConfVideo", "VConfVideoPlayFrame-->onDestroy ");
@@ -630,5 +643,79 @@ public class VConfVideoPlayFrame extends Fragment {
 	/** @return the mMainRenderer */
 	public Renderer getmMainRenderer() {
 		return mMainRenderer;
+	}
+
+	public static final String TAG = "VConfVideoPlayFrame";
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()){
+			case R.id.bt_not_through_examine:
+				// 审核不通过
+				RequestBody _body = getRequestBody(401);
+				ExamReq.exam(_body, new Subscriber<ResponseBody>() {
+					@Override public void onCompleted() {}
+
+					@Override public void onError(Throwable e) {
+						Log.e(TAG, "exam failed exception : " + e.getMessage());
+						ToastUtil.showLongToast(getActivity(), "发送异常");
+					}
+
+					@Override public void onNext(ResponseBody responseBody) {
+						try {
+							String result = responseBody.string();
+							Log.i(TAG, "exam failed success : " + result);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						// 把审核按钮隐藏
+						bt_through_examine.setVisibility(View.GONE);
+						bt_not_through_examine.setVisibility(View.GONE);
+					}
+				});
+				break;
+			case R.id.bt_through_examine:
+				// 审核通过
+				RequestBody body = getRequestBody(200);
+				ExamReq.exam(body, new Subscriber<ResponseBody>() {
+					@Override public void onCompleted() {}
+
+					@Override public void onError(Throwable e) {
+						Log.e(TAG, "exam exception : " + e.getMessage());
+						ToastUtil.showLongToast(getActivity(), "发送异常");
+					}
+
+					@Override public void onNext(ResponseBody responseBody) {
+						try {
+							String result = responseBody.string();
+							Log.i(TAG, "exam success : " + result);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						// 把审核按钮隐藏
+						bt_through_examine.setVisibility(View.GONE);
+						bt_not_through_examine.setVisibility(View.GONE);
+					}
+				});
+				break;
+		}
+	}
+
+	/**
+	 * 获取审核参数
+	 * @param code
+	 * @return
+     */
+	@NonNull
+	private RequestBody getRequestBody(int code) {
+		Exam exam = new Exam();
+		Exam.NotificationBean notificationBean = new Exam.NotificationBean();
+		notificationBean.setCode(code);
+		notificationBean.setReceiver((String) SPUtil.get(getActivity(), "family_accid", ""));
+		notificationBean.setSender((String) SPUtil.get(getActivity(), "token", ""));
+		exam.setNotification(notificationBean);
+		String exam_str = new Gson().toJson(exam);
+		return RequestBody.create(MediaType.
+                parse("application/json; charset=utf-8"),  exam_str);
 	}
 }

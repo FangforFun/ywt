@@ -13,6 +13,7 @@ import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.welcome.WelcomeActivity;
 import com.jungly.gridpasswordview.GridPasswordView;
+import com.keda.sky.app.PcAppStackManager;
 
 /**
  * 输入app解锁密码
@@ -26,6 +27,7 @@ public class InputPasswordActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_input_password, null);
         tv_pwd_error = (TextView) view.findViewById(R.id.tv_pwd_error);
         gpv_input_pwd = (GridPasswordView) view.findViewById(R.id.gpv_input_pwd);
@@ -55,6 +57,13 @@ public class InputPasswordActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     /**
      * 密码输入正确，下一步

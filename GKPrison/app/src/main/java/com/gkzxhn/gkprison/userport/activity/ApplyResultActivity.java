@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.keda.sky.app.PcAppStackManager;
 
 /**
  * 申请结果
@@ -34,6 +35,7 @@ public class ApplyResultActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_apply_result, null);
         tv_request_name = (TextView) view.findViewById(R.id.tv_request_name);
         tv_request_time = (TextView) view.findViewById(R.id.tv_request_time);
@@ -105,4 +107,11 @@ public class ApplyResultActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

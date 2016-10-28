@@ -420,8 +420,8 @@ public class PersonLoginFragment extends BaseFragment {
         });
     }
 
-
     private void login() {
+        MyApplication.getApplication().isH323 = true;
         if (!MyApplication.getApplication().isH323) {
             Configure.setAudioPriorCfgCmd(false);
             if (isMtH323Local()) {

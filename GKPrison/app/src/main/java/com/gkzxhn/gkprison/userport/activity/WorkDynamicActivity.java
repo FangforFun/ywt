@@ -2,10 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +18,6 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
@@ -30,6 +25,7 @@ import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -149,6 +145,7 @@ public class WorkDynamicActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
         mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
@@ -382,4 +379,11 @@ public class WorkDynamicActivity extends BaseActivity {
         TextView tv_home_news_content;
         ImageView iv_home_news_go;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

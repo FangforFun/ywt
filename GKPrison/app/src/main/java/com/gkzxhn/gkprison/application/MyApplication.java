@@ -32,6 +32,7 @@ import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.keda.callback.MyMtcCallback;
 import com.keda.sky.app.TruetouchGlobal;
+import com.keda.vconf.reqs.ExamineEvent;
 import com.kedacom.kdv.mt.api.Base;
 import com.kedacom.kdv.mt.api.Configure;
 import com.kedacom.kdv.mt.bean.TMtH323PxyCfg;
@@ -74,6 +75,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import de.greenrobot.event.EventBus;
+
 /**
  * Created by zhengneng on 2015/12/23.
  */
@@ -90,7 +93,7 @@ public class MyApplication extends MultiDexApplication {
     public final static String USER_NAME = "username";
     public final static String RESULT = "result";
 
-    public boolean isH323 = true;
+    public boolean isH323;
 
     public static MyApplication mOurApplication;
 
@@ -111,6 +114,7 @@ public class MyApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
+        EventBus.getDefault().register(this);
         new Runnable(){
             @Override
             public void run() {
@@ -125,25 +129,23 @@ public class MyApplication extends MultiDexApplication {
                     Log.isDebug = false;
                 }
 
-                if (inMainProcess()) {
-                    // 初始化UIKit模块
-                    initUIKit();
-                    NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
-                            new Observer<StatusCode>() {
-                                public void onEvent(StatusCode status) {
-                                    Log.i("tag", "User status changed to: " + status);
-                                    switch (status) {
-                                        case KICKOUT:
-                                            toMain();
-                                            break;
-                                        case NET_BROKEN:
-                                            ToastUtil.showShortToast(getApplicationContext(), getString(R.string.net_broken));
-                                            break;
-                                    }
+                // 初始化UIKit模块
+                initUIKit();
+                NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
+                        new Observer<StatusCode>() {
+                            public void onEvent(StatusCode status) {
+                                Log.i("tag", "User status changed to: " + status);
+                                switch (status) {
+                                    case KICKOUT:
+                                        toMain();
+                                        break;
+                                    case NET_BROKEN:
+                                        ToastUtil.showShortToast(getApplicationContext(), getString(R.string.net_broken));
+                                        break;
                                 }
-                            }, true);
-                    observeCustomNotification();
-                }
+                            }
+                        }, true);
+                observeCustomNotification();
             }
         }.run();
 
@@ -196,12 +198,12 @@ public class MyApplication extends MultiDexApplication {
                 Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
                 Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
 
-                SPUtil.put(MyApplication.this, "has_new_notification", true);
                 // 第三方 APP 在此处理自定义通知：存储，处理，展示给用户等
                 Log.i("收到通知啦....", "receive custom notification: " + customNotification.getContent()
                         + " from :" + customNotification.getSessionId() + "/" + customNotification.getSessionType());
                 customNotification.getFromAccount();
                 if(customNotification.getContent().contains("type_id")) {
+                    SPUtil.put(MyApplication.this, "has_new_notification", true);
                     sendNotification(MyApplication.this, customNotification.getContent(), customNotification.getSessionId());
                 }else if(customNotification.getContent().contains("审核")){
                     doExamineResult(customNotification.getContent());
@@ -219,10 +221,13 @@ public class MyApplication extends MultiDexApplication {
             JSONObject jsonObject = new JSONObject(content);
             String result = jsonObject.getString("result");
             if(!TextUtils.isEmpty(result) && result.equals("审核通过")){
+                EventBus.getDefault().post(new ExamineEvent("审核通过"));
             }else {
+                EventBus.getDefault().post(new ExamineEvent("审核不通过"));
             }
         } catch (JSONException e) {
             e.printStackTrace();
+            EventBus.getDefault().post(new ExamineEvent("审核不通过"));
         }
     }
 
@@ -485,7 +490,7 @@ public class MyApplication extends MultiDexApplication {
         // { "achNumber" : "", "achPassword" : "", "bEnable" : true, "dwSrvIp" : 1917977712, "dwSrvPort" : 2776 }
         if (null != tmtH323Pxy) {
             isH323 = tmtH323Pxy.bEnable;
-            isH323 = true;
+//            isH323 = true;
         }
     }
 

@@ -22,6 +22,7 @@ import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -52,6 +53,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_opinion_feedback, null);
         et_content = (EditText) view.findViewById(R.id.et_content);
         surplus_count = (TextView) view.findViewById(R.id.surplus_count);
@@ -89,6 +91,13 @@ public class OpinionFeedbackActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     public void onClick(View v) {

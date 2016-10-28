@@ -17,8 +17,10 @@ import android.util.Log;
 import android.widget.FrameLayout;
 
 import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.keda.vconf.reqs.ExamineEvent;
 import com.kedacom.kdv.mt.bean.TMtAddr;
 import com.kedacom.kdv.mt.constant.EmNativeConfType;
 import com.keda.sky.app.PcAppStackManager;
@@ -30,6 +32,8 @@ import com.keda.vconf.video.controller.VConfVideoPlayFrame;
 import com.pc.utils.StringUtils;
 
 import java.util.List;
+
+import de.greenrobot.event.EventBus;
 
 /**
   * 视频会议
@@ -57,13 +61,11 @@ public class VConfVideoUI extends ActionBarActivity {
 	private int mVConfQuality;// 会议质量 2M.1M.256,192
 	private int mDuration;// 会议时长
 
-	/**
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i("VConfVideo", "VConfVideoUI-->onCreate");
 		super.onCreate(savedInstanceState);
+		EventBus.getDefault().register(this);
 		PcAppStackManager.Instance().pushActivity(this);
 		// 让音量键固定为媒体音量控制,其他的页面不要这样设置--只在音视频的界面加入这段代码
 		this.setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
@@ -75,27 +77,18 @@ public class VConfVideoUI extends ActionBarActivity {
 		onViewCreated();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.sky.app.TTActivity#onRestart()
-	 */
 	@Override
 	protected void onRestart() {
 		Log.i("VConfVideo", "VConfVideoUI-->onRestart");
 		super.onRestart();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.sky.app.TTActivity#onStart()
-	 */
 	@Override
 	protected void onStart() {
 		Log.i("VConfVideo", "VConfVideoUI-->onStart");
 		super.onStart();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#onResume()
-	 */
 	@Override
 	protected void onResume() {
 		Log.i("VConfVideo", "VConfVideoUI-->onResume");
@@ -112,9 +105,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		Log.i("VConfVideo", "VConfVideoUI-->onNewIntent");
 	}
 
-	/**
-	 * @see com.pc.app.base.PcActivity#onPostCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
@@ -135,9 +125,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		switchVConfFragment();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#initExtras()
-	 */
 	public void initExtras() {
 
 		Bundle extra = getIntent().getExtras();
@@ -180,7 +167,6 @@ public class VConfVideoUI extends ActionBarActivity {
 
 	/**
 	 * 切换视音频界面
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#switchVConfFragment()
 	 */
 	public void switchVConfFragment() {
 		// 视频会议
@@ -234,9 +220,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		}
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.app.TTBaseActivity#onBackPressed()
-	 */
 	@Override
 	public void onBackPressed() {
 		// super.onBackPressed();
@@ -247,31 +230,23 @@ public class VConfVideoUI extends ActionBarActivity {
 		return mTMtList;
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#onPause()
-	 */
 	@Override
 	protected void onPause() {
 		Log.w("VConfVideo", "VConfVideoUI-->onPause");
 		super.onPause();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.vconf.controller.AbsVConfActivity#onStop()
-	 */
 	@Override
 	protected void onStop() {
 		Log.w("VConfVideo", "VConfVideoUI-->onStop");
 		super.onStop();
 	}
 
-	/**
-	 * @see com.kedacom.truetouch.sky.app.TTActivity#onDestroy()
-	 */
 	@Override
 	protected void onDestroy() {
 		Log.w("VConfVideo", "VConfVideoUI-->onDestroy");
 		PcAppStackManager.Instance().popActivity(this, false);
+		EventBus.getDefault().unregister(this);
 		super.onDestroy();
 	}
 
@@ -315,4 +290,12 @@ public class VConfVideoUI extends ActionBarActivity {
 		return mDuration;
 	}
 
+	public void onEvent(ExamineEvent event){
+		// ToDo 审核
+		if (event.getMsg().contains("发送审核状态异常")){
+			ToastUtil.showLongToast(VConfVideoUI.this, "服务器异常");
+		}else {
+			ToastUtil.showLongToast(VConfVideoUI.this, event.getMsg());
+		}
+	}
 }

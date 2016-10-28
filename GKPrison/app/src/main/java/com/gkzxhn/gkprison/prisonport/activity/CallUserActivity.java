@@ -15,6 +15,7 @@ import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.keda.vconf.dialog.P2PCallDialog;
 import com.squareup.picasso.Picasso;
 
@@ -57,6 +58,7 @@ public class CallUserActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_call_user, null);
         ButterKnife.bind(this, view);
         return view;
@@ -135,4 +137,11 @@ public class CallUserActivity extends BaseActivity {
             showToastMsgShort("没有网络，请检查网络设置");
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

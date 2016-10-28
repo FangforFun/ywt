@@ -35,6 +35,7 @@ import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
@@ -184,6 +185,7 @@ public class FamilyServiceActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_family_service, null);
         el_messge = (ExpandableListView) view.findViewById(R.id.el_messge);
         el_messge.setGroupIndicator(null);
@@ -208,6 +210,13 @@ public class FamilyServiceActivity extends BaseActivity {
         rl_remittance.setOnClickListener(this);
         getPrisonIformation();
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     private void getPrisonIformation() {
         if (Utils.isNetworkAvailable(this)) {

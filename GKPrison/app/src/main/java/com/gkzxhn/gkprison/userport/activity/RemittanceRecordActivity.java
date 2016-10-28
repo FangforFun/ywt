@@ -14,6 +14,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.Remittance;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ public class RemittanceRecordActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(),R.layout.activity_remittance,null);
         lv_remittance = (ListView)view.findViewById(R.id.lv_remittance);
         iv_recode = (ImageView) view.findViewById(R.id.iv_recode);
@@ -55,6 +57,13 @@ public class RemittanceRecordActivity extends BaseActivity {
         adapter = new RemittanceAdapter();
         lv_remittance.setAdapter(adapter);
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     private void getDate() {
         remittances.clear();

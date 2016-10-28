@@ -128,10 +128,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		Log.i("VConfVideo", "VconfVideoFrame-->onCreate ");
 	}
 
-	/**
-	 *
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onCreateView(android.view.LayoutInflater, android.view.ViewGroup, android.os.Bundle)
-	 */
 	@SuppressLint("InflateParams")
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -144,9 +140,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		return view;
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onViewCreated(android.view.View, android.os.Bundle)
-	 */
 	@Override
 	public void onViewCreated(View view, Bundle savedInstanceState) {
 		Log.i("VConfVideo", "VconfVideoFrame-->onViewCreated ");
@@ -162,9 +155,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		VConferenceManager.nativeConfType = EmNativeConfType.VIDEO;
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onStart()
-	 */
 	@Override
 	public void onStart() {
 		Log.i("VConfVideo", "VconfVideoFrame-->onStart ");
@@ -179,9 +169,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		VideoCapture.setAutoRotationCorrect(true);
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onResume()
-	 */
 	@Override
 	public void onResume() {
 		Log.i("VConfVideo", "VconfVideoFrame-->onResume ");
@@ -228,10 +215,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		mVideoCapture = new VideoCapture();
 
 	}
-
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onSaveInstanceState(android.os.Bundle)
-	 */
 
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
@@ -344,7 +327,7 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 	/**
 	 * 设置摄像头状态
 	 *
-	 * @param colse 关闭摄像头，发送静态图片
+	 *   关闭摄像头，发送静态图片
 	 */
 	protected void setCameraState(boolean open) {
 		isOpenCamera = open;
@@ -771,9 +754,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		mPrePipFrame.setLayoutParams(flLP);
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onPause()
-	 */
 	@Override
 	public void onPause() {
 		Log.w("VConfVideo", "VconfVideoFrame-->onPause ");
@@ -785,9 +765,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		super.onPause();
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onStop()
-	 */
 	@Override
 	public void onStop() {
 		Log.w("VConfVideo", "VconfVideoFrame-->onStop ");
@@ -798,18 +775,12 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		removeFacingView();
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDetach()
-	 */
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		Log.w("VConfVideo", "VconfVideoFrame-->onDetach ");
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDestroyView()
-	 */
 	@Override
 	public void onDestroyView() {
 		super.onDestroyView();
@@ -817,9 +788,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		Log.w("VConfVideo", "VconfVideoFrame-->onDestroyView ");
 	}
 
-	/**
-	 * @see com.pc.app.v4fragment.PcAbsFragment#onDestroy()
-	 */
 	@Override
 	public void onDestroy() {
 		Log.w("VConfVideo", "VconfVideoFrame-->onDestroy ");
@@ -967,8 +935,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 	/**
 	 * 重新开始采集图像
 	 *
-	 * @param prevHolder
-	 * @param resolution
 	 */
 	public void reStartVideoCapture() {
 		if (VideoCapServiceManager.getVideoCapServiceConnect() == null) {

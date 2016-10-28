@@ -48,6 +48,7 @@ import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.RequestCallback;
 import com.netease.nimlib.sdk.StatusCode;
@@ -195,6 +196,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_main, null);
         ButterKnife.bind(this, view);
         adjustmentIcon(); // 调整底部导航栏图标
@@ -626,6 +628,12 @@ public class MainActivity extends BaseActivity {
                 prisonerUserInfo.getResult().get(0).getJail_id());
         SPUtil.put(MainActivity.this, "prisoner_number",
                 prisonerUserInfo.getResult().get(0).getPrisoner_number());
+    }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
     }
 
     @Override

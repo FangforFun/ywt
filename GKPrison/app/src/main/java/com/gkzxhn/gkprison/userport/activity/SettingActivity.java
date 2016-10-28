@@ -3,9 +3,7 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -15,6 +13,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.keda.sky.app.PcAppStackManager;
 import com.zcw.togglebutton.ToggleButton;
 
 import butterknife.BindView;
@@ -49,6 +48,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
         ButterKnife.bind(this, view);
         return view;
@@ -80,6 +80,13 @@ public class SettingActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     /**
      * 打开/关闭密码设置

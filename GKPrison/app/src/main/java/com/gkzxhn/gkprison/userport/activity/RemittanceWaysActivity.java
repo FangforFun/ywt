@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.keda.sky.app.PcAppStackManager;
 
 public class RemittanceWaysActivity extends BaseActivity {
 
@@ -29,11 +29,19 @@ public class RemittanceWaysActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_remittance_ways, null);
         lv_remittance_way = (ListView) view.findViewById(R.id.lv_remittance_way);
         bt_next = (Button) view.findViewById(R.id.bt_next);
         return view;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     protected void initData() {

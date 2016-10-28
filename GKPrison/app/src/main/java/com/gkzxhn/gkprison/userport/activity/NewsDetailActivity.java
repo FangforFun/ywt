@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.keda.sky.app.PcAppStackManager;
 
 import org.json.JSONObject;
 
@@ -56,6 +57,7 @@ public class NewsDetailActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_news_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
         npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
@@ -113,6 +115,13 @@ public class NewsDetailActivity extends BaseActivity {
         bt_comment.setOnClickListener(this);
         tv_comments.setOnClickListener(this);
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     public void onBackPressed() {

@@ -10,6 +10,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -47,6 +48,7 @@ public class WeixinPayActivity extends BaseActivity {
     private Map<String,Object> jsonmap = new HashMap<String,Object>();
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this,R.layout.activity_weixin_pay,null);
         tv_prisonname = (TextView)view.findViewById(R.id.tv_pay_prison);
         tv_ordernum = (TextView)view.findViewById(R.id.tv_transnum);
@@ -140,5 +142,10 @@ public class WeixinPayActivity extends BaseActivity {
         return appSign;
     }
 
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
 
 }

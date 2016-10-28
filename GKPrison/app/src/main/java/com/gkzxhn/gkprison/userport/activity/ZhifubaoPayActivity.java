@@ -25,6 +25,7 @@ import com.gkzxhn.gkprison.userport.bean.PayResult;
 import com.gkzxhn.gkprison.utils.SignUtils;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -130,6 +131,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PcAppStackManager.Instance().pushActivity(this);
         setContentView(R.layout.activity_zhifubao_pay);
         totalmoney = (TextView)findViewById(R.id.tv_count);
         countmoney = getIntent().getStringExtra("price");
@@ -390,4 +392,11 @@ public class ZhifubaoPayActivity extends FragmentActivity {
             TextView qty;
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

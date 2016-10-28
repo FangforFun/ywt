@@ -11,11 +11,11 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true" >
 
-        <com.kedacom.skyDemo.vconf.controller.MyFacingView
+        <com.keda.vconf.controller.MyFacingView
             android:id="@+id/myFace_sv"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
-        </com.kedacom.skyDemo.vconf.controller.MyFacingView>
+        </com.keda.vconf.controller.MyFacingView>
     </FrameLayout>
 
     <RelativeLayout

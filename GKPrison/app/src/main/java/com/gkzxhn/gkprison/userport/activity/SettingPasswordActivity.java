@@ -2,7 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -12,6 +11,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.jungly.gridpasswordview.GridPasswordView;
+import com.keda.sky.app.PcAppStackManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,6 +40,7 @@ public class SettingPasswordActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_setting_password, null);
         ButterKnife.bind(this, view);
         return view;
@@ -104,6 +105,13 @@ public class SettingPasswordActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     /**
      * 密码不匹配时延时隐藏确认输入密码

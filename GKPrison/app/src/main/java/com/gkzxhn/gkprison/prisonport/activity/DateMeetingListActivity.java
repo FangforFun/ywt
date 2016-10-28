@@ -39,6 +39,7 @@ import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
@@ -153,6 +154,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
         View view;
         if (screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
@@ -212,6 +214,12 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         rl_refresh.setOnClickListener(this);
         bt_logout.setOnClickListener(this);
         fl_transparent.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
     }
 
     /**

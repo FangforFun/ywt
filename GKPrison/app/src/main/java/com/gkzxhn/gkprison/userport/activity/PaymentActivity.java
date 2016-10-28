@@ -34,6 +34,7 @@ import com.gkzxhn.gkprison.utils.RSAUtil;
 import com.gkzxhn.gkprison.utils.SignUtils;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.tencent.mm.sdk.modelpay.PayReq;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
@@ -298,6 +299,7 @@ public class PaymentActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_payment, null);
         lv_pay_way = (ListView) view.findViewById(R.id.lv_pay_way);
         bt_pay = (Button) view.findViewById(R.id.bt_pay);
@@ -357,6 +359,13 @@ public class PaymentActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     private void send_payment_type(String payment_type) {
         final String str = "{\"trade_no\":\"" + TradeNo + "\",\"payment_type\":\"" + payment_type + "\"}";

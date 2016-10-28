@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 
 import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
@@ -79,6 +80,7 @@ public class ReChargeActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_re_charge, null);
         btn_recharge = (Button) view.findViewById(R.id.btn_recharge);
         five = (RadioButton) view.findViewById(R.id.rb_five);
@@ -87,6 +89,13 @@ public class ReChargeActivity extends BaseActivity {
         hundred = (RadioButton) view.findViewById(R.id.rb_hundred);
         return view;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     protected void initData() {
