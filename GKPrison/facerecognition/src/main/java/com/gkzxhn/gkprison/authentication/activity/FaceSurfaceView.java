@@ -384,4 +384,10 @@ public class FaceSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
         }
     }
+
+
+
+    private void faceID(){
+
+    }
 }
