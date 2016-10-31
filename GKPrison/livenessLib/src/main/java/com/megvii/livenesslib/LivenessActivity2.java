@@ -72,6 +72,13 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     public static final String IMAGE_BEST = "image_best";
     public static final String UUID = "uuid";
     public static final String IMAGE_REF_PATH = "image_ref_path";
+    public static final String CONFIDENCE_RESULT = "confidence_result";
+    public static final String CONFIDENCE_VALUE = "confidence_value";
+    private static final int CONFIDENCE_STANDARD = 85;
+    public static final String RESULT_REF1 = "result_ref1";
+    public static final String CONFIDENCE = "confidence";
+
+
     private TextureView camerapreview;
     private FaceMask mFaceMask;// 画脸位置的类（调试时会用到）
     private ProgressBar mProgressBar;// 网络上传请求验证时出现的ProgressBar
@@ -253,8 +260,8 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         mFaceMask.setFaceInfo(null);
 
         if (mCurStep >= mIDetection.mDetectionSteps.size()) {
-//            mProgressBar.setVisibility(View.VISIBLE);
-//            handleResult(R.string.verify_success);
+            //            mProgressBar.setVisibility(View.VISIBLE);
+            //            handleResult(R.string.verify_success);
 
             FaceIDDataStruct faceIDDataStruct = mDetector.getFaceIDDataStruct();
             mProgressDialog = new ProgressDialog(this);
@@ -321,33 +328,43 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 mProgressDialog.dismiss();
-                String json =null ;
-                Logger.e("response raw  = " + response.raw());
-                try {
-                    json =   response.body().string();
-                    Logger.e("json  = " + json);
-                } catch (IOException e) {
-                    e.printStackTrace();
+
+                if (response.isSuccessful()) {
+                    String json = null;
+                    double confidence = 0;
+                    Logger.e("response raw  = " + response.raw());
+                    try {
+                        json = response.body().string();
+                        Logger.e("json  = " + json);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        JSONObject jsonObject = new JSONObject(json);
+                        JSONObject jsonObject1 = jsonObject.optJSONObject(RESULT_REF1);
+                        confidence = jsonObject1.optDouble(CONFIDENCE);
+
+                        Toast.makeText(LivenessActivity2.this
+                                , "相似度有百分之" + confidence
+                                , Toast.LENGTH_LONG).show();
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (confidence >= CONFIDENCE_STANDARD) {
+                        setFaceResult(RESULT_OK, true, confidence);
+                    }else{
+                        setFaceResult(RESULT_CANCELED, false, confidence);
+                    }
+
+                } else {
+                    setFaceResult(RESULT_CANCELED, false, 0);
+
                 }
 
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    JSONObject jsonObject1 = jsonObject.optJSONObject("result_ref1");
-                    jsonObject1.optString("confidence");
 
-                    Toast.makeText(LivenessActivity2.this
-                            ,"相似度有百分之"+jsonObject1.optString("confidence")
-                            ,Toast.LENGTH_LONG).show();
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-                Logger.e("response message  = " + response.message());
-                Logger.e("response code  = " + response.code());
-                Logger.e("response errorBody  = " + response.errorBody());
-                Logger.e("response headers  = " + response.headers());
-                Logger.e("response isSuccessful  = " + response.isSuccessful());
             }
 
             @Override
@@ -355,8 +372,9 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                 Logger.e("出错  = " + t.getMessage());
                 Logger.e("出错  = " + t);
                 mProgressDialog.dismiss();
-                setResult(RESULT_CANCELED);
-                onBackPressed();
+                setFaceResult(RESULT_CANCELED, false, 0);
+                //                setResult(RESULT_CANCELED);
+                //                onBackPressed();
             }
         });
     }
@@ -377,7 +395,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                 byte[] imageBestData = data;// 这是最好的一张图片
                 CodeHelp.saveJPGFile(this, imageBestData, key);
             } else if (key.equals("image_env")) {
-                byte[] imageEnvData = data;// 这是一张全景图
+                byte[] imageEnvData = data;// 这是一张全景图 q
                 //                CodeHelp.saveJPGFile(this, imageEnvData, key);
             } else {
                 // 其余为其他图片，根据需求自取
@@ -390,6 +408,9 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
      */
     @Override
     public void onDetectionFailed(final DetectionFailedType type) {
+
+//        Logger.e("type.name() = " + type.name());
+
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -408,7 +429,10 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                 resourceID = R.string.liveness_detection_failed_timeout;
                 break;
         }
-        handleResult(resourceID);
+
+        Toast.makeText(LivenessActivity2.this,resourceID,Toast.LENGTH_LONG).show();
+        setFaceResult(RESULT_CANCELED,false,0);
+//        handleResult(resourceID);
     }
 
     /**
@@ -499,6 +523,17 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         Logger.e("jsonObject= " + jsonObject);
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    private void setFaceResult(int resultCode, boolean confidenceResult, double confidenceValue) {
+
+        Intent intent = new Intent();
+        intent.putExtra(CONFIDENCE_RESULT, confidenceResult);
+        intent.putExtra(CONFIDENCE_VALUE, confidenceValue);
+        setResult(resultCode,intent);
+        onBackPressed();
+
+
     }
 
     public void changeType(final DetectionType detectiontype,
@@ -622,8 +657,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                 imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
 
             } else if (integer == 0) {
-                setResult(RESULT_CANCELED);
-                onBackPressed();
+                setFaceResult(RESULT_CANCELED, false, 0);
             }
         }
     }
