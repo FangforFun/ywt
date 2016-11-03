@@ -40,7 +40,6 @@ import com.kedacom.kdv.mt.bean.TagTNetUsedInfoApi;
 import com.kedacom.kdv.mt.constant.EmMtModel;
 import com.kedacom.kdv.mt.constant.EmNetAdapterWorkType;
 import com.kedacom.truetouch.audio.AudioDeviceAndroid;
-import com.netease.nim.uikit.BuildConfig;
 import com.netease.nim.uikit.ImageLoaderKit;
 import com.netease.nim.uikit.NimUIKit;
 import com.netease.nim.uikit.cache.FriendDataCache;
@@ -114,59 +113,62 @@ public class MyApplication extends MultiDexApplication {
     @Override
     public void onCreate() {
         super.onCreate();
-        EventBus.getDefault().register(this);
+        crashAndLog();
+        mOurApplication = this;
         new Runnable(){
             @Override
             public void run() {
                 NIMClient.init(MyApplication.this, loginInfo(), options()); // 初始化
-                // 初始化全局异常捕获
-                CrashHandler crashHandler = CrashHandler.getInstance();
-                crashHandler.init(getApplicationContext());
-
-                if(!BuildConfig.BUILD_TYPE.equals("debug")){
-                    Log.isDebug = true;
-                }else {
-                    Log.isDebug = false;
-                }
-
-                // 初始化UIKit模块
-                initUIKit();
-                NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
-                        new Observer<StatusCode>() {
-                            public void onEvent(StatusCode status) {
-                                Log.i("tag", "User status changed to: " + status);
-                                switch (status) {
-                                    case KICKOUT:
-                                        toMain();
-                                        break;
-                                    case NET_BROKEN:
-                                        ToastUtil.showShortToast(getApplicationContext(), getString(R.string.net_broken));
-                                        break;
+                if (inMainProcess()) {
+                    // 初始化UIKit模块
+                    initUIKit();
+                    NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
+                            new Observer<StatusCode>() {
+                                public void onEvent(StatusCode status) {
+                                    Log.i("tag", "User status changed to: " + status);
+                                    switch (status) {
+                                        case KICKOUT:
+                                            toMain();
+                                            break;
+                                        case NET_BROKEN:
+                                            ToastUtil.showShortToast(getApplicationContext(), getString(R.string.net_broken));
+                                            break;
+                                    }
                                 }
-                            }
-                        }, true);
-                observeCustomNotification();
+                            }, true);
+                    observeCustomNotification();
+                }
             }
         }.run();
-
-        mOurApplication = this;
-        android.util.Log.i(MyApplication.class.getSimpleName(), "onCreate..." + android.os.Build.MODEL + "  package:" + getPackageName());
+        Log.i(MyApplication.class.getSimpleName(), "onCreate..." + android.os.Build.MODEL + "  package:" + getPackageName());
         Base.mtStart(EmMtModel.emSkyAndroidPhone, TruetouchGlobal.MTINFO_SKYWALKER, "5.0", getMediaLibDir()
                 + File.separator, MyMtcCallback.getInstance(), "kedacom"); // 启动业务终端，开始接受回调
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
+        new Thread(new Runnable() {@Override public void run() {
                 parseH323();
                 // 设音视频上下文置
                 AudioDeviceAndroid.initialize(getContext());
                 setUserdNetInfo();
                 // 启动Service
                 Base.initService();
-                android.util.Log.w("Test", "开始终端服务 SYSStartService: agent/misc/mtmp/rest/upgrade/im/mtpa");
+                Log.w("Test", "开始终端服务 SYSStartService: agent/misc/mtmp/rest/upgrade/im/mtpa");
                 VConfStaticPic.checkStaticPic(MyApplication.getContext(), getTempDir() + File.separator);
             }
         }).start();
+    }
+
+    /**
+     * 设置异常捕获以及Log
+     */
+    private void crashAndLog() {
+        // 初始化全局异常捕获
+        CrashHandler crashHandler = CrashHandler.getInstance();
+        crashHandler.init(getApplicationContext());
+
+//        if(!BuildConfig.BUILD_TYPE.equals("debug")){
+//            Log.isDebug = true;
+//        }else {
+//            Log.isDebug = false;
+//        }
     }
 
     private void toMain() {
@@ -495,15 +497,17 @@ public class MyApplication extends MultiDexApplication {
     }
 
     public String getMediaLibDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/mediaLib" + File.separator);
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                "kedacom/sky_Demo/mediaLib" + File.separator);
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        return dir.getAbsolutePath();
+        return dir.getAbsolutePath() + File.separator;
     }
 
     public String getTempDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/mediaLib/temp" + File.separator);
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                "kedacom/sky_Demo/mediaLib/temp" + File.separator);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -511,7 +515,8 @@ public class MyApplication extends MultiDexApplication {
     }
 
     public static String getTmpDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/.tmp" + File.separator);
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                "kedacom/sky_Demo/.tmp" + File.separator);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -521,7 +526,8 @@ public class MyApplication extends MultiDexApplication {
 
     // 保存截图的路径(绝对路径)
     public static String getPictureDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/.picture" + File.separator);
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                "kedacom/sky_Demo/.picture" + File.separator);
         if (!dir.exists()) {
             dir.mkdirs();
         }
@@ -531,7 +537,8 @@ public class MyApplication extends MultiDexApplication {
 
     // 图片保存文件夹绝对路径
     public static String getSaveDir() {
-        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(), "kedacom/sky_Demo/save" + File.separator);
+        File dir = new File(Environment.getExternalStorageDirectory().getAbsolutePath(),
+                "kedacom/sky_Demo/save" + File.separator);
         if (!dir.exists()) {
             dir.mkdirs();
         }

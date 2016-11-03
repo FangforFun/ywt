@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.prisonport.activity;
 
+import android.os.Environment;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -36,6 +37,8 @@ import rx.schedulers.Schedulers;
 public class CallUserActivity extends BaseActivity {
 
     private static final java.lang.String TAG = "CallUserActivity";
+
+    public static final String fileName = Environment.getExternalStorageDirectory() + "/avatar.png";
 
     @BindView(R.id.iv_id_card_01)
     ImageView iv_id_card_01;
@@ -89,18 +92,15 @@ public class CallUserActivity extends BaseActivity {
         apiService.getMeetingDetailInfo(family_id, (String) SPUtil.get(CallUserActivity.this, "token", ""))
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<FamilyMeetingInfo>() {
-                    @Override
-                    public void onCompleted() {}
+                    @Override public void onCompleted() {}
 
-                    @Override
-                    public void onError(Throwable e) {
+                    @Override public void onError(Throwable e) {
                         Log.e(TAG, "get detail info failed : " + e.getMessage());
                         rl_getting.setVisibility(View.GONE);
                         showToastMsgShort("获取身份证照片失败");
                     }
 
-                    @Override
-                    public void onNext(FamilyMeetingInfo familyMeetingInfo) {
+                    @Override public void onNext(FamilyMeetingInfo familyMeetingInfo) {
                         Log.i(TAG, "get detail info success : " + familyMeetingInfo.toString());
                         CallUserActivity.this.familyMeetingInfo = familyMeetingInfo;
                         setImageResources();
@@ -117,10 +117,10 @@ public class CallUserActivity extends BaseActivity {
             String[] img_urls = image_url.split("\\|");
             Picasso.with(this).load(Constants.RESOURSE_HEAD + img_urls[0]).error(R.drawable.default_img).into(iv_id_card_01);
             Picasso.with(this).load(Constants.RESOURSE_HEAD + img_urls[1]).error(R.drawable.default_img).into(iv_id_card_02);
-            Log.i(TAG, "detail info img : " + Constants.RESOURSE_HEAD + img_urls[0] + "---" + Constants.URL_HEAD + img_urls[1]);
+            Log.i(TAG, "detail info img : " + Constants.RESOURSE_HEAD + img_urls[0] + "---" + Constants.RESOURSE_HEAD + img_urls[1]);
             SPUtil.put(this, "img_url_01", Constants.RESOURSE_HEAD + img_urls[0]);
             SPUtil.put(this, "img_url_02", Constants.RESOURSE_HEAD + img_urls[1]);
-            SPUtil.put(this, "img_url_03", Constants.RESOURSE_HEAD + img_urls[2]);
+            SPUtil.put(this, "img_url_03", Constants.RESOURSE_HEAD + img_urls[2]); // 头像
             bt_call.setEnabled(true);
             rl_getting.setVisibility(View.GONE);
         }
@@ -131,6 +131,7 @@ public class CallUserActivity extends BaseActivity {
         if (Utils.isNetworkAvailable(this)) {
             SPUtil.put(CallUserActivity.this, "family_accid", familyMeetingInfo.getAccid());
             Log.i(TAG, "Call User Activity ---> " + familyMeetingInfo.getAccid());
+
             // 呼叫
             new P2PCallDialog(this).show();
         } else {
@@ -143,5 +144,4 @@ public class CallUserActivity extends BaseActivity {
         PcAppStackManager.Instance().popActivity(this, false);
         super.onDestroy();
     }
-
 }

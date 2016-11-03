@@ -5,19 +5,33 @@ package com.keda.vconf.controller;
  * Copyright 2014  it.kedacom.com, Inc. All rights reserved.
  */
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.keda.sky.app.PcAppStackManager;
+import com.keda.vconf.manager.VConferenceManager;
 import com.kedacom.kdv.mt.api.Conference;
 import com.kedacom.kdv.mt.constant.EmConfProtocol;
 import com.kedacom.kdv.mt.constant.EmNativeConfType;
-import com.gkzxhn.gkprison.R;
-import com.keda.sky.app.PcAppStackManager;
-import com.keda.vconf.manager.VConferenceManager;
+import com.megvii.licensemanager.Manager;
+import com.megvii.livenessdetection.LivenessLicenseManager;
+import com.megvii.livenesslib.LivenessActivity2;
+import com.megvii.livenesslib.util.ConUtil;
 import com.pc.utils.NetWorkUtils;
+
+import static com.gkzxhn.gkprison.prisonport.activity.CallUserActivity.fileName;
 
 /**
   * 音视频应答
@@ -27,6 +41,9 @@ import com.pc.utils.NetWorkUtils;
   */
 
 public class VConfAVResponseUI extends ActionBarActivity implements View.OnClickListener {
+
+	private static final int ACTIVITY_REQUEST_CODE = 1;
+	private static final String TAG = "VConfAVResponseUI";
 
 	private String mE164Num;
 	// private String mPeerAlias;// 呼叫方名称
@@ -163,15 +180,7 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 		case R.id.video_response_btn:// 视频应答
 
 			// 正在发起呼叫状态
-				if (VConferenceManager.currTMtCallLinkSate != null && VConferenceManager.currTMtCallLinkSate.isCallIncoming() && !VConferenceManager.currTMtCallLinkSate.isAudio()) {
-					acceptVconfCall(true, false);
-					mConnTextView.setVisibility(View.VISIBLE);
-					mFlowTextView.setVisibility(View.INVISIBLE);
-					hintResponseBtn();
-					mIsAudioConf = false;
-
-				}
-				finish();
+				showCheckIdDialog();
 				break;
 
 		// 音频应答,Note:视频会议可以音频应答
@@ -199,8 +208,56 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 	}
 
 	/**
-	 * @see com.kedacom.truetouch.sky.app.TTActivity#onStop()
+	 * 提示即将进行人脸身份识别
 	 */
+	private void showCheckIdDialog() {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle("提示");
+		builder.setMessage("即将进行人脸身份识别，请注意周边环境，以防影响结果。");
+		builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				WarrantyTask task = new WarrantyTask();
+				task.execute();
+			}
+		}).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+
+		if (resultCode == RESULT_OK && requestCode == ACTIVITY_REQUEST_CODE){
+			boolean verify = data.getBooleanExtra(LivenessActivity2.CONFIDENCE_RESULT, false);
+			double value = data.getDoubleExtra(LivenessActivity2.CONFIDENCE_VALUE, 0);
+			Log.i(TAG, "result : " + verify + ", value: " + value);
+			if (verify){
+				// 应答
+				if (VConferenceManager.currTMtCallLinkSate != null && VConferenceManager.
+						currTMtCallLinkSate.isCallIncoming() && !VConferenceManager.
+						currTMtCallLinkSate.isAudio()) {
+					acceptVconfCall(true, false);
+					mConnTextView.setVisibility(View.VISIBLE);
+					mFlowTextView.setVisibility(View.INVISIBLE);
+					hintResponseBtn();
+					mIsAudioConf = false;
+
+				}
+				finish();
+			}
+		}else {
+			ToastUtil.showLongToast(VConfAVResponseUI.this, "人脸身份验证失败");
+			finish();
+			// ToDo 通知另一端验证失败
+		}
+	}
 
 	@Override
 	protected void onStop() {
@@ -216,7 +273,7 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 	/**
 	 * accept vconf
 	  *
-	  * @param bisAccept
+	  * @param bIsAccept
 	  * @param audio
 	 */
 	private void acceptVconfCall(final boolean bIsAccept, final boolean audio) {
@@ -268,4 +325,52 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 	public boolean ismIsAudioConf() {
 		return mIsAudioConf;
 	}
+
+
+	/**
+	 * 人脸识别sdk授权验证任务
+	 */
+	class WarrantyTask extends AsyncTask<Void, Void, Integer> {
+
+		private ProgressDialog mProgressDialog = new ProgressDialog(VConfAVResponseUI.this);
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			mProgressDialog.setTitle("提示");
+			mProgressDialog.setMessage("正在联网授权中...");
+			mProgressDialog.setCanceledOnTouchOutside(false);
+			mProgressDialog.show();
+		}
+
+		@Override
+		protected Integer doInBackground(Void... params) {
+			Manager manager = new Manager(VConfAVResponseUI.this);
+			LivenessLicenseManager licenseManager = new LivenessLicenseManager(
+					VConfAVResponseUI.this);
+			manager.registerLicenseManager(licenseManager);
+			manager.takeLicenseFromNetwork(ConUtil.getUUIDString(VConfAVResponseUI.this));
+			if (licenseManager.checkCachedLicense() > 0)
+				return 1;
+			else
+				return 0;
+		}
+
+
+		@Override
+		protected void onPostExecute(Integer integer) {
+			super.onPostExecute(integer);
+			mProgressDialog.dismiss();
+			if (integer == 1) {
+				Log.i(TAG, "人脸识别授权验证成功");
+				Intent intent = new Intent(VConfAVResponseUI.this, LivenessActivity2.class);
+				intent.putExtra(LivenessActivity2.UUID, (String) SPUtil.get(VConfAVResponseUI.this, "password", ""));
+				intent.putExtra(LivenessActivity2.IMAGE_REF_PATH, fileName);
+				startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
+			} else if (integer == 0) {
+				ToastUtil.showShortToast(VConfAVResponseUI.this, "授权验证失败，请稍后再试！");
+			}
+		}
+	}
+
 }

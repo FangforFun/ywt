@@ -1,1 +1,1 @@
-include ':app',':libraries:ToggleButtonLib',':libraries:uikit'
+include ':app',':libraries:ToggleButtonLib',':libraries:uikit',':libraries:livenessLib'

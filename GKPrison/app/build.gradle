@@ -26,29 +26,16 @@ android {
         abortOnError false
     }
 
-    signingConfigs {
-        release {
-            storeFile file('gkprison.jks')
-            storePassword '123456'
-            keyAlias 'gkhn'
-            keyPassword '123456'
-        }
+    dexOptions{
+        preDexLibraries = false
+        incremental true
+        javaMaxHeapSize "4g"
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-        }
-        debug {
-            signingConfig signingConfigs.debug
-        }
-    }
-
-    allprojects {
-        repositories {
-            jcenter()
         }
     }
 
@@ -80,17 +67,28 @@ android {
             }
         }
     }
+
+    afterEvaluate {
+        tasks.matching {
+            it.name.startsWith('dex')
+        }.each { dx ->
+            def listFile = project.rootDir.absolutePath+'/app/maindexlist.txt'
+            if (dx.additionalParameters == null) {
+                dx.additionalParameters = []
+            }
+            //表示当方法数越界时则生成多个dex文件
+            dx.additionalParameters += '--multi-dex'
+            //这个指定了listFile中的类（即maindexlist.txt中的类）会打包到主dex中，不过注意下一条。
+            dx.additionalParameters += '--main-dex-list=' +listFile
+            //表明只有-main-dex-list所指定的类（在我的配置中，就是app目录下的maindexlist.txt中包含的类）才能打包到主dex中，如果没有这个选项，上个选项就会失效
+            dx.additionalParameters += '--minimal-main-dex'
+        }
+    }
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libraries:ToggleButtonLib')
-    compile files('libs/xUtils-2.6.14.jar')
-    compile files('libs/alipaySdk-20151112.jar')
-    compile files('libs/json-simple-1.1.1.jar')
-    compile files('libs/cosinesdk.jar')
-    compile files('libs/badgeview.jar')
-    compile files('libs/nineoldandroids-2.4.0.jar')
     compile project(':libraries:uikit')
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:design:22.2.1'
@@ -108,7 +106,6 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.1.0'
     compile 'com.jakewharton:butterknife:8.2.1'
     apt 'com.jakewharton:butterknife-compiler:8.2.1'
-    compile files('libs/kdmediasdk.jar')
-    compile files('libs/kdmobilesdk-V5.0.0.2.1.jar')
-    compile 'com.android.support:multidex:1.0.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile project(':libraries:livenessLib')
 }

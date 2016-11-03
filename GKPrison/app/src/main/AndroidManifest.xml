@@ -71,11 +71,11 @@
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.UNINSTALL_SHORTCUT" />
     <uses-permission android:name="com.android.launcher.permission.READ_SETTINGS" />
-    <!--<uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />-->
+    <uses-permission android:name="com.android.launcher.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.htc.launcher.permission.INSTALL_SHORTCUT" />
     <uses-permission android:name="com.htc.launcher.permission.UNINSTALL_SHORTCUT" />
     <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
-    <!--<uses-permission android:name="com.htc.launcher.permission.WRITE_SETTINGS" />-->
+    <uses-permission android:name="com.htc.launcher.permission.WRITE_SETTINGS" />
 
     <!--<uses-feature-->
         <!--android:name="android.hardware.camera"-->
@@ -411,5 +411,6 @@
 
         <service android:name="com.keda.vconf.modle.service.VideoCapService" >
         </service>
+        <activity android:name="com.megvii.livenesslib.LivenessActivity2" />
     </application>
 </manifest>

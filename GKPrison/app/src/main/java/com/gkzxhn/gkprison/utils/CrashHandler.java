@@ -9,6 +9,8 @@ import android.os.Environment;
 import android.os.Looper;
 import android.widget.Toast;
 
+import com.gkzxhn.gkprison.BuildConfig;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
@@ -103,7 +105,9 @@ public class CrashHandler implements UncaughtExceptionHandler {
             @Override
             public void run() {
                 Looper.prepare();
-                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
+                }
                 Looper.loop();
             }
         }.start();
@@ -112,11 +116,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
         //保存日志文件
         String file_name = saveCrashInfo2File(ex);
         Log.i("save crash info to ", file_name);
-//        SharedPreferences sp = mContext.getSharedPreferences("config", Context.MODE_PRIVATE);
-//        String file_names = sp.getString("错误信息文件名...", "");
-//        SharedPreferences.Editor editor = sp.edit();
-//        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
-//        editor.commit();
         return true;
     }
 
@@ -180,10 +179,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory().getPath();
+                String path = Environment.getExternalStorageDirectory().getPath() + "/agkzxhn";
                 File dir = new File(path);
                 if (!dir.exists()) {
-                    dir.mkdirs();
+                    boolean isSuccess = dir.mkdirs();
                 }
                 FileOutputStream fos = new FileOutputStream(path + "/" +fileName);
                 fos.write(sb.toString().getBytes());
