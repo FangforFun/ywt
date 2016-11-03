@@ -121,7 +121,9 @@ public class LivenessActivity extends Activity implements PreviewCallback,
      * 初始化数据
      */
     private void initData() {
-        DetectionConfig config = new DetectionConfig.Builder().build();
+        DetectionConfig config;
+        DetectionConfig.Builder builder = new DetectionConfig.Builder().setDetectionTimeout(20000);
+        config =   builder.build();
         mDetector = new Detector(this, config);
         boolean initSuccess = mDetector.init(this, ConUtil.readModel(this), "");
         if (!initSuccess) {

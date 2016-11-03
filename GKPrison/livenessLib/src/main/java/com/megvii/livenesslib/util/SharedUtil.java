@@ -34,7 +34,7 @@ public class SharedUtil {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharePre.edit();
         editor.putInt(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -49,7 +49,7 @@ public class SharedUtil {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharePre.edit();
         editor.putLong(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     public void writeDownStartApplicationTime() {
@@ -61,7 +61,7 @@ public class SharedUtil {
         SharedPreferences.Editor editor = sp.edit();
         //editor.putString("启动时间", now.toString());
         editor.putLong("nowtimekey", now);
-        editor.commit();
+        editor.apply();
 
     }
 
@@ -77,7 +77,7 @@ public class SharedUtil {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharePre.edit();
         editor.putBoolean(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -90,7 +90,7 @@ public class SharedUtil {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharePre.edit();
         editor.remove(key);
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -152,7 +152,7 @@ public class SharedUtil {
                 Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharePre.edit();
         editor.putString(key, value);
-        editor.commit();
+        editor.apply();
     }
 
     /**

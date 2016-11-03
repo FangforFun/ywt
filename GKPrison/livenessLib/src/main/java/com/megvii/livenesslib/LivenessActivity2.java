@@ -8,7 +8,6 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.TextureView;
@@ -21,7 +20,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.megvii.licensemanager.Manager;
 import com.megvii.livenessdetection.DetectionConfig;
 import com.megvii.livenessdetection.DetectionFrame;
 import com.megvii.livenessdetection.Detector;
@@ -30,7 +28,6 @@ import com.megvii.livenessdetection.Detector.DetectionListener;
 import com.megvii.livenessdetection.Detector.DetectionType;
 import com.megvii.livenessdetection.FaceQualityManager;
 import com.megvii.livenessdetection.FaceQualityManager.FaceQualityErrorType;
-import com.megvii.livenessdetection.LivenessLicenseManager;
 import com.megvii.livenessdetection.bean.FaceIDDataStruct;
 import com.megvii.livenessdetection.bean.FaceInfo;
 import com.megvii.livenesslib.util.CodeHelp;
@@ -74,11 +71,9 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     public static final String IMAGE_REF_PATH = "image_ref_path";
     public static final String CONFIDENCE_RESULT = "confidence_result";
     public static final String CONFIDENCE_VALUE = "confidence_value";
-    private static final int CONFIDENCE_STANDARD = 85;
     public static final String RESULT_REF1 = "result_ref1";
     public static final String CONFIDENCE = "confidence";
-
-
+    private static final int CONFIDENCE_STANDARD = 85;
     private TextureView camerapreview;
     private FaceMask mFaceMask;// 画脸位置的类（调试时会用到）
     private ProgressBar mProgressBar;// 网络上传请求验证时出现的ProgressBar
@@ -120,9 +115,11 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.liveness_layout);
+        uuid = getIntent().getStringExtra(UUID);
+        imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
         init();
         initData();
-        new WarrantyTask().execute();
+        //        new WarrantyTask().execute(); //验证授权代码移到，此页面的前一个页面
     }
 
     private void init() {
@@ -154,7 +151,8 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
      * 初始化数据
      */
     private void initData() {
-        DetectionConfig config = new DetectionConfig.Builder().build();
+
+        DetectionConfig config = new DetectionConfig.Builder().setDetectionTimeout(20000).build();
         mDetector = new Detector(this, config);
         boolean initSuccess = mDetector.init(this, ConUtil.readModel(this), "");
         if (!initSuccess) {
@@ -355,7 +353,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
 
                     if (confidence >= CONFIDENCE_STANDARD) {
                         setFaceResult(RESULT_OK, true, confidence);
-                    }else{
+                    } else {
                         setFaceResult(RESULT_CANCELED, false, confidence);
                     }
 
@@ -409,7 +407,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     @Override
     public void onDetectionFailed(final DetectionFailedType type) {
 
-//        Logger.e("type.name() = " + type.name());
+        //        Logger.e("type.name() = " + type.name());
 
         new Thread(new Runnable() {
             @Override
@@ -430,9 +428,9 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                 break;
         }
 
-        Toast.makeText(LivenessActivity2.this,resourceID,Toast.LENGTH_LONG).show();
-        setFaceResult(RESULT_CANCELED,false,0);
-//        handleResult(resourceID);
+        Toast.makeText(LivenessActivity2.this, resourceID, Toast.LENGTH_LONG).show();
+        setFaceResult(RESULT_CANCELED, false, 0);
+        //        handleResult(resourceID);
     }
 
     /**
@@ -530,7 +528,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         Intent intent = new Intent();
         intent.putExtra(CONFIDENCE_RESULT, confidenceResult);
         intent.putExtra(CONFIDENCE_VALUE, confidenceValue);
-        setResult(resultCode,intent);
+        setResult(resultCode, intent);
         onBackPressed();
 
 
@@ -614,51 +612,56 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         sensorUtil.release();
     }
 
-    class WarrantyTask extends AsyncTask<Void, Void, Integer> {
+
+    //    class WarrantyTask extends AsyncTask<Void, Void, Integer> {
+    //
+    //
+    //        private ProgressDialog mProgressDialog = new ProgressDialog(LivenessActivity2.this);
+    //
+    //
+    //        @Override
+    //        protected void onPreExecute() {
+    //            super.onPreExecute();
+    //
+    //            mProgressDialog.setTitle("授权");
+    //            mProgressDialog.setMessage("正在联网授权中...");
+    //            mProgressDialog.setCanceledOnTouchOutside(false);
+    //            mProgressDialog.show();
+    //        }
+    //
+    //        @Override
+    //        protected Integer doInBackground(Void... params) {
+    //
+    //
+    //            Manager manager = new Manager(LivenessActivity2.this);
+    //            LivenessLicenseManager licenseManager = new LivenessLicenseManager(
+    //                    LivenessActivity2.this);
+    //            manager.registerLicenseManager(licenseManager);
+    //
+    //            manager.takeLicenseFromNetwork(ConUtil.getUUIDString(LivenessActivity2.this));
+    //            if (licenseManager.checkCachedLicense() > 0)
+    //                return 1;
+    //            else
+    //                return 0;
+    //
+    //
+    //        }
+    //
+    //
+    //        @Override
+    //        protected void onPostExecute(Integer integer) {
+    //            super.onPostExecute(integer);
+    //            mProgressDialog.dismiss();
+    //            if (integer == 1) {
+    //                  uuid = getIntent().getStringExtra(UUID);
+    //                  imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
+
+    //
+    //            } else if (integer == 0) {
+    //                setFaceResult(RESULT_CANCELED, false, 0);
+    //            }
+    //        }
+    //    }
 
 
-        private ProgressDialog mProgressDialog = new ProgressDialog(LivenessActivity2.this);
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-
-            mProgressDialog.setTitle("授权");
-            mProgressDialog.setMessage("正在联网授权中...");
-            mProgressDialog.setCanceledOnTouchOutside(false);
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-
-
-            Manager manager = new Manager(LivenessActivity2.this);
-            LivenessLicenseManager licenseManager = new LivenessLicenseManager(
-                    LivenessActivity2.this);
-            manager.registerLicenseManager(licenseManager);
-
-            manager.takeLicenseFromNetwork(ConUtil.getUUIDString(LivenessActivity2.this));
-            if (licenseManager.checkCachedLicense() > 0)
-                return 1;
-            else
-                return 0;
-
-
-        }
-
-
-        @Override
-        protected void onPostExecute(Integer integer) {
-            super.onPostExecute(integer);
-            mProgressDialog.dismiss();
-            if (integer == 1) {
-                uuid = getIntent().getStringExtra(UUID);
-                imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
-
-            } else if (integer == 0) {
-                setFaceResult(RESULT_CANCELED, false, 0);
-            }
-        }
-    }
 }
