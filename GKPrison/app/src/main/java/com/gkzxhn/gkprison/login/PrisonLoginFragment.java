@@ -115,7 +115,7 @@ public class PrisonLoginFragment extends BaseFragment {
         SPUtil.put(getActivity(), "password", password);
         SPUtil.put(getActivity(), "isCommonUser", false);
         loginKeda();
-        move();
+//        move();
     }
 
     private void loginKeda() {
@@ -235,6 +235,7 @@ public class PrisonLoginFragment extends BaseFragment {
     }
 
     private void login() {
+        MyApplication.getApplication().isH323 = true;
         if (!MyApplication.getApplication().isH323) {
             Configure.setAudioPriorCfgCmd(false);
             if (isMtH323Local()) {
@@ -285,6 +286,7 @@ public class PrisonLoginFragment extends BaseFragment {
             }
         }).start();
     }
+
 
     /**
      * 检测本地 是否是代理 代理ip
