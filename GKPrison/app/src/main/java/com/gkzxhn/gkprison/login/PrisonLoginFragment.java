@@ -389,25 +389,29 @@ public class PrisonLoginFragment extends BaseFragment {
      *
      * @param isSuccessed
      */
-    public void loginSuccessed(boolean isSuccessed, final String failedMsg) {
-        if (isSuccessed) {
-            Toast.makeText(MyApplication.getApplication(), "登录成功", Toast.LENGTH_SHORT).show();
-            move();// 下一页
-            return;
-        }
-        sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
-        sadDialog.setTitleText("登录失败-" + failedMsg).setConfirmText("确定").changeAlertType(SweetAlertDialog.ERROR_TYPE);
-        sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+    public void loginSuccessed(final boolean isSuccessed, final String failedMsg) {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                sweetAlertDialog.dismiss();
+            public void run() {
+                if (isSuccessed) {
+                    Toast.makeText(MyApplication.getApplication(), "登录成功", Toast.LENGTH_SHORT).show();
+                    move();// 下一页
+                    return;
+                }
+                sadDialog.getProgressHelper().setBarColor(getResources().getColor(R.color.tv_red));
+                sadDialog.setTitleText("登录失败").setConfirmText("确定").changeAlertType(SweetAlertDialog.ERROR_TYPE);
+                sadDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismiss();
+                    }
+                });
+                if (StringUtils.isNull(failedMsg)) {
+                    Toast.makeText(MyApplication.getApplication(), "登录失败", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MyApplication.getApplication(), failedMsg, Toast.LENGTH_SHORT).show();
+                }
             }
         });
-        if (StringUtils.isNull(failedMsg)) {
-            Toast.makeText(MyApplication.getApplication(), "登录失败", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(MyApplication.getApplication(), failedMsg, Toast.LENGTH_SHORT).show();
-        }
-
     }
 }

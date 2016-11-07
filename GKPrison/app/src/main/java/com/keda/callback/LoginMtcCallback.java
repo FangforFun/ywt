@@ -277,7 +277,9 @@ public class LoginMtcCallback {
 					}
 				});
 
+				Log.i("Login", "注册GK成功");
 				if (currActivity instanceof LoadingActivity) {
+					Log.i("Login", ((LoadingActivity) currActivity).isPerson + "");
 					if (((LoadingActivity) currActivity).isPerson)
 						((LoadingActivity) currActivity).personLoginFragment.loginSuccessed(isSuccess, "");
 					else {

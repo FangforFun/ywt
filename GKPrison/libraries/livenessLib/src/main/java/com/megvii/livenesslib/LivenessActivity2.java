@@ -110,6 +110,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     private ProgressDialog mProgressDialog;
     private String uuid;
     private String imageRefPath;
+//    private int cameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +118,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         setContentView(R.layout.liveness_layout);
         uuid = getIntent().getStringExtra(UUID);
         imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
+//        cameraId = getIntent().getIntExtra("11",1);
         init();
         initData();
         //        new WarrantyTask().execute(); //验证授权代码移到，此页面的前一个页面
