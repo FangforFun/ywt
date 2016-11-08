@@ -8,6 +8,7 @@ import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.TextureView;
@@ -20,6 +21,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.megvii.licensemanager.Manager;
 import com.megvii.livenessdetection.DetectionConfig;
 import com.megvii.livenessdetection.DetectionFrame;
 import com.megvii.livenessdetection.Detector;
@@ -28,6 +30,7 @@ import com.megvii.livenessdetection.Detector.DetectionListener;
 import com.megvii.livenessdetection.Detector.DetectionType;
 import com.megvii.livenessdetection.FaceQualityManager;
 import com.megvii.livenessdetection.FaceQualityManager.FaceQualityErrorType;
+import com.megvii.livenessdetection.LivenessLicenseManager;
 import com.megvii.livenessdetection.bean.FaceIDDataStruct;
 import com.megvii.livenessdetection.bean.FaceInfo;
 import com.megvii.livenesslib.util.CodeHelp;
@@ -78,7 +81,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     private FaceMask mFaceMask;// 画脸位置的类（调试时会用到）
     private ProgressBar mProgressBar;// 网络上传请求验证时出现的ProgressBar
     private LinearLayout headViewLinear;// "请在光线充足的情况下进行检测"这个视图
-    private RelativeLayout rootView;// 根视图
+    private LinearLayout rootView;// 根视图
     private TextView timeOutText;
     private LinearLayout timeOutLinear;
     private Detector mDetector;// 实体检测器
@@ -110,16 +113,18 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     private ProgressDialog mProgressDialog;
     private String uuid;
     private String imageRefPath;
+//    private int cameraId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.liveness_layout);
+        setContentView(R.layout.liveness_layout2);
         uuid = getIntent().getStringExtra(UUID);
         imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
+//        cameraId = getIntent().getIntExtra("11",1);
         init();
         initData();
-        //        new WarrantyTask().execute(); //验证授权代码移到，此页面的前一个页面
+                new WarrantyTask().execute(); //验证授权代码移到，此页面的前一个页面
     }
 
     private void init() {
@@ -130,7 +135,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         mIMediaPlayer = new IMediaPlayer(this);
         mIFile = new IFile();
         mDialogUtil = new DialogUtil(this);
-        rootView = (RelativeLayout) findViewById(R.id.liveness_layout_rootRel);
+        rootView = (LinearLayout) findViewById(R.id.liveness_layout_rootRel);
         mIDetection = new IDetection(this, rootView);
         mFaceMask = (FaceMask) findViewById(R.id.liveness_layout_facemask);
         mICamera = new ICamera();
@@ -138,7 +143,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         camerapreview = (TextureView) findViewById(R.id.liveness_layout_textureview);
         camerapreview.setSurfaceTextureListener(this);
         mProgressBar = (ProgressBar) findViewById(R.id.liveness_layout_progressbar);
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.GONE);
         headViewLinear = (LinearLayout) findViewById(R.id.liveness_layout_bottom_tips_head);
         headViewLinear.setVisibility(View.VISIBLE);
         timeOutLinear = (LinearLayout) findViewById(R.id.detection_step_timeoutLinear);
@@ -179,6 +184,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
                     .setFrontal(cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT);
             RelativeLayout.LayoutParams layout_params = mICamera
                     .getLayoutParam();
+            layout_params.addRule(RelativeLayout.CENTER_IN_PARENT);//设置摄像头预览在屏幕中间
             camerapreview.setLayoutParams(layout_params);
             mFaceMask.setLayoutParams(layout_params);
             mFaceQualityManager = new FaceQualityManager(1 - 0.5f, 0.5f);
@@ -231,7 +237,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
         if (mICamera.mCamera == null)
             return;
 
-        mProgressBar.setVisibility(View.INVISIBLE);
+        mProgressBar.setVisibility(View.GONE);
         mIDetection.detectionTypeInit();
 
         mCurStep = 0;
@@ -438,12 +444,12 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
      */
     @Override
     public void onFrameDetected(long timeout, DetectionFrame detectionFrame) {
-        if (sensorUtil.isVertical()) {
+//        if (sensorUtil.isVertical()) {
             faceOcclusion(detectionFrame);
             handleNotPass(timeout);
             mFaceMask.setFaceInfo(detectionFrame);
-        } else
-            promptText.setText("请竖直握紧手机");
+//        } else
+//            promptText.setText("请竖直握紧手机");
     }
 
     private void faceOcclusion(DetectionFrame detectionFrame) {
@@ -613,55 +619,55 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     }
 
 
-    //    class WarrantyTask extends AsyncTask<Void, Void, Integer> {
-    //
-    //
-    //        private ProgressDialog mProgressDialog = new ProgressDialog(LivenessActivity2.this);
-    //
-    //
-    //        @Override
-    //        protected void onPreExecute() {
-    //            super.onPreExecute();
-    //
-    //            mProgressDialog.setTitle("授权");
-    //            mProgressDialog.setMessage("正在联网授权中...");
-    //            mProgressDialog.setCanceledOnTouchOutside(false);
-    //            mProgressDialog.show();
-    //        }
-    //
-    //        @Override
-    //        protected Integer doInBackground(Void... params) {
-    //
-    //
-    //            Manager manager = new Manager(LivenessActivity2.this);
-    //            LivenessLicenseManager licenseManager = new LivenessLicenseManager(
-    //                    LivenessActivity2.this);
-    //            manager.registerLicenseManager(licenseManager);
-    //
-    //            manager.takeLicenseFromNetwork(ConUtil.getUUIDString(LivenessActivity2.this));
-    //            if (licenseManager.checkCachedLicense() > 0)
-    //                return 1;
-    //            else
-    //                return 0;
-    //
-    //
-    //        }
-    //
-    //
-    //        @Override
-    //        protected void onPostExecute(Integer integer) {
-    //            super.onPostExecute(integer);
-    //            mProgressDialog.dismiss();
-    //            if (integer == 1) {
-    //                  uuid = getIntent().getStringExtra(UUID);
-    //                  imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
+        class WarrantyTask extends AsyncTask<Void, Void, Integer> {
 
-    //
-    //            } else if (integer == 0) {
-    //                setFaceResult(RESULT_CANCELED, false, 0);
-    //            }
-    //        }
-    //    }
+
+            private ProgressDialog mProgressDialog = new ProgressDialog(LivenessActivity2.this);
+
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+
+                mProgressDialog.setTitle("授权");
+                mProgressDialog.setMessage("正在联网授权中...");
+                mProgressDialog.setCanceledOnTouchOutside(false);
+                mProgressDialog.show();
+            }
+
+            @Override
+            protected Integer doInBackground(Void... params) {
+
+
+                Manager manager = new Manager(LivenessActivity2.this);
+                LivenessLicenseManager licenseManager = new LivenessLicenseManager(
+                        LivenessActivity2.this);
+                manager.registerLicenseManager(licenseManager);
+
+                manager.takeLicenseFromNetwork(ConUtil.getUUIDString(LivenessActivity2.this));
+                if (licenseManager.checkCachedLicense() > 0)
+                    return 1;
+                else
+                    return 0;
+
+
+            }
+
+
+            @Override
+            protected void onPostExecute(Integer integer) {
+                super.onPostExecute(integer);
+                mProgressDialog.dismiss();
+                if (integer == 1) {
+                      uuid = getIntent().getStringExtra(UUID);
+                      imageRefPath = getIntent().getStringExtra(IMAGE_REF_PATH);
+
+
+                } else if (integer == 0) {
+                    setFaceResult(RESULT_CANCELED, false, 0);
+                }
+            }
+        }
 
 
 }

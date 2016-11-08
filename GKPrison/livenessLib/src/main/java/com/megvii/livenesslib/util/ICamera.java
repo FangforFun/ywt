@@ -30,6 +30,11 @@ public class ICamera {
     private int cameraId = 1;//前置摄像头
 
     public ICamera() {
+//        if (hasFrontFacingCamera()) {
+            cameraId = 1;
+//        } else {
+//            cameraId = 0;
+//        }
     }
 
     /**
@@ -37,12 +42,14 @@ public class ICamera {
      */
     public Camera openCamera(Activity activity) {
         try {
+
             mCamera = Camera.open(cameraId);
+
             CameraInfo cameraInfo = new CameraInfo();
             Camera.getCameraInfo(cameraId, cameraInfo);
             Camera.Parameters params = mCamera.getParameters();
             Camera.Size bestPreviewSize = calBestPreviewSize(
-                    mCamera.getParameters(), 640, 480);
+                    mCamera.getParameters(), 533, 450);
             cameraWidth = bestPreviewSize.width;
             cameraHeight = bestPreviewSize.height;
             params.setPreviewSize(cameraWidth, cameraHeight);
@@ -52,6 +59,24 @@ public class ICamera {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+    private boolean checkCameraFacing(final int facing) {
+
+        final int cameraCount = Camera.getNumberOfCameras();
+        CameraInfo info = new CameraInfo();
+        for (int i = 0; i < cameraCount; i++) {
+            Camera.getCameraInfo(i, info);
+            if (facing == info.facing) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasFrontFacingCamera() {
+        return checkCameraFacing(CameraInfo.CAMERA_FACING_FRONT);
     }
 
     // 通过屏幕参数、相机预览尺寸计算布局参数
