@@ -253,9 +253,19 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 				finish();
 			}
 		}else {
-			ToastUtil.showLongToast(VConfAVResponseUI.this, "人脸身份验证失败");
-			finish();
-			// ToDo 通知另一端验证失败
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setCancelable(false);
+			builder.setTitle("提示");
+			builder.setMessage("人脸身份验证失败!");
+			builder.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+					acceptVconfCall(false, false);
+					VConfAVResponseUI.this.finish();
+				}
+			});
+			builder.create().show();
 		}
 	}
 

@@ -122,12 +122,6 @@
         android:theme="@style/AppTheme"
         tools:replace="icon, theme">
         <meta-data
-            android:name="UMENG_APPKEY"
-            android:value="56a71fa7e0f55a06aa0015db"/>
-        <meta-data
-            android:name="UMENG_CHANNEL"
-            android:value="${UMENG_CHANNEL_VALUE}"/>
-        <meta-data
             android:name="com.netease.nim.appKey"
             android:value="87dae6933488de4bab789054a3a5c720"/>
 

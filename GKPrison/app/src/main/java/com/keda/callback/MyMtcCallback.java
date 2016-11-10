@@ -297,12 +297,10 @@ public class MyMtcCallback extends MtcCallback {
 
 						@Override
 						public void run() {
-							Toast.makeText(PcAppStackManager.Instance().currentActivity(), "参加会议失败", Toast.LENGTH_SHORT)
+							Toast.makeText(PcAppStackManager.Instance().currentActivity(), "验证失败", Toast.LENGTH_SHORT)
 									.show();
-
 						}
 					});
-
 				}
 
 				// 修改短会原因

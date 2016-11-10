@@ -39,16 +39,6 @@ android {
         }
     }
 
-    productFlavors {
-        wandoujia {}
-//        baidu {}
-//        c360 {}
-//        uc {}
-        productFlavors.all { flavor ->
-            flavor.manifestPlaceholders = [UMENG_CHANNEL_VALUE: name]
-        }
-    }
-
     //修改生成的apk名字
     applicationVariants. all{ variant->
         variant.outputs.each { output->
@@ -99,7 +89,6 @@ dependencies {
     compile 'com.jungly:gridPasswordView:0.3'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'me.biubiubiu.justifytext:library:1.1'
-    compile 'com.umeng.analytics:analytics:latest.integration'
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'

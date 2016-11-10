@@ -1,6 +1,7 @@
 package com.megvii.livenesslib.util;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
@@ -19,6 +20,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import static android.hardware.Camera.getCameraInfo;
+import static android.hardware.Camera.getNumberOfCameras;
+
 /**
  * 照相机工具类
  */
@@ -30,11 +34,11 @@ public class ICamera {
     private int cameraId = 1;//前置摄像头
 
     public ICamera() {
-        if (hasFrontFacingCamera()) {
-            cameraId = 1;
-        } else {
-            cameraId = 0;
-        }
+        //        if (hasFrontFacingCamera()) {
+        //        cameraId = 1;
+        //        } else {
+        //            cameraId = 0;
+        //        }
     }
 
     /**
@@ -43,13 +47,30 @@ public class ICamera {
     public Camera openCamera(Activity activity) {
         try {
 
-            mCamera = Camera.open(cameraId);
 
+            int numberOfCameras = getNumberOfCameras();
             CameraInfo cameraInfo = new CameraInfo();
-            Camera.getCameraInfo(cameraId, cameraInfo);
+            for (int i = 0; i < numberOfCameras; i++) {
+                getCameraInfo(i, cameraInfo);
+                if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    builder.setTitle("前置摄像头可以调用");
+//                    builder.show();
+                    cameraId = i;
+                    mCamera = Camera.open(i);
+                }
+//                else if(cameraInfo.facing == CameraInfo.CAMERA_FACING_BACK){
+//                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+//                    builder.setTitle("前置摄像头调用不了，搞毛线");
+//                    builder.show();
+//                    mCamera = Camera.open(i);
+//
+//                }
+            }
+            getCameraInfo(cameraId, cameraInfo);
             Camera.Parameters params = mCamera.getParameters();
             Camera.Size bestPreviewSize = calBestPreviewSize(
-                    mCamera.getParameters(), 640, 480);
+                    mCamera.getParameters(), 533, 450);
             cameraWidth = bestPreviewSize.width;
             cameraHeight = bestPreviewSize.height;
             params.setPreviewSize(cameraWidth, cameraHeight);
@@ -59,25 +80,6 @@ public class ICamera {
         } catch (Exception e) {
             return null;
         }
-    }
-
-
-    private boolean checkCameraFacing(final int facing) {
-
-        final int cameraCount = Camera.getNumberOfCameras();
-        CameraInfo info = new CameraInfo();
-        for (int i = 0; i < cameraCount; i++) {
-            Camera.getCameraInfo(i, info);
-            if (facing == info.facing) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean hasFrontFacingCamera() {
-        final int CAMERA_FACING_BACK = 1;
-        return checkCameraFacing(CAMERA_FACING_BACK);
     }
 
     // 通过屏幕参数、相机预览尺寸计算布局参数
@@ -225,7 +227,7 @@ public class ICamera {
     public int getCameraAngle(Activity activity) {
         int rotateAngle = 90;
         android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
-        android.hardware.Camera.getCameraInfo(cameraId, info);
+        getCameraInfo(cameraId, info);
         int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
         int degrees = 0;
         switch (rotation) {

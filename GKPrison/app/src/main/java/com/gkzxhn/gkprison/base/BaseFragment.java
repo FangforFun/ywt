@@ -8,8 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.umeng.analytics.MobclickAgent;
-
 /**
  * add by hzn 2015.12.03
  * Fragment基类
@@ -35,13 +33,11 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        MobclickAgent.onPageStart("BaseFragment"); //统计页面，"MainScreen"为页面名称，可自定义
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        MobclickAgent.onPageEnd("BaseFragment");
     }
 
     //填充数据
