@@ -45,7 +45,7 @@ android {
             def oldFile = output.outputFile
             def newName = '';
             if (variant.buildType.name.equals('release')) {
-                def releaseApkName = 'yuwutong-' + defaultConfig.versionName + '.apk'
+                def releaseApkName = 'yuwutong-keda-' + defaultConfig.versionName + '.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }
             if (variant.buildType.name.equals('beta')) {

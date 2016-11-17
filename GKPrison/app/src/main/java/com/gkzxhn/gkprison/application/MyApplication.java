@@ -195,10 +195,10 @@ public class MyApplication extends MultiDexApplication {
                 Log.i(TAG, "custom notification SessionId : " + customNotification.getSessionId());
                 Log.i(TAG, "custom notification Time : " + customNotification.getTime());
                 Log.i(TAG, "custom notification SessionType : " + customNotification.getSessionType());
-                Log.i(TAG, "custom notification PushPayload : " + customNotification.getPushPayload().size());
-                Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
-                Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
-                Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
+//                Log.i(TAG, "custom notification PushPayload : " + customNotification.getPushPayload().size());
+//                Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
+//                Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
+//                Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
 
                 // 第三方 APP 在此处理自定义通知：存储，处理，展示给用户等
                 Log.i("收到通知啦....", "receive custom notification: " + customNotification.getContent()
