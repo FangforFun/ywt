@@ -93,8 +93,8 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 22 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" exported="" name="okio-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="converter-scalars-2.1.0" level="project" />
+    <orderEntry type="library" exported="" name="okio-1.8.0" level="project" />
     <orderEntry type="library" exported="" name="licensemanager-v1.1" level="project" />
     <orderEntry type="library" exported="" name="leakcanary-watcher-1.5" level="project" />
     <orderEntry type="library" exported="" name="livenessdetection-proguard-2.4.1" level="project" />
