@@ -6,8 +6,6 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Looper;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -99,24 +97,19 @@ public class CrashHandler implements UncaughtExceptionHandler {
             return false;
         }
         //使用Toast来显示异常信息
-        new Thread() {
-            @Override
-            public void run() {
-                Looper.prepare();
-                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
-                Looper.loop();
-            }
-        }.start();
+//        new Thread() {
+//            @Override
+//            public void run() {
+//                Looper.prepare();
+////                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
+//                Looper.loop();
+//            }
+//        }.start();
         //收集设备参数信息
         collectDeviceInfo(mContext);
         //保存日志文件
         String file_name = saveCrashInfo2File(ex);
         Log.i("save crash info to ", file_name);
-//        SharedPreferences sp = mContext.getSharedPreferences("config", Context.MODE_PRIVATE);
-//        String file_names = sp.getString("错误信息文件名...", "");
-//        SharedPreferences.Editor editor = sp.edit();
-//        editor.putString("错误信息文件名...", TextUtils.isEmpty(file_name) ? file_name : file_names + "+" + file_name);
-//        editor.commit();
         return true;
     }
 
@@ -180,7 +173,7 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory().getPath();
+                String path = Environment.getExternalStorageDirectory().getPath() + "/aprison-nim-log";
                 File dir = new File(path);
                 if (!dir.exists()) {
                     dir.mkdirs();

@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -144,10 +143,10 @@ public class MyApplication extends Application {
                 Log.i(TAG, "custom notification SessionId : " + customNotification.getSessionId());
                 Log.i(TAG, "custom notification Time : " + customNotification.getTime());
                 Log.i(TAG, "custom notification SessionType : " + customNotification.getSessionType());
-                Log.i(TAG, "custom notification PushPayload : " + customNotification.getPushPayload().size());
-                Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
-                Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
-                Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
+//                Log.i(TAG, "custom notification PushPayload : " + customNotification.getPushPayload().size());
+//                Log.i(TAG, "custom notification enableUnreadCount : " + customNotification.getConfig().enableUnreadCount);
+//                Log.i(TAG, "custom notification enablePush : " + customNotification.getConfig().enablePush);
+//                Log.i(TAG, "custom notification enablePushNick : " + customNotification.getConfig().enablePushNick);
 
                 SPUtil.put(MyApplication.this, "has_new_notification", true);
                 // 第三方 APP 在此处理自定义通知：存储，处理，展示给用户等
