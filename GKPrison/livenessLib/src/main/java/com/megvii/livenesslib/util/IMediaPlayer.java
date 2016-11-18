@@ -3,8 +3,9 @@ package com.megvii.livenesslib.util;
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
-import com.megvii.livenesslib.R;
+
 import com.megvii.livenessdetection.Detector;
+import com.megvii.livenesslib.R;
 
 public class IMediaPlayer {
     public MediaPlayer mMediaPlayer;
