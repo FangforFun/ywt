@@ -2,6 +2,9 @@ package com.gkzxhn.gkprison.userport.fragment;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +24,15 @@ import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
+
+import java.io.File;
+import java.io.FileOutputStream;
 
 /**
  * 左侧侧滑菜单fragment
@@ -68,6 +76,8 @@ public class MenuFragment extends BaseFragment{
             if(!TextUtils.isEmpty(ICON_URL)){
                 Picasso.with(getActivity()).load(Constants.RESOURSE_HEAD + ICON_URL)
                         .error(R.drawable.default_icon).into(iv_user_icon);
+                Picasso.with(getActivity()).load(Constants.RESOURSE_HEAD + ICON_URL)
+                        .into(target);
             }
         }
         lv_home_menu.setAdapter(new MenuAdapter());
@@ -133,7 +143,34 @@ public class MenuFragment extends BaseFragment{
         });
     }
 
-    /**
+    private Target target = new Target() {
+
+        @Override
+        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+            File dcimFile = new File(Environment.getExternalStorageDirectory() + "/avatar.png");
+            FileOutputStream ostream = null;
+            try {
+                ostream = new FileOutputStream(dcimFile);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
+                ostream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            Log.i("图片下载至:" + dcimFile);
+        }
+
+        @Override
+        public void onBitmapFailed(Drawable errorDrawable) {
+
+        }
+
+        @Override
+        public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+        }
+    };
+
+        /**
      * 显示确认对话框
      */
     private void showConfirmDialog() {

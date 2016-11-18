@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.avchat;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
@@ -260,6 +259,16 @@ public class AVChatUI implements AVChatUIListener {
             });
         }
         closeSessions(type);
+    }
+
+    public void receiver(){
+        Log.i("AVChatUI receiver");
+        avChatVideo.receiver();
+    }
+
+    public void refuce(){
+        Log.i("AVChatUI refuce");
+        avChatVideo.refuse();
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.gkzxhn.gkprison.avchat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
 import android.view.View;
@@ -12,10 +14,10 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleListener;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleState;
 import com.gkzxhn.gkprison.avchat.toggleview.ToggleView;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.netease.nim.uikit.cache.NimUserInfoCache;
 import com.netease.nim.uikit.common.ui.imageview.HeadImageView;
-import com.netease.nimlib.sdk.avchat.AVChatManager;
 
 /**
  * 视频管理器， 视频界面初始化和相关管理
@@ -278,7 +280,8 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
                 listener.onRefuse();
                 break;
             case R.id.receive:
-                listener.onReceive();
+//                listener.onReceive();
+                showDialog();
                 break;
             case R.id.avchat_video_mute:
                 listener.toggleMute();
@@ -302,6 +305,36 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
             default:
                 break;
         }
+    }
+
+    private void showDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("提示");
+        builder.setMessage("即将进行人脸身份验证，请做好准备！");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Log.i("context: " + context);
+                ((AVChatActivity) context).startVerification();
+                dialog.dismiss();
+            }
+        }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.create().show();
+    }
+
+    public void receiver(){
+        Log.i("AVChatVideo receiver");
+        listener.onReceive();
+    }
+
+    public void refuse(){
+        Log.i("AVChatVideo refuse");
+        listener.onRefuse();
     }
 
     public void showRecordView(boolean show, boolean warning) {

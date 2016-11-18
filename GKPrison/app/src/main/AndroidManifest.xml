@@ -290,5 +290,8 @@ d
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <activity android:name="com.megvii.livenesslib.LivenessActivity2"
+            android:screenOrientation="portrait"/>
     </application>
 </manifest>

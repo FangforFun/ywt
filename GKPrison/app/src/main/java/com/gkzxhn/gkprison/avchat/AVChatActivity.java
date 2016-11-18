@@ -1,9 +1,12 @@
 package com.gkzxhn.gkprison.avchat;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -18,6 +21,11 @@ import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.megvii.licensemanager.Manager;
+import com.megvii.livenessdetection.LivenessLicenseManager;
+import com.megvii.livenesslib.LivenessActivity2;
+import com.megvii.livenesslib.util.ConUtil;
 import com.netease.nim.uikit.common.activity.TActivity;
 import com.netease.nim.uikit.common.util.log.LogUtil;
 import com.netease.nim.uikit.common.util.sys.NetworkUtil;
@@ -516,6 +524,72 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
             avChatUI.closeSessions(AVChatExitCode.INVALIDE_CHANNELID);
         } else { // 连接服务器错误，直接退出
             avChatUI.closeSessions(AVChatExitCode.CONFIG_ERROR);
+        }
+    }
+
+    public void startVerification(){
+        new WarrantyTask().execute();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK){
+            if (requestCode == 1){
+                boolean verify = data.getBooleanExtra(LivenessActivity2.CONFIDENCE_RESULT, false);
+                double value = data.getDoubleExtra(LivenessActivity2.CONFIDENCE_VALUE, 0);
+                Log.i(verify + "---" + value);
+                if (verify){
+                    avChatUI.receiver();
+                }
+            }
+        }
+    }
+
+    class WarrantyTask extends AsyncTask<Void, Void, Integer> {
+
+        private ProgressDialog mProgressDialog = new ProgressDialog(AVChatActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            mProgressDialog.setTitle("授权");
+            mProgressDialog.setMessage("正在联网授权中...");
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+
+
+            Manager manager = new Manager(AVChatActivity.this);
+            LivenessLicenseManager licenseManager = new LivenessLicenseManager(
+                    AVChatActivity.this);
+            manager.registerLicenseManager(licenseManager);
+
+            manager.takeLicenseFromNetwork(ConUtil.getUUIDString(AVChatActivity.this));
+            if (licenseManager.checkCachedLicense() > 0)
+                return 1;
+            else
+                return 0;
+        }
+
+
+        @Override
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+            mProgressDialog.dismiss();
+            if (integer == 1) {
+                Intent intent = new Intent(AVChatActivity.this, LivenessActivity2.class);
+                intent.putExtra(LivenessActivity2.UUID, "xxx");
+                intent.putExtra(LivenessActivity2.IMAGE_REF_PATH, Environment.getExternalStorageDirectory() + "/avatar.png");
+                startActivityForResult(intent, 1);
+            } else if (integer == 0) {
+                // 授权失败
+                ToastUtil.showShortToast(AVChatActivity.this, "人脸识别失败");
+                avChatUI.refuce();
+            }
         }
     }
 
