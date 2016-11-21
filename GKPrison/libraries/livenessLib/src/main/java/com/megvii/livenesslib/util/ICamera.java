@@ -55,7 +55,7 @@ public class ICamera {
                 if (cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                     builder.setTitle("前置摄像头可以调用");
-//                    builder.show();
+                    builder.show();
                     cameraId = i;
                     mCamera = Camera.open(i);
                 }

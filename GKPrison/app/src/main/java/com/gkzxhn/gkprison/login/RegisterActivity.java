@@ -85,7 +85,7 @@ import rx.schedulers.Schedulers;
  */
 public class RegisterActivity extends BaseActivity {
 
-    private static final java.lang.String TAG = "RegisterActivity";
+    private static final String TAG = "RegisterActivity";
     @BindView(R.id.et_name)
     EditText et_name;// 姓名
     @BindView(R.id.rb_male)
@@ -265,7 +265,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     @OnClick({R.id.bt_send_identifying_code, R.id.bt_register,R.id.tv_software_protocol,R.id.tv_read,
-            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon, R.id.rl_back})
+            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_read:
@@ -326,22 +326,22 @@ public class RegisterActivity extends BaseActivity {
                     showToastMsgShort("没有网络");
                 }
                 break;
-            case R.id.rl_back:
-                getEditTextContent();
-                if (dialog != null && dialog.isShowing()) {
-                    // 没反应
-                } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
-                    // 没反应
-                } else if (alertView != null && alertView.isShowing()) {
-                    alertView.dismiss();
-                } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
-                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
-                        || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
-                    setReminder();// 弹出对话框提醒
-                } else {
-                    super.onBackPressed();
-                }
-                break;
+//            case R.id.rl_back:
+//                getEditTextContent();
+//                if (dialog != null && dialog.isShowing()) {
+//                    // 没反应
+//                } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
+//                    // 没反应
+//                } else if (alertView != null && alertView.isShowing()) {
+//                    alertView.dismiss();
+//                } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+//                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+//                        || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
+//                    setReminder();// 弹出对话框提醒
+//                } else {
+//                    super.onBackPressed();
+//                }
+//                break;
         }
     }
 
