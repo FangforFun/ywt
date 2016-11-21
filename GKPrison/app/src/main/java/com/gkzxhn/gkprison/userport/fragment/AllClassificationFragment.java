@@ -57,6 +57,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private int cart_id;
     private String tv_count = "0.0";
     private int qty = 0;
+    private static final String TAG = "AllClassification";
     private RelativeLayout xiala;
     private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
     private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
@@ -551,6 +552,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                 }
             });
             String t = Constants.RESOURSE_HEAD + commodities.get(position).getAvatar_url();
+            Log.i(TAG, "sales image: " + t);
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());

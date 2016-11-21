@@ -334,7 +334,7 @@ public class AVChatVideo implements View.OnClickListener, ToggleListener, Anticl
 
     public void refuse(){
         Log.i("AVChatVideo refuse");
-        listener.onRefuse();
+        listener.onHangUp();
     }
 
     public void showRecordView(boolean show, boolean warning) {

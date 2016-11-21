@@ -534,15 +534,20 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, requestCode + "-------" + resultCode);
         if (resultCode == RESULT_OK){
             if (requestCode == 1){
                 boolean verify = data.getBooleanExtra(LivenessActivity2.CONFIDENCE_RESULT, false);
                 double value = data.getDoubleExtra(LivenessActivity2.CONFIDENCE_VALUE, 0);
-                Log.i(verify + "---" + value);
+                Log.i(TAG, verify + "-----------" + value);
                 if (verify){
                     avChatUI.receiver();
+                }else {
+                    avChatUI.refuce();
                 }
             }
+        }else {
+            avChatUI.refuce();
         }
     }
 
@@ -587,7 +592,7 @@ public class AVChatActivity extends TActivity implements AVChatUI.AVChatListener
                 startActivityForResult(intent, 1);
             } else if (integer == 0) {
                 // 授权失败
-                ToastUtil.showShortToast(AVChatActivity.this, "人脸识别失败");
+                ToastUtil.showShortToast(AVChatActivity.this, "授权失败");
                 avChatUI.refuce();
             }
         }

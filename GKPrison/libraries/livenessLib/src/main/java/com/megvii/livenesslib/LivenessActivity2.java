@@ -76,7 +76,7 @@ public class LivenessActivity2 extends Activity implements PreviewCallback,
     public static final String CONFIDENCE_VALUE = "confidence_value";
     public static final String RESULT_REF1 = "result_ref1";
     public static final String CONFIDENCE = "confidence";
-    private static final int CONFIDENCE_STANDARD = 80;
+    private static final int CONFIDENCE_STANDARD = 50;
     private TextureView camerapreview;
     private FaceMask mFaceMask;// 画脸位置的类（调试时会用到）
     private ProgressBar mProgressBar;// 网络上传请求验证时出现的ProgressBar

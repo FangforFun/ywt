@@ -153,7 +153,7 @@ public class RegisterActivity extends BaseActivity {
     // 头像身份证图片相关
     private static final int TAKE_PHOTO = 0; //imageview1照相;
     private static final int CHOOSE_PHOTO = 1;//imageview1选图片;
-    private static final int SCALE = 5;// 照片缩小比例
+    private static final int SCALE = 20;// 照片缩小比例
     private String uploadFile1 = "";
     private String uploadFile2 = "";
     private String uploadFile3 = "";
@@ -265,7 +265,7 @@ public class RegisterActivity extends BaseActivity {
     }
 
     @OnClick({R.id.bt_send_identifying_code, R.id.bt_register,R.id.tv_software_protocol,R.id.tv_read,
-            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon, R.id.rl_back})
+            R.id.iv_add_photo_01, R.id.iv_add_photo_02,R.id.iv_user_icon})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.tv_read:
@@ -326,22 +326,22 @@ public class RegisterActivity extends BaseActivity {
                     showToastMsgShort("没有网络");
                 }
                 break;
-            case R.id.rl_back:
-                getEditTextContent();
-                if (dialog != null && dialog.isShowing()) {
-                    // 没反应
-                } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
-                    // 没反应
-                } else if (alertView != null && alertView.isShowing()) {
-                    alertView.dismiss();
-                } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
-                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
-                        || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
-                    setReminder();// 弹出对话框提醒
-                } else {
-                    super.onBackPressed();
-                }
-                break;
+//            case R.id.rl_back:
+//                getEditTextContent();
+//                if (dialog != null && dialog.isShowing()) {
+//                    // 没反应
+//                } else if (agreement_dialog != null && agreement_dialog.isShowing()) {
+//                    // 没反应
+//                } else if (alertView != null && alertView.isShowing()) {
+//                    alertView.dismiss();
+//                } else if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+//                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+//                        || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
+//                    setReminder();// 弹出对话框提醒
+//                } else {
+//                    super.onBackPressed();
+//                }
+//                break;
         }
     }
 
@@ -620,8 +620,13 @@ public class RegisterActivity extends BaseActivity {
                     @Override public void onCompleted() {}
 
                     @Override public void onError(Throwable e) {
-                        Log.e(TAG, "send register info failed : " + e.getMessage());
-                        showFailedDialog("注册请求失败，请稍后再试！");
+                        String error = e.getMessage();
+                        Log.e(TAG, "send register info failed : " + error);
+                        if (error.contains("413")) {
+                            showFailedDialog("注册失败，照片体积过大！");
+                        }else {
+                            showFailedDialog("注册请求失败，请稍后再试！");
+                        }
                     }
 
                     @Override public void onNext(ResponseBody responseBody) {
