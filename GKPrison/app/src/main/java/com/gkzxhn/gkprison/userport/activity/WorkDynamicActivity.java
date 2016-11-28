@@ -2,10 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +18,6 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
@@ -253,7 +248,7 @@ public class WorkDynamicActivity extends BaseActivity {
                             for (News news : newses){
                                 Log.i(TAG, news.toString());
                                 allnews.add(news);
-                                if(news.getType_id() == 1){
+                                if(news.getType_id() == 2){
                                     newsList.add(news);
                                 }
                             }

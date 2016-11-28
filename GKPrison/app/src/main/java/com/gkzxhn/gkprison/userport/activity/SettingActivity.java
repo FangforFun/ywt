@@ -3,9 +3,7 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -147,6 +145,7 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick({R.id.rl_opinion_feedback, R.id.rl_version_update, R.id.tv_agreement, R.id.tv_contact_us})
     public void onClick(View view) {
+        super.onClick(view);
         Intent intent;
         switch (view.getId()) {
             case R.id.rl_opinion_feedback:

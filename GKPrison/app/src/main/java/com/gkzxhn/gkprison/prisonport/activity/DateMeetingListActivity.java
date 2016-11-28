@@ -6,10 +6,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -32,10 +30,9 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
-import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
-import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
+import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -46,17 +43,8 @@ import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -230,7 +218,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      */
     private void checkStatusCode(StatusCode code) {
         if (code == StatusCode.KICKOUT) {// 被其他端挤掉
-            showKickoutDialog();
+//            showKickoutDialog();
         } else if (code == StatusCode.CONNECTING) {// 正在连接
             showToastMsgShort("正在连接...");
         } else if (code == StatusCode.LOGINING) {// 正在登录
@@ -247,7 +235,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     /**
      * 云信id在其他设备登录
      */
-    private void showKickoutDialog() {
+    public void showKickoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("账号下线提示");
         builder.setCancelable(false);
@@ -257,6 +245,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                SPUtil.clear(DateMeetingListActivity.this);
                 // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
                 SPUtil.put(DateMeetingListActivity.this, "is_first", false);
                 startActivity(intent);

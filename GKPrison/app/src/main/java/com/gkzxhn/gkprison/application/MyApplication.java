@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.application;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.Application;
 import android.app.Notification;
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.widget.Toast;
 
@@ -108,14 +110,70 @@ public class MyApplication extends Application {
                                     Log.i("tag", "User status changed to: " + status);
                                     switch (status) {
                                         case KICKOUT:
-                                            Intent intent;
-                                            if ((Boolean)SPUtil.get(getApplicationContext(), "isCommonUser", true)) {
-                                                intent = new Intent(getApplicationContext(), MainActivity.class);
-                                            } else {
-                                                intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                            boolean isCommonUser = (boolean) SPUtil.get(getApplicationContext(), "isCommonUser", true);
+                                            Log.d(TAG, isCommonUser + "");
+                                            if (SystemUtil.isForeground(getApplicationContext())){
+                                                Activity activity = PcAppStackManager.Instance().currentActivity();
+                                                Log.d(activity.toString());
+                                                if (isCommonUser) {
+                                                    if (activity instanceof MainActivity) {
+                                                        // 直接通知MAinActivity弹出对话框
+                                                        ((MainActivity) activity).showKickoutDialog();
+                                                    } else {
+                                                        // 跳到MAinActivity弹出对话框
+                                                        PcAppStackManager.Instance().finishAllActivityExceptOne(MainActivity.class);
+                                                        Intent intent  = new Intent(getApplicationContext(), MainActivity.class);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                        Log.d(PcAppStackManager.Instance().currentActivity().toString());
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                ((MainActivity)PcAppStackManager.Instance().currentActivity()).showKickoutDialog();
+                                                            }
+                                                        }, 1000);
+                                                    }
+                                                }else {
+                                                    if (activity instanceof DateMeetingListActivity){
+                                                        // 直接通知DateMeetingListActivity弹出对话框
+                                                        ((DateMeetingListActivity)activity).showKickoutDialog();
+                                                    }else {
+                                                        // 跳到DateMeetingListActivity弹出对话框
+                                                        PcAppStackManager.Instance().finishAllActivityExceptOne(DateMeetingListActivity.class);
+                                                        Intent intent  = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                        startActivity(intent);
+                                                        Log.d(PcAppStackManager.Instance().currentActivity().toString());
+                                                        new Handler().postDelayed(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                ((DateMeetingListActivity)PcAppStackManager.Instance().currentActivity()).showKickoutDialog();
+                                                            }
+                                                        }, 1000);
+                                                    }
+                                                }
+                                            }else {
+                                                Intent intent;
+                                                if (isCommonUser) {
+                                                    intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            ((MainActivity)PcAppStackManager.Instance().currentActivity()).showKickoutDialog();
+                                                        }
+                                                    }, 1000);
+                                                } else {
+                                                    intent = new Intent(getApplicationContext(), DateMeetingListActivity.class);
+                                                    new Handler().postDelayed(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            ((DateMeetingListActivity)PcAppStackManager.Instance().currentActivity()).showKickoutDialog();
+                                                        }
+                                                    }, 1000);
+                                                }
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                startActivity(intent);
                                             }
-                                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(intent);
                                             break;
                                         case NET_BROKEN:
                                             Toast.makeText(getApplicationContext(), "网络连接已断开，请检查网络", Toast.LENGTH_SHORT).show();

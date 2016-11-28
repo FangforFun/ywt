@@ -287,9 +287,6 @@ public class MainActivity extends BaseActivity {
             prison_map = new HashMap<>();
             showPrisonDialog();// 弹出监狱选择框
         }
-        if(statusCode == StatusCode.KICKOUT){
-            showKickoutDialog();// 其他设备登录
-        }
         setMessageVisibility(View.VISIBLE); // 显示系统消息图标
 
         setSupportActionBar(tool_bar);
@@ -546,7 +543,7 @@ public class MainActivity extends BaseActivity {
     /**
      * 云信id在其他设备登录
      */
-    private void showKickoutDialog() {
+    public void showKickoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("账号下线提示");
         builder.setCancelable(false);

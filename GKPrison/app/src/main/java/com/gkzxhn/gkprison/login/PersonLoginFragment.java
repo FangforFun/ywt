@@ -247,7 +247,10 @@ public class PersonLoginFragment extends BaseFragment {
                 .addConverterFactory(GsonConverterFactory.create()).build();
         LoginService login = retrofit.create(LoginService.class);
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), userInfo);
-        login.loginPersonAccount(body).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+        login
+                .loginPersonAccount(body)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<UserInfo>() {
                     @Override public void onCompleted() {}
 

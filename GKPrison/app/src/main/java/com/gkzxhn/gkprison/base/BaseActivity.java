@@ -1,12 +1,9 @@
 package com.gkzxhn.gkprison.base;
 
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.application.PcAppStackManager;
 import com.gkzxhn.gkprison.login.view.NiceSpinner;
 import com.umeng.analytics.MobclickAgent;
 
@@ -46,6 +44,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PcAppStackManager.Instance().pushActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_base);
         ly_title_bar = findViewById(R.id.ly_title_bar);
@@ -82,6 +81,12 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected void onPause() {
         super.onPause();
         MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this);
+        super.onDestroy();
     }
 
     /**
