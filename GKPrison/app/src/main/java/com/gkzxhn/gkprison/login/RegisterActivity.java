@@ -253,8 +253,9 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 getEditTextContent();
-                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
-                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num)
+                        || !TextUtils.isEmpty(relationship_with_prisoner) || !TextUtils.isEmpty(prisoner_number)
+                        || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
                         || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
                     setReminder();// 设置退出提醒
                 } else {
