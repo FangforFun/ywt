@@ -932,8 +932,7 @@ public class RegisterActivity extends BaseActivity {
                     break;
                 case CROP_SMALL_PICTURE:
                     // 将保存在本地的图片取出并缩小后显示在界面上
-                    Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/image.jpg");
-                    newBitmap3 = bitmap;
+                    newBitmap3 = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/image.jpg");;
                     iv_user_icon.setImageBitmap(newBitmap3);
                     break;
             }

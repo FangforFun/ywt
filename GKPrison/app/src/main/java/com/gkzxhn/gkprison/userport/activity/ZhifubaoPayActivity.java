@@ -161,6 +161,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
             commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
             commodities.add(commodity);
         }
+        cursor.close();
     }
 
 

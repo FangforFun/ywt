@@ -69,8 +69,6 @@ public class PaymentActivity extends BaseActivity {
     private MyAdapter adapter;
     public static String TradeNo;
     public static String times;
-    private IWXAPI api;
-    private int cart_id;
     private int jail_id;
     StringBuffer sb;
     PayReq req = new PayReq();
@@ -96,9 +94,6 @@ public class PaymentActivity extends BaseActivity {
     private static final int SDK_PAY_FLAG = 2;
     private static final int SDK_CHECK_FLAG = 3;
     private String apply = "";
-    private String saletype;
-    private String bussinesstype;
-    private SharedPreferences sp;
     private String token;
     private String payment_type = "";
     private String prepay_id = "";
@@ -315,10 +310,10 @@ public class PaymentActivity extends BaseActivity {
         Log.d("订单号", TradeNo);
         countmoney = getIntent().getStringExtra("totalmoney");
         times = getIntent().getStringExtra("times");
-        cart_id = getIntent().getIntExtra("cart_id", 0);
-        saletype = getIntent().getStringExtra("saletype");
-        bussinesstype = getIntent().getStringExtra("bussiness");
-        sp = getSharedPreferences("config", MODE_PRIVATE);
+        int cart_id = getIntent().getIntExtra("cart_id", 0);
+        String saletype = getIntent().getStringExtra("saletype");
+        String bussinesstype = getIntent().getStringExtra("bussiness");
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         jail_id = sp.getInt("jail_id", 0);
         tv_count_money.setText(countmoney + "");
@@ -349,10 +344,10 @@ public class PaymentActivity extends BaseActivity {
                 //  payment_type = "unionpay";
                 //  send_payment_type(payment_type);
                 // }else
-                if (ischeckeds[0] == true) {
+                if (ischeckeds[0]) {
                     payment_type = "alipay";
                     send_payment_type(payment_type);
-                } else if (ischeckeds[1] == true) {
+                } else if (ischeckeds[1]) {
                     payment_type = "weixin";
                     send_payment_type(payment_type);
                 }
@@ -638,7 +633,7 @@ public class PaymentActivity extends BaseActivity {
 
     private void weixinPay() {
         String packge = "Sign=WXPay";
-        api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID, true);
+        IWXAPI api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID, true);
         req.appId = app_id;
         req.nonceStr = nonce_str;
         req.packageValue = packge;

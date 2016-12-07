@@ -18,20 +18,20 @@ public interface PcBaseActivity extends PcIBaseActivity {
 	/**
 	 * init Extras
 	 */
-	public void initExtras();
+	void initExtras();
 
 	/**
 	 * find views (eg:for id)
 	 */
-	public void findViews();
+	void findViews();
 
 	/**
 	 * 初始化控件的值
 	 */
-	public void initComponentValue();
+	void initComponentValue();
 
 	/**
 	 * 注册监听事件
 	 */
-	public void registerListeners();
+	void registerListeners();
 }

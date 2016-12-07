@@ -74,17 +74,17 @@ public class RemittanceWaysActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_next:
-                if (ischeckeds[0] == true){
+                if (ischeckeds[0]){
 
                     Intent intent = new Intent(RemittanceWaysActivity.this,BankPayActivity.class);
                     RemittanceWaysActivity.this.startActivity(intent);
-                }else if (ischeckeds[1] == true){
+                }else if (ischeckeds[1]){
                     Intent intent = new Intent(RemittanceWaysActivity.this,ZhifubaoPayActivity.class);
                     intent.putExtra("price",money);
                     intent.putExtra("outorderno",TradeNo);
                     intent.putExtra("times",times);
                     RemittanceWaysActivity.this.startActivity(intent);
-                }else if (ischeckeds[2] == true){
+                }else if (ischeckeds[2]){
 
                     Intent intent = new Intent(RemittanceWaysActivity.this,WeixinPayActivity.class);
                     RemittanceWaysActivity.this.startActivity(intent);

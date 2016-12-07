@@ -56,7 +56,6 @@ public class CallUserActivity extends BaseActivity {
     RelativeLayout rl_meeting_notice;
     @BindView(R.id.bt_call)
     Button bt_call;// 呼叫按钮  默认是不可用的  当成功解析详细会见信息后恢复可用
-    private int family_id;// 家属id
     private FamilyMeetingInfo familyMeetingInfo;// 会见详情信息
 
     @Override
@@ -71,7 +70,7 @@ public class CallUserActivity extends BaseActivity {
     protected void initData() {
         setTitle("远程会见");
         setBackVisibility(View.VISIBLE);
-        family_id = getIntent().getIntExtra("family_id", 0);
+        int family_id = getIntent().getIntExtra("family_id", 0);
         Log.i(TAG, "family_id : " + family_id);
         getMeetingDetailInfo(family_id);// 获取会见对象详情信息
     }

@@ -188,8 +188,6 @@ public class MyMtcCallback extends MtcCallback {
 			// 查询某组下的联系人列表Finish信息
 			else if (EmMtEntity.ImQueryMemberInfoByGroupSn_Fin_Rsp.toString().equalsIgnoreCase(eventname)) {
 				if (!stopHanldeJni) {
-					final JSONObject jsonBodyObjs = jsonBodyObj;
-
 					// => For SDM-00037552 added by gaofan_kd7331 2015-10-15 21:26:18
 					cachedThreadPool.execute(new Runnable() {
 
@@ -305,8 +303,9 @@ public class MyMtcCallback extends MtcCallback {
 
 				// 修改短会原因
 				if (reson != -1 && null != VConferenceManager.currTMtCallLinkSate) {
-					EmMtCallDisReason emDisReason = EmMtCallDisReason.toEmMtCallDisReason(reson, VConferenceManager.currTMtCallLinkSate.emCallDisReason);
-					VConferenceManager.currTMtCallLinkSate.emCallDisReason = emDisReason;
+					VConferenceManager.currTMtCallLinkSate.emCallDisReason =
+							EmMtCallDisReason.toEmMtCallDisReason(reson,
+									VConferenceManager.currTMtCallLinkSate.emCallDisReason);
 				}
 
 				if (null != VConferenceManager.currTMtCallLinkSate) {

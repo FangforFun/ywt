@@ -217,7 +217,7 @@ public class FormatTransfer {
 	  * @param b byte[]  
 	  * @return short  
 	  */
-	public static short hBytesToShort(byte[] b) {
+	private static short hBytesToShort(byte[] b) {
 		int s = 0;
 		if (b[0] >= 0) {
 			s = s + b[0];
@@ -230,8 +230,7 @@ public class FormatTransfer {
 		} else {
 			s = s + 256 + b[1];
 		}
-		short result = (short) s;
-		return result;
+		return (short) s;
 	}
 
 	/**  
@@ -252,8 +251,7 @@ public class FormatTransfer {
 		} else {
 			s = s + 256 + b[0];
 		}
-		short result = (short) s;
-		return result;
+		return (short) s;
 	}
 
 	/**  
@@ -319,8 +317,7 @@ public class FormatTransfer {
 	  * @return int  
 	  */
 	public static int reverseInt(int i) {
-		int result = FormatTransfer.hBytesToInt(FormatTransfer.toLH(i));
-		return result;
+		return FormatTransfer.hBytesToInt(FormatTransfer.toLH(i));
 	}
 
 	/**  
@@ -329,8 +326,7 @@ public class FormatTransfer {
 	  * @return short  
 	  */
 	public static short reverseShort(short s) {
-		short result = FormatTransfer.hBytesToShort(FormatTransfer.toLH(s));
-		return result;
+		return FormatTransfer.hBytesToShort(FormatTransfer.toLH(s));
 	}
 
 	/**  
@@ -339,8 +335,7 @@ public class FormatTransfer {
 	  * @return float  
 	  */
 	public static float reverseFloat(float f) {
-		float result = FormatTransfer.hBytesToFloat(FormatTransfer.toLH(f));
-		return result;
+		return FormatTransfer.hBytesToFloat(FormatTransfer.toLH(f));
 	}
 
 }

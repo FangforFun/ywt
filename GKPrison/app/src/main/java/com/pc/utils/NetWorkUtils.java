@@ -339,9 +339,7 @@ public class NetWorkUtils {
 		if (dhcpInfo == null) {
 			return null;
 		}
-		String dns = intToIp(dhcpInfo.dns1);
-
-		return dns;
+		return intToIp(dhcpInfo.dns1);
 	}
 
 	/**

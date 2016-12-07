@@ -77,6 +77,7 @@ public class RemittanceRecordActivity extends BaseActivity {
             remittance.setPayment_type(cursor.getString(cursor.getColumnIndex("payment_type")));
             remittances.add(remittance);
         }
+        cursor.close();
         Collections.sort(remittances, new Comparator<Remittance>() {
             @Override
             public int compare(Remittance lhs, Remittance rhs) {

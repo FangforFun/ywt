@@ -37,18 +37,13 @@ import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.keda.sky.app.PcAppStackManager;
 
-import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 
@@ -57,16 +52,11 @@ import java.util.Locale;
  */
 public class FamilyServiceActivity extends BaseActivity {
     private ExpandableListView el_messge;
-    private MyAdapter adapter;
     private String TradeNo;
     private String times = "";
     private SQLiteDatabase db = StringUtils.getSQLiteDB(this);
     private SharedPreferences sp;
-    private String ip;
     private String money = "";
-    private Gson gson;
-    private String apply;
-    private Prison prison = new Prison();
     private TextView prison_num;
     private TextView prison_gender;
     private TextView prison_crimes;
@@ -86,7 +76,7 @@ public class FamilyServiceActivity extends BaseActivity {
                     } else if (information.equals("success")) {
                         Bundle bundle = msg.getData();
                         String prison_information = bundle.getString("result");
-                        prison = analysisprison(prison_information);
+                        Prison prison = analysisprison(prison_information);
                         prison_num.setText(prison.getPrisoner_number());
                         if (prison.getGender().equals("m")) {
                             prison_gender.setText("男");
@@ -140,42 +130,42 @@ public class FamilyServiceActivity extends BaseActivity {
             add("购物签收");
         }
     };
-    private List<String> sentence_time = new ArrayList(){
+    private List<String> sentence_time = new ArrayList<String>(){
         {
             add("2016年5月30日");
             add("2016年5月20日");
             add("2016年5月10日");
         }
     };
-    private List<String> sentence_cause = new ArrayList(){
+    private List<String> sentence_cause = new ArrayList<String>(){
         {
             add("制止狱内暴力");
             add("制止狱内暴力");
             add("制止狱内暴力");
         }
     };
-    private List<String> sentence_time_add = new ArrayList(){
+    private List<String> sentence_time_add = new ArrayList<String>(){
         {
             add("减刑三个月");
             add("减刑三个月");
             add("减刑三个月");
         }
     };
-    private List<String> buyer_id = new ArrayList(){
+    private List<String> buyer_id = new ArrayList<String>(){
         {
             add("1232423423423");
             add("1232423423423");
             add("1232423423423");
         }
     };
-    private List<String> money1 = new ArrayList(){
+    private List<String> money1 = new ArrayList<String>(){
         {
             add("120元");
             add("120元");
             add("120元");
         }
     };
-    private List<String> commodity = new ArrayList(){
+    private List<String> commodity = new ArrayList<String>(){
         {
             add("水杯");
             add("水杯");
@@ -204,8 +194,7 @@ public class FamilyServiceActivity extends BaseActivity {
         setRemittanceVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
-        ip = getLocalHostIp();
-        adapter = new MyAdapter();
+        MyAdapter adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
         getPrisonIformation();
@@ -338,6 +327,7 @@ public class FamilyServiceActivity extends BaseActivity {
                             }
                             String sql2 = "insert into line_items(Items_id,cart_id) values (9999," + cart_id + ")";
                             db.execSQL(sql2);
+                            cursor.close();
                         }
                     }
                 });
@@ -360,8 +350,7 @@ public class FamilyServiceActivity extends BaseActivity {
         order.setCreated_at(times);
         Float f = Float.parseFloat(money);
         order.setAmount(f);
-        gson = new Gson();
-        apply = gson.toJson(order);
+        Gson gson = new Gson();
         final AA aa = new AA();
         aa.setOrder(order);
         final String str = gson.toJson(aa);
@@ -436,38 +425,6 @@ public class FamilyServiceActivity extends BaseActivity {
             e.printStackTrace();
         }
         return a;
-    }
-
-    /**
-     * 获取本地hostIP
-     * @return
-     */
-    public String getLocalHostIp() {
-        String ipaddress = "";
-        try {
-            Enumeration<NetworkInterface> en = NetworkInterface
-                    .getNetworkInterfaces();
-            // 遍历所用的网络接口
-            while (en.hasMoreElements()) {
-                NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
-                Enumeration<InetAddress> inet = nif.getInetAddresses();
-                // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements()) {
-                    InetAddress ip = inet.nextElement();
-                    if (!ip.isLoopbackAddress()
-                            && InetAddressUtils.isIPv4Address(ip
-                            .getHostAddress())) {
-                        return ipaddress = ip.getHostAddress();
-                    }
-                }
-
-            }
-        } catch (SocketException e) {
-            Log.e("feige", "获取本地ip地址失败");
-            e.printStackTrace();
-        }
-        return ipaddress;
-
     }
 
     private class MyAdapter extends BaseExpandableListAdapter {

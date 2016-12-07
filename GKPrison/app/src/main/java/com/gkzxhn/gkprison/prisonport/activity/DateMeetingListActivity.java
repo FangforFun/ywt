@@ -101,7 +101,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     @BindView(R.id.scrollView)
     ScrollView scrollView;
     private int mCurrentIndex = 498;
-    private CalendarCard[] mShowViews;
     private CalendarViewAdapter<CalendarCard> adapter;
     private SildeDirection mDirection = SildeDirection.NO_SILDE;
     private MeetingListAdapter meetingListAdapter;
@@ -113,7 +112,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
     private AlertDialog cancel_meeting_dialog;// 取消会见对话框
-    private int[] screenWidthHeight;// 屏幕宽带
     private Handler handler = new Handler();
 
     private Runnable dismissProgressDialogTask = new Runnable() {
@@ -149,13 +147,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     }
 
     enum SildeDirection {
-        RIGHT, LEFT, NO_SILDE;
+        RIGHT, LEFT, NO_SILDE
     }
 
     @Override
     protected View initView() {
         PcAppStackManager.Instance().pushActivity(this);
-        screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
+        int[] screenWidthHeight = DensityUtil.getScreenWidthHeight(this);// 屏幕宽带
         View view;
         if (screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
             view = View.inflate(this, R.layout.activity_date_meeting_list, null);
@@ -464,7 +462,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     // 更新日历视图
     private void updateCalendarView(int arg0) {
-        mShowViews = adapter.getAllItems();
+        CalendarCard[] mShowViews = adapter.getAllItems();
         if (mDirection == SildeDirection.RIGHT) {
             mShowViews[arg0 % mShowViews.length].rightSlide();
         } else if (mDirection == SildeDirection.LEFT) {

@@ -20,7 +20,6 @@ public class LawsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
     private NumberProgressBar npb_loading;
-    private int id;
 
     @Override
     protected View initView() {
@@ -35,7 +34,7 @@ public class LawsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        id = getIntent().getIntExtra("id", 1);
+        int id = getIntent().getIntExtra("id", 1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/laws/" + id + "");
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override

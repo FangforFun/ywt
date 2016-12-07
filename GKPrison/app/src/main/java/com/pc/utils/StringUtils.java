@@ -538,7 +538,7 @@ public class StringUtils {
 	 * @param newString the String that will replace all instances of oldString
 	 * @return a String will all instances of oldString replaced by newString
 	 */
-	public static final String replace(String line, String oldString, String newString) {
+	public static String replace(String line, String oldString, String newString) {
 		if (line == null) {
 			return null;
 		}
@@ -597,7 +597,7 @@ public class StringUtils {
 	 * @param newString the String that will replace all instances of oldString
 	 * @return a String will all instances of oldString replaced by newString
 	 */
-	public static final String replaceIgnoreCase(String line, String oldString, String newString) {
+	public static String replaceIgnoreCase(String line, String oldString, String newString) {
 		if (line == null) {
 			return null;
 		}
@@ -631,7 +631,7 @@ public class StringUtils {
 	 * @param newString the String that will replace all instances of oldString
 	 * @return a String will all instances of oldString replaced by newString
 	 */
-	public static final String replace(String line, String oldString, String newString, int[] count) {
+	public static String replace(String line, String oldString, String newString, int[] count) {
 		if (line == null) {
 			return null;
 		}
@@ -667,7 +667,7 @@ public class StringUtils {
 	 * @return the input string with the characters '&lt;' and '&gt;' replaced
 	 *         with their HTML escape sequences.
 	 */
-	public static final String escapeHTMLTags(String input) {
+	public static String escapeHTMLTags(String input) {
 		// Check if the string is null or zero length -- if so, return
 		// what was sent in.
 		if (input == null || input.length() == 0) {
@@ -717,7 +717,7 @@ public class StringUtils {
 	 * @param data the String to compute the hash of.
 	 * @return a hashed version of the passed-in String
 	 */
-	public synchronized static final String hash(String data) {
+	public synchronized static String hash(String data) {
 		if (digest == null) {
 			try {
 				digest = MessageDigest.getInstance("MD5");
@@ -747,7 +747,7 @@ public class StringUtils {
 	 * @param hash an rray of bytes to convert to a hex-string
 	 * @return generated hex string
 	 */
-	public static final String toHex(byte hash[]) {
+	public static String toHex(byte hash[]) {
 		StringBuffer buf = new StringBuffer(hash.length * 2);
 		int i;
 
@@ -769,7 +769,7 @@ public class StringUtils {
 	 * @param text a String of text to convert into an array of words
 	 * @return text broken up into an array of words.
 	 */
-	public static final String[] toLowerCaseWordArray(String text) {
+	public static String[] toLowerCaseWordArray(String text) {
 		if (text == null || text.length() == 0) {
 			return new String[0];
 		}
@@ -796,7 +796,7 @@ public class StringUtils {
 	 * removed. The specific words removed are: a, and, as, at, be, do, i, if,
 	 * in, is, it, so, the, to
 	 */
-	public static final String[] removeCommonWords(String[] words) {
+	public static String[] removeCommonWords(String[] words) {
 		// See if common words map has been initialized. We don't statically
 		// initialize it to save some memory. Even though this a small savings,
 		// it adds up with hundreds of classes being loaded.
@@ -849,7 +849,7 @@ public class StringUtils {
 	 * @param length the desired length of the random String to return.
 	 * @return a random String of numbers and letters of the specified length.
 	 */
-	public static final String randomString(int length) {
+	public static String randomString(int length) {
 		if (length < 1) {
 			return null;
 		}
@@ -884,7 +884,7 @@ public class StringUtils {
 	 * @return a substring of <code>string</code> whose length is less than or
 	 *         equal to <code>length</code>, and that is chopped at whitespace.
 	 */
-	public static final String chopAtWord(String string, int length) {
+	public static String chopAtWord(String string, int length) {
 		if (string == null) {
 			return string;
 		}
@@ -941,7 +941,7 @@ public class StringUtils {
 	 * @param endHighlight the tag that should be inserted to end highlighting.
 	 * @return a new String with the specified words highlighted.
 	 */
-	public static final String highlightWords(String string, String[] words, String startHighlight, String endHighlight) {
+	public static String highlightWords(String string, String[] words, String startHighlight, String endHighlight) {
 		if (string == null || words == null || startHighlight == null || endHighlight == null) {
 			return null;
 		}
@@ -1040,7 +1040,7 @@ public class StringUtils {
 	 * @param string the string to escape.
 	 * @return the string with appropriate characters escaped.
 	 */
-	public static final String escapeForXML(String string) {
+	public static String escapeForXML(String string) {
 		// Check if the string is null or zero length -- if so, return
 		// what was sent in.
 		if (string == null || string.length() == 0) {
@@ -1070,7 +1070,7 @@ public class StringUtils {
 	 * @param string
 	 * @return
 	 */
-	public static final String deleteWhiteSpace(String string) {
+	public static String deleteWhiteSpace(String string) {
 		if (string == null || string.length() == 0) {
 			return string;
 		}
@@ -1092,11 +1092,10 @@ public class StringUtils {
 	 * @param string
 	 * @return
 	 */
-	public static final String getChnString_ms(String string) {
+	public static String getChnString_ms(String string) {
 		try {
 			byte[] temp_t = string.getBytes("ISO8859-1");
-			String temp = new String(temp_t);
-			return temp;
+			return new String(temp_t);
 		} catch (Exception e) {
 			return "null";
 		}
@@ -1109,12 +1108,11 @@ public class StringUtils {
 	 * @param chNum
 	 * @return
 	 */
-	public static final String dumpNextLine(String string, int chNum) {
-		String chStr = string;
+	public static String dumpNextLine(String string, int chNum) {
 		if (string == null || chNum == 0) {
 			return "";
 		}
-		StringTokenizer sTk = new StringTokenizer(chStr, "<br>");
+		StringTokenizer sTk = new StringTokenizer(string, "<br>");
 		String endStr = "";
 		String tStr = "";
 		while (sTk.hasMoreTokens()) {
@@ -1147,7 +1145,7 @@ public class StringUtils {
 	 * @param detail
 	 * @return
 	 */
-	public static final String great_summary_3(int charNum, String detail) {
+	public static String great_summary_3(int charNum, String detail) {
 		StringBuffer detail_temp = new StringBuffer();
 		int len = 0;
 		int pos = 0;
@@ -1239,7 +1237,7 @@ public class StringUtils {
 		}
 	}
 
-	public static final boolean eval_IntNumber(String param) { // 校锟斤拷锟角凤拷为锟斤拷锟斤�?
+	public static boolean eval_IntNumber(String param) { // 校锟斤拷锟角凤拷为锟斤拷锟斤�?
 		boolean isIntNum = true;
 		char[] nums = new char[10];
 		for (int j = 0; j < 9; j++) {
@@ -1254,7 +1252,7 @@ public class StringUtils {
 		return isIntNum;
 	}
 
-	public static final boolean eval_Real(String param) { // 校锟斤拷锟角凤拷为实锟斤�?
+	public static boolean eval_Real(String param) { // 校锟斤拷锟角凤拷为实锟斤�?
 		boolean isReal = true;
 		if (param.length() <= 0) return false;
 		for (int i = 0; i < param.length(); i++) {
@@ -1494,7 +1492,7 @@ public class StringUtils {
 	 * @param hex
 	 * @return
 	 */
-	public static final byte[] decodeHex(String hex) {
+	public static byte[] decodeHex(String hex) {
 		char[] chars = hex.toCharArray();
 		// byte[] bytes = new byte[chars.length/2];
 		byte[] bytes = new byte[hex.length() / 2];
@@ -1517,7 +1515,7 @@ public class StringUtils {
 	 * @param ch
 	 * @return
 	 */
-	private static final byte hexCharToByte(char ch) {
+	private static byte hexCharToByte(char ch) {
 		switch (ch) {
 			case '0':
 				return 0x00;
@@ -1938,7 +1936,6 @@ public class StringUtils {
 	 * to Short
 	 *
 	 * @param s
-	 * @param defaultV 默认值
 	 * @return
 	 */
 	public static short str2Short(String s) {

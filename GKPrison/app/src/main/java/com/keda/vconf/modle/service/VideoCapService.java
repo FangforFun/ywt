@@ -246,7 +246,7 @@ public class VideoCapService extends Service {
 		VideoCapture.start(surfaceHolder, w, h, maxFPS, d.getRotation());
 
 		Log.e("VConfVideo", "VideoCapService VideoCapture.start(surfaceHolder, w, h, maxFPS, d.getRotation()):" + "w=" + w + "; h=" + h + ";maxFPS=" + maxFPS + ";portrait ="
-				+ (portrait == true ? "竖屏" : "横屏") + ";d.getRotation()=" + d.getRotation());
+				+ (portrait ? "竖屏" : "横屏") + ";d.getRotation()=" + d.getRotation());
 		mVideoCapturing = true;
 	}
 

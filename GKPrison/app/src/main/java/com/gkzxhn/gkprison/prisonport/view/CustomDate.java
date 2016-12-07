@@ -1,7 +1,5 @@
 package com.gkzxhn.gkprison.prisonport.view;
 
-import android.graphics.drawable.GradientDrawable;
-
 import com.gkzxhn.gkprison.utils.DateUtil;
 
 import java.io.Serializable;
@@ -38,8 +36,7 @@ public class CustomDate implements Serializable{
     }
 
     public static CustomDate modifiDayForObject(CustomDate date,int day){
-        CustomDate modifiDate = new CustomDate(date.year,date.month,day);
-        return modifiDate;
+        return new CustomDate(date.year,date.month,day);
     }
     @Override
     public String toString() {

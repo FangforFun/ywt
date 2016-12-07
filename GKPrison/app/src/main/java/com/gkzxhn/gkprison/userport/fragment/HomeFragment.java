@@ -92,14 +92,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
     @BindView(R.id.tv_focus_attention) TextView tv_focus_attention;
     @BindView(R.id.srl_refresh) SwipeRefreshLayout srl_refresh;
 
-    private RollViewPager vp_carousel;
     private News focus_news_1;
     private News focus_news_2;
     private News focus_news_3;
 
     private final List<String> list_news_title = new ArrayList<>();
     private int jail_id;
-    private boolean isRegisteredUser;
     private boolean is_request_foucs_news_successed = true; // true表示请求成功  false表示请求失败  请求失败时显示上一次缓存的焦点新闻
     private String token;// 当前登录用户的token
     private ProgressDialog dialog;
@@ -121,7 +119,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
 
     @Override
     protected void initData() {
-        isRegisteredUser = (Boolean) SPUtil.get(getActivity(), "isRegisteredUser", false);
+        boolean isRegisteredUser = (Boolean) SPUtil.get(getActivity(), "isRegisteredUser", false);
         jail_id = (int) SPUtil.get(getActivity(), "jail_id", 0);
         showLoadingDialog(); // 初次进来加载对话框
         getFocusNews();// 获取焦点新闻
@@ -231,7 +229,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener{
 
         }
         initDot();// 初始化轮播图底部小圆圈
-        vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
+        RollViewPager vp_carousel = new RollViewPager(context, dotList, new RollViewPager.OnViewClickListener() {
             @Override
             public void viewClick(int position) {
                 if(allnews.size() > 0) {

@@ -43,18 +43,13 @@ import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
 
-import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -78,7 +73,6 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_sales;
     private TextView tv_zhineng;
     private Spinner sp_allclass;
-    private Gson gson;
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -89,14 +83,11 @@ public class CanteenFragment extends BaseFragment {
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
     private Bundle data;
-    private int count = 0;
-    private String ip;
     private BadgeView badgeView;
     private List<Integer> lcount = new ArrayList<Integer>();
     private int allcount;
     private String TradeNo;
     private SharedPreferences sp;
-    private String apply = "";
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String times;
     private ProgressDialog dialog;
@@ -113,7 +104,6 @@ public class CanteenFragment extends BaseFragment {
     private int clicksalse = 1;
     private int jail_id;
     private FrameLayout salsechoose;
-    private AllchooseAdapter allchooseAdapter;
     private View image_buycar;
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
@@ -229,8 +219,6 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-
-        ip = getLocalHostIp();
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
@@ -246,6 +234,7 @@ public class CanteenFragment extends BaseFragment {
         while (cursor.moveToNext()) {
             cart_id = cursor.getInt(cursor.getColumnIndex("id"));
         }
+        cursor.close();
         data = new Bundle();
         data.putString("times", times);
         EventBus.getDefault().register(this);
@@ -317,7 +306,7 @@ public class CanteenFragment extends BaseFragment {
         data.putInt("leibie", 0);
         allclass.setArguments(data);
         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-        allchooseAdapter = new AllchooseAdapter();
+        AllchooseAdapter allchooseAdapter = new AllchooseAdapter();
         lv_salsechoose_items.setAdapter(allchooseAdapter);
         lv_allchoose_items.setAdapter(allchooseAdapter);
         lv_salsechoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -567,7 +556,7 @@ public class CanteenFragment extends BaseFragment {
         allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,line_items.id,line_items.price,line_items.title from line_items,Cart where line_items.cart_id = " + cart_id;
         Cursor cursor = db.rawQuery(sql, null);
-        android.util.Log.d("ff", cursor.getCount() + "");
+        Log.d("ff", cursor.getCount() + "");
         total = 0;
         if (cursor.getCount() == 0) {
             tv_total_money.setText("0.0");
@@ -585,6 +574,7 @@ public class CanteenFragment extends BaseFragment {
             adapter = new BuyCarAdapter();
             lv_buycar.setAdapter(adapter);
         }
+        cursor.close();
         for (int i = 0; i < commodities.size(); i++) {
             String t = commodities.get(i).getPrice();
             float p = Float.parseFloat(t);
@@ -594,8 +584,7 @@ public class CanteenFragment extends BaseFragment {
             lineitemsattributes.setQuantity(n);
             line_items_attributes.add(lineitemsattributes);
             total += p * n;
-            count = n;
-            lcount.add(count);
+            lcount.add(n);
         }
         //  total += 2;
         for (int i = 0; i < lcount.size(); i++) {
@@ -632,8 +621,8 @@ public class CanteenFragment extends BaseFragment {
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
         order.setAmount(f);
-        gson = new Gson();
-        apply = gson.toJson(order);
+        Gson gson = new Gson();
+        String apply = gson.toJson(order);
         Log.d("结算发送", apply);
         final AA aa = new AA();
         aa.setOrder(order);
@@ -708,34 +697,6 @@ public class CanteenFragment extends BaseFragment {
         key = key + r.nextInt();
         key = key.substring(0, 15);
         return key;
-    }
-
-    public String getLocalHostIp() {
-        String ipaddress = "";
-        try {
-            Enumeration<NetworkInterface> en = NetworkInterface
-                    .getNetworkInterfaces();
-            // 遍历所用的网络接口
-            while (en.hasMoreElements()) {
-                NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
-                Enumeration<InetAddress> inet = nif.getInetAddresses();
-                // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements()) {
-                    InetAddress ip = inet.nextElement();
-                    if (!ip.isLoopbackAddress()
-                            && InetAddressUtils.isIPv4Address(ip
-                            .getHostAddress())) {
-                        return ipaddress = ip.getHostAddress();
-                    }
-                }
-
-            }
-        } catch (SocketException e) {
-            Log.e("feige", "获取本地ip地址失败");
-            e.printStackTrace();
-        }
-        return ipaddress;
-
     }
 
     private class BuyCarAdapter extends BaseAdapter {
@@ -820,6 +781,7 @@ public class CanteenFragment extends BaseFragment {
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
+                    cursor.close();
                     Message msg2 = handler2.obtainMessage();
                     msg2.obj = qty;
                     msg2.what = 1;
@@ -889,6 +851,7 @@ public class CanteenFragment extends BaseFragment {
                         while (cursor.moveToNext()) {
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
+                        cursor.close();
                         Message msg2 = handler2.obtainMessage();
                         msg2.obj = qty;
                         msg2.what = 1;

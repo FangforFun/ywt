@@ -43,10 +43,7 @@ public class LawsRegulationsActivity extends BaseActivity {
 
     private ListView lv_laws_regulations;
     private List<Laws> lawses = new ArrayList<>();
-    private SharedPreferences sp;
-    private String token = "";
     private String url = "";
-    private int jail_id;
     private ProgressDialog dialog;
     private Handler handler = new Handler() {
         @Override
@@ -83,9 +80,9 @@ public class LawsRegulationsActivity extends BaseActivity {
     protected void initData() {
         setTitle("法律法规");
         setBackVisibility(View.VISIBLE);
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        token = sp.getString("token", "00");
-        jail_id = sp.getInt("jail_id", 0);
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
+        String token = sp.getString("token", "00");
+        int jail_id = sp.getInt("jail_id", 0);
         url = Constants.URL_HEAD + "laws?jail_id=" + jail_id + "&access_token=" + token;
         getLaws();
         lv_laws_regulations.setOnItemClickListener(new AdapterView.OnItemClickListener() {

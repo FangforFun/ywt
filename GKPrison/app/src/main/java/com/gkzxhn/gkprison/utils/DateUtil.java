@@ -63,9 +63,8 @@ public class DateUtil {
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 7 - getWeekDay()+1);
-        CustomDate date = new CustomDate(c.get(Calendar.YEAR),
+        return new CustomDate(c.get(Calendar.YEAR),
                 c.get(Calendar.MONTH)+1, c.get(Calendar.DAY_OF_MONTH));
-        return date;
     }
 
     public static int[] getWeekSunday(int year, int month, int day, int pervious) {

@@ -49,8 +49,6 @@ public class DownloadProgressBar extends View {
 
     private float mCenterX;
     private float mCenterY;
-    private float mPaddingX;
-    private float mPaddingY;
 
     private int mCircleBackgroundColor;
     private int mDrawingColor;
@@ -62,15 +60,12 @@ public class DownloadProgressBar extends View {
     private AnimatorSet mArrowToLineAnimatorSet;
     private AnimatorSet mProgressAnimationSet;
 
-    private OvershootInterpolator mOvershootInterpolator;
-
     private ValueAnimator mDotToProgressAnimation;
     private ValueAnimator mProgressAnimation;
     private ValueAnimator mSuccessAnimation;
     private ValueAnimator mExpandAnimation;
     private ValueAnimator mCollapseAnimation;
     private ValueAnimator mErrorAnimation;
-    private ValueAnimator mArrowLineToDot;
     private ValueAnimator mArrowLineToHorizontalLine;
     private ValueAnimator mManualProgressAnimation;
 
@@ -153,8 +148,8 @@ public class DownloadProgressBar extends View {
 
         mCenterX = w / 2f;
         mCenterY = h / 2f;
-        mPaddingX = w / 2f - mRadius;
-        mPaddingY = h / 2f - mRadius;
+        float mPaddingX = w / 2f - mRadius;
+        float mPaddingY = h / 2f - mRadius;
 
         mCircleBounds = new RectF();
         mCircleBounds.top = mPaddingY;
@@ -164,8 +159,8 @@ public class DownloadProgressBar extends View {
     }
 
     private void setupAnimations() {
-        mOvershootInterpolator = new OvershootInterpolator(mOvershootValue);
-        mArrowLineToDot = ValueAnimator.ofFloat(0, mRadius / 4);
+        OvershootInterpolator mOvershootInterpolator = new OvershootInterpolator(mOvershootValue);
+        ValueAnimator mArrowLineToDot = ValueAnimator.ofFloat(0, mRadius / 4);
         mArrowLineToDot.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {

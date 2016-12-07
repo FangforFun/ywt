@@ -25,8 +25,7 @@ public class LoadingActivity extends BaseActivity {
     @Override
     protected View initView() {
         PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(this,R.layout.activity_loading,null);
-        return view;
+        return View.inflate(this,R.layout.activity_loading,null);
     }
 
     @Override

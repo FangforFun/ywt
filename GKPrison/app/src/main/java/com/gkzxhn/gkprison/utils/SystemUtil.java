@@ -21,7 +21,7 @@ public class SystemUtil {
      * @param context
      * @return 进程名
      */
-    public static final String getProcessName(Context context) {
+    public static String getProcessName(Context context) {
         String processName = null;
         // ActivityManager
         ActivityManager am = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE));

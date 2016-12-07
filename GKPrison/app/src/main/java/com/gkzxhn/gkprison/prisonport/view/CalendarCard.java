@@ -24,8 +24,6 @@ public class CalendarCard extends View {
 
     private Paint mCirclePaint; // 绘制圆形的画笔
     private Paint mTextPaint; // 绘制文本的画笔
-    private int mViewWidth; // 视图的宽度
-    private int mViewHeight; // 视图的高度
     private int mCellSpace; // 单元格间距
     private Row rows[] = new Row[TOTAL_ROW]; // 行数组，每个元素代表一行
     public static CustomDate mShowDate; // 自定义的日期，包括year,month,day
@@ -158,9 +156,7 @@ public class CalendarCard extends View {
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
-        mViewWidth = w;
-        mViewHeight = h;
-        mCellSpace = Math.min(mViewHeight / TOTAL_ROW, mViewWidth / TOTAL_COL);
+        mCellSpace = Math.min(h / TOTAL_ROW, w / TOTAL_COL);
         if (!callBackCellSpace) {
             callBackCellSpace = true;
         }
@@ -297,7 +293,7 @@ public class CalendarCard extends View {
      * 单元格的状态 当前月日期，过去的月的日期，下个月的日期
      */
     enum State {
-        TODAY,CURRENT_MONTH_DAY, PAST_MONTH_DAY, NEXT_MONTH_DAY, UNREACH_DAY;
+        TODAY,CURRENT_MONTH_DAY, PAST_MONTH_DAY, NEXT_MONTH_DAY, UNREACH_DAY
     }
 
     // 从左往右划，上一个月

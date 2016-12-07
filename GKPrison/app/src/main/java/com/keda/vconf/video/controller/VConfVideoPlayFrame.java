@@ -120,7 +120,7 @@ public class VConfVideoPlayFrame extends Fragment implements View.OnClickListene
 	public void onStart() {
 		Log.i("VConfVideo", "VConfVideoPlayFrame-->onStart ");
 		super.onStart();
-	};
+	}
 
 	@Override
 	public void onResume() {

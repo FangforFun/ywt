@@ -39,9 +39,6 @@ import okhttp3.Response;
  */
 public class InterractiveMailboxFragment extends Fragment {
     private String url = "";
-    private SharedPreferences sp;
-    private int family_id = 0;
-    private String token = "";
     private TextView nonotice;
     private List<Reply> replies = new ArrayList<Reply>();
     private SwipeRefreshLayout srl_refresh;
@@ -71,9 +68,9 @@ public class InterractiveMailboxFragment extends Fragment {
     }
 
     private void initData() {
-        sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
-        family_id = sp.getInt("family_id", 1);
-        token = sp.getString("token", "");
+        SharedPreferences sp = getActivity().getSharedPreferences("config", getActivity().MODE_PRIVATE);
+        int family_id = sp.getInt("family_id", 1);
+        String token = sp.getString("token", "");
         url = Constants.URL_HEAD + "comments?access_token=" + token + "&family_id=" + family_id;
         getReply();
         srl_refresh.setColorSchemeResources(R.color.theme, R.color.theme, R.color.theme, R.color.theme);

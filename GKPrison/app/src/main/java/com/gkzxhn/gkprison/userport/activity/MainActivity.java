@@ -109,15 +109,10 @@ public class MainActivity extends BaseActivity {
     private CanteenBaseFragment canteenBaseFragment = null;
     private String datebase_path;
     private SQLiteDatabase db;
-    private List<Commodity> commodityList = new ArrayList<>();
     private long mExitTime;//add by hzn 退出按键时间间隔
     private boolean isRegisteredUser; // 是否注册登录用户
     private int jail_id;  // 监狱id
-    private ActionBarDrawerToggle toggle;
-    private String times;
     private AutoCompleteTextView actv_prison_choose; // 监狱选择
-    private AutoTextAdapater autoTextAdapater;
-    private String data; // 监狱选择访问服务器返回的字符串
     private List<String> suggest;// 自动提示的集合
     private Map<String, Integer> prison_map; // 服务器返回的监狱列表存储需要的集合
     private OkHttpClient client = new OkHttpClient();
@@ -133,7 +128,7 @@ public class MainActivity extends BaseActivity {
                     if (m.equals("success")){
                         Bundle bundle = msg.getData();
                         String commodity = bundle.getString("result");
-                        commodityList = analysis_commodity(commodity);
+                        List<Commodity> commodityList = analysis_commodity(commodity);
                         if (commodityList.size() != 0){
                             String sql = "delete from Items where 1=1";
                             db.execSQL(sql);
@@ -295,7 +290,7 @@ public class MainActivity extends BaseActivity {
         setMessageVisibility(View.VISIBLE); // 显示系统消息图标
 
         setSupportActionBar(tool_bar);
-        toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, R.drawable.icon_menu, R.string.drawer_open, R.string.drawer_close);
         drawerLayout.setDrawerListener(toggle);
         toggle.syncState();
 
@@ -312,7 +307,7 @@ public class MainActivity extends BaseActivity {
      * 更新微信支付订单
      */
     private void doWXPayController() {
-        times = getIntent().getStringExtra("times");
+        String times = getIntent().getStringExtra("times");
         if (times != null){
             final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
             final String str = getXml();
@@ -510,7 +505,7 @@ public class MainActivity extends BaseActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            autoTextAdapater = new AutoTextAdapater(suggest, MainActivity.this);
+            AutoTextAdapater autoTextAdapater = new AutoTextAdapater(suggest, MainActivity.this);
             actv_prison_choose.setAdapter(autoTextAdapater);
         }
 
@@ -522,7 +517,7 @@ public class MainActivity extends BaseActivity {
             suggest = new ArrayList<>();
             if(Utils.isNetworkAvailable(MainActivity.this)) {
                 try {
-                    data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
+                    String data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText); // 监狱选择访问服务器返回的字符串
                     Log.i("监狱。。。。", data);
                     prison_map.clear();
                     JSONObject jsonObject = new JSONObject(data);
@@ -736,7 +731,7 @@ public class MainActivity extends BaseActivity {
         char[] chars = new char[len];
         Random random = new Random();
         for (int i = 0;i < len;i++){
-            if (random.nextBoolean() == true){
+            if (random.nextBoolean()){
                 chars[i] = (char)(random.nextInt(25) + 97);
             }else {
                 chars[i] = (char)(random.nextInt(9) + 48);

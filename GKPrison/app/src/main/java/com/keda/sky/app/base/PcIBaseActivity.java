@@ -17,12 +17,12 @@ public interface PcIBaseActivity {
 	/**
 	 * Activity finish
 	 */
-	public void onFinish();
+	void onFinish();
 
 	/**
 	 * Activity 是否可用 
 	 *
 	 * @return
 	 */
-	public boolean isAvailable();
+	boolean isAvailable();
 }

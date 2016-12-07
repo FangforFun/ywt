@@ -494,9 +494,7 @@ public class TerminalUtils {
 	 */
 	public Rect getScreenBoundRect(Context context) {
 		DisplayMetrics dm = context.getResources().getDisplayMetrics();
-		Rect rect = new Rect(0, 0, dm.widthPixels, dm.heightPixels);
-
-		return rect;
+		return new Rect(0, 0, dm.widthPixels, dm.heightPixels);
 	}
 
 	/**

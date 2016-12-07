@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class IntellingentSortingFragment extends BaseFragment {
     private ListView lv_intelling;
-    private SalesAdapter adapter;
     private List<Integer> image = new ArrayList<Integer>(){
         {
             add(R.drawable.beizi1);
@@ -56,8 +55,7 @@ public class IntellingentSortingFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-        adapter = new SalesAdapter();
-        lv_intelling.setAdapter(adapter);
+        lv_intelling.setAdapter(new SalesAdapter());
     }
 
     private class SalesAdapter extends BaseAdapter {

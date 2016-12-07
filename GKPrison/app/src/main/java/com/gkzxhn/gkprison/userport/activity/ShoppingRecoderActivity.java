@@ -80,6 +80,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                     cart.setTotal_money(cursor.getString(cursor.getColumnIndex("total_money")));
                     carts.add(cart);
                 }
+                cursor.close();
                 sort();// 排序
                 for (int i = 0; i < carts.size(); i++) {
                     List<Commodity> commodities = new ArrayList<>();
@@ -94,6 +95,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                         commodities.add(commodity);
                     }
                     carts.get(i).setCommodityList(commodities);
+                    cursor1.close();
                 }
                 showUI();
             }

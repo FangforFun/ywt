@@ -14,7 +14,6 @@ import com.gkzxhn.gkprison.R;
 
 public class ApplyDialog extends Dialog {
 
-	private TextView msgView;
 	private String msg;
 	private TMTEntityInfo info;
 	private boolean isApplyChairMan;
@@ -35,7 +34,7 @@ public class ApplyDialog extends Dialog {
 		}
 		setContentView(R.layout.dialog_apply);
 
-		msgView = (EditText) findViewById(R.id.msg);
+		TextView msgView = (EditText) findViewById(R.id.msg);
 		if (null != info.tMtAlias) msgView.setText(info.tMtAlias.getAlias());
 
 		findViewById(R.id.btnCancel).setOnClickListener(new View.OnClickListener() {

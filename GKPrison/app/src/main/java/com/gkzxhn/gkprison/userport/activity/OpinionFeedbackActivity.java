@@ -45,7 +45,6 @@ public class OpinionFeedbackActivity extends BaseActivity {
     private TextView surplus_count;
     private Button bt_commit_opinions;
     private ProgressDialog commit_dialog;
-    private SharedPreferences sp;
     private String token;
     private boolean isFinish = false;
     private Handler handler = new Handler();
@@ -63,7 +62,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         setTitle("意见反馈");
         setBackVisibility(View.VISIBLE);

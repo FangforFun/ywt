@@ -42,7 +42,6 @@ public class NewsDetailActivity extends BaseActivity {
     private static final String TAG = "NewsDetailActivity";
     private WebView wv_news_detail;
     private NumberProgressBar npb_loading;
-    private String webUrl;
     private int type;
     private int id;// 新闻id
 
@@ -51,9 +50,6 @@ public class NewsDetailActivity extends BaseActivity {
     private EditText et_comment;
     private Button bt_comment;
     private TextView tv_comments;
-
-    // 评论内容
-    private String comment_content;
 
     @Override
     protected View initView() {
@@ -78,6 +74,7 @@ public class NewsDetailActivity extends BaseActivity {
         id = getIntent().getIntExtra("id",-1);
         // type=0 首页轮播图  type=1 新闻  默认为1
         type = getIntent().getIntExtra("type", 1);
+        String webUrl;
         if(type == 1) {
             webUrl = Constants.RESOURSE_HEAD + "/news/" + id;
         }else {
@@ -137,7 +134,7 @@ public class NewsDetailActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_comment:
-                comment_content = et_comment.getText().toString().trim();
+                String comment_content = et_comment.getText().toString().trim();
                 if(TextUtils.isEmpty(comment_content)){
                     showToastMsgShort("输入您要评论的内容吧");
                     return;

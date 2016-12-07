@@ -81,7 +81,6 @@ public class PersonLoginFragment extends BaseFragment {
     private SweetAlertDialog sadDialog;
     private String username;// 用户名(手机号)
     private String ic_card_num;// 身份证
-    private String identifying_code;// 验证码
     private boolean isRunning = false;// 倒计时任务正在执行
     private int countdown = 60;// 倒计时
     private int successCode = 0;// 登录成功码  先等于自己服务器  成功之后加1登录云信服务器  等于2才算登录成功
@@ -240,7 +239,7 @@ public class PersonLoginFragment extends BaseFragment {
             case R.id.btn_login:
                 username = et_login_username.getText().toString().trim();
                 ic_card_num = et_login_ic_card_num.getText().toString().trim();
-                identifying_code = et_identifying_code.getText().toString().trim();
+                String identifying_code = et_identifying_code.getText().toString().trim();
                 if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
                     Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
                 } else {

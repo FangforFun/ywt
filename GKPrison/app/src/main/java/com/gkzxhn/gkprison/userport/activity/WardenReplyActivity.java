@@ -11,8 +11,7 @@ public class WardenReplyActivity extends BaseActivity {
     @Override
     protected View initView() {
         PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(this, R.layout.activity_warden_reply, null);
-        return view;
+        return View.inflate(this, R.layout.activity_warden_reply, null);
     }
 
     @Override
