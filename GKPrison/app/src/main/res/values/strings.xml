@@ -80,4 +80,11 @@
     <string name="network_4g">目前网络处于4G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
     <string name="network_wifi">目前网络处于wifi状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
     <string name="network_default">目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
+    <string name="select_payment_failed">选择支付类型失败</string>
+    <string name="pay_failed">支付失败</string>
+    <string name="pay_result_confirming">支付结果确认中</string>
+    <string name="pay_success">支付成功</string>
+    <string name="out_￥_800">抱歉，您本月汇款总额已超出800元限额！</string>
+    <string name="input_money">请输入汇款金额</string>
+    <string name="recharge">充值</string>
 </resources>

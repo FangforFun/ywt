@@ -5,13 +5,11 @@ import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -42,86 +40,6 @@ import javax.net.ssl.X509TrustManager;
 public class HttpRequestUtil {
 
     private static final int time_out = 100000;
-
-    /**
-     * Post请求连接Https服务
-     * @param serverURL  请求地址
-     * @param jsonStr    请求报文
-     * @return
-     * @throws Exception
-     */
-    public static synchronized String doHttpsPost(String serverURL, String jsonStr)throws Exception {
-        // 参数
-        HttpParams httpParameters = new BasicHttpParams();
-        // 设置连接超时
-        HttpConnectionParams.setConnectionTimeout(httpParameters, time_out);
-        // 设置socket超时
-        HttpConnectionParams.setSoTimeout(httpParameters, time_out);
-        // 获取HttpClient对象 （认证）
-        HttpClient hc = initHttpClient(httpParameters);
-        HttpPost post = new HttpPost(serverURL);
-        // 发送数据类型
-        post.addHeader("Content-Type", "application/json;charset=utf-8");
-        // 接受数据类型
-        post.addHeader("Accept", "application/json");
-        // 请求报文
-        StringEntity entity = new StringEntity(jsonStr, "UTF-8");
-        post.setEntity(entity);
-        post.setParams(httpParameters);
-        HttpResponse response = null;
-        try {
-            response = hc.execute(post);
-        } catch (UnknownHostException e) {
-            throw new Exception("Unable to access " + e.getLocalizedMessage());
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        int sCode = response.getStatusLine().getStatusCode();
-        if (sCode == HttpStatus.SC_OK) {
-            return EntityUtils.toString(response.getEntity(), "utf-8");
-        } else
-            throw new Exception("StatusCode is " + sCode);
-    }
-
-    /**
-     * Post请求连接Https服务
-     * @param serverURL  请求地址
-     * @param jsonStr    请求报文
-     * @return
-     * @throws Exception
-     */
-    public static synchronized String doHttpsPost(String serverURL, String jsonStr, int timeout)throws Exception {
-        // 参数
-        HttpParams httpParameters = new BasicHttpParams();
-        // 设置连接超时
-        HttpConnectionParams.setConnectionTimeout(httpParameters, timeout);
-        // 设置socket超时
-        HttpConnectionParams.setSoTimeout(httpParameters, timeout);
-        // 获取HttpClient对象 （认证）
-        HttpClient hc = initHttpClient(httpParameters);
-        HttpPost post = new HttpPost(serverURL);
-        // 发送数据类型
-        post.addHeader("Content-Type", "application/json;charset=utf-8");
-        // 接受数据类型
-        post.addHeader("Accept", "application/json");
-        // 请求报文
-        StringEntity entity = new StringEntity(jsonStr, "UTF-8");
-        post.setEntity(entity);
-        post.setParams(httpParameters);
-        HttpResponse response = null;
-        try {
-            response = hc.execute(post);
-        } catch (UnknownHostException e) {
-            throw new Exception("Unable to access " + e.getLocalizedMessage());
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        int sCode = response.getStatusLine().getStatusCode();
-        if (sCode == HttpStatus.SC_OK) {
-            return EntityUtils.toString(response.getEntity(), "utf-8");
-        } else
-            throw new Exception("StatusCode is " + sCode);
-    }
 
     /**
      * Get请求连接Https服务

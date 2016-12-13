@@ -5,10 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
@@ -20,16 +16,16 @@ import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Prison;
+import com.gkzxhn.gkprison.userport.bean.PrisonerInfo;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
@@ -40,22 +36,39 @@ import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 /**
  * 家属服务
  */
 public class FamilyServiceActivity extends BaseActivity {
-    private ExpandableListView el_messge;
+    private static final String TAG = "FamilyServiceActivity";
+    @BindView(R.id.el_messge) ExpandableListView el_messge;
+    @BindView(R.id.tv_prison_num) TextView prison_num;
+    @BindView(R.id.tv_mail_sex) TextView prison_gender;
+    @BindView(R.id.tv_crime_accent) TextView prison_crimes;
+    @BindView(R.id.tv_sentence_time) TextView prison_start_time;
+    @BindView(R.id.tv_sentence_time_end) TextView prison_end_time;
     private MyAdapter adapter;
     private String TradeNo;
     private String times = "";
@@ -64,65 +77,8 @@ public class FamilyServiceActivity extends BaseActivity {
     private String ip;
     private String money = "";
     private Gson gson;
-    private String apply;
-    private Prison prison = new Prison();
-    private TextView prison_num;
-    private TextView prison_gender;
-    private TextView prison_crimes;
-    private TextView prison_start_time;
-    private TextView prison_end_time;
     private List<line_items_attributes> line_items_attributes = new ArrayList<>();
     private int jail_id;
-    private String url1 = Constants.URL_HEAD + "services?access_token=";
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String information = (String) msg.obj;
-                    if (information.equals("error")) {
-                        showToastMsgShort("同步数据有误");
-                    } else if (information.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String prison_information = bundle.getString("result");
-                        prison = analysisprison(prison_information);
-                        prison_num.setText(prison.getPrisoner_number());
-                        if (prison.getGender().equals("m")) {
-                            prison_gender.setText("男");
-                        } else {
-                            prison_gender.setText("女");
-                        }
-                        prison_crimes.setText(prison.getCrimes());
-                        prison_start_time.setText(prison.getPrison_term_started_at());
-                        prison_end_time.setText(prison.getPrison_term_ended_at());
-                    }
-                    break;
-                case 2:
-                    String ording = (String) msg.obj;
-                    if (ording.equals("error")) {
-                        showToastMsgShort("操作失败，请稍后再试！");
-                    } else if (ording.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String code = bundle.getString("result");
-                        int pass_code = getResultcode(code);
-                        if (pass_code == 200) {
-                            TradeNo = getResultTradeno(code);
-                            Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
-                            intent.putExtra("totalmoney", money);
-                            intent.putExtra("times", times);
-                            intent.putExtra("TradeNo", TradeNo);
-                            intent.putExtra("saletype", "汇款");
-                            startActivity(intent);
-                        }else {
-                            // 其他情况就是等于500  超出每月800额度
-                            // {"code":500,"msg":"Create order failed","errors":{"order":["超出每月800元限额"]}}
-                            showToastMsgLong("抱歉，您本月汇款总额已超出800元限额！");
-                        }
-                    }
-                    break;
-            }
-        }
-    };
 
     private List<Integer> image_messge = new ArrayList<Integer>() {
         {
@@ -139,42 +95,42 @@ public class FamilyServiceActivity extends BaseActivity {
             add("购物签收");
         }
     };
-    private List<String> sentence_time = new ArrayList(){
+    private List<String> sentence_time = new ArrayList<String>(){
         {
             add("2016年5月30日");
             add("2016年5月20日");
             add("2016年5月10日");
         }
     };
-    private List<String> sentence_cause = new ArrayList(){
+    private List<String> sentence_cause = new ArrayList<String>(){
         {
             add("制止狱内暴力");
             add("制止狱内暴力");
             add("制止狱内暴力");
         }
     };
-    private List<String> sentence_time_add = new ArrayList(){
+    private List<String> sentence_time_add = new ArrayList<String>(){
         {
             add("减刑三个月");
             add("减刑三个月");
             add("减刑三个月");
         }
     };
-    private List<String> buyer_id = new ArrayList(){
+    private List<String> buyer_id = new ArrayList<String>(){
         {
             add("1232423423423");
             add("1232423423423");
             add("1232423423423");
         }
     };
-    private List<String> money1 = new ArrayList(){
+    private List<String> money1 = new ArrayList<String>(){
         {
             add("120元");
             add("120元");
             add("120元");
         }
     };
-    private List<String> commodity = new ArrayList(){
+    private List<String> commodity = new ArrayList<String>(){
         {
             add("水杯");
             add("水杯");
@@ -185,13 +141,8 @@ public class FamilyServiceActivity extends BaseActivity {
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_family_service, null);
-        el_messge = (ExpandableListView) view.findViewById(R.id.el_messge);
+        ButterKnife.bind(this, view);
         el_messge.setGroupIndicator(null);
-        prison_num = (TextView) view.findViewById(R.id.tv_prison_num);
-        prison_gender = (TextView) view.findViewById(R.id.tv_mail_sex);
-        prison_crimes = (TextView) view.findViewById(R.id.tv_crime_accent);
-        prison_start_time = (TextView) view.findViewById(R.id.tv_sentence_time);
-        prison_end_time = (TextView) view.findViewById(R.id.tv_sentence_time_end);
         return view;
     }
 
@@ -206,59 +157,74 @@ public class FamilyServiceActivity extends BaseActivity {
         adapter = new MyAdapter();
         el_messge.setAdapter(adapter);
         rl_remittance.setOnClickListener(this);
-        getPrisonIformation();
+        getPrisonInformation();
     }
 
-    private void getPrisonIformation() {
+    /**
+     * 获取囚犯信息
+     */
+    private void getPrisonInformation() {
         if (Utils.isNetworkAvailable()) {
-            new Thread() {
-                String token = sp.getString("token", "");
-                Message msg = handler.obtainMessage();
-
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    try {
-                        String result = HttpRequestUtil.doHttpsGet(url1 + token);
-                        if (result.contains("StatusCode is ")) {
-                            msg.obj = "error";
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        } else {
-                            msg.obj = "success";
-                            Bundle bundle = new Bundle();
-                            bundle.putString("result", result);
-                            msg.setData(bundle);
-                            msg.what = 1;
-                            handler.sendMessage(msg);
+            String token = sp.getString("token", "");
+            Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl(Constants.URL_HEAD)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                    .build();
+            ApiRequest request = retrofit.create(ApiRequest.class);
+            request.getPrisonerInfo(token)
+                    .map(new Func1<PrisonerInfo, Prison>() {
+                        @Override
+                        public Prison call(PrisonerInfo prisonerInfo) {
+                            Log.i(TAG, prisonerInfo.toString());
+                            return getPerson(prisonerInfo);
                         }
-                    } catch (Exception e) {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                        e.printStackTrace();
-                    } finally {
-                        Looper.loop();
-                    }
-                }
-            }.start();
+                    })
+                    .subscribeOn(Schedulers.io())
+                    .unsubscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<Prison>() {
+                        @Override public void onCompleted() {}
+                        @Override public void onError(Throwable e) {
+                            showToastMsgShort("同步数据有误");
+                        }
+
+                        @Override public void onNext(Prison prison) {
+                            if (prison != null) {
+                                Log.i(TAG, prison.toString());
+                                prison_num.setText(prison.getPrisoner_number());
+                                if (prison.getGender().equals("m")) {
+                                    prison_gender.setText("男");
+                                } else {
+                                    prison_gender.setText("女");
+                                }
+                                prison_crimes.setText(prison.getCrimes());
+                                prison_start_time.setText(prison.getPrison_term_started_at());
+                                prison_end_time.setText(prison.getPrison_term_ended_at());
+                            }else {
+                                showToastMsgShort("同步数据有误");
+                            }
+                        }
+                    });
         } else {
             showToastMsgShort("没有网络");
         }
     }
 
-    private Prison analysisprison(String t) {
-        Prison prison = new Prison();
-        try {
-            JSONObject jsonObject = new JSONObject(t);
-            JSONObject jsonObject1 = jsonObject.getJSONObject("prisoner");
-            prison.setGender(jsonObject1.getString("gender"));
-            prison.setCrimes(jsonObject1.getString("crimes"));
-            prison.setPrison_term_ended_at(jsonObject1.getString("prison_term_ended_at"));
-            prison.setPrison_term_started_at(jsonObject1.getString("prison_term_started_at"));
-            prison.setPrisoner_number(jsonObject1.getString("prisoner_number"));
-        } catch (JSONException e) {
-            e.printStackTrace();
+    /**
+     * 转换数据
+     * @param prisonerInfo
+     * @return
+     */
+    private Prison getPerson(PrisonerInfo prisonerInfo) {
+        Prison prison = null;
+        if (prisonerInfo.getCode() == 200) {
+            prison = new Prison();
+            prison.setGender(prisonerInfo.getPrisoner().getGender());
+            prison.setCrimes(prisonerInfo.getPrisoner().getCrimes());
+            prison.setPrison_term_ended_at(prisonerInfo.getPrisoner().getPrison_term_ended_at());
+            prison.setPrison_term_started_at(prisonerInfo.getPrisoner().getPrison_term_started_at());
+            prison.setPrisoner_number(prisonerInfo.getPrisoner().getPrisoner_number());
         }
         return prison;
     }
@@ -266,17 +232,11 @@ public class FamilyServiceActivity extends BaseActivity {
     @Override
     public void onClick(View v) {
         super.onClick(v);
-        //Intent intent;
         switch (v.getId()) {
             case R.id.rl_remittance:
-                // intent = new Intent(this, RemittanceWaysActivity.class);
-                //startActivity(intent);
-                long time = System.currentTimeMillis();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                Date date = new Date(time);
-                times = format.format(date);
+                times = StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
                 AlertDialog.Builder builder = new AlertDialog.Builder(FamilyServiceActivity.this);
-                View view = FamilyServiceActivity.this.getLayoutInflater().inflate(R.layout.remittance_dialog, null);
+                View view = View.inflate(FamilyServiceActivity.this, R.layout.remittance_dialog, null);
                 final EditText et_money = (EditText) view.findViewById(R.id.et_money);
                 Editable ea = et_money.getText();
                 et_money.setSelection(ea.length());
@@ -305,30 +265,18 @@ public class FamilyServiceActivity extends BaseActivity {
                         }
                         money = et_money.getText().toString();
                         if (TextUtils.isEmpty(money)) {
-                            Toast.makeText(getApplicationContext(), "请输入汇款金额", Toast.LENGTH_SHORT).show();
+                            showToastMsgShort(getString(R.string.input_money));
                             try {
                                 Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
                                 field.setAccessible(true);
                                 field.set(dialog, false);
                                 dialog.dismiss();
-                            } catch (NoSuchFieldException e) {
-                                e.printStackTrace();
-                            } catch (IllegalAccessException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            return;
                         } else {
-                            sendOrderToServer();
-                            String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('" + times + "','" + TradeNo + "',0,'" + money + "',1)";
-                            db.execSQL(sql);
-                            int cart_id = 0;
-                            String sql1 = "select id from Cart where time = '" + times + "'";
-                            Cursor cursor = db.rawQuery(sql1, null);
-                            while (cursor.moveToNext()) {
-                                cart_id = cursor.getInt(cursor.getColumnIndex("id"));
-                            }
-                            String sql2 = "insert into line_items(Items_id,cart_id) values (9999," + cart_id + ")";
-                            db.execSQL(sql2);
+                            sendOrderToServer();// 发送至服务器
+                            saveOrderRecord();// 保存汇款订单记录
                         }
                     }
                 });
@@ -338,9 +286,88 @@ public class FamilyServiceActivity extends BaseActivity {
         }
     }
 
+    /**
+     * 保存汇款订单记录至数据库
+     */
+    private void saveOrderRecord() {
+        String sql = "insert into Cart(time,out_trade_no,isfinish,total_money,remittance) values('"
+                + times + "','" + TradeNo + "',0,'" + money + "',1)";
+        db.execSQL(sql);
+        int cart_id = 0;
+        String sql1 = "select id from Cart where time = '" + times + "'";
+        Cursor cursor = db.rawQuery(sql1, null);
+        while (cursor.moveToNext()) {
+            cart_id = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+        String sql2 = "insert into line_items(Items_id,cart_id) values (9999," + cart_id + ")";
+        db.execSQL(sql2);
+        cursor.close();
+    }
+
+    /**
+     * 发送汇款订单至服务器
+     */
     private void sendOrderToServer() {
+        String str = getOrderJsonStr();
+        String token = sp.getString("token", "");
+        Log.i(TAG, str + "-------" + token);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiRequest request = retrofit.create(ApiRequest.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), str);
+        request.sendOrder(jail_id, token, body)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override public void onCompleted() {}
+                    @Override public void onError(Throwable e) {
+                        showToastMsgShort("操作失败，请稍后再试！");
+                    }
+
+                    @Override public void onNext(ResponseBody responseBody) {
+                        try {
+                            String result = responseBody.string();
+                            Log.i(TAG, "send order result : " + result);
+                            int pass_code = getResultcode(result);
+                            if (pass_code == 200) {
+                                TradeNo = getResultTradno(result);
+                                selectPayment();// 选择支付方式
+                            }else {
+                                // 其他情况就是等于500  超出每月800额度
+                                // {"code":500,"msg":"Create order failed","errors":{"order":["超出每月800元限额"]}}
+                                showToastMsgLong(getString(R.string.out_￥_800));
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            showToastMsgShort("操作失败，请稍后再试！");
+                        }
+                    }
+                });
+    }
+
+    /**
+     * 选择支付方式
+     */
+    private void selectPayment() {
+        Intent intent = new Intent(FamilyServiceActivity.this, PaymentActivity.class);
+        intent.putExtra("totalmoney", money);
+        intent.putExtra("times", times);
+        intent.putExtra("TradeNo", TradeNo);
+        intent.putExtra("saletype", "汇款");
+        startActivity(intent);
+    }
+
+    /**
+     * 获取订单json字符串
+     * @return
+     */
+    private String getOrderJsonStr() {
         int family_id = sp.getInt("family_id", 1);
-        final Order order = new Order();
+        Order order = new Order();
         order.setFamily_id(family_id);
         line_items_attributes lineitemsattributes = new line_items_attributes();
         lineitemsattributes.setItem_id(9999);
@@ -352,65 +379,9 @@ public class FamilyServiceActivity extends BaseActivity {
         Float f = Float.parseFloat(money);
         order.setAmount(f);
         gson = new Gson();
-        apply = gson.toJson(order);
-        final AA aa = new AA();
+        AA aa = new AA();
         aa.setOrder(order);
-        final String str = gson.toJson(aa);
-
-        new Thread() {
-            @Override
-            public void run() {
-                String token = sp.getString("token", "");
-                String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
-                //       HttpClient httpClient = new DefaultHttpClient();
-                //       HttpPost post = new HttpPost(url+token);
-                String s = url + token;
-
-                /**
-                 StringEntity entity = new StringEntity(str);
-                 entity.setContentType("application/json");
-                 entity.setContentEncoding("UTF-8");
-                 post.setEntity(entity);
-                 HttpResponse response = httpClient.execute(post);
-                 if (response.getStatusLine().getStatusCode() == 200){
-                 String result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                 }
-                 }  catch (UnsupportedEncodingException e) {
-                 e.printStackTrace();
-                 } catch (ClientProtocolException e) {
-                 e.printStackTrace();
-                 } catch (IOException e) {
-                 e.printStackTrace();
-                 }
-                 **/
-                Looper.prepare();
-                Message msg = handler.obtainMessage();
-                try {
-                    String result = HttpRequestUtil.doHttpsPost(url + token, str);
-                    Log.d("订单号", result);
-                    if (result.contains("StatusCode is ")) {
-                        msg.obj = "error";
-                        msg.what = 2;
-                        handler.sendMessage(msg);
-                    } else {
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 2;
-                        handler.sendMessage(msg);
-                    }
-                } catch (Exception e) {
-                    msg.obj = "error";
-                    msg.what = 2;
-                    handler.sendMessage(msg);
-                    e.printStackTrace();
-                } finally {
-                    Looper.loop();
-                }
-
-            }
-        }.start();
+        return gson.toJson(aa);
     }
 
     /**
@@ -719,7 +690,7 @@ public class FamilyServiceActivity extends BaseActivity {
      * @param s
      * @return
      */
-    private String getResultTradeno(String s) {
+    private String getResultTradno(String s) {
         String str = "";
         try {
             JSONObject jsonObject = new JSONObject(s);

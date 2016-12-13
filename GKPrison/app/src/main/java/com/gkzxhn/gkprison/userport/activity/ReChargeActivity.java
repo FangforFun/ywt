@@ -2,11 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RadioButton;
@@ -14,10 +9,12 @@ import android.widget.RadioButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
+import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 
@@ -25,22 +22,34 @@ import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.Locale;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class ReChargeActivity extends BaseActivity {
-    private Button btn_recharge;
-    private RadioButton five;
-    private RadioButton twenty;
-    private RadioButton fifty;
-    private RadioButton hundred;
+
+    private static final String TAG = "ReChargeActivity";
+    @BindView(R.id.btn_recharge) Button btn_recharge;
+    @BindView(R.id.rb_five) RadioButton five;
+    @BindView(R.id.rb_twenty) RadioButton twenty;
+    @BindView(R.id.rb_fifty) RadioButton fifty;
+    @BindView(R.id.rb_hundred) RadioButton hundred;
     private String ip;
     private String money;
     private String TradeNo = "";
@@ -50,54 +59,29 @@ public class ReChargeActivity extends BaseActivity {
     private Gson gson;
     private String apply;
     private int jail_id;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String recharge = (String) msg.obj;
-                    if (recharge.equals("error")) {
-                        showToastMsgShort("上传数据失败");
-                    } else if (recharge.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String code = bundle.getString("result");
-                        TradeNo = getResultTradeno(code);
-                        int a = getResultcode(code);
-                        if (a == 200) {
-                            Intent intent = new Intent(ReChargeActivity.this, PaymentActivity.class);
-                            intent.putExtra("totalmoney", money);
-                            intent.putExtra("times", times);
-                            intent.putExtra("TradeNo", TradeNo);
-                            intent.putExtra("saletype", "视频充值");
-                            startActivity(intent);
-                        }
-                    }
-                    break;
-            }
-        }
-    };
 
     @Override
     protected View initView() {
         View view = View.inflate(getApplicationContext(), R.layout.activity_re_charge, null);
-        btn_recharge = (Button) view.findViewById(R.id.btn_recharge);
-        five = (RadioButton) view.findViewById(R.id.rb_five);
-        twenty = (RadioButton) view.findViewById(R.id.rb_twenty);
-        fifty = (RadioButton) view.findViewById(R.id.rb_fifty);
-        hundred = (RadioButton) view.findViewById(R.id.rb_hundred);
+        ButterKnife.bind(this, view);
         return view;
     }
 
     @Override
     protected void initData() {
-        setTitle("充值");
+        setTitle(getString(R.string.recharge));
         setBackVisibility(View.VISIBLE);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
         ip = getLocalHostIp();
-        btn_recharge.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        btn_recharge.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        super.onClick(v);
+        switch (v.getId()){
+            case R.id.btn_recharge:
                 if (Utils.isFastClick()) {
                     return;
                 }
@@ -113,18 +97,77 @@ public class ReChargeActivity extends BaseActivity {
                     showToastMsgShort("请选择充值金额");
                     return;
                 }
-                long time = System.currentTimeMillis();
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-                Date date = new Date(time);
-                times = format.format(date);
+                times = StringUtils.formatTime(System.currentTimeMillis(), "yyyy-MM-dd HH:mm:ss");
                 sendOrderToServer();
-            }
-        });
+                break;
+        }
     }
 
+    /**
+     * 发送汇款订单至服务器
+     */
     private void sendOrderToServer() {
+        String str = getOrderJsonStr();
+        String token = sp.getString("token", "");
+        Log.i(TAG, str + "-------" + token);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiRequest request = retrofit.create(ApiRequest.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), str);
+        request.sendOrder(jail_id, token, body)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override public void onCompleted() {}
+                    @Override public void onError(Throwable e) {
+                        showToastMsgShort("操作失败，请稍后再试！");
+                    }
+
+                    @Override public void onNext(ResponseBody responseBody) {
+                        try {
+                            String result = responseBody.string();
+                            Log.i(TAG, "send order result : " + result);
+                            int pass_code = getResultcode(result);
+                            if (pass_code == 200) {
+                                TradeNo = getResultTradeno(result);
+                                selectPayment();// 选择支付方式
+                            }else {
+                                // 其他情况就是等于500  超出每月800额度
+                                // {"code":500,"msg":"Create order failed","errors":{"order":["超出每月800元限额"]}}
+                                showToastMsgShort("上传数据失败");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            showToastMsgShort("上传数据失败");
+                        }
+                    }
+                });
+    }
+
+
+    /**
+     * 选择支付方式
+     */
+    private void selectPayment() {
+        Intent intent = new Intent(ReChargeActivity.this, PaymentActivity.class);
+        intent.putExtra("totalmoney", money);
+        intent.putExtra("times", times);
+        intent.putExtra("TradeNo", TradeNo);
+        intent.putExtra("saletype", "视频充值");
+        startActivity(intent);
+    }
+
+    /**
+     * 获取汇款订单json字符串
+     * @return
+     */
+    private String getOrderJsonStr() {
         int family_id = sp.getInt("family_id", 1);
-        final Order order = new Order();
+        Order order = new Order();
         order.setFamily_id(family_id);
         line_items_attributes lineitemsattributes = new line_items_attributes();
         lineitemsattributes.setItem_id(9988);
@@ -137,49 +180,16 @@ public class ReChargeActivity extends BaseActivity {
         order.setAmount(f);
         gson = new Gson();
         apply = gson.toJson(order);
-        Log.d("成功", apply);
-        final AA aa = new AA();
+        Log.d(TAG, apply);
+        AA aa = new AA();
         aa.setOrder(order);
-        final String str = gson.toJson(aa);
-
-        new Thread() {
-            @Override
-            public void run() {
-                String token = sp.getString("token", "");
-                //       HttpClient httpClient = new DefaultHttpClient();
-                //       HttpPost post = new HttpPost(url+token);
-                String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
-                String s = url + token;
-                Looper.prepare();
-                Message msg = handler.obtainMessage();
-                try {
-                    String result = HttpRequestUtil.doHttpsPost(url + token, str);
-                    Log.d("订单号", result);
-                    if (result.contains("StatusCode is ")) {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    } else {
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handler.sendMessage(msg);
-                    }
-                } catch (Exception e) {
-                    msg.obj = "error";
-                    msg.what = 1;
-                    handler.sendMessage(msg);
-                    e.printStackTrace();
-                } finally {
-                    Looper.loop();
-                }
-
-            }
-        }.start();
+        return gson.toJson(aa);
     }
 
+    /**
+     * 获取本地ip
+     * @return
+     */
     public String getLocalHostIp() {
         String ipaddress = "";
         try {
@@ -198,14 +208,11 @@ public class ReChargeActivity extends BaseActivity {
                         return ipaddress = ip.getHostAddress();
                     }
                 }
-
             }
         } catch (SocketException e) {
-            Log.e("feige", "获取本地ip地址失败");
             e.printStackTrace();
         }
         return ipaddress;
-
     }
 
     private String getResultTradeno(String s) {
@@ -230,5 +237,4 @@ public class ReChargeActivity extends BaseActivity {
         }
         return a;
     }
-
 }

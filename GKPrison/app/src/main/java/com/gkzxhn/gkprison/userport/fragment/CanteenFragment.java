@@ -9,12 +9,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -29,7 +27,6 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
@@ -37,6 +34,7 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -47,6 +45,7 @@ import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -62,11 +61,20 @@ import java.util.Random;
 import de.greenrobot.event.EventBus;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
+    private static final String TAG = "CanteenFragment";
     private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
@@ -140,44 +148,6 @@ public class CanteenFragment extends BaseFragment {
             }
         }
     };
-    private Handler handlerbilling = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    /**
-
-                     String s = (String)msg.obj;
-
-
-                     **/
-                    String billing = (String) msg.obj;
-                    if (billing.equals("error")) {
-                        showToastMsgShort("上传数据失败");
-                    } else if (billing.equals("success")) {
-                        Bundle bundle = msg.getData();
-                        String s = bundle.getString("result");
-                        TradeNo = getResultTradeno(s);
-                        String sql = "update Cart set total_money = '" + send + "',count = " + allcount + ",out_trade_no ='" + TradeNo + "'   where time = '" + times + "'";
-                        db.execSQL(sql);
-                        Log.d("订单号", TradeNo);
-                        int a = getResultcode(s);
-                        Log.d("订单号", a + "");
-                        if (a == 200) {
-                            settlement.setEnabled(true);
-                            Intent intent = new Intent(context, PaymentActivity.class);
-                            intent.putExtra("totalmoney", send);
-                            intent.putExtra("TradeNo", TradeNo);
-                            intent.putExtra("times", times);
-                            intent.putExtra("cart_id", cart_id);
-                            intent.putExtra("bussiness", "(含配送费2元)");
-                            context.startActivity(intent);
-                        }
-                    }
-                    break;
-            }
-        }
-    };
 
     private String getResultTradeno(String s) {
         String str = "";
@@ -189,11 +159,6 @@ public class CanteenFragment extends BaseFragment {
             e.printStackTrace();
         }
         return str;
-    }
-
-    @Override
-    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        return super.onCreateAnimation(transit, enter, nextAnim);
     }
 
     @Override
@@ -623,9 +588,72 @@ public class CanteenFragment extends BaseFragment {
         }
     }
 
+    /**
+     * 发送至服务器
+     */
     private void sendOrderToServer() {
+        String str = getOrderJsonStr();
+        String token = sp.getString("token", "");
+        Log.i(TAG, str + "-------" + token);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiRequest request = retrofit.create(ApiRequest.class);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), str);
+        request.sendOrder(jail_id, token, body)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ResponseBody>() {
+                    @Override public void onCompleted() {}
+                    @Override public void onError(Throwable e) {
+                        Log.e(TAG, e.getMessage());
+                        showToastMsgShort("上传数据失败");
+                    }
+
+                    @Override public void onNext(ResponseBody responseBody) {
+                        try {
+                            String result = responseBody.string();
+                            Log.i(TAG, "send order result : " + result);
+                            int pass_code = getResultcode(result);
+                            String sql = "update Cart set total_money = '" + send +
+                                    "',count = " + allcount + ",out_trade_no ='" + TradeNo
+                                    + "'   where time = '" + times + "'";
+                            db.execSQL(sql);
+                            if (pass_code == 200) {
+                                TradeNo = getResultTradeno(result);
+                                selectPayment();// 选择支付方式
+                            }else {
+                                showToastMsgShort("上传数据失败");
+                            }
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                            showToastMsgShort("上传数据失败");
+                        }
+                    }
+                });
+    }
+
+    private void selectPayment() {
+        settlement.setEnabled(true);
+        Intent intent = new Intent(context, PaymentActivity.class);
+        intent.putExtra("totalmoney", send);
+        intent.putExtra("TradeNo", TradeNo);
+        intent.putExtra("times", times);
+        intent.putExtra("cart_id", cart_id);
+        intent.putExtra("bussiness", "(含配送费2元)");
+        context.startActivity(intent);
+    }
+
+    /**
+     * 获取汇款订单json字符串
+     * @return
+     */
+    private String getOrderJsonStr() {
         int family_id = sp.getInt("family_id", 1);
-        final Order order = new Order();
+        Order order = new Order();
         order.setFamily_id(family_id);
         order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(jail_id);
@@ -635,67 +663,9 @@ public class CanteenFragment extends BaseFragment {
         gson = new Gson();
         apply = gson.toJson(order);
         Log.d("结算发送", apply);
-        final AA aa = new AA();
+        AA aa = new AA();
         aa.setOrder(order);
-        final String str = gson.toJson(aa);
-        final String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
-        new Thread() {
-            @Override
-            public void run() {
-                String token = sp.getString("token", "");
-                // HttpClient httpClient = new DefaultHttpClient();
-                //HttpPost post = new HttpPost(url+token);
-                String s = url + token;
-                Looper.prepare();
-                Message msg = handlerbilling.obtainMessage();
-                /**
-                 try {
-                 StringEntity entity = new StringEntity(str);
-                 entity.setContentType("application/json");
-                 entity.setContentEncoding("UTF-8");
-                 post.setEntity(entity);
-                 HttpResponse response = httpClient.execute(post);
-                 if (response.getStatusLine().getStatusCode() == 200){
-                 result = EntityUtils.toString(response.getEntity(), "UTF-8");
-                 Log.d("成功",result);
-                 msg.what = 1;
-                 msg.obj = result;
-                 handlerbilling.sendMessage(msg);
-                 }else {
-                 handlerbilling.sendEmptyMessage(2);
-                 }
-                 }  catch (Exception e) {
-                 handlerbilling.sendEmptyMessage(3);
-                 e.printStackTrace();
-                 } finally {
-                 Looper.loop();
-                 }
-                 **/
-                try {
-                    String result = HttpRequestUtil.doHttpsPost(s, str);
-                    Log.d("返回订单号", result);
-                    if (result.contains("StatusCode is")) {
-                        msg.obj = "error";
-                        msg.what = 1;
-                        handlerbilling.sendMessage(msg);
-                    } else {
-                        msg.obj = "success";
-                        Bundle bundle = new Bundle();
-                        bundle.putString("result", result);
-                        msg.setData(bundle);
-                        msg.what = 1;
-                        handlerbilling.sendMessage(msg);
-                    }
-                } catch (Exception e) {
-                    msg.obj = "error";
-                    msg.what = 1;
-                    handlerbilling.sendMessage(msg);
-                    e.printStackTrace();
-                } finally {
-                    Looper.loop();
-                }
-            }
-        }.start();
+        return gson.toJson(aa);
     }
 
 

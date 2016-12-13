@@ -49,4 +49,15 @@ public class Prison {
     public void setPrison_term_ended_at(String prison_term_ended_at) {
         this.prison_term_ended_at = prison_term_ended_at;
     }
+
+    @Override
+    public String toString() {
+        return "Prison{" +
+                "prisoner_number='" + prisoner_number + '\'' +
+                ", gender='" + gender + '\'' +
+                ", crimes='" + crimes + '\'' +
+                ", prison_term_started_at='" + prison_term_started_at + '\'' +
+                ", prison_term_ended_at='" + prison_term_ended_at + '\'' +
+                '}';
+    }
 }

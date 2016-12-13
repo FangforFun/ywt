@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.userport.requests;
 
 import com.gkzxhn.gkprison.userport.bean.Balance;
 import com.gkzxhn.gkprison.userport.bean.News;
+import com.gkzxhn.gkprison.userport.bean.PrisonerInfo;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 
 import java.util.List;
@@ -87,4 +88,44 @@ public interface ApiRequest {
     Observable<ResponseBody> sendMeetingRequest(
             @Query("access_token") String token,
             @Body RequestBody body);
+
+    /**
+     * 发送支付方式
+     * @param jail_id
+     * @param access_token
+     * @param body
+     * @return
+     */
+    @Headers({"Content-Type:application/json", "Accept:application/json"})
+    @POST("prepay")
+    Observable<ResponseBody> sendPaymentType(
+            @Query("jail_id") String jail_id,
+            @Query("access_token") String access_token,
+            @Body RequestBody body
+    );
+
+    /**
+     * 家属服务 获取囚犯信息
+     * @param access_token
+     * @return
+     */
+    @GET("services")
+    Observable<PrisonerInfo> getPrisonerInfo(
+            @Query("access_token") String access_token
+    );
+
+    /**
+     * 汇款订单
+     * @param jail_id
+     * @param token
+     * @param body
+     * @return
+     */
+    @Headers({"Content-Type:application/json", "Accept:application/json"})
+    @POST("orders")
+    Observable<ResponseBody> sendOrder(
+            @Query("jail_id") int jail_id,
+            @Query("access_token") String token,
+            @Body RequestBody body
+    );
 }
