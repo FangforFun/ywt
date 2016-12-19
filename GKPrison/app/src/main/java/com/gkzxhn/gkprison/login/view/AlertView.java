@@ -28,7 +28,7 @@ import java.util.List;
  * 点击取消按钮返回 －1，其他按钮从0开始算
  */
 public class AlertView {
-    public static enum Style{
+    public enum Style{
         ActionSheet,
         Alert
     }
@@ -46,7 +46,6 @@ public class AlertView {
     private String title;
     private String msg;
     private List<String> mDestructive;
-    private List<String> mOthers;
     private String cancel;
     private ArrayList<String> mDatas = new ArrayList<String>();
 
@@ -89,7 +88,7 @@ public class AlertView {
             this.mDatas.addAll(mDestructive);
         }
         if (others != null){
-            this.mOthers = Arrays.asList(others);
+            List<String> mOthers = Arrays.asList(others);
             this.mDatas.addAll(mOthers);
         }
         if (cancel != null){

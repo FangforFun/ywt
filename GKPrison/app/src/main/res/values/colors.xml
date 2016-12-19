@@ -18,8 +18,6 @@
     <color name="item_press">#eeeeee</color>
     <color name="orange_bg">#FD5D2B</color>
     <color name="canlendar_text_color">#323232</color>
-    <color name="color_c2364b">#C2364B</color>
-    <color name="color_f5455e">#F5455E</color>
     <color name="navpage">#FFE1E8EB</color>
 
     <color name="gplus_color_1">#3e802f</color>
@@ -63,4 +61,24 @@
     <color name="success_stroke_color">#6495ed</color><!-- #A5DC86 -->
     <color name="trans_success_stroke_color">#33A5DC86</color>
     <color name="warning_stroke_color">#F8BB86</color>
+
+    // keda
+    <color name="red">#FF0000</color>
+
+    <!-- gray -->
+    <color name="gray_484848">#484848</color>
+
+    <!-- c -->
+    <!-- meeting list -->
+
+    <color name="grey">#ff58616d</color>
+
+    <!-- black -->
+
+    <!-- blue -->
+    <color name="blue_008ccd">#008ccd</color>
+
+    <!-- color -->
+    <color name="color_78">#FF787878</color>
+    <color name="color_a1">#FFa1a1a1</color>
 </resources>

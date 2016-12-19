@@ -10,8 +10,7 @@ public class BankPayActivity extends BaseActivity {
 
     @Override
     protected View initView() {
-        View view = View.inflate(this,R.layout.activity_bank_pay,null);
-        return view;
+        return View.inflate(this,R.layout.activity_bank_pay,null);
     }
 
     @Override

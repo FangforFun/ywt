@@ -24,6 +24,7 @@ import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -143,6 +144,7 @@ public class PrisonOpenActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
         ButterKnife.bind(this, view);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
@@ -204,11 +206,18 @@ public class PrisonOpenActivity extends BaseActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
+
     /**
      * 获取新闻
      */
     private void getNews(final int getType) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             if (getType == 0) {// 进入页面
                 showProgressDialog();
             }else if (getType == 2) {// 上拉加载

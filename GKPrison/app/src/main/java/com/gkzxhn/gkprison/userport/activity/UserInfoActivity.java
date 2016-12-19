@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,6 +9,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.keda.sky.app.PcAppStackManager;
 
 /**
  * created by huangzhengneng on 2016/1/14
@@ -25,6 +25,7 @@ public class UserInfoActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_user_info, null);
         lv_user_info = (ListView) view.findViewById(R.id.lv_user_info);
         return view;
@@ -104,4 +105,11 @@ public class UserInfoActivity extends BaseActivity {
         TextView tv_user_info_left;
         TextView tv_user_info_right;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

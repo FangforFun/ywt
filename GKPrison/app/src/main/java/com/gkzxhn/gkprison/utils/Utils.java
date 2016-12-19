@@ -10,8 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-import com.gkzxhn.gkprison.avchat.DemoCache;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
@@ -64,7 +62,7 @@ public class Utils {
     private static long lastClickTime;
     private static final String TAG = "SDK_Sample.Util";
 
-    public static final boolean isChineseCharacter(String chineseStr) {
+    public static boolean isChineseCharacter(String chineseStr) {
         char[] charArray = chineseStr.toCharArray();
         for (int i = 0; i < charArray.length; i++) {
             // 是否是Unicode编码,除了"�"这个字符.这个字符要另外处理
@@ -114,8 +112,7 @@ public class Utils {
     public static String dateFormat(String sdate, String format) {
         SimpleDateFormat formatter = new SimpleDateFormat(format, Locale.getDefault());
         java.sql.Date date = java.sql.Date.valueOf(sdate);
-        String dateString = formatter.format(date);
-        return dateString;
+        return formatter.format(date);
     }
 
 
@@ -209,10 +206,8 @@ public class Utils {
      * 网络是否可用
      * @return
      */
-    public static boolean isNetworkAvailable(){
-        Context context = DemoCache.getContext();
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                context.getSystemService(context.CONNECTIVITY_SERVICE);
+    public static boolean isNetworkAvailable(Context context){
+        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {
@@ -231,8 +226,7 @@ public class Utils {
      *
      * @return
      */
-    public static int getStatusHeight() {
-        Context context = DemoCache.getContext();
+    public static int getStatusHeight(Context context) {
         int statusHeight = -1;
         try {
             Class clazz = Class.forName("com.android.internal.R$dimen");
@@ -272,7 +266,7 @@ public class Utils {
         } else if (IDStr.length() == 15) {
             Ai = IDStr.substring(0, 6) + "19" + IDStr.substring(6, 15);
         }
-        if (isNumeric(Ai) == false) {
+        if (isNumeric(Ai)) {
             errorInfo = "身份证15位号码都应为数字 ; 18位号码除最后一位外，都应为数字。";
             return errorInfo;
         }
@@ -321,7 +315,7 @@ public class Utils {
         Ai = Ai + strVerifyCode;
 
         if (IDStr.length() == 18) {
-            if (Ai.equals(IDStr) == false) {
+            if (Ai.equals(IDStr)) {
                 errorInfo = "身份证无效，不是合法的身份证号码";
                 return errorInfo;
             }
@@ -350,8 +344,8 @@ public class Utils {
      * 功能：设置地区编码
      * @return Hashtable 对象
      */
-    public static Hashtable GetAreaCode() {
-        Hashtable hashtable = new Hashtable();
+    private static Hashtable GetAreaCode() {
+        Hashtable<String, String> hashtable = new Hashtable<String, String>();
         hashtable.put("11", "北京");
         hashtable.put("12", "天津");
         hashtable.put("13", "河北");

@@ -9,8 +9,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-
-import java.util.List;
+import android.util.Log;
 
 /**
  * Created by zhengneng on 2015/12/18.
@@ -22,7 +21,7 @@ public class SystemUtil {
      * @param context
      * @return 进程名
      */
-    public static final String getProcessName(Context context) {
+    public static String getProcessName(Context context) {
         String processName = null;
         // ActivityManager
         ActivityManager am = ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE));
@@ -140,29 +139,6 @@ public class SystemUtil {
      * @return 平板返回 True，手机返回 False
      */
     public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout
-                & Configuration.SCREENLAYOUT_SIZE_MASK) >=
-                Configuration.SCREENLAYOUT_SIZE_LARGE;
-    }
-
-    /**
-     * 判断app是否处于前台
-     * @param context
-     * @return
-     */
-    public static boolean isForeground(Context context){
-        if (context != null){
-            ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-            List<ActivityManager.RunningAppProcessInfo> apps = activityManager.getRunningAppProcesses();
-            for (ActivityManager.RunningAppProcessInfo info : apps) {
-                Log.d("info.processName : " + info.processName + "----" + "packageName: " + context.getPackageName());
-                if (info.processName.equals(context.getPackageName())){
-                    if (info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND){
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }

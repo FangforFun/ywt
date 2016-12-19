@@ -19,9 +19,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 public class AlarmActivity extends BaseActivity {
 
     private ImageView iv_alarm_icon;
-    private TextView tv_alarm_time;
     private TextView tv_alarm_stop;
-    private TextView tv_alarm_remind;
     private Vibrator vibrator;
     private MediaPlayer player;
     private Handler handler = new Handler();
@@ -31,9 +29,7 @@ public class AlarmActivity extends BaseActivity {
     protected View initView() {
         View view = View.inflate(this, R.layout.activity_alarm, null);
         iv_alarm_icon = (ImageView) view.findViewById(R.id.iv_alarm_icon);
-        tv_alarm_time = (TextView) view.findViewById(R.id.tv_alarm_time);
         tv_alarm_stop = (TextView) view.findViewById(R.id.tv_alarm_stop);
-        tv_alarm_remind = (TextView) view.findViewById(R.id.tv_alarm_remind);
         return view;
     }
 

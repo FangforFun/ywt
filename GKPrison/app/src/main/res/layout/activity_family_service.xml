@@ -45,7 +45,7 @@
             android:textSize="16sp"
             android:textColor="#333333"
             android:layout_alignBaseline="@+id/tv_prisonnum"
-            android:text="未知"
+            android:text="男"
             android:layout_toRightOf="@+id/tv_mail"
             />
         <TextView
@@ -67,7 +67,7 @@
             android:layout_alignBaseline="@+id/tv_crime"
             android:textSize="16sp"
             android:textColor="#333333"
-            android:text="未知"
+            android:text="抢劫罪"
             />
         <TextView
             android:id="@+id/tv_sentence"
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="#333333"
-            android:text="xxxx"
+            android:text="2011"
             android:layout_alignBaseline="@+id/tv_sentence"
             android:layout_toRightOf="@+id/tv_sentence"/>
         <TextView
@@ -104,7 +104,7 @@
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="@color/tv_bg"
-            android:text="xxxx"
+            android:text="2012"
             android:layout_toRightOf="@+id/tv_zhi"
             android:layout_alignBaseline="@+id/tv_sentence_time"/>
         <TextView
@@ -126,7 +126,7 @@
             android:layout_toRightOf="@+id/tv_balance"
             android:layout_alignBaseline="@+id/tv_balance"
             android:textColor="#1f9300"
-            android:text="0"/>
+            android:text="10000"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -154,7 +154,7 @@
             android:layout_toLeftOf="@+id/tv_danwei"
             android:layout_alignBaseline="@+id/tv_balance"
             android:textColor="#1f9300"
-            android:text="0"/>
+            android:text="400"/>
         <TextView
             android:id="@+id/tv_keyong"
             android:layout_width="wrap_content"

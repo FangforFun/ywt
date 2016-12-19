@@ -1,7 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -14,6 +13,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.keda.sky.app.PcAppStackManager;
 
 public class RemittanceWaysActivity extends BaseActivity {
 
@@ -29,11 +29,19 @@ public class RemittanceWaysActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_remittance_ways, null);
         lv_remittance_way = (ListView) view.findViewById(R.id.lv_remittance_way);
         bt_next = (Button) view.findViewById(R.id.bt_next);
         return view;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     protected void initData() {
@@ -66,17 +74,17 @@ public class RemittanceWaysActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_next:
-                if (ischeckeds[0] == true){
+                if (ischeckeds[0]){
 
                     Intent intent = new Intent(RemittanceWaysActivity.this,BankPayActivity.class);
                     RemittanceWaysActivity.this.startActivity(intent);
-                }else if (ischeckeds[1] == true){
+                }else if (ischeckeds[1]){
                     Intent intent = new Intent(RemittanceWaysActivity.this,ZhifubaoPayActivity.class);
                     intent.putExtra("price",money);
                     intent.putExtra("outorderno",TradeNo);
                     intent.putExtra("times",times);
                     RemittanceWaysActivity.this.startActivity(intent);
-                }else if (ischeckeds[2] == true){
+                }else if (ischeckeds[2]){
 
                     Intent intent = new Intent(RemittanceWaysActivity.this,WeixinPayActivity.class);
                     RemittanceWaysActivity.this.startActivity(intent);

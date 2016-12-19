@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -48,6 +49,7 @@ public class WriteMessageActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_write_message, null);
         et_theme = (EditText) view.findViewById(R.id.et_theme);
         et_content = (EditText) view.findViewById(R.id.et_content);
@@ -80,7 +82,7 @@ public class WriteMessageActivity extends BaseActivity {
                     showToastMsgShort("请输入内容");
                     return;
                 } else {
-                    if (Utils.isNetworkAvailable()) {
+                    if (Utils.isNetworkAvailable(this)) {
                         sendMessage();
                     } else {
                         showToastMsgShort("没有网络,请检查网络设置");
@@ -263,4 +265,11 @@ public class WriteMessageActivity extends BaseActivity {
             }
         }
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.userport.fragment.InterractiveMailboxFragment;
 import com.gkzxhn.gkprison.userport.fragment.ReplyPublicityFragment;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +37,7 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        PcAppStackManager.Instance().pushActivity(this);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_prison_warden);
         sp = getSharedPreferences("config", MODE_PRIVATE);
@@ -62,6 +64,13 @@ public class PrisonWardenActivity extends FragmentActivity implements View.OnCli
         adapter.addFragment(new InterractiveMailboxFragment(), "投诉反馈");
         viewPager.setAdapter(adapter);
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     public void onClick(View v) {

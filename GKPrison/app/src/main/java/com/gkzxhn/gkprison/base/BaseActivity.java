@@ -12,9 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.PcAppStackManager;
 import com.gkzxhn.gkprison.login.view.NiceSpinner;
-import com.umeng.analytics.MobclickAgent;
 
 /**
  * activity基类
@@ -44,7 +42,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        PcAppStackManager.Instance().pushActivity(this);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         setContentView(R.layout.activity_base);
         ly_title_bar = findViewById(R.id.ly_title_bar);
@@ -74,19 +71,11 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     protected void onResume() {
         super.onResume();
-        MobclickAgent.onResume(this);// 统计时长
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        MobclickAgent.onPause(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this);
-        super.onDestroy();
     }
 
     /**

@@ -118,6 +118,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                             adapter = new SalesAdapter(context, commodities);
                             lv_sale.setAdapter(adapter);
                         }
+                        cursor.close();
                     }
                     break;
                 case 2:
@@ -159,6 +160,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                             loadmore.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
+                        cursor1.close();
                     } else {
                         showToastMsgShort("已到最后一页");
                         loadmore.setVisibility(View.GONE);
@@ -232,6 +234,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         while (cursor.moveToNext()) {
             cart_id = cursor.getInt(cursor.getColumnIndex("id"));
         }
+        cursor.close();
         if (category_id == 0) {
             url = Constants.URL_HEAD + "items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id;
             Log.d("ff", url);
@@ -353,8 +356,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -376,8 +378,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -399,8 +400,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -422,8 +422,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -524,7 +523,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
-
+                    cursor.close();
                     Message msg = handler.obtainMessage();
                     msg.obj = qty;
                     msg.what = 1;
@@ -558,6 +557,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
+                    cursor.close();
                     Message msg = handler.obtainMessage();
                     msg.obj = qty;
                     msg.what = 2;

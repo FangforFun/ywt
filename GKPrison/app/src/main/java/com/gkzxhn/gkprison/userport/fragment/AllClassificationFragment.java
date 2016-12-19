@@ -35,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +52,8 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private ListView lv_allclass;
     private SalesAdapter adapter;
     private List<Commodity> commodities = new ArrayList<Commodity>();
-    private float count = 0;
     private int cart_id;
-    private String tv_count = "0.0";
     private int qty = 0;
-    private static final String TAG = "AllClassification";
     private RelativeLayout xiala;
     private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
     private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
@@ -65,17 +61,12 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     private int jail_id;
     private int page;
     private ImageView iv_nothing;//当商品列表没有数据时加载；
-    private List<Commodity> addcommdity = new ArrayList<>();
     private View loadmore;
     private int visibleLastIndex = 0; //最后的可视索引；
-    private int visibleItemCount;//当前窗口可见项总数；
     private int Items_id = 0;
     private int category_id;
-    private SharedPreferences sp;
     private String url;
-    private int eventint = 0;//接收点击事件传来的数据
     OkHttpClient client = new OkHttpClient();
-    private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -111,11 +102,12 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                             adapter = new SalesAdapter(context, commodities);
                             lv_allclass.setAdapter(adapter);
                         }
+                        cursor.close();
                     }
                     break;
                 case 2:
                     String add = (String) msg.obj;
-                    addcommdity = analysiscommodity(add);
+                    List<Commodity> addcommdity = analysiscommodity(add);
                     for (int i = 0; i < commodities.size(); i++) {
                         for (int j = 0; j < addcommdity.size(); j++) {
                             if (commodities.get(i).getId() == addcommdity.get(j).getId()) {
@@ -141,6 +133,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                             loadmore.setVisibility(View.GONE);
                             adapter.notifyDataSetChanged();
                         }
+                        cursor1.close();
                     } else {
                         showToastMsgShort("已到最后一页");
                         loadmore.setVisibility(View.GONE);
@@ -170,7 +163,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
     @Override
     protected void initData() {
         EventBus.getDefault().register(this);
-        sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
+        SharedPreferences sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 1);
         token = sp.getString("token", "");
         lv_allclass.addFooterView(loadmore);
@@ -191,7 +184,6 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
@@ -204,6 +196,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
         while (cursor.moveToNext()) {
             cart_id = cursor.getInt(cursor.getColumnIndex("id"));
         }
+        cursor.close();
         category_id = bundle.getInt("leibie", 1);
         Log.d("dd", category_id + "");
         if (category_id == 0) {
@@ -310,8 +303,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -333,8 +325,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -356,8 +347,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -379,8 +369,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                         Message msg = handler.obtainMessage();
                         Response response = client.newCall(request).execute();
                         if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            msg.obj = result;
+                            msg.obj = response.body().string();
                             msg.what = 2;
                             handler.sendMessage(msg);
                         }
@@ -509,6 +498,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
+                    cursor.close();
                     Message msg = handler.obtainMessage();
                     msg.obj = qty;
                     msg.what = 1;
@@ -542,6 +532,7 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
+                    cursor.close();
                     Message msg = handler.obtainMessage();
                     msg.obj = qty;
                     msg.what = 2;
@@ -552,14 +543,11 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
                 }
             });
             String t = Constants.RESOURSE_HEAD + commodities.get(position).getAvatar_url();
-            Log.i(TAG, "sales image: " + t);
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
             viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
             viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
-            DecimalFormat fnum = new DecimalFormat("####0.0");
-            tv_count = fnum.format(count);
             return convertView;
         }
 
@@ -586,8 +574,8 @@ public class AllClassificationFragment extends BaseFragment implements AbsListVi
 
     public void onEvent(ClickEven1 even1) {
 
-        eventint = even1.getDelete();
-        eventlist = even1.getList();
+        int eventint = even1.getDelete();//接收点击事件传来的数据
+        List<Integer> eventlist = even1.getList();//接收点击事件传来的数据
         if (eventint == 0) {
             int id = eventlist.get(0);
             int qty = eventlist.get(1);

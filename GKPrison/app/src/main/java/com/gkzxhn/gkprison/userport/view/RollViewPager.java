@@ -37,7 +37,7 @@ public class RollViewPager extends ViewPager {
 			RollViewPager.this.setCurrentItem(currentPosition);
 			// 循环滚动，继续发消息
 			startRoll();
-		};
+		}
 	};
 	private RunnableTask runnableTask;
 	private int downX;
@@ -69,7 +69,7 @@ public class RollViewPager extends ViewPager {
 		 * 
 		 * @param position
 		 */
-		public void viewClick(int position);
+		void viewClick(int position);
 	}
 
 	// 当view移出界面的时候调用

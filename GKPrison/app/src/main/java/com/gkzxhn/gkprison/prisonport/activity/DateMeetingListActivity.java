@@ -39,6 +39,8 @@ import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
+import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.StatusCode;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -99,7 +101,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     @BindView(R.id.scrollView)
     ScrollView scrollView;
     private int mCurrentIndex = 498;
-    private CalendarCard[] mShowViews;
     private CalendarViewAdapter<CalendarCard> adapter;
     private SildeDirection mDirection = SildeDirection.NO_SILDE;
     private MeetingListAdapter meetingListAdapter;
@@ -111,7 +112,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     private ProgressDialog progressDialog;
     private List<MeetingInfo> meetingInfos;
     private AlertDialog cancel_meeting_dialog;// 取消会见对话框
-    private int[] screenWidthHeight;// 屏幕宽带
     private Handler handler = new Handler();
 
     private Runnable dismissProgressDialogTask = new Runnable() {
@@ -147,12 +147,13 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     }
 
     enum SildeDirection {
-        RIGHT, LEFT, NO_SILDE;
+        RIGHT, LEFT, NO_SILDE
     }
 
     @Override
     protected View initView() {
-        screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
+        PcAppStackManager.Instance().pushActivity(this);
+        int[] screenWidthHeight = DensityUtil.getScreenWidthHeight(this);// 屏幕宽带
         View view;
         if (screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) {
             view = View.inflate(this, R.layout.activity_date_meeting_list, null);
@@ -213,12 +214,18 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         fl_transparent.setOnClickListener(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
     /**
      * 判断当前云信id状态
      */
     private void checkStatusCode(StatusCode code) {
         if (code == StatusCode.KICKOUT) {// 被其他端挤掉
-//            showKickoutDialog();
+            showKickoutDialog();
         } else if (code == StatusCode.CONNECTING) {// 正在连接
             showToastMsgShort("正在连接...");
         } else if (code == StatusCode.LOGINING) {// 正在登录
@@ -235,7 +242,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
     /**
      * 云信id在其他设备登录
      */
-    public void showKickoutDialog() {
+    private void showKickoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("账号下线提示");
         builder.setCancelable(false);
@@ -245,7 +252,6 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                SPUtil.clear(DateMeetingListActivity.this);
                 // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
                 SPUtil.put(DateMeetingListActivity.this, "is_first", false);
                 startActivity(intent);
@@ -275,7 +281,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      * 请求会见列表数据
      */
     private void requestData(String date) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             handler.post(rotateTask);
             ll_loading.setVisibility(View.VISIBLE);
             tv_loading.setText("正在刷新...");
@@ -422,9 +428,10 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                         SPUtil.clear(DateMeetingListActivity.this);
                         SharedPreferences.Editor editor = sp.edit();
                         editor.clear();
-                        editor.commit();
+                        editor.apply();
                         startActivity(intent);
                         NIMClient.getService(AuthService.class).logout();
+                        TruetouchGlobal.logOff();
                     }
                 });
                 dialog.show();
@@ -455,7 +462,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
 
     // 更新日历视图
     private void updateCalendarView(int arg0) {
-        mShowViews = adapter.getAllItems();
+        CalendarCard[] mShowViews = adapter.getAllItems();
         if (mDirection == SildeDirection.RIGHT) {
             mShowViews[arg0 % mShowViews.length].rightSlide();
         } else if (mDirection == SildeDirection.LEFT) {
@@ -550,7 +557,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
      * 发送取消会见至服务器
      */
     private void sendCancelMeetingToServer(final int position, int id, String reason) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             initAndShowDialog();
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(Constants.URL_HEAD)

@@ -248,4 +248,15 @@
         <item name="progress_reached_bar_height">1.5dp</item>
         <item name="progress_unreached_bar_height">0.75dp</item>
     </style>
+
+    <!-- Application theme. -->
+    <style name="TT.ToggleButton" parent="">
+        <item name="android:textOff">@string/off</item>
+        <item name="android:textOn">@string/on</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">34dip</item>
+        <item name="android:textSize">@dimen/SmallerTextSize</item>
+        <item name="android:background">@drawable/btn_toggle_selector</item>
+    </style>
+
 </resources>

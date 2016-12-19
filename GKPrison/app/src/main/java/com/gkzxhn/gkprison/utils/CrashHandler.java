@@ -6,6 +6,10 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
+import android.widget.Toast;
+
+import com.gkzxhn.gkprison.BuildConfig;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -97,14 +101,16 @@ public class CrashHandler implements UncaughtExceptionHandler {
             return false;
         }
         //使用Toast来显示异常信息
-//        new Thread() {
-//            @Override
-//            public void run() {
-//                Looper.prepare();
-////                Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
-//                Looper.loop();
-//            }
-//        }.start();
+        new Thread() {
+            @Override
+            public void run() {
+                Looper.prepare();
+                if (BuildConfig.DEBUG) {
+                    Toast.makeText(mContext, "很抱歉,程序出现异常,即将退出.", Toast.LENGTH_LONG).show();
+                }
+                Looper.loop();
+            }
+        }.start();
         //收集设备参数信息
         collectDeviceInfo(mContext);
         //保存日志文件
@@ -173,10 +179,10 @@ public class CrashHandler implements UncaughtExceptionHandler {
             String time = formatter.format(new Date());
             String fileName = "crash-" + time + "-" + timestamp + ".log";
             if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
-                String path = Environment.getExternalStorageDirectory().getPath() + "/aprison-nim-log";
+                String path = Environment.getExternalStorageDirectory().getPath() + "/agkzxhn";
                 File dir = new File(path);
                 if (!dir.exists()) {
-                    dir.mkdirs();
+                    boolean isSuccess = dir.mkdirs();
                 }
                 FileOutputStream fos = new FileOutputStream(path + "/" +fileName);
                 fos.write(sb.toString().getBytes());

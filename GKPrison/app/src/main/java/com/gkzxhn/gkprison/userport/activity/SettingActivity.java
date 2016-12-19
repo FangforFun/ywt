@@ -13,6 +13,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.keda.sky.app.PcAppStackManager;
 import com.zcw.togglebutton.ToggleButton;
 
 import butterknife.BindView;
@@ -47,6 +48,7 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
         ButterKnife.bind(this, view);
         return view;
@@ -78,6 +80,13 @@ public class SettingActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     /**
      * 打开/关闭密码设置
@@ -145,7 +154,6 @@ public class SettingActivity extends BaseActivity {
 
     @OnClick({R.id.rl_opinion_feedback, R.id.rl_version_update, R.id.tv_agreement, R.id.tv_contact_us})
     public void onClick(View view) {
-        super.onClick(view);
         Intent intent;
         switch (view.getId()) {
             case R.id.rl_opinion_feedback:

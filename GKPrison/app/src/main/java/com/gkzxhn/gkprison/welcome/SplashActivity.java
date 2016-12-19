@@ -1,9 +1,5 @@
 package com.gkzxhn.gkprison.welcome;
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
@@ -15,28 +11,15 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
-import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
 import com.gkzxhn.gkprison.userport.db.SQLitehelp;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
-import com.google.gson.Gson;
-import com.lidroid.xutils.HttpUtils;
-import com.lidroid.xutils.exception.HttpException;
-import com.lidroid.xutils.http.ResponseInfo;
-import com.lidroid.xutils.http.callback.RequestCallBack;
-import com.lidroid.xutils.http.client.HttpRequest;
-import com.umeng.analytics.MobclickAgent;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 
 /**
  * created by huangzhengneng on 2015/12/22
@@ -97,7 +80,6 @@ public class SplashActivity extends BaseActivity {
     protected void initData() {
         help = new SQLitehelp(this);
         db = help.getWritableDatabase();
-        MobclickAgent.openActivityDurationTrack(false);
         sp = getSharedPreferences("config", MODE_PRIVATE);
         tv_version.setText("V " + SystemUtil.getVersionName(this));
         new Handler().postDelayed(new Runnable() {

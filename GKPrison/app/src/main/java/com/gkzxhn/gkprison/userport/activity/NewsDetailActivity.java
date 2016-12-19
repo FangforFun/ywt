@@ -20,6 +20,7 @@ import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.keda.sky.app.PcAppStackManager;
 
 import org.json.JSONObject;
 
@@ -41,7 +42,6 @@ public class NewsDetailActivity extends BaseActivity {
     private static final String TAG = "NewsDetailActivity";
     private WebView wv_news_detail;
     private NumberProgressBar npb_loading;
-    private String webUrl;
     private int type;
     private int id;// 新闻id
 
@@ -51,11 +51,9 @@ public class NewsDetailActivity extends BaseActivity {
     private Button bt_comment;
     private TextView tv_comments;
 
-    // 评论内容
-    private String comment_content;
-
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_news_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
         npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
@@ -76,6 +74,7 @@ public class NewsDetailActivity extends BaseActivity {
         id = getIntent().getIntExtra("id",-1);
         // type=0 首页轮播图  type=1 新闻  默认为1
         type = getIntent().getIntExtra("type", 1);
+        String webUrl;
         if(type == 1) {
             webUrl = Constants.RESOURSE_HEAD + "/news/" + id;
         }else {
@@ -115,6 +114,13 @@ public class NewsDetailActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
+
+    @Override
     public void onBackPressed() {
         if(wv_news_detail.canGoBack()){
             wv_news_detail.goBack();
@@ -128,7 +134,7 @@ public class NewsDetailActivity extends BaseActivity {
         super.onClick(v);
         switch (v.getId()){
             case R.id.bt_comment:
-                comment_content = et_comment.getText().toString().trim();
+                String comment_content = et_comment.getText().toString().trim();
                 if(TextUtils.isEmpty(comment_content)){
                     showToastMsgShort("输入您要评论的内容吧");
                     return;

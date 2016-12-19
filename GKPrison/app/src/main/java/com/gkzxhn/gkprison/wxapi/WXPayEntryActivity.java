@@ -137,8 +137,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                             httpPatch.setEntity(entity);
                             HttpResponse response = httpClient.execute(httpPatch);
                             if (response.getStatusLine().getStatusCode() == 200) {
-                                String result = EntityUtils.toString(response.getEntity(), "utf-8");
-                                msg.obj = result;
+                                msg.obj = EntityUtils.toString(response.getEntity(), "utf-8");
                                 msg.what = 1;
                                 handler.sendMessage(msg);
                             } else {
@@ -243,7 +242,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         char[] chars = new char[len];
         Random random = new Random();
         for (int i = 0; i < len; i++) {
-            if (random.nextBoolean() == true) {
+            if (random.nextBoolean()) {
                 chars[i] = (char) (random.nextInt(25) + 97);
             } else {
                 chars[i] = (char) (random.nextInt(9) + 48);

@@ -85,7 +85,7 @@ import rx.schedulers.Schedulers;
  */
 public class RegisterActivity extends BaseActivity {
 
-    private static final java.lang.String TAG = "RegisterActivity";
+    private static final String TAG = "RegisterActivity";
     @BindView(R.id.et_name)
     EditText et_name;// 姓名
     @BindView(R.id.rb_male)
@@ -153,7 +153,7 @@ public class RegisterActivity extends BaseActivity {
     // 头像身份证图片相关
     private static final int TAKE_PHOTO = 0; //imageview1照相;
     private static final int CHOOSE_PHOTO = 1;//imageview1选图片;
-    private static final int SCALE = 20;// 照片缩小比例
+    private static final int SCALE = 5;// 照片缩小比例
     private String uploadFile1 = "";
     private String uploadFile2 = "";
     private String uploadFile3 = "";
@@ -253,9 +253,8 @@ public class RegisterActivity extends BaseActivity {
             @Override
             public void onClick(View v) {
                 getEditTextContent();
-                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num)
-                        || !TextUtils.isEmpty(relationship_with_prisoner) || !TextUtils.isEmpty(prisoner_number)
-                        || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
+                if (!TextUtils.isEmpty(name) || !TextUtils.isEmpty(ic_card) || !TextUtils.isEmpty(phone_num) || !TextUtils.isEmpty(relationship_with_prisoner)
+                        || !TextUtils.isEmpty(prisoner_number) || !TextUtils.isEmpty(prison_chooes) || !TextUtils.isEmpty(identifying_code)
                         || newBitmap1 != null || newBitmap2 != null || newBitmap3 != null) {
                     setReminder();// 设置退出提醒
                 } else {
@@ -289,7 +288,7 @@ public class RegisterActivity extends BaseActivity {
                     if (!Utils.isMobileNO(phone_num)) {
                         showToastMsgShort("请输入正确的手机号码");
                     } else {
-                        if (Utils.isNetworkAvailable()) {
+                        if (Utils.isNetworkAvailable(this)) {
                             String phone_str = "{\"apply\":{\"phone\":\"" + phone_num + "\"}}";
                             initAndShowDialog("正在发送...");
                             getVerificationCode(phone_str);
@@ -309,7 +308,7 @@ public class RegisterActivity extends BaseActivity {
                 // 判断姓名是否都是汉字组成
                 if (judgeName()) return;
                 // 判断身份证号是否合法
-                if (judgeIDCard(ic_card)) return;
+                if (judgeIDCard()) return;
                 // 判断手机号码是否合法
                 if (judgePhoneNumber()) return;
                 // 判断输入的与服刑人员关系是否都是汉字
@@ -321,7 +320,7 @@ public class RegisterActivity extends BaseActivity {
                 // 判断是否上传身份证正反面照
                 // 判断是否上传头像
                 if (judgeNullInput()) return;
-                if (Utils.isNetworkAvailable()) {
+                if (Utils.isNetworkAvailable(this)) {
                     showConfirmDialog();
                 } else {
                     showToastMsgShort("没有网络");
@@ -509,7 +508,7 @@ public class RegisterActivity extends BaseActivity {
      * 判断身份证是否合法
      * @return
      */
-    public boolean judgeIDCard(String ic_card) {
+    private boolean judgeIDCard() {
         if (TextUtils.isEmpty(ic_card)) {
             showToastMsgShort("身份证号为空");
             return true;
@@ -576,7 +575,7 @@ public class RegisterActivity extends BaseActivity {
             String newText = key[0];
             newText = newText.trim();
             newText = newText.replace(" ", "+");
-            if (Utils.isNetworkAvailable()) {
+            if (Utils.isNetworkAvailable(RegisterActivity.this)) {
                 try {
                     data = HttpRequestUtil.doHttpsGet(Constants.URL_HEAD + "jails/" + newText);
                     suggest = new ArrayList<>();
@@ -621,13 +620,8 @@ public class RegisterActivity extends BaseActivity {
                     @Override public void onCompleted() {}
 
                     @Override public void onError(Throwable e) {
-                        String error = e.getMessage();
-                        Log.e(TAG, "send register info failed : " + error);
-                        if (error.contains("413")) {
-                            showFailedDialog("注册失败，照片体积过大！");
-                        }else {
-                            showFailedDialog("注册请求失败，请稍后再试！");
-                        }
+                        Log.e(TAG, "send register info failed : " + e.getMessage());
+                        showFailedDialog("注册请求失败，请稍后再试！");
                     }
 
                     @Override public void onNext(ResponseBody responseBody) {
@@ -938,8 +932,7 @@ public class RegisterActivity extends BaseActivity {
                     break;
                 case CROP_SMALL_PICTURE:
                     // 将保存在本地的图片取出并缩小后显示在界面上
-                    Bitmap bitmap = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/image.jpg");
-                    newBitmap3 = bitmap;
+                    newBitmap3 = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/image.jpg");;
                     iv_user_icon.setImageBitmap(newBitmap3);
                     break;
             }

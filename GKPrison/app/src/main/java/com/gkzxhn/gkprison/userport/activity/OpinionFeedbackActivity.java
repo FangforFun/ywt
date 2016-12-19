@@ -22,6 +22,7 @@ import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -44,7 +45,6 @@ public class OpinionFeedbackActivity extends BaseActivity {
     private TextView surplus_count;
     private Button bt_commit_opinions;
     private ProgressDialog commit_dialog;
-    private SharedPreferences sp;
     private String token;
     private boolean isFinish = false;
     private Handler handler = new Handler();
@@ -52,6 +52,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_opinion_feedback, null);
         et_content = (EditText) view.findViewById(R.id.et_content);
         surplus_count = (TextView) view.findViewById(R.id.surplus_count);
@@ -61,7 +62,7 @@ public class OpinionFeedbackActivity extends BaseActivity {
 
     @Override
     protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
+        SharedPreferences sp = getSharedPreferences("config", MODE_PRIVATE);
         token = sp.getString("token", "");
         setTitle("意见反馈");
         setBackVisibility(View.VISIBLE);
@@ -91,12 +92,19 @@ public class OpinionFeedbackActivity extends BaseActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.bt_commit_opinions:
                 opinion_content = et_content.getText().toString().trim();
                 if(!TextUtils.isEmpty(opinion_content) && !(opinion_content.length() > 255)){
-                    if(Utils.isNetworkAvailable()) {
+                    if(Utils.isNetworkAvailable(this)) {
                         sendOpinionsToServer(opinion_content);
                     }else {
                         showToastMsgShort("没有网络");

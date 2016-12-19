@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.userport.activity;
 import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -14,13 +13,12 @@ import com.gkzxhn.gkprison.userport.adapter.ShoppingAdapter;
 import com.gkzxhn.gkprison.userport.bean.Cart;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
-import rx.Observable;
 
 /**
  * 购物记录
@@ -36,6 +34,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_shopping_recoder, null);
         lv_shoppingrecoder = (ListView) view.findViewById(R.id.lv_shopping_recode);
         iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);
@@ -48,6 +47,13 @@ public class ShoppingRecoderActivity extends BaseActivity {
         setBackVisibility(View.VISIBLE);
         getShoppingRecoder();
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     /**
      * 获取购物记录
@@ -74,6 +80,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                     cart.setTotal_money(cursor.getString(cursor.getColumnIndex("total_money")));
                     carts.add(cart);
                 }
+                cursor.close();
                 sort();// 排序
                 for (int i = 0; i < carts.size(); i++) {
                     List<Commodity> commodities = new ArrayList<>();
@@ -88,6 +95,7 @@ public class ShoppingRecoderActivity extends BaseActivity {
                         commodities.add(commodity);
                     }
                     carts.get(i).setCommodityList(commodities);
+                    cursor1.close();
                 }
                 showUI();
             }

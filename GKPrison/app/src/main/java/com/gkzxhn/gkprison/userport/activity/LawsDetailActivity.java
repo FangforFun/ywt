@@ -11,6 +11,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.Log;
+import com.keda.sky.app.PcAppStackManager;
 
 /**
  * 法律法规详情页
@@ -19,10 +20,10 @@ public class LawsDetailActivity extends BaseActivity {
 
     private WebView wv_news_detail;
     private NumberProgressBar npb_loading;
-    private int id;
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_laws_detail, null);
         wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
         npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
@@ -33,7 +34,7 @@ public class LawsDetailActivity extends BaseActivity {
     protected void initData() {
         setTitle("");
         setBackVisibility(View.VISIBLE);
-        id = getIntent().getIntExtra("id", 1);
+        int id = getIntent().getIntExtra("id", 1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD + "/laws/" + id + "");
         wv_news_detail.setWebViewClient(new WebViewClient() {
             @Override
@@ -61,6 +62,13 @@ public class LawsDetailActivity extends BaseActivity {
             }
         });
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 
     @Override
     public void onBackPressed() {

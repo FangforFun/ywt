@@ -134,8 +134,7 @@ public class RSAUtil {
         try {
             X509EncodedKeySpec bobPubKeySpec = new X509EncodedKeySpec(key);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PublicKey pubKey = keyFactory.generatePublic(bobPubKeySpec);
-            return pubKey;
+            return keyFactory.generatePublic(bobPubKeySpec);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -151,8 +150,7 @@ public class RSAUtil {
         try {
             PKCS8EncodedKeySpec pkcs8keyspec = new PKCS8EncodedKeySpec(key);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-            PrivateKey priKey = keyFactory.generatePrivate(pkcs8keyspec);
-            return priKey;
+            return keyFactory.generatePrivate(pkcs8keyspec);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -254,8 +252,7 @@ public class RSAUtil {
         RSAPublicKeySpec keySpec = new RSAPublicKeySpec(bigIntModulus,
                 bigIntPublicExponent);
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-        PublicKey publicKey = keyFactory.generatePublic(keySpec);
-        return publicKey;
+        return keyFactory.generatePublic(keySpec);
     }
 
     /**
@@ -281,18 +278,16 @@ public class RSAUtil {
         // 请将此处的module换成PM环境商户验签的公钥模数
         String modulus = "23648629510357402173669374843546537318532861396089478651610490265597426690711092692490012429464861104676801339474220894685964389750254240882066338437712341498313076007251358899488346743554156067576120095739341094220657657611893755799646325194641430110114613586989866468748149428464174345443169749235358776080247588710246733575431530477273705811466095207773188767974550742707293785661521305267533098997705930724499157184797236612324838287379798375903922360666026664942383548006246201656190964746068225967889145661249463716565124050082767382345820178584568857820200627919768134084891356188058390460707236118612628845159";
         String publicExponent = "65537";
-        PublicKey publicKey = RSAUtil.generateRSAPublicKey(modulus,
+        return RSAUtil.generateRSAPublicKey(modulus,
                 publicExponent);
-        return publicKey;
     }
 
-    public static PublicKey getPublicKeyProduct() {
+    private static PublicKey getPublicKeyProduct() {
         // 请将此处的module换成生产环境商户验签的公钥模数
         String modulus = "24882698307025187401768229621661046262584590315978248721358993520593720674589904440569546585666019820242051570504151753011145804842286060932917913063481673780509705461614953345565639235206110825500286080970112119864280897521494849627888301696007067301658192870705725665343356870712277918685009799388229000694331337917299248049043161583425309743997726880393752539043378681782404204317246630750179082094887254614603968643698185220012572776981256942180397391050384441191238689965500817914744059136226832836964600497185974686263216711646940573711995536080829974535604890076661028920284600607547181058581575296480113060083";
         String publicExponent = "65537";
-        PublicKey publicKey = RSAUtil.generateRSAPublicKey(modulus,
+        return RSAUtil.generateRSAPublicKey(modulus,
                 publicExponent);
-        return publicKey;
     }
 
     public static boolean verifyPM(byte[] message, byte[] signature)

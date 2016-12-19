@@ -24,6 +24,7 @@ import com.gkzxhn.gkprison.userport.bean.VersionInfo;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
+import com.keda.sky.app.PcAppStackManager;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -61,6 +62,7 @@ public class VersionUpdateActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_version_update, null);
         iv_check_update = (ImageView) view.findViewById(R.id.iv_check_update);
         bt_update = (Button) view.findViewById(R.id.bt_update);
@@ -93,6 +95,7 @@ public class VersionUpdateActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
         super.onDestroy();
     }
 

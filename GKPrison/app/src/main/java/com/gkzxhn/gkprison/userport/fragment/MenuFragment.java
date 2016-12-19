@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,6 +25,8 @@ import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
 import com.squareup.picasso.Picasso;
@@ -34,11 +35,14 @@ import com.squareup.picasso.Target;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import static com.gkzxhn.gkprison.prisonport.activity.CallUserActivity.fileName;
+
 /**
  * 左侧侧滑菜单fragment
  */
 public class MenuFragment extends BaseFragment{
 
+    private static final String TAG = "MenuFragment";
     private ListView lv_home_menu;
     private final String[] menu_options_tv = {"账号信息", "汇款记录", "购物记录", "设置"};
     private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.setting};
@@ -62,6 +66,36 @@ public class MenuFragment extends BaseFragment{
         return view;
     }
 
+    /**
+     * 下载头像
+     * @param url
+     */
+    private void downLoadAvatar(String url) {
+        if (Utils.isNetworkAvailable(getActivity())){
+            Picasso.with(getActivity()).load(url).into(new Target() {
+                @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    Log.i(TAG, "avatar开始下载 " + from);
+//                    if (from == Picasso.LoadedFrom.NETWORK){
+                        try {
+                            FileOutputStream fos =new FileOutputStream(new File(fileName));
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+                            fos.close();
+                            Log.i(TAG, "avatar已下载至:" + fileName);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+//                    }
+                }
+                @Override public void onBitmapFailed(Drawable errorDrawable) {
+                    Log.i(TAG, "avatar下载失败");
+                }
+                @Override public void onPrepareLoad(Drawable placeHolderDrawable) {
+                    Log.i(TAG, "avatar准备加载");
+                }
+            });
+        }
+    }
+
     @Override
     protected void initData() {
         isRegisteredUser = (boolean) SPUtil.get(getActivity(), "isRegisteredUser", false);
@@ -76,8 +110,7 @@ public class MenuFragment extends BaseFragment{
             if(!TextUtils.isEmpty(ICON_URL)){
                 Picasso.with(getActivity()).load(Constants.RESOURSE_HEAD + ICON_URL)
                         .error(R.drawable.default_icon).into(iv_user_icon);
-                Picasso.with(getActivity()).load(Constants.RESOURSE_HEAD + ICON_URL)
-                        .into(target);
+                downLoadAvatar(Constants.RESOURSE_HEAD + ICON_URL);// 下载头像
             }
         }
         lv_home_menu.setAdapter(new MenuAdapter());
@@ -143,34 +176,7 @@ public class MenuFragment extends BaseFragment{
         });
     }
 
-    private Target target = new Target() {
-
-        @Override
-        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-            File dcimFile = new File(Environment.getExternalStorageDirectory() + "/avatar.png");
-            FileOutputStream ostream = null;
-            try {
-                ostream = new FileOutputStream(dcimFile);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, ostream);
-                ostream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            Log.i("图片下载至:" + dcimFile);
-        }
-
-        @Override
-        public void onBitmapFailed(Drawable errorDrawable) {
-
-        }
-
-        @Override
-        public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-        }
-    };
-
-        /**
+    /**
      * 显示确认对话框
      */
     private void showConfirmDialog() {
@@ -195,6 +201,7 @@ public class MenuFragment extends BaseFragment{
                 SPUtil.put(getActivity(), "is_first", false);
                 startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();
+                TruetouchGlobal.logOff();
             }
         });
         dialog.show();

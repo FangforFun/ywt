@@ -9,10 +9,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -27,6 +29,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
@@ -34,26 +37,19 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
-import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.jauker.widget.BadgeView;
 
-import org.apache.http.conn.util.InetAddressUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -61,20 +57,11 @@ import java.util.Random;
 import de.greenrobot.event.EventBus;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * Created by zhengneng on 2015/12/21.
  */
 public class CanteenFragment extends BaseFragment {
-    private static final String TAG = "CanteenFragment";
     private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
@@ -86,7 +73,6 @@ public class CanteenFragment extends BaseFragment {
     private TextView tv_sales;
     private TextView tv_zhineng;
     private Spinner sp_allclass;
-    private Gson gson;
     private Spinner sp_sales;
     private Spinner sp_zhineng;
     private TextView tv_total_money;
@@ -97,14 +83,11 @@ public class CanteenFragment extends BaseFragment {
     SalesPriorityFragment sales;
     IntellingentSortingFragment zhineng;
     private Bundle data;
-    private int count = 0;
-    private String ip;
     private BadgeView badgeView;
     private List<Integer> lcount = new ArrayList<Integer>();
     private int allcount;
     private String TradeNo;
     private SharedPreferences sp;
-    private String apply = "";
     private List<line_items_attributes> line_items_attributes = new ArrayList<line_items_attributes>();
     private String times;
     private ProgressDialog dialog;
@@ -121,7 +104,6 @@ public class CanteenFragment extends BaseFragment {
     private int clicksalse = 1;
     private int jail_id;
     private FrameLayout salsechoose;
-    private AllchooseAdapter allchooseAdapter;
     private View image_buycar;
     OkHttpClient client = new OkHttpClient();
     public static final MediaType JSON
@@ -148,6 +130,44 @@ public class CanteenFragment extends BaseFragment {
             }
         }
     };
+    private Handler handlerbilling = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 1:
+                    /**
+
+                     String s = (String)msg.obj;
+
+
+                     **/
+                    String billing = (String) msg.obj;
+                    if (billing.equals("error")) {
+                        showToastMsgShort("上传数据失败");
+                    } else if (billing.equals("success")) {
+                        Bundle bundle = msg.getData();
+                        String s = bundle.getString("result");
+                        TradeNo = getResultTradeno(s);
+                        String sql = "update Cart set total_money = '" + send + "',count = " + allcount + ",out_trade_no ='" + TradeNo + "'   where time = '" + times + "'";
+                        db.execSQL(sql);
+                        Log.d("订单号", TradeNo);
+                        int a = getResultcode(s);
+                        Log.d("订单号", a + "");
+                        if (a == 200) {
+                            settlement.setEnabled(true);
+                            Intent intent = new Intent(context, PaymentActivity.class);
+                            intent.putExtra("totalmoney", send);
+                            intent.putExtra("TradeNo", TradeNo);
+                            intent.putExtra("times", times);
+                            intent.putExtra("cart_id", cart_id);
+                            intent.putExtra("bussiness", "(含配送费2元)");
+                            context.startActivity(intent);
+                        }
+                    }
+                    break;
+            }
+        }
+    };
 
     private String getResultTradeno(String s) {
         String str = "";
@@ -159,6 +179,11 @@ public class CanteenFragment extends BaseFragment {
             e.printStackTrace();
         }
         return str;
+    }
+
+    @Override
+    public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
+        return super.onCreateAnimation(transit, enter, nextAnim);
     }
 
     @Override
@@ -194,8 +219,6 @@ public class CanteenFragment extends BaseFragment {
 
     @Override
     protected void initData() {
-
-        ip = getLocalHostIp();
         TradeNo = getOutTradeNo();
         sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
@@ -211,6 +234,7 @@ public class CanteenFragment extends BaseFragment {
         while (cursor.moveToNext()) {
             cart_id = cursor.getInt(cursor.getColumnIndex("id"));
         }
+        cursor.close();
         data = new Bundle();
         data.putString("times", times);
         EventBus.getDefault().register(this);
@@ -282,7 +306,7 @@ public class CanteenFragment extends BaseFragment {
         data.putInt("leibie", 0);
         allclass.setArguments(data);
         ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
-        allchooseAdapter = new AllchooseAdapter();
+        AllchooseAdapter allchooseAdapter = new AllchooseAdapter();
         lv_salsechoose_items.setAdapter(allchooseAdapter);
         lv_allchoose_items.setAdapter(allchooseAdapter);
         lv_salsechoose_items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -532,7 +556,7 @@ public class CanteenFragment extends BaseFragment {
         allcount = 0;
         String sql = "select distinct line_items.Items_id,line_items.qty,line_items.id,line_items.price,line_items.title from line_items,Cart where line_items.cart_id = " + cart_id;
         Cursor cursor = db.rawQuery(sql, null);
-        android.util.Log.d("ff", cursor.getCount() + "");
+        Log.d("ff", cursor.getCount() + "");
         total = 0;
         if (cursor.getCount() == 0) {
             tv_total_money.setText("0.0");
@@ -550,6 +574,7 @@ public class CanteenFragment extends BaseFragment {
             adapter = new BuyCarAdapter();
             lv_buycar.setAdapter(adapter);
         }
+        cursor.close();
         for (int i = 0; i < commodities.size(); i++) {
             String t = commodities.get(i).getPrice();
             float p = Float.parseFloat(t);
@@ -559,8 +584,7 @@ public class CanteenFragment extends BaseFragment {
             lineitemsattributes.setQuantity(n);
             line_items_attributes.add(lineitemsattributes);
             total += p * n;
-            count = n;
-            lcount.add(count);
+            lcount.add(n);
         }
         //  total += 2;
         for (int i = 0; i < lcount.size(); i++) {
@@ -588,84 +612,79 @@ public class CanteenFragment extends BaseFragment {
         }
     }
 
-    /**
-     * 发送至服务器
-     */
     private void sendOrderToServer() {
-        String str = getOrderJsonStr();
-        String token = sp.getString("token", "");
-        Log.i(TAG, str + "-------" + token);
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(Constants.URL_HEAD)
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ApiRequest request = retrofit.create(ApiRequest.class);
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), str);
-        request.sendOrder(jail_id, token, body)
-                .subscribeOn(Schedulers.io())
-                .unsubscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<ResponseBody>() {
-                    @Override public void onCompleted() {}
-                    @Override public void onError(Throwable e) {
-                        Log.e(TAG, e.getMessage());
-                        showToastMsgShort("上传数据失败");
-                    }
-
-                    @Override public void onNext(ResponseBody responseBody) {
-                        try {
-                            String result = responseBody.string();
-                            Log.i(TAG, "send order result : " + result);
-                            int pass_code = getResultcode(result);
-                            String sql = "update Cart set total_money = '" + send +
-                                    "',count = " + allcount + ",out_trade_no ='" + TradeNo
-                                    + "'   where time = '" + times + "'";
-                            db.execSQL(sql);
-                            if (pass_code == 200) {
-                                TradeNo = getResultTradeno(result);
-                                selectPayment();// 选择支付方式
-                            }else {
-                                showToastMsgShort("上传数据失败");
-                            }
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                            showToastMsgShort("上传数据失败");
-                        }
-                    }
-                });
-    }
-
-    private void selectPayment() {
-        settlement.setEnabled(true);
-        Intent intent = new Intent(context, PaymentActivity.class);
-        intent.putExtra("totalmoney", send);
-        intent.putExtra("TradeNo", TradeNo);
-        intent.putExtra("times", times);
-        intent.putExtra("cart_id", cart_id);
-        intent.putExtra("bussiness", "(含配送费2元)");
-        context.startActivity(intent);
-    }
-
-    /**
-     * 获取汇款订单json字符串
-     * @return
-     */
-    private String getOrderJsonStr() {
         int family_id = sp.getInt("family_id", 1);
-        Order order = new Order();
+        final Order order = new Order();
         order.setFamily_id(family_id);
         order.setLine_items_attributes(line_items_attributes);
         order.setJail_id(jail_id);
         order.setCreated_at(times);
         Float f = Float.parseFloat(send);
         order.setAmount(f);
-        gson = new Gson();
-        apply = gson.toJson(order);
+        Gson gson = new Gson();
+        String apply = gson.toJson(order);
         Log.d("结算发送", apply);
-        AA aa = new AA();
+        final AA aa = new AA();
         aa.setOrder(order);
-        return gson.toJson(aa);
+        final String str = gson.toJson(aa);
+        final String url = Constants.URL_HEAD + "orders?jail_id=" + jail_id + "&access_token=";
+        new Thread() {
+            @Override
+            public void run() {
+                String token = sp.getString("token", "");
+                // HttpClient httpClient = new DefaultHttpClient();
+                //HttpPost post = new HttpPost(url+token);
+                String s = url + token;
+                Looper.prepare();
+                Message msg = handlerbilling.obtainMessage();
+                /**
+                 try {
+                 StringEntity entity = new StringEntity(str);
+                 entity.setContentType("application/json");
+                 entity.setContentEncoding("UTF-8");
+                 post.setEntity(entity);
+                 HttpResponse response = httpClient.execute(post);
+                 if (response.getStatusLine().getStatusCode() == 200){
+                 result = EntityUtils.toString(response.getEntity(), "UTF-8");
+                 Log.d("成功",result);
+                 msg.what = 1;
+                 msg.obj = result;
+                 handlerbilling.sendMessage(msg);
+                 }else {
+                 handlerbilling.sendEmptyMessage(2);
+                 }
+                 }  catch (Exception e) {
+                 handlerbilling.sendEmptyMessage(3);
+                 e.printStackTrace();
+                 } finally {
+                 Looper.loop();
+                 }
+                 **/
+                try {
+                    String result = HttpRequestUtil.doHttpsPost(s, str);
+                    Log.d("返回订单号", result);
+                    if (result.contains("StatusCode is")) {
+                        msg.obj = "error";
+                        msg.what = 1;
+                        handlerbilling.sendMessage(msg);
+                    } else {
+                        msg.obj = "success";
+                        Bundle bundle = new Bundle();
+                        bundle.putString("result", result);
+                        msg.setData(bundle);
+                        msg.what = 1;
+                        handlerbilling.sendMessage(msg);
+                    }
+                } catch (Exception e) {
+                    msg.obj = "error";
+                    msg.what = 1;
+                    handlerbilling.sendMessage(msg);
+                    e.printStackTrace();
+                } finally {
+                    Looper.loop();
+                }
+            }
+        }.start();
     }
 
 
@@ -678,34 +697,6 @@ public class CanteenFragment extends BaseFragment {
         key = key + r.nextInt();
         key = key.substring(0, 15);
         return key;
-    }
-
-    public String getLocalHostIp() {
-        String ipaddress = "";
-        try {
-            Enumeration<NetworkInterface> en = NetworkInterface
-                    .getNetworkInterfaces();
-            // 遍历所用的网络接口
-            while (en.hasMoreElements()) {
-                NetworkInterface nif = en.nextElement();// 得到每一个网络接口绑定的所有ip
-                Enumeration<InetAddress> inet = nif.getInetAddresses();
-                // 遍历每一个接口绑定的所有ip
-                while (inet.hasMoreElements()) {
-                    InetAddress ip = inet.nextElement();
-                    if (!ip.isLoopbackAddress()
-                            && InetAddressUtils.isIPv4Address(ip
-                            .getHostAddress())) {
-                        return ipaddress = ip.getHostAddress();
-                    }
-                }
-
-            }
-        } catch (SocketException e) {
-            Log.e("feige", "获取本地ip地址失败");
-            e.printStackTrace();
-        }
-        return ipaddress;
-
     }
 
     private class BuyCarAdapter extends BaseAdapter {
@@ -790,6 +781,7 @@ public class CanteenFragment extends BaseFragment {
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
                     }
+                    cursor.close();
                     Message msg2 = handler2.obtainMessage();
                     msg2.obj = qty;
                     msg2.what = 1;
@@ -859,6 +851,7 @@ public class CanteenFragment extends BaseFragment {
                         while (cursor.moveToNext()) {
                             qty = cursor.getInt(cursor.getColumnIndex("qty"));
                         }
+                        cursor.close();
                         Message msg2 = handler2.obtainMessage();
                         msg2.obj = qty;
                         msg2.what = 1;

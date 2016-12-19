@@ -5,6 +5,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
+import com.keda.sky.app.PcAppStackManager;
 
 /**
  * created by huangzhengneng on 2016/1/28
@@ -18,6 +19,7 @@ public class ContactUsActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(this, R.layout.activity_contact_us, null);
         tv_address = (TextView) view.findViewById(R.id.tv_address);
         tv_zip_code = (TextView) view.findViewById(R.id.tv_zip_code);
@@ -30,4 +32,11 @@ public class ContactUsActivity extends BaseActivity {
         setTitle("联系我们");
         setBackVisibility(View.VISIBLE);
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

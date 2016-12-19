@@ -17,6 +17,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.keda.sky.app.PcAppStackManager;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class SystemMessageActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_system_message, null);
         lv_system_msg = (ListView) view.findViewById(R.id.lv_system_msg);
         iv_no_system_message = (ImageView) view.findViewById(R.id.iv_no_system_message);
@@ -69,6 +71,8 @@ public class SystemMessageActivity extends BaseActivity {
             iv_no_system_message.setVisibility(View.GONE);
         }
     }
+
+
 
     /**
      * 获取消息列表
@@ -227,9 +231,10 @@ public class SystemMessageActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
+        PcAppStackManager.Instance().popActivity(this, false);
         if (db != null && db.isOpen()) {
             db.close();
         }
+        super.onDestroy();
     }
 }

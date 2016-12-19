@@ -30,8 +30,7 @@ public final class ImageTools {
         float scaleWidth = ((float) width / w);
         float scaleHeight = ((float) height / h);
         matrix.postScale(scaleWidth, scaleHeight);
-        Bitmap newbmp = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
-        return newbmp;
+        return Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
     }
 
     /**

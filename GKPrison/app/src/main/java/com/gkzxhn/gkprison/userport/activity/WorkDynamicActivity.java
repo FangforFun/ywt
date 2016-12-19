@@ -25,6 +25,7 @@ import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
+import com.keda.sky.app.PcAppStackManager;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -144,6 +145,7 @@ public class WorkDynamicActivity extends BaseActivity {
 
     @Override
     protected View initView() {
+        PcAppStackManager.Instance().pushActivity(this);
         View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
         lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
         mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
@@ -208,7 +210,7 @@ public class WorkDynamicActivity extends BaseActivity {
      * 获取新闻
      */
     private void getNews(final int getType) {
-        if (Utils.isNetworkAvailable()) {
+        if (Utils.isNetworkAvailable(this)) {
             if (getType == 0) {// 进入页面
                 getNews_dialog = new ProgressDialog(this);
                 getNews_dialog.setMessage("正在加载...");
@@ -248,7 +250,7 @@ public class WorkDynamicActivity extends BaseActivity {
                             for (News news : newses){
                                 Log.i(TAG, news.toString());
                                 allnews.add(news);
-                                if(news.getType_id() == 2){
+                                if(news.getType_id() == 1){
                                     newsList.add(news);
                                 }
                             }
@@ -377,4 +379,11 @@ public class WorkDynamicActivity extends BaseActivity {
         TextView tv_home_news_content;
         ImageView iv_home_news_go;
     }
+
+    @Override
+    protected void onDestroy() {
+        PcAppStackManager.Instance().popActivity(this, false);
+        super.onDestroy();
+    }
+
 }

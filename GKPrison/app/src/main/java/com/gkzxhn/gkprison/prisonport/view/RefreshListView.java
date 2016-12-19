@@ -79,10 +79,10 @@ public class RefreshListView extends ListView implements OnScrollListener {
 
 	public interface OnRefreshListener {
 		// 下拉刷新的方法
-		public void pullDownRefresh();
+		void pullDownRefresh();
 
 		// 上拉加载的方法
-		public void pullUpLoadMore();
+		void pullUpLoadMore();
 	}
 
 	/**

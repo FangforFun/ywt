@@ -26,38 +26,6 @@
     <string name="saturday">六</string>
     <string name="meeting_notice"><![CDATA[注意：\n        请确保视频内都是您的亲人，不是请及时告知狱警。\n        请注意通话不涉及犯罪、国家机密等内容，否则您将失去并可能永久失去远程会见机会。\n        请注意时间长短，不要影响后面的狱友使用。\n        若您在通话过程中有任何问题，请及时联系狱警沟通解决。]]></string>
 
-    <string name="avchat_hangup">结束通话</string>
-    <string name="avchat_switch_to_video">切换视频</string>
-    <string name="avchat_video_call_request">请求视频聊天…</string>
-    <string name="avchat_audio_call_wifi_unavailable_tip">当前非WiFi环境，每分钟将产生约0.5M的流量</string>
-    <string name="avchat_network_grade_0">网络通畅：</string>
-    <string name="avchat_network_grade_1">网络正常：</string>
-    <string name="avchat_network_grade_2">网络一般：</string>
-    <string name="avchat_network_grade_3">网络较差：</string>
-    <string name="avchat_receive">开启</string>
-    <string name="avchat_pickup">接听</string>
-    <string name="avchat_net_error_then_quit">网络异常，通话结束</string>
-    <string name="avchat_call_finish">通话结束</string>
-    <string name="avchat_peer_reject">对方拒绝了本次通话</string>
-    <string name="avchat_peer_protocol_low_version">对方版本过低，请提示对方升级</string>
-    <string name="avchat_local_protocol_low_version">版本过低，请升级后使用</string>
-    <string name="avchat_invalid_channel_id">对方已挂断</string>
-    <string name="avchat_local_call_busy">本地通话中，无法使用易信进行通话。</string>
-    <string name="avchat_peer_busy">对方正在通话中，请稍后再拨。</string>
-    <string name="avchat_wait_recieve">等待对方接听…</string>
-    <string name="avchat_audio_call_request">请求通话</string>
-    <string name="avchat_connecting">连接中…</string>
-    <string name="avchat_audio_to_video_invitation">对方邀请你开启视频聊天…</string>
-    <string name="avchat_peer_close_camera">对方关闭了摄像头</string>
-    <string name="avchat_local_close_camera">你关闭了摄像头</string>
-    <string name="avchat_audio_to_video_wait">正在等待对方开启摄像头…</string>
-    <string name="avchat_no_response">无人接听</string>
-    <string name="avchat_switch_video_reject">对方不同意音频切换为视频！</string>
-    <string name="avchat_notification">正在与%1$s通话中，点击继续</string>
-    <string name="avchat_call">网络通话</string>
-    <string name="avchat_no_pickup_call">未接听</string>
-    <string name="avchat_in_switch">请耐心等待！</string>
-    <string name="avchat_device_no_ready">音视频设备未准备好</string>
     <string name="meeting_note">会见须知： \n&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;狱务通为您提供远程探监服务，您可以通过狱务通申请探监，并通过手机视频和服刑人员进行远程探视。 在申请远程探监前，请您详细阅读以下注意事项：\n1、服刑人员每月可远程探监次数不限。 \n2、部分服刑人员不提供探视服务。 \n3、狱务通软件暂时只提供直系亲属远程探视，请谅解。 \n4、根据安全要求，您的会见信息可能会被记录。 \n5、每次会见需缴纳一定费用，请勿无故提交远程探监申请。</string>
     <string name="alarm_remind"><![CDATA[        温馨提示：您与德山监狱的远程视频会见即将开始，请连接好网络做好准备。]]></string>
 
@@ -66,7 +34,6 @@
     <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
     <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
-    <string name="pull_to_refresh_tap_label">一大波商品正在准备中.......</string>
 
     <string name="enable_logined">登录后可用</string>
 
@@ -75,16 +42,80 @@
     <string name="dialog_default_title">Here\'s a message!</string>
     <string name="dialog_ok">OK</string>
     <string name="dialog_cancel">Cancel</string>
-    <string name="network_2g">目前网络处于2G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
-    <string name="network_3g">目前网络处于3G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
-    <string name="network_4g">目前网络处于4G状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
-    <string name="network_wifi">目前网络处于wifi状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
-    <string name="network_default">目前网络处于默认状态，请尽快切换到wifi，否则可能会影响通话质量！</string>
-    <string name="select_payment_failed">选择支付类型失败</string>
-    <string name="pay_failed">支付失败</string>
-    <string name="pay_result_confirming">支付结果确认中</string>
-    <string name="pay_success">支付成功</string>
-    <string name="out_￥_800">抱歉，您本月汇款总额已超出800元限额！</string>
-    <string name="input_money">请输入汇款金额</string>
-    <string name="recharge">充值</string>
+    <string name="net_broken">网络连接已断开，请检查网络</string>
+
+
+    <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+    <!-- status 在线、 会议中、 免打扰、 离开、 离线 -->
+
+    <!-- main -->
+    <string name="main_get_contact">联系人</string>
+    <string name="main_get_vconf_contact">搜索联系人</string>
+    <string name="main_get_vconf_list">获取会议列表</string>
+    <string name="make_call">呼叫点对点会议</string>
+    <string name="muti_call">呼叫多点会议</string>
+    <string name="main_create_vconf">创建视频会议</string>
+    <string name="main_setting">设置</string>
+    <string name="main_logout">注销</string>
+    <!-- login -->
+    <string name="server_adds">服务器地址</string>
+    <string name="account">帐号</string>
+    <string name="password">密码</string>
+    <string name="login_text">登录</string>
+    <string name="login_off">退出</string>
+
+    <!-- vconf -->
+    <string name="vconf_shortNum">会议号码</string>
+    <string name="vconf_time">会议时间</string>
+    <string name="vconf_timeLen">会议时长</string>
+    <string name="vconf_info_title">会议信息</string>
+    <string name="vconf_convene">正在召集</string>
+    <string name="vconf_call">正在呼叫</string>
+    <string name="vconf_join">正在加入</string>
+    <string name="vconf_join_waitingTxt_p2p">请求与您通话</string>
+    <string name="vconf_join_waitingTxt_mul">邀请您进入会议</string>
+    <string name="vconf_audio_waiting">音频呼叫中</string>
+    <string name="vconf_QualityMeetings">视频质量会议</string>
+    <string name="vconf_Apply4AdministrativePrivileges">申请管理权限</string>
+    <string name="vconf_releaseAdministrativePrivileges">释放管理权限</string>
+    <string name="vconf_Apply4Speaker">申请发言</string>
+    <string name="vconf_StatisticalInformation">统计信息</string>
+    <string name="vconf_ExitConf">退出会议</string>
+    <string name="vconf_EndConf">结束会议</string>
+    <string name="vconf_flow_remind">电话应答将为您节省流量</string>
+    <string name="vconf_chooseJoinWay_3GInfo_mobile">在移动数据网络环境下会影响视音频质量，\n并产生手机流量，可选择电话方式入会</string>
+    <string name="vconf_chooseJoinWay_3GInfo_normal">在移动数据网络环境下会影响视音频质量，\n并产生手机流量</string>
+    <string name="vconf_tel_response">电话</string>
+    <string name="vconf_video_response">视频接听</string>
+    <string name="vconf_audio_response">音频接听</string>
+    <string name="vconf_answer">接听</string>
+    <string name="vconf_2g_unable_tel_join">在当前的网络下您不能进行音视频通话，请使用电话应答入会</string>
+    <string name="vconf_canceled">已取消</string>
+    <string name="vconf_rejected">已拒绝</string>
+    <string name="vconf_noresponse">无人应答</string>
+    <string name="vconf_unconnect">未接通</string>
+    <string name="vconf_sending_desktop">正在接收双流</string>
+    <string name="telephonereceiver_open_info">听筒模式已关</string>
+    <string name="telephonereceiver_close_info">听筒模式已开</string>
+    <string name="vconf_quit_msg">您确定退出会议吗？</string>
+    <string name="vconf_end_msg">您确定结束会议吗？</string>
+    <string name="vconf_quit">退出</string>
+    <string name="vconf_end">结束</string>
+    <string name="hang_up">挂断</string>
+    <string name="more_info">更多</string>
+    <string name="off">关</string>
+    <string name="on">开</string>
+
+
+    <!-- comm Text -->
+    <string name="ok">确定</string>
+    <string name="save">保存</string>
+    <string name="cancel">取消</string>
+    <string name="close">关闭</string>
+    <string name="search">搜索</string>
+    <string name="definition">清晰度</string>
+    <string name="send">发送</string>
+    <string name="microphone">麦克风</string>
+    <string name="speaker">扬声器</string>
+    <string name="add_text">添加</string>
 </resources>
