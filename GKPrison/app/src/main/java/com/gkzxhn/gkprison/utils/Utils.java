@@ -211,7 +211,8 @@ public class Utils {
      */
     public static boolean isNetworkAvailable(){
         Context context = DemoCache.getContext();
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                context.getSystemService(context.CONNECTIVITY_SERVICE);
         if (connectivityManager != null) {
             NetworkInfo info = connectivityManager.getActiveNetworkInfo();
             if (info != null && info.isConnected()) {

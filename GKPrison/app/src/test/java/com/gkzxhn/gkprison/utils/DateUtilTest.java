@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.utils;
 
+import com.gkzxhn.gkprison.prisonport.view.CustomDate;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,12 @@ import org.junit.Test;
  * Description:DateUtil类相关方法单元测试
  */
 public class DateUtilTest {
+
+    private DateUtil dateUtil;
+
+    public DateUtilTest() {
+        dateUtil = new DateUtil();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -79,7 +87,7 @@ public class DateUtilTest {
 
     @Test
     public void isToday() throws Exception {
-
+        dateUtil.isToday(new CustomDate(2015, 10, 11));
     }
 
     @Test

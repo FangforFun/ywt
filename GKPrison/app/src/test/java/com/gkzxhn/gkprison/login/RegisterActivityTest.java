@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.login;
 
+import com.gkzxhn.gkprison.utils.Log;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +13,13 @@ import org.junit.Test;
  * Description:注册页面相关方法测试
  */
 public class RegisterActivityTest {
+
+    private static final String TAG = "RegisterActivityTest";
+    private RegisterActivity register;
+
+    public RegisterActivityTest() {
+        register = new RegisterActivity();
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -25,5 +34,14 @@ public class RegisterActivityTest {
     @Test
     public void onBackPressed() throws Exception {
 
+    }
+
+    @Test
+    public void judgeIDCard() throws Exception {
+        if (register.judgeIDCard("430482199404073618")){
+            Log.d(TAG, "id is ok");
+        }else {
+            Log.d(TAG, "id is not ok");
+        }
     }
 }

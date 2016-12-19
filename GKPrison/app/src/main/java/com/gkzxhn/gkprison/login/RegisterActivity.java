@@ -309,7 +309,7 @@ public class RegisterActivity extends BaseActivity {
                 // 判断姓名是否都是汉字组成
                 if (judgeName()) return;
                 // 判断身份证号是否合法
-                if (judgeIDCard()) return;
+                if (judgeIDCard(ic_card)) return;
                 // 判断手机号码是否合法
                 if (judgePhoneNumber()) return;
                 // 判断输入的与服刑人员关系是否都是汉字
@@ -509,7 +509,7 @@ public class RegisterActivity extends BaseActivity {
      * 判断身份证是否合法
      * @return
      */
-    private boolean judgeIDCard() {
+    public boolean judgeIDCard(String ic_card) {
         if (TextUtils.isEmpty(ic_card)) {
             showToastMsgShort("身份证号为空");
             return true;
