@@ -9,7 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.keda.sky.app.PcAppStackManager;
 import com.keda.vconf.manager.VConferenceManager;
 import com.pc.utils.StringUtils;
@@ -68,7 +68,7 @@ public class MultiCallDialog extends Dialog {
 					return;
 				}
 				Activity currActivity = PcAppStackManager.Instance().currentActivity();
-				if (ValidateUtils.isIP(number) || MyApplication.getApplication().isH323) {
+				if (ValidateUtils.isIP(number) || KDInitUtil.isH323) {
 					VConferenceManager.openVConfVideoUI(currActivity, true, number, number);
 				} else {
 					VConferenceManager.openVConfVideoUI(currActivity, false, number, number);

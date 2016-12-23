@@ -2,7 +2,8 @@ package com.keda.sky.app;
 
 import android.content.Context;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.kedacom.kdv.mt.api.Base;
 import com.kedacom.kdv.mt.api.IM;
 
@@ -42,7 +43,7 @@ public final class TruetouchGlobal {
 			public void run() {
 				GKStateMannager.instance().unRegisterGK();
 				GKStateMannager.restoreLoginState();
-				if (!MyApplication.getApplication().isH323) {
+				if (!KDInitUtil.isH323) {
 					// 退出平台
 					Base.logOutPlatformServerCmd();
 					Base.logOutIMCmd(IM.imHandle);
@@ -70,7 +71,7 @@ public final class TruetouchGlobal {
 		GKStateMannager.instance().unRegisterGK();
 		GKStateMannager.restoreLoginState();
 		// 退出平台
-		if (!MyApplication.getApplication().isH323) {
+		if (!KDInitUtil.isH323) {
 			// 退出平台
 			Base.logOutPlatformServerCmd();
 			Base.logOutIMCmd(IM.imHandle);

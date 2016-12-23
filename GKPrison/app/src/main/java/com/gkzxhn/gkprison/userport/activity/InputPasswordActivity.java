@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.userport.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
@@ -24,6 +25,11 @@ public class InputPasswordActivity extends BaseActivity {
     private GridPasswordView gpv_input_pwd;
     private SharedPreferences sp;
     private Handler handler = new Handler();
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, InputPasswordActivity.class);
+        mContext.startActivity(intent);
+    }
 
     @Override
     protected View initView() {

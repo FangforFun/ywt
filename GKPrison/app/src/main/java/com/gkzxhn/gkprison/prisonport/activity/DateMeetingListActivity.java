@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.prisonport.activity;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -35,6 +36,7 @@ import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
+import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -139,6 +141,11 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         } else if (date.getMonth() > Integer.parseInt(monthText.getText().toString().split("年")[1].substring(0, monthText.getText().toString().split("年")[1].length() - 1))) {
             showToastMsgShort("右滑至上个月份");
         }
+    }
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, DateMeetingListActivity.class);
+        mContext.startActivity(intent);
     }
 
     @Override

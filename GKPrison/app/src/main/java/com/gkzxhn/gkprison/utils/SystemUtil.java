@@ -9,7 +9,8 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
-import android.util.Log;
+
+import com.blankj.utilcode.utils.ShellUtils;
 
 /**
  * Created by zhengneng on 2015/12/18.
@@ -139,6 +140,38 @@ public class SystemUtil {
      * @return 平板返回 True，手机返回 False
      */
     public static boolean isTablet(Context context) {
-        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+        return (context.getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK) >=
+                Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    /**
+     * 网络不可用弹出toast
+     */
+    public static boolean isNetWorkUnAvailable(){
+        if (!isAvailableByPing()){
+            ToastUtil.showShortToast("网络不可用");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 判断网络是否可用
+     * <p>需添加权限 {@code <uses-permission android:name="android.permission.INTERNET"/>}</p>
+     *
+     *  context 上下文
+     * @return {@code true}: 可用<br>{@code false}: 不可用
+     */
+    public static boolean isAvailableByPing() {
+        ShellUtils.CommandResult result = ShellUtils.execCmd("ping -c 1 -w 1 www.baidu.com", false);
+        boolean ret = result.result == 0;
+        if (result.errorMsg != null) {
+            Log.d("isAvailableByPing errorMsg : " + result.errorMsg);
+        }
+        if (result.successMsg != null) {
+            Log.d("isAvailableByPing successMsg: " + result.successMsg);
+        }
+        return ret;
     }
 }

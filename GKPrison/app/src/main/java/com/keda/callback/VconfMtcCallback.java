@@ -10,7 +10,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.keda.main.VConfListActivity;

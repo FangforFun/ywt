@@ -13,10 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.login.requests.LoginService;
+import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
@@ -62,17 +63,17 @@ public class PersonLoginFragment extends BaseFragment {
     private static final java.lang.String TAG = "PersonLoginFragment";
     @BindView(R.id.tv_login_notice)
     TextView tv_login_notice;
-    @BindView(R.id.et_login_username)
+    @BindView(R.id.et_personal_username)
     EditText et_login_username;
-    @BindView(R.id.et_login_ic_card_num)
+    @BindView(R.id.et_personal_id_code)
     EditText et_login_ic_card_num;
     @BindView(R.id.et_identifying_code)
     EditText et_identifying_code;
-    @BindView(R.id.tv_send_identifying_code)
+    @BindView(R.id.tv_send_verify_code)
     TextView tv_send_identifying_code;
-    @BindView(R.id.ll_checkcode)
+    @BindView(R.id.ll_check_code)
     LinearLayout ll_checkcode;
-    @BindView(R.id.btn_login)
+    @BindView(R.id.btn_person_login)
     Button btn_login;
     @BindView(R.id.bt_register)
     Button bt_register;
@@ -157,7 +158,7 @@ public class PersonLoginFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        View view = View.inflate(context, R.layout.fragment_person_loading, null);
+        View view = View.inflate(context, R.layout.fragment_person_login, null);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -208,10 +209,10 @@ public class PersonLoginFragment extends BaseFragment {
         isRunning = false;
     }
 
-    @OnClick({R.id.tv_send_identifying_code, R.id.btn_login, R.id.bt_register, R.id.bt_fast_login})
+    @OnClick({R.id.tv_send_verify_code, R.id.btn_person_login, R.id.bt_register, R.id.bt_fast_login})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.tv_send_identifying_code:
+            case R.id.tv_send_verify_code:
                 username = et_login_username.getText().toString().trim();
                 // 判断手机号码是否合法
                 if (TextUtils.isEmpty(username)) {
@@ -221,7 +222,7 @@ public class PersonLoginFragment extends BaseFragment {
                         showToastMsgShort("请输入正确的用户名");
                     } else {
                         if (Utils.isNetworkAvailable(getActivity())) {
-                            final String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
+                            String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
                             initAndShowDialog("正在发送...");
                             getVerificationCode(phone_str);
                         } else {
@@ -236,7 +237,7 @@ public class PersonLoginFragment extends BaseFragment {
                     }
                 }
                 break;
-            case R.id.btn_login:
+            case R.id.btn_person_login:
                 username = et_login_username.getText().toString().trim();
                 ic_card_num = et_login_ic_card_num.getText().toString().trim();
                 String identifying_code = et_identifying_code.getText().toString().trim();
@@ -420,8 +421,8 @@ public class PersonLoginFragment extends BaseFragment {
     }
 
     private void login() {
-        MyApplication.getApplication().isH323 = true;
-        if (!MyApplication.getApplication().isH323) {
+        KDInitUtil.isH323 = true;
+        if (!KDInitUtil.isH323) {
             Configure.setAudioPriorCfgCmd(false);
             if (isMtH323Local()) {
                 // 取消代理，成功则 登陆aps
@@ -532,7 +533,7 @@ public class PersonLoginFragment extends BaseFragment {
      * @param isEnable true:设置代理可用
      */
     public void setH323PxyCfgCmdResult(final boolean isEnable) {
-        MyApplication.getApplication().isH323 = isEnable;
+        KDInitUtil.isH323 = isEnable;
         if (!isEnable) {
             Log.i("Login", "取消代理 -- 登录APS " + mAccount + "-" + mPassword);
             new Thread(new Runnable() {

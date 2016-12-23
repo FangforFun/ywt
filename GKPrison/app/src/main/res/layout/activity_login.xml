@@ -1,0 +1,13 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+        <include layout="@layout/toolbar_layout" />
+
+        <RelativeLayout android:layout_width="match_parent"
+            android:layout_height="match_parent">
+                <include layout="@layout/fragment_prison_login" />
+                <include layout="@layout/fragment_person_login" />
+        </RelativeLayout>
+</LinearLayout>

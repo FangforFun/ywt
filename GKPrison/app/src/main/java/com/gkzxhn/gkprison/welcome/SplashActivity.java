@@ -16,7 +16,7 @@ import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
-import com.gkzxhn.gkprison.userport.db.SQLitehelp;
+import com.gkzxhn.gkprison.userport.db.SQLiteHelper;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
@@ -31,13 +31,13 @@ public class SplashActivity extends BaseActivity {
     private VersionInfo versionInfo;
     private TextView tv_version;
     private RelativeLayout rl_splash;
-    private SQLitehelp help ;
+    private SQLiteHelper help ;
     private SQLiteDatabase db ;
     private TextView tv1;
     private TextView tv2;
     private int[] screenWidthHeight;
   //  private boolean tabexit;//判断数据库是否存在
-    private SQLitehelp sqLitehelp;
+    private SQLiteHelper sqLitehelp;
 
     @Override
     protected View initView() {
@@ -48,7 +48,6 @@ public class SplashActivity extends BaseActivity {
         tv2 = (TextView) view.findViewById(R.id.tv2);
         if(SystemUtil.isTablet(this)){ // 平板
             screenWidthHeight = DensityUtil.getScreenWidthHeight(this);
-//            showToastMsgLong(screenWidthHeight[0] + "---" + screenWidthHeight[1]);
             Log.i("screenWidthHeight is : ", screenWidthHeight[0] + "---" + screenWidthHeight[1]);
             if(screenWidthHeight[0] == 1280 && screenWidthHeight[1] == 720) { // orange pi
                 rl_splash.setBackgroundResource(R.drawable.splash_tablet);
@@ -69,16 +68,16 @@ public class SplashActivity extends BaseActivity {
             }
         }else { // 手机
             rl_splash.setBackgroundResource(R.drawable.splash);
-            tv1.setTextSize(11);
-            tv2.setTextSize(11);
-            tv_version.setTextSize(11);
+            tv1.setTextSize(12);
+            tv2.setTextSize(12);
+            tv_version.setTextSize(12);
         }
         return view;
     }
 
     @Override
     protected void initData() {
-        help = new SQLitehelp(this);
+        help = new SQLiteHelper(this);
         db = help.getWritableDatabase();
         sp = getSharedPreferences("config", MODE_PRIVATE);
         tv_version.setText("V " + SystemUtil.getVersionName(this));

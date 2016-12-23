@@ -1,5 +1,7 @@
 package com.gkzxhn.gkprison.login;
 
+import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.widget.AdapterView;
 
@@ -21,6 +23,11 @@ public class LoadingActivity extends BaseActivity {
     public PersonLoginFragment personLoginFragment;
     public PrisonLoginFragment prisonLoginFragment;
     public static boolean isPerson = true;
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, LoadingActivity.class);
+        mContext.startActivity(intent);
+    }
 
     @Override
     protected View initView() {

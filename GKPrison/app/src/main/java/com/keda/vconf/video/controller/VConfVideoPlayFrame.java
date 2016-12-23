@@ -658,7 +658,7 @@ public class VConfVideoPlayFrame extends Fragment implements View.OnClickListene
 
 					@Override public void onError(Throwable e) {
 						Log.e(TAG, "exam failed exception : " + e.getMessage());
-						ToastUtil.showLongToast(getActivity(), "发送异常");
+						ToastUtil.showLongToast("发送异常");
 					}
 
 					@Override public void onNext(ResponseBody responseBody) {
@@ -682,7 +682,7 @@ public class VConfVideoPlayFrame extends Fragment implements View.OnClickListene
 
 					@Override public void onError(Throwable e) {
 						Log.e(TAG, "exam exception : " + e.getMessage());
-						ToastUtil.showLongToast(getActivity(), "发送异常");
+						ToastUtil.showLongToast("发送异常");
 					}
 
 					@Override public void onNext(ResponseBody responseBody) {

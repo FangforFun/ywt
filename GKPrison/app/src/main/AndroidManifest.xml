@@ -114,7 +114,7 @@
         android:protectionLevel="normal" />
 
     <application
-        android:name=".application.MyApplication"
+        android:name=".app.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -136,7 +136,7 @@
             android:value="mobile" />
 
         <activity
-            android:name=".welcome.SplashActivity"
+            android:name=".userport.ui.splash.SplashActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -153,7 +153,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".login.LoadingActivity"
+            android:name=".userport.ui.login.LoginActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.MainActivity"
@@ -240,7 +240,7 @@
             android:name=".prisonport.activity.CallUserActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".welcome.WelcomeActivity"
+            android:name=".userport.ui.splash.welcome.WelComeActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.NewsDetailActivity"

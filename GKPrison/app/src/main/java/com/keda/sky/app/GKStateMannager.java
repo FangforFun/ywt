@@ -9,7 +9,8 @@ import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.google.gson.Gson;
 import com.kedacom.kdv.mt.api.Base;
 import com.kedacom.kdv.mt.api.Configure;
@@ -117,7 +118,7 @@ public class GKStateMannager {
 	 */
 	public void registerGK(String achE164, String password, String domain, long gkIp, String terlAlias) {
 		// ConfLibCtrl.confSetStackCmd(false, (short) EmConfProtocol.em323.ordinal()); // 走代理不用设协议栈
-		boolean isH323 = MyApplication.getApplication().isH323;
+		boolean isH323 = KDInitUtil.isH323;
 		// 设置别名
 		TMtTerminalNameApi mtTerminalNameApi = new TMtTerminalNameApi();
 		mtTerminalNameApi.achE164 = achE164;

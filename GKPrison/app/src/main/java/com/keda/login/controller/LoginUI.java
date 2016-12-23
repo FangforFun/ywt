@@ -23,7 +23,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.google.gson.Gson;
 import com.keda.main.MainUI;
 import com.keda.sky.app.GKStateMannager;
@@ -131,7 +131,7 @@ public class LoginUI extends ActionBarActivity {
 			mPasswdEdit.setText(GKStateMannager.mPszPassword);
 		}
 		mServerAddrEdit.setSelection(mServerAddrEdit.getText().toString().length());
-		mIsH323Tog.setChecked(MyApplication.getApplication().isH323);//是否h323代理
+		mIsH323Tog.setChecked(KDInitUtil.isH323);//是否h323代理
 	}
 
 	public void registerListeners() {
@@ -179,13 +179,13 @@ public class LoginUI extends ActionBarActivity {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				//设置代理
-				MyApplication.getApplication().isH323 = isChecked;
+				KDInitUtil.isH323 = isChecked;
 			}
 		});
 	}
 
 	protected void login() {
-		if (!MyApplication.getApplication().isH323) {
+		if (!KDInitUtil.isH323) {
 			Configure.setAudioPriorCfgCmd(false);
 			if (isMtH323Local()) {
 				// 取消代理，成功则 登陆aps
@@ -380,7 +380,7 @@ public class LoginUI extends ActionBarActivity {
 	 * @param isEnable true:设置代理可用
 	 */
 	public void setH323PxyCfgCmdResult(final boolean isEnable) {
-		MyApplication.getApplication().isH323 = isEnable;
+		KDInitUtil.isH323 = isEnable;
 		if (!isEnable) {
 			Log.i("Login", "取消代理 -- 登录APS " + mAccount + "-" + mPassword);
 			new Thread(new Runnable() {

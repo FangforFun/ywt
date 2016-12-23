@@ -9,7 +9,8 @@ import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.google.gson.Gson;
 import com.kedacom.kdv.mt.api.Base;
@@ -155,8 +156,8 @@ public class LoginMtcCallback {
 		userLogin.achNO = userInfoFromApsCfg.achJid;
 		userLogin.achUserPwd = userInfoFromApsCfg.achXmppPwd;
 		userLogin.byPwdLen = (short) userLogin.achUserPwd.length();
-		userLogin.achDefaultSaveDir = MyApplication.getSaveDir();
-		userLogin.achPicSaveDir = MyApplication.getPictureDir();
+		userLogin.achDefaultSaveDir = KDInitUtil.getSaveDir();
+		userLogin.achPicSaveDir = KDInitUtil.getPictureDir();
 		userLogin.achConfigPath = MyApplication.getContext().getFilesDir().getAbsolutePath();
 
 		// XMPP登录配置
@@ -259,7 +260,7 @@ public class LoginMtcCallback {
 			final int resultType = jsonBodyObj.getJSONObject(MyMtcCallback.KEY_AssParam).getInt(
 					MyMtcCallback.KEY_basetype);
 			boolean isSuccess = resultType == EmRegFailedReason.emRegSuccess.value;
-			boolean isH323 = MyApplication.getApplication().isH323;
+			boolean isH323 = KDInitUtil.isH323;
 			Activity currActivity = PcAppStackManager.Instance().currentActivity();
 			// GK 注册成功
 			if (isSuccess) {
@@ -403,7 +404,7 @@ public class LoginMtcCallback {
 					}
 				});
 				// 设置传输文件缓存路径,此处必须设置
-				Configure.imSetTempPathCmd(IM.imHandle, MyApplication.getTmpDir());
+				Configure.imSetTempPathCmd(IM.imHandle, KDInitUtil.getTmpDir());
 				LoginStateManager.imLogin = true;
 				LoginStateManager.imLogining = false;
 

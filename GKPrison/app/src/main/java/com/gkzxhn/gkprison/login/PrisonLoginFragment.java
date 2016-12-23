@@ -15,7 +15,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
@@ -55,7 +56,7 @@ public class PrisonLoginFragment extends BaseFragment {
     EditText et_username;
     @BindView(R.id.et_password)
     EditText et_password;
-    @BindView(R.id.btn_login)
+    @BindView(R.id.btn_prison_login)
     Button btn_login;
     private SweetAlertDialog sadDialog;
     private String username;
@@ -143,7 +144,7 @@ public class PrisonLoginFragment extends BaseFragment {
 
     @Override
     protected View initView() {
-        View view = View.inflate(context, R.layout.fragment_prison_loading, null);
+        View view = View.inflate(context, R.layout.fragment_prison_login, null);
         ButterKnife.bind(this, view);
         return view;
     }
@@ -212,7 +213,7 @@ public class PrisonLoginFragment extends BaseFragment {
         return null;
     }
 
-    @OnClick(R.id.btn_login)
+    @OnClick(R.id.btn_prison_login)
     public void onClick() {
         if (!Utils.isNetworkAvailable(getActivity())) {
             showToastMsgShort("网络不可用，请检查网络设置");
@@ -235,8 +236,8 @@ public class PrisonLoginFragment extends BaseFragment {
     }
 
     private void login() {
-        MyApplication.getApplication().isH323 = true;
-        if (!MyApplication.getApplication().isH323) {
+        KDInitUtil.isH323 = true;
+        if (!KDInitUtil.isH323) {
             Configure.setAudioPriorCfgCmd(false);
             if (isMtH323Local()) {
                 // 取消代理，成功则 登陆aps
@@ -348,7 +349,7 @@ public class PrisonLoginFragment extends BaseFragment {
      * @param isEnable true:设置代理可用
      */
     public void setH323PxyCfgCmdResult(final boolean isEnable) {
-        MyApplication.getApplication().isH323 = isEnable;
+        KDInitUtil.isH323 = isEnable;
         if (!isEnable) {
             Log.i("Login", "取消代理 -- 登录APS " + mAccount + "-" + mPassword);
             new Thread(new Runnable() {

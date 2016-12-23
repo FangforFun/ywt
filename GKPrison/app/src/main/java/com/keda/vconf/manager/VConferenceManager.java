@@ -13,7 +13,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDConstants;
 import com.google.gson.Gson;
 import com.kedacom.kdv.mt.api.Conference;
 import com.kedacom.kdv.mt.bean.EmPeerProductId;
@@ -449,7 +450,6 @@ public class VConferenceManager {
 	 * P2P呼叫
 	 *
 	 * @param e164
-	 * @param isAudioConf
 	 */
 	public static void makeCall(final String e164, final boolean isAudio) {
 		if (e164 == null || e164.length() == 0) {
@@ -499,7 +499,7 @@ public class VConferenceManager {
 	 * 音视频入会
 	 * 
 	 * @param vconf
-	 * @param isAudio
+	 *  isAudio
 	 */
 	private static void joinConf(VConf vconf) {
 		if (vconf == null) {
@@ -533,7 +533,7 @@ public class VConferenceManager {
 	public static void openVConfAudioUI(Activity cucrActivity, boolean isMackCall, String vconfName, String e164) {
 		Bundle extras = new Bundle();
 		extras.putString("VconfName", vconfName);
-		extras.putString(MyApplication.E164NUM, e164);
+		extras.putString(KDConstants.E164NUM, e164);
 		extras.putBoolean("MackCall", isMackCall);
 		extras.putBoolean("JoinConf", !isMackCall);
 
@@ -566,7 +566,7 @@ public class VConferenceManager {
 
 		Bundle extras = new Bundle();
 		extras.putString("VconfName", vconfName);
-		extras.putString(MyApplication.E164NUM, e164);
+		extras.putString(KDConstants.E164NUM, e164);
 		extras.putBoolean("MackCall", isMackCall);
 		extras.putBoolean("JoinConf", !isMackCall);
 
@@ -651,11 +651,11 @@ public class VConferenceManager {
 	 * 无帐号加入会议
 	 *
 	 * @param e164
-	 * @param alias
+	 *  alias
 	 */
 	public static void joinConfByVideo(Activity activity, String e164) {
 		Bundle pBundle = new Bundle();
-		pBundle.putString(MyApplication.E164NUM, e164);
+		pBundle.putString(KDConstants.E164NUM, e164);
 		pBundle.putBoolean("JoinVConf", true);
 		VConferenceManager.nativeConfType = EmNativeConfType.JOINING_VIDEO;
 		ActivityUtils.openActivity(activity, VConfVideoUI.class, pBundle);
@@ -665,7 +665,7 @@ public class VConferenceManager {
 	/**
 	 * 根据呼叫状态选择是否切换界面
 	 * 
-	 * @param currTMtCallLinkSate
+	 *  currTMtCallLinkSate
 	 */
 	public static void switchVConfViewFromCallLinkSate() {
 		Activity currActivity = PcAppStackManager.Instance().currentActivity();
@@ -991,7 +991,7 @@ public class VConferenceManager {
 
 	/**
 	 * 删除会议包含终端信息
-	 * @param tMtInfoEx
+	 *  tMtInfoEx
 	 */
 	public static void delTmtInfoByTerId(int terId) {
 		if (mTMtInfoList == null || mTMtInfoList.isEmpty()) {
@@ -1008,7 +1008,7 @@ public class VConferenceManager {
 
 	/**
 	 * 通过terNo获取alias
-	 * @param terNo
+	 *  terNo
 	 * @return
 	 */
 	public static String getAliasByTerId(int terId) {
@@ -1029,7 +1029,7 @@ public class VConferenceManager {
 
 	/**
 	 * 通过terNo获取alias
-	 * @param terNo
+	 *  terNo
 	 * @return
 	 */
 	public static TMTEntityInfo getMtInfoByTerId(int terId) {
@@ -1095,7 +1095,7 @@ public class VConferenceManager {
 	 * 创建会议
 	 * @param activity
 	 * @param vconfName 会议名称
-	 * @param tmplt 会议模板
+	 *  tmplt 会议模板
 	 * @param tMtList 与会人员
 	 * @param vconfQuality 会议质量
 	 * @param duration 会议时长
@@ -1132,7 +1132,7 @@ public class VConferenceManager {
 	/**
 	 * 通过ras 请求创建会议  tMtList不带自己
 	 *
-	 * @param  StringBuffer(TMtCreateConfParam_Api)	要创建的会议信息 
+	 *   StringBuffer(TMtCreateConfParam_Api)	要创建的会议信息
 	 * @return
 	 */
 	public static int confCreateConfCmd(String confTitle, List<TMtAddr> tmtList, int rate, int duration, boolean isAudio) {
@@ -1343,7 +1343,7 @@ public class VConferenceManager {
 		Intent intent = new Intent();
 		intent.setClass(activity, VConfDetailsUI.class);
 		Bundle bundle = new Bundle();
-		bundle.putString(MyApplication.E164NUM, e164);
+		bundle.putString(KDConstants.E164NUM, e164);
 		intent.putExtras(bundle);
 		ActivityUtils.openActivity(activity, intent);
 		// 获取会议详情

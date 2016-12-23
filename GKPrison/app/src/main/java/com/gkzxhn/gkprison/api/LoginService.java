@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.login.requests;
+package com.gkzxhn.gkprison.api;
 
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 

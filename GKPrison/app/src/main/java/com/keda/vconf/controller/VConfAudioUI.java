@@ -14,7 +14,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDConstants;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kedacom.kdv.mt.api.Conference;
@@ -114,7 +116,7 @@ public class VConfAudioUI extends ActionBarActivity {
 		}
 		if (null != extra) {
 			mConfTitle = extra.getString("VconfName");
-			mE164 = extra.getString(MyApplication.E164NUM);
+			mE164 = extra.getString(KDConstants.E164NUM);
 			mIsP2PConf = extra.getBoolean("MackCall", false);
 			mIsJoinConf = extra.getBoolean("JoinConf", false);
 		}

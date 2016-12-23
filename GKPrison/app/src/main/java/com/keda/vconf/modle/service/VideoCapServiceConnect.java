@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
 import com.kedacom.truetouch.video.capture.VideoCapture;
 
 /**

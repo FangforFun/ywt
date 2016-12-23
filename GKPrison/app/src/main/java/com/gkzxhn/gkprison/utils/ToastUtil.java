@@ -10,6 +10,7 @@ import android.widget.Toast;
 public class ToastUtil {
 
     public static boolean isShowToast = true;// 是否弹土司
+    public static Context mContext;
 
     private ToastUtil(){
 
@@ -20,70 +21,73 @@ public class ToastUtil {
     }
 
     /**
-     * 短时间显示Toast  (3s)
+     * 注册上下文
+     *      在application类里注册一次就不再需要穿context了
      * @param context
+     */
+    public static void registerContext(Context context){
+        mContext = context.getApplicationContext();
+    }
+
+    /**
+     * 短时间显示Toast  (3s)
      * @param msg
      */
-    public static void showShortToast(Context context, CharSequence msg){
+    public static void showShortToast(CharSequence msg){
         if(isShowToast){
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
      * 短时间显示Toast
-     * @param context
      * @param msg
      */
-    public static void showShortToast(Context context, int msg){
+    public static void showShortToast(int msg){
         if(isShowToast){
-            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, msg, Toast.LENGTH_SHORT).show();
         }
     }
 
     /**
      * 长时间显示Toast (5s)
-     * @param context
      * @param msg
      */
-    public static void showLongToast(Context context, CharSequence msg){
+    public static void showLongToast(CharSequence msg){
         if(isShowToast){
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         }
     }
 
     /**
      * 长时间显示Toast (5s)
-     * @param context
      * @param msg
      */
-    public static void showLongToast(Context context, int msg){
+    public static void showLongToast(int msg){
         if(isShowToast){
-            Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, msg, Toast.LENGTH_LONG).show();
         }
     }
 
     /**
      * 自定义Toast显示时常
-     * @param context
      * @param msg
      * @param duration
      */
-    public static void showToastDivTime(Context context, CharSequence msg, int duration){
+    public static void showToastDivTime(CharSequence msg, int duration){
         if(isShowToast){
-            Toast.makeText(context, msg, duration).show();
+            Toast.makeText(mContext, msg, duration).show();
         }
     }
 
     /**
      * 自定义Toast显示时常
-     * @param context
      * @param msg
      * @param duration
      */
-    public static void showToastDivTime(Context context, int msg, int duration){
+    public static void showToastDivTime(int msg, int duration){
         if(isShowToast){
-            Toast.makeText(context, msg, duration).show();
+            Toast.makeText(mContext, msg, duration).show();
         }
     }
 }

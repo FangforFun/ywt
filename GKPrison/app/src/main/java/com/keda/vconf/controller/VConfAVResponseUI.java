@@ -378,7 +378,7 @@ public class VConfAVResponseUI extends ActionBarActivity implements View.OnClick
 				intent.putExtra(LivenessActivity2.IMAGE_REF_PATH, fileName);
 				startActivityForResult(intent, ACTIVITY_REQUEST_CODE);
 			} else if (integer == 0) {
-				ToastUtil.showShortToast(VConfAVResponseUI.this, "授权验证失败，请稍后再试！");
+				ToastUtil.showShortToast("授权验证失败，请稍后再试！");
 			}
 		}
 	}

@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -187,6 +188,11 @@ public class MainActivity extends BaseActivity {
             }
         });
         builder.create().show();
+    }
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, MainActivity.class);
+        mContext.startActivity(intent);
     }
 
     @Override

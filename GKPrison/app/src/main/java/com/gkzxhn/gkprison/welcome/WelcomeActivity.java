@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.welcome;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
@@ -22,6 +23,11 @@ public class WelcomeActivity extends BaseActivity {
     private final int[] WELCOME_IMGS = {R.drawable.welcome01, R.drawable.welcome02, R.drawable.welcome03};
     private MyAdapter welcome_adapter;
     private Handler handler = new Handler();
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, WelcomeActivity.class);
+        mContext.startActivity(intent);
+    }
 
     @Override
     protected View initView() {

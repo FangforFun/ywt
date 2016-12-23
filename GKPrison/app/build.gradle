@@ -115,4 +115,10 @@ dependencies {
     apt project.DAGGER_COMPILER
     compile project.DAGGER
     provided project.JAVAX_ANNOTATION// 添加android缺失的部分javax注解
+    //leakcanary
+    debugCompile project.LEAKCANARY_DEBUG
+    releaseCompile project.LEAKCANARY_RELEASE
+    testCompile project.LEAKCANARY_TEST
+
+    compile project.UTIL_CODE
 }

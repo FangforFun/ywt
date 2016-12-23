@@ -9,7 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
 import com.keda.vconf.modle.service.VideoCapService;
 import com.keda.vconf.modle.service.VideoCapServiceConnect;
 

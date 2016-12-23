@@ -22,7 +22,7 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
 import com.kedacom.kdv.mt.api.Conference;
 import com.kedacom.kdv.mt.constant.EmMtCallDisReason;
 import com.gkzxhn.gkprison.R;

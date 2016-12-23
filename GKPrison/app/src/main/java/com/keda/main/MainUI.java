@@ -13,7 +13,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.keda.sky.app.TruetouchGlobal;
 import com.keda.sky.app.base.PcActivity;
 import com.keda.vconf.dialog.CreateConfDialog;
@@ -65,7 +65,7 @@ public class MainUI extends PcActivity {
 
 	@Override
 	public void initComponentValue() {
-		if (MyApplication.getApplication().isH323) {
+		if (KDInitUtil.isH323) {
 			mContact.setVisibility(View.GONE);
 			mConfContact.setVisibility(View.GONE);
 			mConfList.setVisibility(View.GONE);

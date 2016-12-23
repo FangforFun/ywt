@@ -7,7 +7,7 @@ package com.pc.utils;
 
 import android.content.Context;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
 
 
 /**

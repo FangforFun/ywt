@@ -10,7 +10,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.kedacom.kdv.mt.api.Base;
 import com.kedacom.kdv.mt.api.IM;
 import com.kedacom.kdv.mt.bean.TImUserLogin;
@@ -72,7 +73,7 @@ public class LoginStateManager {
 	 * @param pwd
 	 */
 	public synchronized static void loginAps(final String account, final String pwd, final String serverAddr) {
-		if (MyApplication.getApplication().isH323) {
+		if (KDInitUtil.isH323) {
 			return;
 		}
 		if (imLogin || imLogining) {

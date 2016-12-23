@@ -16,7 +16,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.gkzxhn.gkprison.application.MyApplication;
+import com.gkzxhn.gkprison.app.MyApplication;
+import com.gkzxhn.gkprison.app.utils.KDConstants;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -133,7 +134,7 @@ public class VConfVideoUI extends ActionBarActivity {
 		}
 		if (null != extra) {
 			mConfTitle = extra.getString("VconfName");
-			mE164 = extra.getString(MyApplication.E164NUM);
+			mE164 = extra.getString(KDConstants.E164NUM);
 			mIsP2PConf = extra.getBoolean("MackCall", false);
 			mIsJoinConf = extra.getBoolean("JoinConf", false);
 		}
@@ -293,9 +294,9 @@ public class VConfVideoUI extends ActionBarActivity {
 	public void onEvent(ExamineEvent event){
 		// ToDo 审核
 		if (event.getMsg().contains("发送审核状态异常")){
-			ToastUtil.showLongToast(VConfVideoUI.this, "服务器异常");
+			ToastUtil.showLongToast("服务器异常");
 		}else {
-			ToastUtil.showLongToast(VConfVideoUI.this, event.getMsg());
+			ToastUtil.showLongToast(event.getMsg());
 		}
 	}
 }

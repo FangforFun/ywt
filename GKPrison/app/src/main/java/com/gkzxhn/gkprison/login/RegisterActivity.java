@@ -35,7 +35,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
-import com.gkzxhn.gkprison.login.requests.LoginService;
+import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.login.view.AlertView;
 import com.gkzxhn.gkprison.login.view.OnItemClickListener;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
@@ -167,6 +167,11 @@ public class RegisterActivity extends BaseActivity {
     private boolean isRunning = false;
 
     private Handler handler = new Handler();
+
+    public static void startActivity(Context mContext){
+        Intent intent = new Intent(mContext, RegisterActivity.class);
+        mContext.startActivity(intent);
+    }
 
     /**
      * 成功

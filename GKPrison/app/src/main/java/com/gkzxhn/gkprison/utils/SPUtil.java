@@ -3,9 +3,6 @@ package com.gkzxhn.gkprison.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.netease.nim.uikit.common.util.C;
-
-import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -19,7 +16,8 @@ public class SPUtil {
     /**
      * sp保存的文件名
      */
-    public static final String FILE_NAME = "config";
+    private static final String FILE_NAME = "config";
+    private static final String FILE_NAME_2 = "pres_status";
 
     /**
      * 保存数据的方法，可传入String,int,boolean,float,long
@@ -50,6 +48,34 @@ public class SPUtil {
     }
 
     /**
+     * 保存数据的方法，可传入String,int,boolean,float,long
+     *        其它类型均以字符串形式保存其toString()的结果
+     * @param context
+     * @param key
+     * @param object
+     */
+    public static void putCanNotClear(Context context, String key, Object object){
+        SharedPreferences sp = context.getSharedPreferences(FILE_NAME_2,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        if(object instanceof  String){
+            editor.putString(key, (String) object);
+        }else if(object instanceof Integer){
+            editor.putInt(key, (Integer) object);
+        }else if(object instanceof Boolean){
+            editor.putBoolean(key, (Boolean) object);
+        }else if(object instanceof Float){
+            editor.putFloat(key, (Float) object);
+        }else if(object instanceof Long){
+            editor.putLong(key, (Long) object);
+        }else {
+            editor.putString(key, object.toString());
+        }
+        SharedPreferencesCompat.apply(editor);
+    }
+
+    /**
      * 获取对应的sp值
      * @param context
      * @param key
@@ -58,6 +84,30 @@ public class SPUtil {
      */
     public static Object get(Context context, String key, Object defaultObject){
         SharedPreferences sp = context.getSharedPreferences(FILE_NAME,
+                Context.MODE_PRIVATE);
+        if(defaultObject instanceof String){
+            return sp.getString(key, (String) defaultObject);
+        }else if(defaultObject instanceof Integer){
+            return sp.getInt(key, (Integer) defaultObject);
+        }else if(defaultObject instanceof Float){
+            return sp.getFloat(key, (Float) defaultObject);
+        }else if(defaultObject instanceof Long){
+            return sp.getLong(key, (Long) defaultObject);
+        }else if(defaultObject instanceof Boolean){
+            return sp.getBoolean(key, (Boolean) defaultObject);
+        }
+        return null;
+    }
+
+    /**
+            * 获取对应的sp值
+    * @param context
+    * @param key
+    * @param defaultObject
+    * @return
+            */
+    public static Object getCanNotClear(Context context, String key, Object defaultObject){
+        SharedPreferences sp = context.getSharedPreferences(FILE_NAME_2,
                 Context.MODE_PRIVATE);
         if(defaultObject instanceof String){
             return sp.getString(key, (String) defaultObject);
