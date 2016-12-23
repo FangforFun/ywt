@@ -35,6 +35,10 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivityNew implements LoginContract.View{
 
     // 绑定id
+
+    @BindView(R.id.tv_title)
+    TextView tv_title;
+
     @BindView(R.id.layout_prison)
     LinearLayout layout_prison;
     @BindView(R.id.et_username)
@@ -73,6 +77,7 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     @Override
     protected void initUiAndListener() {
         ButterKnife.bind(this);
+        tv_title.setText(getString(R.string.login_text));
         mPresenter.attachView(this);
     }
 

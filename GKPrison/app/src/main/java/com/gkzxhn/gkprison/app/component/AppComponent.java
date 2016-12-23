@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.app.component;
 import android.content.Context;
 
 import com.gkzxhn.gkprison.app.MyApplication;
-import com.gkzxhn.gkprison.app.module.ApiModule;
 import com.gkzxhn.gkprison.app.module.AppModule;
 import com.gkzxhn.gkprison.app.module.DBModule;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
@@ -20,7 +19,7 @@ import dagger.Component;
  */
 
 @Singleton
-@Component(modules = {AppModule.class, ApiModule.class, DBModule.class})
+@Component(modules = {AppModule.class, DBModule.class})
 public interface AppComponent {
 
     Context getContext();

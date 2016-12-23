@@ -133,4 +133,5 @@
     <string name="unavailable_phone">手机号码不存在</string>
     <string name="verify_failed">验证码请求失败，请稍后再试</string>
     <string name="code_200">200</string>
+    <string name="sended">已发送</string>
 </resources>

@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.userport.ui.login;
 import com.gkzxhn.gkprison.app.PerActivity;
 import com.gkzxhn.gkprison.app.component.AppComponent;
 import com.gkzxhn.gkprison.app.module.ActivityModule;
+import com.gkzxhn.gkprison.app.module.ApiModule;
 
 import dagger.Component;
 
@@ -14,7 +15,7 @@ import dagger.Component;
  */
 
 @PerActivity
-@Component(dependencies = AppComponent.class, modules = ActivityModule.class)
+@Component(dependencies = AppComponent.class, modules = {ActivityModule.class, ApiModule.class})
 public interface LoginComponent {
     void inject(LoginActivity activity);
 }

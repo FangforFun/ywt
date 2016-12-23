@@ -34,13 +34,12 @@ public class ApiModule {
 
     @Provides
     public Retrofit provideRetrofit(OkHttpClient okHttpClient){
-        Retrofit retrofit = new Retrofit.Builder()
+        return new Retrofit.Builder()
                 .baseUrl(Constants.URL_HEAD)
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
-        return retrofit;
     }
 
     @Provides
