@@ -75,9 +75,9 @@ public class PrisonLoginFragment extends BaseFragment {
         }
     };
 
-    private String mAccount = "001001889";
+    private String mAccount = "001001002";
     private String mPassword = "";
-    private String mAddr = "222.240.225.6";
+    private String mAddr = "106.14.18.98";
 
     /**
      * 登录失败

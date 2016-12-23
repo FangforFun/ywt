@@ -105,9 +105,9 @@ public class PersonLoginFragment extends BaseFragment {
         }
     };
 
-    private String mAccount = "001001888";
+    private String mAccount = "001001001";
     private String mPassword = "";
-    private String mAddr = "222.240.225.6";
+    private String mAddr = "106.14.18.98";
 
     /**
      * 登录成功
