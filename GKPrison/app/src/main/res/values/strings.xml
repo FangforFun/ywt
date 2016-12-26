@@ -119,6 +119,10 @@
     <string name="microphone">麦克风</string>
     <string name="speaker">扬声器</string>
     <string name="add_text">添加</string>
+
+
+
+
     <string name="app_company_name">国科政信（北京）股份有限公司</string>
     <string name="app_copy_rights">copyright©2006-2015.All right reserved</string>
     <string name="register">注册</string>
@@ -134,4 +138,24 @@
     <string name="verify_failed">验证码请求失败，请稍后再试</string>
     <string name="code_200">200</string>
     <string name="sended">已发送</string>
+    <string name="login_failed_retry">登录失败，请稍后再试</string>
+    <string name="unexist_account">用户不存在，请注册后使用！</string>
+    <string name="verify_code_error">验证码错误</string>
+    <string name="login_exception_retry">登录异常，请稍后再试</string>
+    <string name="login_success">登录成功</string>
+
+    <!-- 云信登录失败状态码对应 -->
+    <string name="account_pwd_error">手机号或者身份证号错误</string>
+    <string name="server_busy">服务器繁忙</string>
+    <string name="network_error">网络出错，请检查网络</string>
+    <string name="time_out">请求超时，请稍后再试</string>
+    <string name="illegal_control">非法操作或没有权限</string>
+    <string name="account_disable">您的账号已被禁用</string>
+    <string name="server_error">服务器错误</string>
+    <string name="username_empty">用户名不能为空</string>
+    <string name="pwd_empty">密码为空</string>
+    <string name="logining">正在登录...</string>
+    <string name="sending">正在发送...</string>
+
+
 </resources>

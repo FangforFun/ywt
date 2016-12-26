@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -30,12 +28,6 @@ import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
 import com.keda.vconf.reqs.ExamineEvent;
-import com.netease.nim.uikit.ImageLoaderKit;
-import com.netease.nim.uikit.NimUIKit;
-import com.netease.nim.uikit.cache.FriendDataCache;
-import com.netease.nim.uikit.cache.NimUserInfoCache;
-import com.netease.nim.uikit.cache.TeamDataCache;
-import com.netease.nim.uikit.contact.ContactProvider;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.Observer;
 import com.netease.nimlib.sdk.SDKOptions;
@@ -47,15 +39,12 @@ import com.netease.nimlib.sdk.msg.MsgServiceObserve;
 import com.netease.nimlib.sdk.msg.constant.SessionTypeEnum;
 import com.netease.nimlib.sdk.msg.model.CustomNotification;
 import com.netease.nimlib.sdk.uinfo.UserInfoProvider;
-import com.netease.nimlib.sdk.uinfo.model.NimUserInfo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import de.greenrobot.event.EventBus;
@@ -80,8 +69,6 @@ public class NimInitUtil {
     public static void initNim(){
         NIMClient.init(MyApplication.getContext(), loginInfo(), options()); // 初始化
         if (inMainProcess()) {
-            // 初始化UIKit模块
-            NimUIKit.init(MyApplication.getContext(), infoProvider, contactProvider);
             observeCustomNotification();
             NIMClient.getService(AuthServiceObserver.class).observeOnlineStatus(
                     getObserver(), true);
@@ -204,80 +191,6 @@ public class NimInitUtil {
         };
         return options;
     }
-
-    private static UserInfoProvider infoProvider = new UserInfoProvider(){
-
-        @Override
-        public UserInfo getUserInfo(String s) {
-            UserInfo user = NimUserInfoCache.getInstance().getUserInfo(s);
-            if (user == null) {
-                NimUserInfoCache.getInstance().getUserInfoFromRemote(s, null);
-            }
-            return user;
-        }
-
-        @Override
-        public int getDefaultIconResId() {
-            return R.drawable.avatar_def;
-        }
-
-        @Override
-        public Bitmap getTeamIcon(String s) {
-            Drawable drawable = MyApplication.getContext().getResources().
-                    getDrawable(R.drawable.nim_avatar_group);
-            if (drawable instanceof BitmapDrawable) {
-                return ((BitmapDrawable) drawable).getBitmap();
-            }
-            return null;
-        }
-
-        @Override
-        public Bitmap getAvatarForMessageNotifier(String s) {
-            UserInfo user = getUserInfo(s);
-            return (user != null) ? ImageLoaderKit.getNotificationBitmapFromCache(user) : null;
-        }
-
-        @Override
-        public String getDisplayNameForMessageNotifier(String account, String sessionId, SessionTypeEnum sessionTypeEnum) {
-            String nick = null;
-            if (sessionTypeEnum == SessionTypeEnum.P2P) {
-                nick = NimUserInfoCache.getInstance().getAlias(account);
-            } else if (sessionTypeEnum == SessionTypeEnum.Team) {
-                nick = TeamDataCache.getInstance().getTeamNick(sessionId, account);
-                if (TextUtils.isEmpty(nick)) {
-                    nick = NimUserInfoCache.getInstance().getAlias(account);
-                }
-            }
-            // 返回null，交给sdk处理。如果对方有设置nick，sdk会显示nick
-            if (TextUtils.isEmpty(nick)) {
-                return null;
-            }
-
-            return nick;
-        }
-    };
-
-    private static ContactProvider contactProvider = new ContactProvider() {
-        @Override
-        public List<UserInfoProvider.UserInfo> getUserInfoOfMyFriends() {
-            List<NimUserInfo> nimUsers = NimUserInfoCache.getInstance().getAllUsersOfMyFriend();
-            List<UserInfoProvider.UserInfo> users = new ArrayList<>(nimUsers.size());
-            if (!nimUsers.isEmpty()) {
-                users.addAll(nimUsers);
-            }
-            return users;
-        }
-
-        @Override
-        public int getMyFriendsCount() {
-            return FriendDataCache.getInstance().getMyFriendCounts();
-        }
-
-        @Override
-        public String getUserDisplayName(String account) {
-            return NimUserInfoCache.getInstance().getUserDisplayName(account);
-        }
-    };
 
 
     /**

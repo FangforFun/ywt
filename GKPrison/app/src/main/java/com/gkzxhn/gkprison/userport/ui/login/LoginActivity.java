@@ -11,8 +11,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.login.RegisterActivity;
+import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
@@ -63,9 +65,22 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
 
     private ProgressDialog verify_dialog;
 
+    /**
+     * 开启此activity
+     * @param mContext
+     */
     public static void startActivity(Context mContext){
         Intent intent = new Intent(mContext, LoginActivity.class);
         mContext.startActivity(intent);
+    }
+
+    /**
+     * 登录成功
+     * @param isSuccess
+     * @param failedMsg
+     */
+    public void loginSuccess(boolean isSuccess, String failedMsg){
+        mPresenter.control.loginSuccessed(isSuccess, failedMsg);
     }
 
     @Override
@@ -100,25 +115,10 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     }
 
     @Override
-    public void showMainUi() {
-
-    }
-
-    @Override
-    public void toRegister() {
-
-    }
-
-    @Override
-    public void toLoginWithoutAccount() {
-
-    }
-
-    @Override
-    public void showProgress() {
+    public void showProgress(String msg) {
         if (verify_dialog == null){
             verify_dialog = new ProgressDialog(this);
-            verify_dialog.setMessage("请稍候...");
+            verify_dialog.setMessage(msg);
             verify_dialog.show();
         }else {
             if (!verify_dialog.isShowing())
@@ -130,16 +130,6 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     public void dismissProgress() {
         if (verify_dialog != null && verify_dialog.isShowing())
             verify_dialog.dismiss();
-    }
-
-    @Override
-    public void showFailed(String msg) {
-
-    }
-
-    @Override
-    public void showSuccess(String msg) {
-
     }
 
     @Override
@@ -161,6 +151,16 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     @Override
     public void removeCountDown() {
         removeCodeTask();
+    }
+
+    @Override
+    public void toNextPage(boolean isCommonUser) {
+        if (isCommonUser){
+            MainActivity.startActivity(this);
+        }else {
+            DateMeetingListActivity.startActivity(this);
+        }
+        finish();
     }
 
     private boolean isRunning = false;
@@ -202,40 +202,61 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
             R.id.btn_prison_login, R.id.btn_prison_switch})
     public void OnClick(View view){
         switch (view.getId()){
-            case R.id.tv_send_verify_code:
+            case R.id.tv_send_verify_code:// 发送验证码
                 if (isRunning)
                     return; // 正在倒计时
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;// 网络不可用
                 mPresenter.sendVerifyCode(et_personal_username);
                 break;
-            case R.id.btn_person_login:
+            case R.id.btn_person_login:// 个人用户登录
+                if (!mPresenter.checkInputText(et_personal_username,
+                        et_personal_id_code, et_verify_code))// 校验输入文本可行性
+                    return;
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;
-
+                mPresenter.login(true, getPersonalLoginText());
                 break;
-            case R.id.btn_personal_switch:
+            case R.id.btn_personal_switch:// 个人用户登录切换到监狱用户登录
                 switchLoginUi();
                 break;
-            case R.id.bt_register:
+            case R.id.bt_register:// 跳转注册页面
                 RegisterActivity.startActivity(this);
                 break;
-            case R.id.bt_fast_login:
+            case R.id.bt_fast_login:// 无账号快捷登录
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;
-
-                break;
-            case R.id.btn_prison_login:
-                if (SystemUtil.isNetWorkUnAvailable())
-                    return;
-                SPUtil.put(this, "isRegisteredUser", false);
+                // 标注非注册用户进入主页
+                SPUtil.put(this, SPKeyConstants.IS_REGISTERED_USER, false);
                 MainActivity.startActivity(this);
                 finish();
                 break;
-            case R.id.btn_prison_switch:
+            case R.id.btn_prison_login:// 监狱管理用户登录
+                // 非普通用户  即监狱用户
+                if (!mPresenter.checkInputText(et_username, et_password))
+                    return;
+                if (SystemUtil.isNetWorkUnAvailable())
+                    return;
+                String username = et_username.getText().toString().trim();
+                String password = et_password.getText().toString().trim();
+                mPresenter.login(false, username + "-" + password);
+                break;
+            case R.id.btn_prison_switch:// 监狱用户切换至普通个人用户登录界面
                 switchLoginUi();
                 break;
         }
+    }
+
+    /**
+     * 获取个人登录字符串
+     * @return
+     */
+    private String getPersonalLoginText() {
+        String phone_num = et_personal_username.getText().toString().trim();
+        String id_num = et_personal_id_code.getText().toString().trim();
+        String verify_code = et_verify_code.getText().toString().trim();
+        return "{\"session\":{ \"phone\":\"" + phone_num + "\", \"uuid\":\""
+                + id_num + "\", \"code\":\"" + verify_code + "\"}}";
     }
 
     /**
@@ -248,6 +269,8 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
 
     @Override
     protected void onDestroy() {
+        if (isRunning)
+            removeCountDown();
         super.onDestroy();
         mPresenter.detachView();
     }

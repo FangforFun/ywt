@@ -4,26 +4,20 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.base.BaseFragment;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
 import com.gkzxhn.gkprison.userport.bean.UserInfo;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
-import com.gkzxhn.gkprison.utils.Utils;
 import com.google.gson.Gson;
 import com.keda.sky.app.GKStateMannager;
 import com.keda.sky.app.LoginStateManager;
@@ -41,9 +35,7 @@ import com.pc.utils.StringUtils;
 
 import java.net.InetAddress;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -54,6 +46,7 @@ import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
+
 /**
  * created by huangzhengneng on 2016.1.12
  * description:个人用户登录界面
@@ -61,24 +54,24 @@ import rx.schedulers.Schedulers;
 public class PersonLoginFragment extends BaseFragment {
 
     private static final java.lang.String TAG = "PersonLoginFragment";
-    @BindView(R.id.tv_login_notice)
-    TextView tv_login_notice;
-    @BindView(R.id.et_personal_username)
-    EditText et_login_username;
-    @BindView(R.id.et_personal_id_code)
-    EditText et_login_ic_card_num;
-    @BindView(R.id.et_identifying_code)
-    EditText et_identifying_code;
-    @BindView(R.id.tv_send_verify_code)
-    TextView tv_send_identifying_code;
-    @BindView(R.id.ll_check_code)
-    LinearLayout ll_checkcode;
-    @BindView(R.id.btn_person_login)
-    Button btn_login;
-    @BindView(R.id.bt_register)
-    Button bt_register;
-    @BindView(R.id.bt_fast_login)
-    Button bt_fast_login;
+//    @BindView(R.id.tv_login_notice)
+//    TextView tv_login_notice;
+//    @BindView(R.id.et_login_username)
+//    EditText et_login_username;
+//    @BindView(R.id.et_login_ic_card_num)
+//    EditText et_login_ic_card_num;
+//    @BindView(R.id.et_identifying_code)
+//    EditText et_identifying_code;
+//    @BindView(R.id.tv_send_identifying_code)
+//    TextView tv_send_identifying_code;
+//    @BindView(R.id.ll_checkcode)
+//    LinearLayout ll_checkcode;
+//    @BindView(R.id.btn_login)
+//    Button btn_login;
+//    @BindView(R.id.bt_register)
+//    Button bt_register;
+//    @BindView(R.id.bt_fast_login)
+//    Button bt_fast_login;
     private SweetAlertDialog sadDialog;
     private String username;// 用户名(手机号)
     private String ic_card_num;// 身份证
@@ -106,9 +99,9 @@ public class PersonLoginFragment extends BaseFragment {
         }
     };
 
-    private String mAccount = "001001888";
+    private String mAccount = "001001001";
     private String mPassword = "";
-    private String mAddr = "222.240.225.6";
+    private String mAddr = "106.14.18.98";
 
     /**
      * 登录成功
@@ -187,7 +180,7 @@ public class PersonLoginFragment extends BaseFragment {
         public void run() {
             isRunning = true;
             countdown--;
-            tv_send_identifying_code.setText(countdown + "秒后可重发");
+//            tv_send_identifying_code.setText(countdown + "秒后可重发");
             if (countdown == 0) {
                 removeCodeTask();
             } else {
@@ -201,72 +194,72 @@ public class PersonLoginFragment extends BaseFragment {
      */
     private void removeCodeTask() {
         handler.removeCallbacks(identifying_Code_Task);
-        tv_send_identifying_code.setEnabled(true);
-        tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
-        tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
-        tv_send_identifying_code.setText("发送验证码");
+//        tv_send_identifying_code.setEnabled(true);
+//        tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.white));
+//        tv_send_identifying_code.setTextColor(getResources().getColor(R.color.theme));
+//        tv_send_identifying_code.setText("发送验证码");
         countdown = 60;
         isRunning = false;
     }
 
-    @OnClick({R.id.tv_send_verify_code, R.id.btn_person_login, R.id.bt_register, R.id.bt_fast_login})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.tv_send_verify_code:
-                username = et_login_username.getText().toString().trim();
-                // 判断手机号码是否合法
-                if (TextUtils.isEmpty(username)) {
-                    showToastMsgShort("手机号为空");
-                } else {
-                    if (!Utils.isMobileNO(username)) {
-                        showToastMsgShort("请输入正确的用户名");
-                    } else {
-                        if (Utils.isNetworkAvailable(getActivity())) {
-                            String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
-                            initAndShowDialog("正在发送...");
-                            getVerificationCode(phone_str);
-                        } else {
-                            showToastMsgLong("没有网络");
-                            return;
-                        }
-                        tv_send_identifying_code.setEnabled(false);
-                        tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.tv_gray));
-                        tv_send_identifying_code.setTextColor(getResources().getColor(R.color.white));
-                        tv_send_identifying_code.setText(countdown + "秒后可重发");
-                        handler.postDelayed(identifying_Code_Task, 1000);
-                    }
-                }
-                break;
-            case R.id.btn_person_login:
-                username = et_login_username.getText().toString().trim();
-                ic_card_num = et_login_ic_card_num.getText().toString().trim();
-                String identifying_code = et_identifying_code.getText().toString().trim();
-                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
-                    Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
-                } else {
-                    if (Utils.isNetworkAvailable(getActivity())) {
-                        initAndShowDialog("正在登录...");
-                        setNIMLoginCallBack();// 设置云信id登录回调
-                        String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\""
-                                + ic_card_num + "\", \"code\":\"" + identifying_code + "\"}}";
-                        loginPersonAccount(str);
-                    } else {
-                        showToastMsgLong("没有网络");
-                    }
-                }
-                break;
-            case R.id.bt_register:
-                Intent intent1 = new Intent(context, RegisterActivity.class);
-                startActivity(intent1);
-                break;
-            case R.id.bt_fast_login:
-                SPUtil.put(getActivity(), "isRegisteredUser", false);
-                Intent intent2 = new Intent(context, MainActivity.class);
-                startActivity(intent2);
-                getActivity().finish();
-                break;
-        }
-    }
+//    @OnClick({R.id.tv_send_identifying_code, R.id.btn_login, R.id.bt_register, R.id.bt_fast_login})
+//    public void onClick(View view) {
+//        switch (view.getId()) {
+//            case R.id.tv_send_identifying_code:
+////                username = et_login_username.getText().toString().trim();
+//                // 判断手机号码是否合法
+//                if (TextUtils.isEmpty(username)) {
+//                    showToastMsgShort("手机号为空");
+//                } else {
+//                    if (!Utils.isMobileNO(username)) {
+//                        showToastMsgShort("请输入正确的用户名");
+//                    } else {
+//                        if (Utils.isNetworkAvailable(getActivity())) {
+//                            final String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
+//                            initAndShowDialog("正在发送...");
+//                            getVerificationCode(phone_str);
+//                        } else {
+//                            showToastMsgLong("没有网络");
+//                            return;
+//                        }
+////                        tv_send_identifying_code.setEnabled(false);
+////                        tv_send_identifying_code.setBackgroundColor(getResources().getColor(R.color.tv_gray));
+////                        tv_send_identifying_code.setTextColor(getResources().getColor(R.color.white));
+////                        tv_send_identifying_code.setText(countdown + "秒后可重发");
+//                        handler.postDelayed(identifying_Code_Task, 1000);
+//                    }
+//                }
+//                break;
+//            case R.id.btn_login:
+////                username = et_login_username.getText().toString().trim();
+////                ic_card_num = et_login_ic_card_num.getText().toString().trim();
+////                String identifying_code = et_identifying_code.getText().toString().trim();
+////                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
+////                    Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
+////                } else {
+////                    if (Utils.isNetworkAvailable(getActivity())) {
+////                        initAndShowDialog("正在登录...");
+////                        setNIMLoginCallBack();// 设置云信id登录回调
+////                        String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\""
+////                                + ic_card_num + "\", \"code\":\"" + identifying_code + "\"}}";
+////                        loginPersonAccount(str);
+////                    } else {
+////                        showToastMsgLong("没有网络");
+////                    }
+////                }
+//                break;
+//            case R.id.bt_register:
+//                Intent intent1 = new Intent(context, RegisterActivity.class);
+//                startActivity(intent1);
+//                break;
+//            case R.id.bt_fast_login:
+//                SPUtil.put(getActivity(), "isRegisteredUser", false);
+//                Intent intent2 = new Intent(context, MainActivity.class);
+//                startActivity(intent2);
+//                getActivity().finish();
+//                break;
+//        }
+//    }
 
     /**
      * 登录个人用户

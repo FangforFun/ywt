@@ -12,7 +12,13 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.login.LoadingActivity;
+import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.google.gson.Gson;
+import com.keda.main.MainUI;
+import com.keda.sky.app.GKStateMannager;
+import com.keda.sky.app.LoginStateManager;
+import com.keda.sky.app.PcAppStackManager;
+import com.keda.sky.app.TruetouchGlobal;
 import com.kedacom.kdv.mt.api.Base;
 import com.kedacom.kdv.mt.api.Configure;
 import com.kedacom.kdv.mt.api.IM;
@@ -23,11 +29,6 @@ import com.kedacom.kdv.mt.bean.TRestErrorInfo;
 import com.kedacom.kdv.mt.bean.UserInfoFromApsCfg;
 import com.kedacom.kdv.mt.bean.XNUCfg;
 import com.kedacom.kdv.mt.constant.EmRegFailedReason;
-import com.keda.main.MainUI;
-import com.keda.sky.app.GKStateMannager;
-import com.keda.sky.app.LoginStateManager;
-import com.keda.sky.app.PcAppStackManager;
-import com.keda.sky.app.TruetouchGlobal;
 import com.pc.utils.DNSParseUtil;
 import com.pc.utils.NetWorkUtils;
 import com.pc.utils.StringUtils;
@@ -86,13 +87,9 @@ public class LoginMtcCallback {
 			LoginStateManager.restoreLoginState();
 			Base.logoutApsServerCmd();
 			Activity currActivity = PcAppStackManager.Instance().currentActivity();
-			LoadingActivity activity = (LoadingActivity) currActivity;
-			if (activity.isPerson) {
-				activity.personLoginFragment.loginSuccessed(false,
-						"APS登录失败:" + apsErr);
-			}else {
-				activity.prisonLoginFragment.loginSuccessed(false,
-						"APS登录失败:" + apsErr);
+			if (currActivity instanceof LoginActivity){
+				LoginActivity activity = (LoginActivity) currActivity;
+				activity.loginSuccess(false,"APS登录失败:" + apsErr);
 			}
 			return;
 		}
@@ -279,13 +276,9 @@ public class LoginMtcCallback {
 				});
 
 				Log.i("Login", "注册GK成功");
-				if (currActivity instanceof LoadingActivity) {
-					Log.i("Login", ((LoadingActivity) currActivity).isPerson + "");
-					if (((LoadingActivity) currActivity).isPerson)
-						((LoadingActivity) currActivity).personLoginFragment.loginSuccessed(isSuccess, "");
-					else {
-						((LoadingActivity) currActivity).prisonLoginFragment.loginSuccessed(isSuccess, "");
-					}
+				if (currActivity instanceof LoginActivity){
+					LoginActivity activity = (LoginActivity) currActivity;
+					activity.loginSuccess(true,"");
 				}
 			} else {
 				new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -316,15 +309,10 @@ public class LoginMtcCallback {
 					Log.i("Login", "H323 注册GK成功");
 				} else {
 					Log.i("Login", "H323 注册GK失败" + resultType);
-					if (currActivity instanceof LoadingActivity) {
+					if (currActivity instanceof LoginActivity) {
 						if (resultType != EmRegFailedReason.emUnRegSuc.value) {// 不用多次注销
-							if (((LoadingActivity) currActivity).isPerson) {
-								((LoadingActivity) currActivity).personLoginFragment.loginSuccessed(isSuccess,
-										"错误码" + resultType);
-							}else {
-								((LoadingActivity) currActivity).prisonLoginFragment.loginSuccessed(isSuccess,
-										"错误码" + resultType);
-							}
+							LoginActivity activity = (LoginActivity) currActivity;
+							activity.loginSuccess(false,"错误码" + resultType);
 							// 注销gk，不然会一直注册
 							GKStateMannager.instance().unRegisterGK();
 						}
@@ -428,14 +416,11 @@ public class LoginMtcCallback {
 				});
 				Log.i("Login", "LoginIm失败");
 				Activity currActivity = PcAppStackManager.Instance().currentActivity();
-				if (!(currActivity instanceof LoadingActivity)) {
+				if (!(currActivity instanceof LoginActivity)) {
 					 GKStateMannager.instance().registerGK();
 				} else {
-					if (((LoadingActivity) currActivity).isPerson)
-					 	((LoadingActivity) currActivity).personLoginFragment.loginSuccessed(false, "");
-					else {
-						((LoadingActivity) currActivity).prisonLoginFragment.loginSuccessed(false, "");
-					}
+					LoginActivity activity = (LoginActivity) currActivity;
+					activity.loginSuccess(false, "");
 				}
 			}
 

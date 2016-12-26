@@ -73,8 +73,6 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     // 自定义toggle button
     compile project(':libraries:ToggleButtonLib')
-    // 云信sdk
-    compile project(':libraries:uikit')
     // 人脸识别库
     compile project(':libraries:livenessLib')
     // android support
@@ -116,9 +114,12 @@ dependencies {
     compile project.DAGGER
     provided project.JAVAX_ANNOTATION// 添加android缺失的部分javax注解
     //leakcanary
-    debugCompile project.LEAKCANARY_DEBUG
-    releaseCompile project.LEAKCANARY_RELEASE
-    testCompile project.LEAKCANARY_TEST
+//    debugCompile project.LEAKCANARY_DEBUG
+//    releaseCompile project.LEAKCANARY_RELEASE
+//    testCompile project.LEAKCANARY_TEST
 
+    // 安卓常用工具类大全
     compile project.UTIL_CODE
+    // 云信基础sdk
+    compile project.NIM_SDK_BASE
 }

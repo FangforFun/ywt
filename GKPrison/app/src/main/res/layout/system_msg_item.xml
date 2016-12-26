@@ -32,7 +32,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:text="11:12"
-        android:textSize="@dimen/text_size_12"
+        android:textSize="12sp"
         android:textColor="@color/tv_gray"
         android:paddingBottom="2dp"/>
 </RelativeLayout>

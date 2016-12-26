@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/libraries" />
             <option value="$PROJECT_DIR$/libraries/ToggleButtonLib" />
             <option value="$PROJECT_DIR$/libraries/livenessLib" />
-            <option value="$PROJECT_DIR$/libraries/uikit" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
