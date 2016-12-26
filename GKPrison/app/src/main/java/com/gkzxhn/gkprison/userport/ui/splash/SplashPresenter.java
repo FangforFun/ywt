@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
 import com.gkzxhn.gkprison.app.PerActivity;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.userport.db.SQLiteHelper;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -51,20 +52,20 @@ public class SplashPresenter implements SplashContract.Presenter{
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                boolean isFirst = (boolean) getSharedPres("is_first", true);
+                boolean isFirst = (boolean) getSharedPres(SPKeyConstants.FIRST_LOGIN, true);
                 if (!isFirst){
-                    boolean isLock = (boolean) getSharedPres("isLock", false);
+                    boolean isLock = (boolean) getSharedPres(SPKeyConstants.APP_LOCK, false);
                     if (isLock){// 已加锁进入输入密码页面
                         mSplashView.toInputPassWord();
                         Log.i(TAG, "user will go to input password!");
                     }else {
-                        String account = (String) getClearableSharedPres("username", "");
-                        String password = (String) getClearableSharedPres("password", "");
+                        String account = (String) getClearableSharedPres(SPKeyConstants.USERNAME, "");
+                        String password = (String) getClearableSharedPres(SPKeyConstants.PASSWORD, "");
                         if (TextUtils.isEmpty(account) || TextUtils.isEmpty(password)){
                             mSplashView.toLogin();
                             Log.i(TAG, "user will go to login!");
                         }else {
-                            boolean isCommonUser = (boolean) getClearableSharedPres("isCommonUser", true);
+                            boolean isCommonUser = (boolean) getClearableSharedPres(SPKeyConstants.IS_COMMON_USER, true);
                             if (isCommonUser){
                                 mSplashView.toMain();
                                 Log.i(TAG, "isCommonUser, user will go to main!");
@@ -76,7 +77,7 @@ public class SplashPresenter implements SplashContract.Presenter{
                     }
                 }else {// 第一次  进入欢迎页面
                     mSplashView.toWelCome();
-                    SPUtil.putCanNotClear(mContext, "is_first", false);
+                    SPUtil.putCanNotClear(mContext, SPKeyConstants.FIRST_LOGIN, false);
                     Log.i(TAG, "new user!!!!!!!!!");
                 }
             }

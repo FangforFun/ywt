@@ -35,7 +35,6 @@ import butterknife.OnClick;
 public class LoginActivity extends BaseActivityNew implements LoginContract.View{
 
     // 绑定id
-
     @BindView(R.id.tv_title)
     TextView tv_title;
 
