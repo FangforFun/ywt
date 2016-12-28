@@ -36,7 +36,7 @@ import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 import com.gkzxhn.gkprison.prisonport.view.CalendarCard;
 import com.gkzxhn.gkprison.prisonport.view.CustomDate;
-import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
+import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -430,7 +430,7 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
                 tv_ok.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
+                        Intent intent = new Intent(DateMeetingListActivity.this, LoginActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         SPUtil.clear(DateMeetingListActivity.this);
                         SharedPreferences.Editor editor = sp.edit();

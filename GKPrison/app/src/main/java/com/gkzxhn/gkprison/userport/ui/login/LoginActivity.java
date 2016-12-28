@@ -13,18 +13,22 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.login.RegisterActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.ui.register.RegisterActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.gkzxhn.gkprison.utils.UIUtils;
+import com.pc.utils.StringUtils;
 
 import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+
+import static com.gkzxhn.gkprison.utils.ToastUtil.mContext;
 
 
 /**
@@ -79,8 +83,24 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
      * @param isSuccess
      * @param failedMsg
      */
-    public void loginSuccess(boolean isSuccess, String failedMsg){
-        mPresenter.control.loginSuccessed(isSuccess, failedMsg);
+    public void loginSuccess(final boolean isSuccess, final String failedMsg){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dismissProgress();
+                if (isSuccess) {
+                    showToast(mContext.getString(R.string.login_success));
+                    // 进入下一页
+                    toNextPage();
+                    return;
+                }
+                if (StringUtils.isNull(failedMsg)) {
+                    showToast(mContext.getString(R.string.login_failed_retry));
+                } else {
+                    showToast(failedMsg);
+                }
+            }
+        });
     }
 
     @Override
@@ -117,9 +137,7 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     @Override
     public void showProgress(String msg) {
         if (verify_dialog == null){
-            verify_dialog = new ProgressDialog(this);
-            verify_dialog.setMessage(msg);
-            verify_dialog.show();
+            verify_dialog = UIUtils.showProgressDialog(this, msg);
         }else {
             if (!verify_dialog.isShowing())
                 verify_dialog.show();
@@ -128,8 +146,7 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
 
     @Override
     public void dismissProgress() {
-        if (verify_dialog != null && verify_dialog.isShowing())
-            verify_dialog.dismiss();
+        UIUtils.dismissProgressDialog(verify_dialog);
     }
 
     @Override
@@ -154,7 +171,8 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     }
 
     @Override
-    public void toNextPage(boolean isCommonUser) {
+    public void toNextPage() {
+        boolean isCommonUser = layout_personal.getVisibility() == View.VISIBLE;
         if (isCommonUser){
             MainActivity.startActivity(this);
         }else {
@@ -207,15 +225,20 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
                     return; // 正在倒计时
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;// 网络不可用
-                mPresenter.sendVerifyCode(et_personal_username);
+                mPresenter.sendVerifyCode(et_personal_username.getText().toString().trim());
                 break;
             case R.id.btn_person_login:// 个人用户登录
-                if (!mPresenter.checkInputText(et_personal_username,
-                        et_personal_id_code, et_verify_code))// 校验输入文本可行性
+                String phone_num = et_personal_username.getText().toString().trim();
+                String id_num = et_personal_id_code.getText().toString().trim();
+                String verify_code = et_verify_code.getText().toString().trim();
+                if (!mPresenter.checkInputText(phone_num,
+                        id_num, verify_code))// 校验输入文本可行性
                     return;
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;
-                mPresenter.login(true, getPersonalLoginText());
+                String login_json = "{\"session\":{ \"phone\":\"" + phone_num + "\", \"uuid\":\""
+                        + id_num + "\", \"code\":\"" + verify_code + "\"}}";
+                mPresenter.login(true, login_json);
                 break;
             case R.id.btn_personal_switch:// 个人用户登录切换到监狱用户登录
                 switchLoginUi();
@@ -233,30 +256,18 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
                 break;
             case R.id.btn_prison_login:// 监狱管理用户登录
                 // 非普通用户  即监狱用户
-                if (!mPresenter.checkInputText(et_username, et_password))
+                String username = et_username.getText().toString().trim();
+                String password = et_password.getText().toString().trim();
+                if (!mPresenter.checkInputText(username, password))
                     return;
                 if (SystemUtil.isNetWorkUnAvailable())
                     return;
-                String username = et_username.getText().toString().trim();
-                String password = et_password.getText().toString().trim();
                 mPresenter.login(false, username + "-" + password);
                 break;
             case R.id.btn_prison_switch:// 监狱用户切换至普通个人用户登录界面
                 switchLoginUi();
                 break;
         }
-    }
-
-    /**
-     * 获取个人登录字符串
-     * @return
-     */
-    private String getPersonalLoginText() {
-        String phone_num = et_personal_username.getText().toString().trim();
-        String id_num = et_personal_id_code.getText().toString().trim();
-        String verify_code = et_verify_code.getText().toString().trim();
-        return "{\"session\":{ \"phone\":\"" + phone_num + "\", \"uuid\":\""
-                + id_num + "\", \"code\":\"" + verify_code + "\"}}";
     }
 
     /**

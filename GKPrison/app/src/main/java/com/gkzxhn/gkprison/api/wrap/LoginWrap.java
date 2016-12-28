@@ -58,4 +58,35 @@ public class LoginWrap {
                 .subscribe(observer);
     }
 
+    /**
+     * 判断验证码是否正确
+     * @param service
+     * @param body
+     * @param observer
+     * @return
+     */
+    public Subscription checkVerifyCode(LoginService service,
+         RequestBody body, SimpleObserver<ResponseBody> observer){
+        return service.judgeVerificationCode(body)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
+
+    /**
+     * 注册
+     * @param service
+     * @param body
+     * @param observer
+     * @return
+     */
+    public Subscription register(LoginService service,
+        RequestBody body, SimpleObserver<ResponseBody> observer){
+        return service.register(body)
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
+    }
 }

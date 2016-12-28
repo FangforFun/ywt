@@ -20,7 +20,6 @@ import java.util.List;
  */
 public class AutoTextAdapater implements ListAdapter, Filterable {
 
-//    String[] strs;
     List<String> strs;
     Context conx;
     MyFilter myFilter;
@@ -30,9 +29,6 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
         super();
         this.strs = strs;
         this.conx = conx;
-//        for (String s : strs){
-//            Log.i("sssssssss", s);
-//        }
     }
 
     @Override
@@ -67,7 +63,6 @@ public class AutoTextAdapater implements ListAdapter, Filterable {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         String temp1 = strs.get(position);
-        Log.i("---position---", position + temp1);
         ViewHolder holder;
         if(convertView == null){
             convertView = View.inflate(conx, R.layout.suggest_item, null);

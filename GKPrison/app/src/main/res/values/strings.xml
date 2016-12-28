@@ -126,7 +126,7 @@
     <string name="app_company_name">国科政信（北京）股份有限公司</string>
     <string name="app_copy_rights">copyright©2006-2015.All right reserved</string>
     <string name="register">注册</string>
-    <string name="input_verify_code">输入验证码</string>
+    <string name="input_verify_code">请输入验证码</string>
     <string name="send_verify_code">发送验证码</string>
     <string name="switch_login_type">切换登录方式</string>
     <string name="login_without_account">无账号快捷登录</string>
@@ -156,6 +156,38 @@
     <string name="pwd_empty">密码为空</string>
     <string name="logining">正在登录...</string>
     <string name="sending">正在发送...</string>
+    <string name="id_empty">身份证号码为空</string>
+    <string name="verify_code_empty">验证码不能为空</string>
+    <string name="unexist_id_num">身份证号不存在</string>
+    <string name="name">姓名</string>
+    <string name="prisoner_relationship">与服刑人员关系</string>
+    <string name="prisoner_code">囚号</string>
+    <string name="prison_select">监狱选择</string>
+    <string name="man">男</string>
+    <string name="woman">女</string>
+    <string name="upload_id_photo">请上传您的身份证正反面照</string>
+    <string name="readed_agree">我已阅读并同意</string>
+    <string name="soft_use_agreement">《狱务通软件使用协议》</string>
+    <string name="giveup_make_content">放弃已编辑的内容吗？</string>
+    <string name="upload_avatar">上传头像</string>
+    <string name="file_not_exist">文件不存在</string>
+    <string name="read_file_error">读取文件出错</string>
+    <string name="take_photo">拍照</string>
+    <string name="choose_from_album">从相册中选择</string>
+    <string name="back">返回</string>
+    <string name="choose_avatar">请选择头像</string>
+    <string name="null_name">姓名为空</string>
+    <string name="input_relationship">请输入您与服刑人员的关系</string>
+    <string name="null_prisoner_num">囚号为空</string>
+    <string name="input_prison_name">请输入监狱名称</string>
+    <string name="registering">正在注册...</string>
+    <string name="exception">异常</string>
+    <string name="not_open_prison">抱歉，暂未开通此监狱</string>
+    <string name="register_failed_retry">注册请求失败，请稍后再试</string>
+    <string name="code_404">404</string>
+    <string name="code_501">501</string>
+    <string name="register_success">注册成功!</string>
+    <string name="register_failed">注册失败！</string>
 
 
 </resources>

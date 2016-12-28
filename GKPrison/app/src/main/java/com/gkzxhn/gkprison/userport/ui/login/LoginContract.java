@@ -1,7 +1,5 @@
 package com.gkzxhn.gkprison.userport.ui.login;
 
-import android.widget.EditText;
-
 import com.gkzxhn.gkprison.base.BasePresenter;
 import com.gkzxhn.gkprison.base.BaseView;
 
@@ -44,9 +42,8 @@ public interface LoginContract {
 
         /**
          * 进入下一个页面
-         * @param isCommonUser
          */
-        void toNextPage(boolean isCommonUser);
+        void toNextPage();
     }
 
     interface Presenter extends BasePresenter<View>{
@@ -60,15 +57,15 @@ public interface LoginContract {
 
         /**
          * 发送验证码
-         * @param editText
+         * @param content
          */
-        void sendVerifyCode(EditText editText);
+        void sendVerifyCode(String content);
 
         /**
          * 检查输入框文本
          * @param editTexts
          * @return
          */
-        boolean checkInputText(EditText... editTexts);
+        boolean checkInputText(String... editTexts);
     }
 }

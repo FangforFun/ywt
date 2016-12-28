@@ -3,7 +3,6 @@ package com.gkzxhn.gkprison.userport.ui.login;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.widget.EditText;
 
 import com.blankj.utilcode.utils.RegexUtils;
 import com.gkzxhn.gkprison.R;
@@ -30,7 +29,6 @@ import com.netease.nimlib.sdk.auth.LoginInfo;
 import com.pc.utils.DNSParseUtil;
 import com.pc.utils.FormatTransfer;
 import com.pc.utils.NetWorkUtils;
-import com.pc.utils.StringUtils;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -117,6 +115,7 @@ public class LoginPresenter implements LoginContract.Presenter {
         @Override public void onSuccess(LoginInfo loginInfo) {
             if (isCommonUser) {// 普通个人用户
                 if (userInfo != null && userInfo.getUser() != null) {
+                    Log.i(TAG, "login nim success:" + loginInfo.toString());
                     // 云信登录成功
                     putSP(SPKeyConstants.USERNAME, userInfo.getUser().getPhone());
                     putSP(SPKeyConstants.PASSWORD, userInfo.getUser().getUuid());
@@ -164,8 +163,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     };
 
     @Override
-    public void sendVerifyCode(@NonNull EditText editText) {
-        String content = editText.getText().toString().trim();
+    public void sendVerifyCode(String content) {
         if (TextUtils.isEmpty(content)){
             loginContractView.showToast(mContext.getString(R.string.null_phone));
             return;
@@ -206,7 +204,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public boolean checkInputText(EditText... editTexts) {
+    public boolean checkInputText(String... editTexts) {
         if (editTexts.length == 2){
             // 监狱端登录输入框验证
             return checkPrisonLoginText(editTexts);
@@ -221,33 +219,28 @@ public class LoginPresenter implements LoginContract.Presenter {
      * @param editTexts 三个输入框  顺序是 手机号  身份证号  验证码
      * @return {@code true}为通过可登录 <br>  {@code true}验证失败
      */
-    private boolean checkCommonLoginText(EditText[] editTexts) {
-        for (EditText editText : editTexts){
-            if (editText == null){
-                throw new NullPointerException("check object can not be null");
-            }
-        }
-        String phone_num = editTexts[0].getText().toString().trim();
-        String id_num = editTexts[1].getText().toString().trim();
-        String verifyCode = editTexts[2].getText().toString().trim();
+    private boolean checkCommonLoginText(String[] editTexts) {
+        String phone_num = editTexts[0];
+        String id_num = editTexts[1];
+        String verifyCode = editTexts[2];
         if (TextUtils.isEmpty(phone_num)){
-            loginContractView.showToast("手机号不能为空");
+            loginContractView.showToast(mContext.getString(R.string.null_phone));
             return false;
         }
         if (TextUtils.isEmpty(id_num)){
-            loginContractView.showToast("身份证号不能为空");
+            loginContractView.showToast(mContext.getString(R.string.id_empty));
             return false;
         }
         if (TextUtils.isEmpty(verifyCode)){
-            loginContractView.showToast("验证码不能为空");
+            loginContractView.showToast(mContext.getString(R.string.verify_code_empty));
             return false;
         }
-        if (RegexUtils.isMobileExact(phone_num)){
-            loginContractView.showToast("手机号不存在");
+        if (!RegexUtils.isMobileExact(phone_num)){
+            loginContractView.showToast(mContext.getString(R.string.unavailable_phone));
             return false;
         }
         if (!RegexUtils.isIDCard15(id_num) && !RegexUtils.isIDCard18(id_num)){
-            loginContractView.showToast("身份证号不存在");
+            loginContractView.showToast(mContext.getString(R.string.unexist_id_num));
             return false;
         }
         return true;
@@ -258,14 +251,12 @@ public class LoginPresenter implements LoginContract.Presenter {
      * @param editTexts 两个输入框  顺序是 用户名 密码
      * @return {@code true}为通过可登录 <br>  {@code true}验证失败
      */
-    private boolean checkPrisonLoginText(EditText[] editTexts) {
-        String username = editTexts[0].getText().toString().trim();
-        String password = editTexts[1].getText().toString().trim();
-        if (TextUtils.isEmpty(username)){
+    private boolean checkPrisonLoginText(String[] editTexts) {
+        if (TextUtils.isEmpty(editTexts[0])){
             loginContractView.showToast(mContext.getString(R.string.username_empty));
             return false;
         }
-        if (TextUtils.isEmpty(password)){
+        if (TextUtils.isEmpty(editTexts[1])){
             loginContractView.showToast(mContext.getString(R.string.pwd_empty));
             return false;
         }
@@ -462,18 +453,7 @@ public class LoginPresenter implements LoginContract.Presenter {
          * @param isSuccess
          */
         public void loginSuccessed(boolean isSuccess, String failedMsg) {
-            loginContractView.dismissProgress();
-            if (isSuccess) {
-                loginContractView.showToast(mContext.getString(R.string.login_success));
-                // 进入下一页
-                loginContractView.toNextPage(isCommonUser);
-                return;
-            }
-            if (StringUtils.isNull(failedMsg)) {
-                loginContractView.showToast(mContext.getString(R.string.login_failed_retry));
-            } else {
-                loginContractView.showToast(failedMsg);
-            }
+
         }
     }
 }

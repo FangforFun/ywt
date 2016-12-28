@@ -193,7 +193,7 @@
             android:name=".userport.activity.SystemMessageActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".login.RegisterActivity"
+            android:name=".userport.ui.register.RegisterActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait"/>
         <activity
@@ -315,25 +315,6 @@
         <meta-data
             android:name="com.netease.cosine.target.receiver"
             android:value="com.netease.nimlib.service.NimReceiver"/>
-        <!--
-             申明实时音视频来电通知的广播接收器，第三方APP集成时，
-                        action中的com.netease.nim.demo请替换为自己的包名
-        -->
-        <receiver
-            android:name="com.netease.nimlib.receiver.AVChatBroadcastReceiver"
-            android:enabled="true"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="com.gkzxhn.gkprison.ACTION.RECEIVE_AVCHAT_CALL_NOTIFICATION"/>
-            </intent-filter>
-        </receiver>
-
-        <!-- 申明本地电话状态（通话状态）的广播接收器，第三方APP集成时音视频模块时，如果需要网络通话与本地电话互斥，请加上此接收器 -->
-        <receiver android:name="com.netease.nimlib.receiver.IncomingCallReceiver">
-            <intent-filter>
-                <action android:name="android.intent.action.PHONE_STATE"/>
-            </intent-filter>
-        </receiver>
 
         <!-- 声明自定义通知的广播接收器，第三方 APP 集成时，action 中的 com.netease.nim.demo 请替换为自己的包名 -->
         <!-- 需要权限声明 <uses-permission android:name="com.netease.nim.demo.permission.RECEIVE_MSG"/> -->

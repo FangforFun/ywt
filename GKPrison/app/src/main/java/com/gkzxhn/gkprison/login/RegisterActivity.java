@@ -135,8 +135,8 @@ public class RegisterActivity extends BaseActivity {
     private Map<String, Integer> prison_map;
     private AutoTextAdapater autoTextAdapater; // actv_prison_choose适配器
     private String data; // 监狱选择访问服务器返回的字符串
-    private String name = "";
     private String apply = "";
+    private String name = "";
     private String ic_card = "";
     private String phone_num = "";
     private String relationship_with_prisoner = "";
@@ -228,11 +228,7 @@ public class RegisterActivity extends BaseActivity {
         cb_agree_disagree.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    bt_register.setEnabled(true);
-                } else {
-                    bt_register.setEnabled(false);
-                }
+            bt_register.setEnabled(isChecked);
             }
         });
         prison_map = new HashMap<>();
@@ -595,7 +591,7 @@ public class RegisterActivity extends BaseActivity {
                         prison_map.put(suggestKey, id);
                     }
                 } catch (Exception e) {
-                    Log.w("Error", e.getMessage());
+                    Log.w(TAG, e.getMessage());
                 }
             }
             return null;
@@ -952,14 +948,12 @@ public class RegisterActivity extends BaseActivity {
         if (imageclick == 1) {
             // 为防止原始图片过大导致内存溢出，这里先缩小原图显示，然后释放原始Bitmap占用的内存
             newBitmap1 = ImageTools.zoomBitmap(photo, photo.getWidth() / SCALE, photo.getHeight() / SCALE);
-            // 释放原始图片占用的内存，防止out of memory异常发生
             photo.recycle();
             iv_add_photo_01.setImageBitmap(newBitmap1);
             uploadFile1 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)
                     .getAbsolutePath() + "/Camera/" + "emptyphoto.png";
         } else if (imageclick == 2) {
             newBitmap2 = ImageTools.zoomBitmap(photo, photo.getWidth() / SCALE, photo.getHeight() / SCALE);
-            // 释放原始图片占用的内存，防止out of memory异常发生
             photo.recycle();
             iv_add_photo_02.setImageBitmap(newBitmap2);
             uploadFile2 = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)

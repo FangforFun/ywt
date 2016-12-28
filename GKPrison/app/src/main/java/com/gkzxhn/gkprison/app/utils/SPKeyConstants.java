@@ -61,4 +61,9 @@ public class SPKeyConstants {
      * 囚犯所属监狱
      */
     public static final String JAIL = "jail";
+
+    /**
+     * 监狱名称
+     */
+    public static final String PRISON_NAME = "prisonname";
 }

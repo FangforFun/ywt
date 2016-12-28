@@ -4,10 +4,15 @@ package com.gkzxhn.gkprison.utils;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 
+import com.gkzxhn.gkprison.userport.bean.Uuid_images_attributes;
+
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 相片处理工具类(Tools for handler picture)
@@ -82,5 +87,39 @@ public final class ImageTools {
                 }
             }
         }
+    }
+
+    /**
+     * 获取压缩图片并转换base64
+     * @param newBitmap1
+     * @param newBitmap2
+     * @param newBitmap3
+     * @return
+     */
+    public static List<Uuid_images_attributes> getZipPicture(Bitmap newBitmap1, Bitmap newBitmap2, Bitmap newBitmap3) {
+        List<Uuid_images_attributes> uuid_images = new ArrayList<>();
+        ByteArrayOutputStream bao1 = new ByteArrayOutputStream();
+        newBitmap1.compress(Bitmap.CompressFormat.PNG, 100, bao1);
+        byte[] ba1 = bao1.toByteArray();
+        String tu1 = Base64.encode(ba1);
+        ByteArrayOutputStream bao2 = new ByteArrayOutputStream();
+        newBitmap2.compress(Bitmap.CompressFormat.PNG, 100, bao2);
+        byte[] ba2 = bao2.toByteArray();
+        String tu2 = Base64.encode(ba2);
+        String[] tu = {tu1, tu2};
+        uuid_images.clear();
+        for (int i = 0; i < tu.length; i++) {
+            Uuid_images_attributes uuid_images_attributes = new Uuid_images_attributes();
+            uuid_images_attributes.setImage_data(tu[i]);
+            uuid_images.add(uuid_images_attributes);
+        }
+        ByteArrayOutputStream bao3 = new ByteArrayOutputStream();
+        newBitmap3.compress(Bitmap.CompressFormat.PNG, 100, bao3);
+        byte[] ba3 = bao3.toByteArray();
+        String tu3 = Base64.encode(ba3);
+        Uuid_images_attributes user_icon = new Uuid_images_attributes();
+        user_icon.setImage_data(tu3);
+        uuid_images.add(user_icon);
+        return uuid_images;
     }
 }
