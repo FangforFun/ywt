@@ -3,8 +3,7 @@ package com.gkzxhn.gkprison.userport.fragment;
 import android.view.View;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.base.BaseFragmentNew;
 
 /**
  * author:huangzhengneng
@@ -12,17 +11,22 @@ import com.gkzxhn.gkprison.base.BaseFragment;
  * date: 2016/8/2.
  * function:电子商务最底层fragment
  */
-public class CanteenBaseFragment extends BaseFragment {
+public class CanteenBaseFragment extends BaseFragmentNew {
 
     @Override
-    protected View initView() {
-        return View.inflate(context, R.layout.fragment_cannteen, null);
+    protected void initUiAndListener(View view) {
+
+    }
+
+    @Override
+    protected int setLayoutResId() {
+        return R.layout.fragment_cannteen;
     }
 
     @Override
     protected void initData() {
         CanteenFragment canteenFragment = new CanteenFragment();
-        ((BaseActivity)context).getSupportFragmentManager()
+        getActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fl_canteen,canteenFragment)
                 .commit();

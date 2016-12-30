@@ -27,8 +27,9 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.login.LoadingActivity;
@@ -38,10 +39,9 @@ import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.fragment.CanteenBaseFragment;
-import com.gkzxhn.gkprison.userport.fragment.HomeFragment;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.fragment.RemoteMeetFragment;
-import com.gkzxhn.gkprison.userport.requests.ApiRequest;
+import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
@@ -102,7 +102,7 @@ public class MainActivity extends BaseActivity {
     @BindView(R.id.drawer_layout) CustomDrawerLayout drawerLayout; // 侧拉菜单
     @BindView(R.id.fl_drawer) FrameLayout fl_drawer; // 侧拉菜单底层帧布局
 
-    private List<BaseFragment> fragments = new ArrayList<>();
+    private List<BaseFragmentNew> fragments = new ArrayList<>();
     private FragmentManager manager;
     private FragmentTransaction transaction = null;
     private HomeFragment homeFragment = null;
@@ -277,7 +277,7 @@ public class MainActivity extends BaseActivity {
         Log.i("云信id状态...", statusCode.toString());
         isRegisteredUser = (Boolean) SPUtil.get(MainActivity.this, "isRegisteredUser", false);
         if(isRegisteredUser && statusCode != StatusCode.LOGINED && statusCode != StatusCode.KICKOUT){
-            // 如果是注册用户并且不是被其他端踢掉的未上线就重新登录
+            // 如果是注册用户并且不是被其他端踢掉的未上线就重新登录  可以忽略这个操作了
             handler.post(reLoginTask);
         }
         if(isRegisteredUser) {
@@ -559,10 +559,10 @@ public class MainActivity extends BaseActivity {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent(MainActivity.this, LoadingActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                SPUtil.clear(MainActivity.this);
                 // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
                 SPUtil.put(MainActivity.this, "is_first", false);
                 startActivity(intent);
+                SPUtil.clear(MainActivity.this);
                 NIMClient.getService(AuthService.class).logout();
             }
         });
@@ -585,8 +585,9 @@ public class MainActivity extends BaseActivity {
             ApiRequest repo = retrofit.create(ApiRequest.class);
             Map<String, String> map = new HashMap<>();
             map.put("uuid", (String) SPUtil.get(MainActivity.this, "password", ""));
+            map.put("phone", (String) SPUtil.get(MainActivity.this, "username", ""));
             mSubscriptions.add(
-                    repo.getUserInfo((String) SPUtil.get(MainActivity.this, "username", ""), map)
+                    repo.getUserInfo(map)
                             .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new Observer<PrisonerUserInfo>() {
                                 @Override

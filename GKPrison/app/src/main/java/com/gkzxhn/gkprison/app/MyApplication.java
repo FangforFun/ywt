@@ -9,7 +9,6 @@ import com.gkzxhn.gkprison.app.component.DaggerAppComponent;
 import com.gkzxhn.gkprison.app.module.AppModule;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.app.utils.NimInitUtil;
-import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.squareup.leakcanary.LeakCanary;
 
@@ -48,7 +47,7 @@ public class MyApplication extends MultiDexApplication {
         KDInitUtil.init();// 科达SDK相关初始化及后续操作
         ToastUtil.registerContext(this);
         LeakCanary.install(this);
-        CrashHandler.getInstance().init(mOurApplication);
+//        CrashHandler.getInstance().init(mOurApplication);
     }
 
     /**

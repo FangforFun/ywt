@@ -14,7 +14,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
-import com.gkzxhn.gkprison.userport.activity.MainActivity;
+import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.userport.ui.register.RegisterActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
@@ -75,6 +75,16 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
      */
     public static void startActivity(Context mContext){
         Intent intent = new Intent(mContext, LoginActivity.class);
+        mContext.startActivity(intent);
+    }
+
+    /**
+     * 清除任务站开启此页面
+     * @param mContext
+     */
+    public static void startActivityClearTask(Context mContext){
+        Intent intent = new Intent(mContext, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         mContext.startActivity(intent);
     }
 

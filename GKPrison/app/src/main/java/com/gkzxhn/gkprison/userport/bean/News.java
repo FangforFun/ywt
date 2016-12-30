@@ -1,9 +1,11 @@
 package com.gkzxhn.gkprison.userport.bean;
 
+import java.io.Serializable;
+
 /**
  * Created by admin on 2016/1/7.
  */
-public class News {
+public class News implements Serializable{
 
     /**
      contents": "为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力<br><b><p></p><i></i></b><br><br><br><br><br><br><br><br>",
@@ -20,6 +22,7 @@ public class News {
     "type_id": 1,
     "updated_at": "2016-01-15T02:12:32.000Z"
      */
+    private static final long serialVersionUID = 1L;
 
     private int id;
     private String title;

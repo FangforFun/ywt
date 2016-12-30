@@ -17,7 +17,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Opinion;
-import com.gkzxhn.gkprison.userport.requests.ApiRequest;
+import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.sweet_alert_dialog.SweetAlertDialog;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.Utils;

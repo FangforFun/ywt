@@ -16,11 +16,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.api.ApiRequest;
+import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
 import com.gkzxhn.gkprison.userport.bean.Balance;
-import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
@@ -50,7 +50,7 @@ import rx.schedulers.Schedulers;
  * function:
  */
 
-public class RemoteMeetFragment extends BaseFragment implements View.OnClickListener{
+public class RemoteMeetFragment extends BaseFragmentNew implements View.OnClickListener{
 
     private static final String MEETING_REQUEST_URL = Constants.URL_HEAD + "apply?access_token=";
     private static final String[] REQUEST_TIME = Utils.afterNDay(30).toArray(new String[Utils.afterNDay(30).size()]);// 时间选择
@@ -103,8 +103,8 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
         }
         dialog.dismiss();
         //                    showToastMsgLong("提交成功，提交结果会以短信方式发送至您的手机，请注意查收");
-        AlertDialog.Builder visit_builder = new AlertDialog.Builder(context);
-        View visit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+        AlertDialog.Builder visit_builder = new AlertDialog.Builder(getActivity());
+        View visit_success_dialog_view = View.inflate(getActivity(), R.layout.msg_ok_cancel_dialog, null);
         visit_builder.setCancelable(false);
         View view_01_ = visit_success_dialog_view.findViewById(R.id.view_01);
         view_01_.setVisibility(View.GONE);
@@ -124,8 +124,8 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
             tv_msg_dialog_.setText("申请提交成功，系统将以短信和系统消息形式通知您申请结果，请注意查收。");
             visit_success_dialog.show();
             bt_commit_request_visit.setEnabled(true);
-            String committed_time = (String) SPUtil.get(context, "committed_time", "");
-            SPUtil.put(context, "committed_time", committed_time + visit_request_time + "/");
+            String committed_time = (String) SPUtil.get(getActivity(), "committed_time", "");
+            SPUtil.put(getActivity(), "committed_time", committed_time + visit_request_time + "/");
         }else {
             String reason = "";
             try {
@@ -161,9 +161,9 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
         }
         dialog.dismiss();
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setCancelable(false);
-        View commit_success_dialog_view = View.inflate(context, R.layout.msg_ok_cancel_dialog, null);
+        View commit_success_dialog_view = View.inflate(getActivity(), R.layout.msg_ok_cancel_dialog, null);
         View view_01 = commit_success_dialog_view.findViewById(R.id.view_01);
         view_01.setVisibility(View.GONE);
         TextView tv_msg_dialog = (TextView) commit_success_dialog_view.findViewById(R.id.tv_msg_dialog);
@@ -182,8 +182,8 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
             tv_msg_dialog.setText("申请提交成功，系统将以短信和系统消息形式通知您申请结果，请注意查收。");
             commit_success_dialog.show();
             bt_commit_request.setEnabled(true);
-            String committed_meeting_time = (String) SPUtil.get(context, "committed_meeting_time", "");
-            SPUtil.put(context, "committed_meeting_time", committed_meeting_time + meeting_request_time + "/");
+            String committed_meeting_time = (String) SPUtil.get(getActivity(), "committed_meeting_time", "");
+            SPUtil.put(getActivity(), "committed_meeting_time", committed_meeting_time + meeting_request_time + "/");
         }else {
             String reason = "";
             try {
@@ -205,36 +205,39 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
     }
 
     @Override
-    protected View initView() {
-        View view = View.inflate(context, R.layout.fragment_remote_meeting, null);
+    protected void initUiAndListener(View view) {
         ButterKnife.bind(this, view);
         Drawable[] drawables = rb_top_guide_meeting.getCompoundDrawables();
-        drawables[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
+        drawables[0].setBounds(0, 0, getActivity().getResources().getDimensionPixelSize(R.dimen.home_tab_width), getActivity().getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
         rb_top_guide_meeting.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         Drawable[] drawables2 = rb_top_guide_visit.getCompoundDrawables();
-        drawables2[0].setBounds(0, 0, context.getResources().getDimensionPixelSize(R.dimen.home_tab_width), context.getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
+        drawables2[0].setBounds(0, 0, getActivity().getResources().getDimensionPixelSize(R.dimen.home_tab_width), getActivity().getResources().getDimensionPixelSize(R.dimen.visit_tab_height));
         rb_top_guide_visit.setCompoundDrawables(drawables2[0], drawables2[1], drawables2[2], drawables2[3]);
-        return view;
+    }
+
+    @Override
+    protected int setLayoutResId() {
+        return R.layout.fragment_remote_meeting;
     }
 
     @Override
     protected void initData() {
-        id_num = (String) SPUtil.get(context, "password", "");
-        family_id = (int) SPUtil.get(context, "family_id", 1);
-        isCommonUser = (boolean) SPUtil.get(context, "isCommonUser", false);
+        id_num = (String) SPUtil.get(getActivity(), "password", "");
+        family_id = (int) SPUtil.get(getActivity(), "family_id", 1);
+        isCommonUser = (boolean) SPUtil.get(getActivity(), "isCommonUser", false);
         getBalance(); // 获取余额
         if(isCommonUser){
-            tv_meeting_request_name.setText(SPUtil.get(context, "name", "") + "");
+            tv_meeting_request_name.setText(SPUtil.get(getActivity(), "name", "") + "");
             String start_ = id_num.substring(0, 5);
             String end_ = id_num.substring(id_num.length() - 4, id_num.length());
             tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
-            tv_meeting_request_phone.setText(SPUtil.get(context, "username", "") + "");
-            tv_meeting_request_relationship.setText(SPUtil.get(context, "relationship", "") + "");
-            tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(context, "last_meeting_time", "暂无会见"));
+            tv_meeting_request_phone.setText(SPUtil.get(getActivity(), "username", "") + "");
+            tv_meeting_request_relationship.setText(SPUtil.get(getActivity(), "relationship", "") + "");
+            tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(getActivity(), "last_meeting_time", "暂无会见"));
         }
-        adapter = new ArrayAdapter<>(context,
+        adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
-        visit_adapter = new ArrayAdapter<>(context,
+        visit_adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, REQUEST_TIME);
         bs_meeting_request_time.setAdapter(adapter);
         bs_visit_request_time.setAdapter(visit_adapter);
@@ -270,25 +273,25 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
                         rl_meeting.setVisibility(View.VISIBLE);
                         rl_visit.setVisibility(View.GONE);
                         if (isCommonUser) {
-                            tv_meeting_request_name.setText(SPUtil.get(context, "name", "") + "");
+                            tv_meeting_request_name.setText(SPUtil.get(getActivity(), "name", "") + "");
                             String start_ = id_num.substring(0, 5);
                             String end_ = id_num.substring(id_num.length() - 4, id_num.length());
                             tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
-                            tv_meeting_request_phone.setText(SPUtil.get(context, "username", "") + "");
-                            tv_meeting_request_relationship.setText(SPUtil.get(context, "relationship", "") + "");
-                            tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(context, "last_meeting_time", "暂无会见"));
+                            tv_meeting_request_phone.setText(SPUtil.get(getActivity(), "username", "") + "");
+                            tv_meeting_request_relationship.setText(SPUtil.get(getActivity(), "relationship", "") + "");
+                            tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(getActivity(), "last_meeting_time", "暂无会见"));
                         }
                         break;
                     case R.id.rb_top_guide_visit:
                         rl_meeting.setVisibility(View.GONE);
                         rl_visit.setVisibility(View.VISIBLE);
                         if (isCommonUser) {
-                            tv_visit_request_name.setText(SPUtil.get(context, "name", "") + "");
+                            tv_visit_request_name.setText(SPUtil.get(getActivity(), "name", "") + "");
                             String start_ = id_num.substring(0, 5);
                             String end_ = id_num.substring(id_num.length() - 4, id_num.length());
                             tv_meeting_request_id_num.setText(start_ + "******" + end_);// 显示身份证前4位和后4位
-                            tv_visit_request_phone.setText(SPUtil.get(context, "username", "") + "");
-                            tv_visit_request_relationship.setText(SPUtil.get(context, "relationship", "") + "");
+                            tv_visit_request_phone.setText(SPUtil.get(getActivity(), "username", "") + "");
+                            tv_visit_request_relationship.setText(SPUtil.get(getActivity(), "relationship", "") + "");
                         }
                         break;
                 }
@@ -297,8 +300,8 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
         bt_recharge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ReChargeActivity.class);
-                context.startActivity(intent);
+                Intent intent = new Intent(getActivity(), ReChargeActivity.class);
+                getActivity().startActivity(intent);
             }
         });
     }
@@ -348,7 +351,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
      * 设置上次会见时间
      */
     public void setLastMeetingTime(){
-        tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(context, "last_meeting_time", "暂无会见"));
+        tv_meeting_last_time.setText("上次会见时间：" + SPUtil.get(getActivity(), "last_meeting_time", "暂无会见"));
     }
 
     @Override
@@ -360,7 +363,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(meeting_request_time)) {
-                        String committed_meeting_time = (String) SPUtil.get(context, "committed_meeting_time", "");
+                        String committed_meeting_time = (String) SPUtil.get(getActivity(), "committed_meeting_time", "");
                         if(committed_meeting_time.contains(meeting_request_time)){
                             showToastMsgLong("您已申请过当日远程探监，请选择其他日期。");
                             return;
@@ -384,7 +387,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
                 }
                 if(isCommonUser) {
                     if(!TextUtils.isEmpty(visit_request_time)) {
-                        String committed_time = (String) SPUtil.get(context, "committed_time", "");
+                        String committed_time = (String) SPUtil.get(getActivity(), "committed_time", "");
                         if(committed_time.contains(visit_request_time)){
                             showToastMsgLong("您已申请过当日实地探监，请选择其他日期。");
                             return;
@@ -409,12 +412,12 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
         if(Utils.isNetworkAvailable(getActivity())) {
             bt_commit_request_visit.setEnabled(false);
             showProgressDialog();
-            String prisoner_number = (String) SPUtil.get(context, "prisoner_number", "4000002");
-            String param = "{\"apply\":{\"phone\":\"" + SPUtil.get(context, "username", "")
-                    + "\",\"uuid\":\"" + SPUtil.get(context, "password", "") + "\",\"app_date\":\""
+            String prisoner_number = (String) SPUtil.get(getActivity(), "prisoner_number", "4000002");
+            String param = "{\"apply\":{\"phone\":\"" + SPUtil.get(getActivity(), "username", "")
+                    + "\",\"uuid\":\"" + SPUtil.get(getActivity(), "password", "") + "\",\"app_date\":\""
                     + visit_request_time + "\",\"name\":\"" + tv_visit_request_name.getText().toString()
                     + "\",\"relationship\":\"" + tv_visit_request_relationship.getText().toString()
-                    + "\",\"jail_id\":" + SPUtil.get(context, "jail_id", 1)
+                    + "\",\"jail_id\":" + SPUtil.get(getActivity(), "jail_id", 1)
                     + ",\"prisoner_number\":\"" + prisoner_number + "\",\"type_id\":2}}";
             Retrofit retrofit = new Retrofit.Builder()
                     .baseUrl(Constants.URL_HEAD)
@@ -423,7 +426,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
                     .build();
             ApiRequest api = retrofit.create(ApiRequest.class);
             RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), param);
-            api.sendMeetingRequest(SPUtil.get(context, "token", "") + "", body)
+            api.sendMeetingRequest(SPUtil.get(getActivity(), "token", "") + "", body)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ResponseBody>() {
@@ -463,12 +466,12 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
         if(Utils.isNetworkAvailable(getActivity())) {
             bt_commit_request.setEnabled(false);
             showProgressDialog();
-            String prisoner_number = (String) SPUtil.get(context, "prisoner_number", "");
-            String param = "{\"apply\":{\"phone\":\"" + SPUtil.get(context, "username", "") + "\",\"uuid\":\""
-                    + SPUtil.get(context, "password", "") + "\",\"app_date\":\"" + meeting_request_time
+            String prisoner_number = (String) SPUtil.get(getActivity(), "prisoner_number", "");
+            String param = "{\"apply\":{\"phone\":\"" + SPUtil.get(getActivity(), "username", "") + "\",\"uuid\":\""
+                    + SPUtil.get(getActivity(), "password", "") + "\",\"app_date\":\"" + meeting_request_time
                     + "\",\"name\":\"" + tv_meeting_request_name.getText().toString() + "\",\"relationship\":\""
                     + tv_meeting_request_relationship.getText().toString() + "\",\"jail_id\":"
-                    + SPUtil.get(context, "jail_id", 1) + ",\"prisoner_number\":\""
+                    + SPUtil.get(getActivity(), "jail_id", 1) + ",\"prisoner_number\":\""
                     + prisoner_number + "\",\"type_id\":1}}";
             Log.i(TAG, param);
 
@@ -479,7 +482,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
                     .build();
             RequestBody body = RequestBody.create(MediaType.parse("application/json;charset=utf-8"), param);
             ApiRequest api = retrofit.create(ApiRequest.class);
-            api.sendMeetingRequest(SPUtil.get(context, "token", "") + "", body)
+            api.sendMeetingRequest(SPUtil.get(getActivity(), "token", "") + "", body)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<ResponseBody>() {
@@ -517,7 +520,7 @@ public class RemoteMeetFragment extends BaseFragment implements View.OnClickList
      * 初始化并显示加载进度条对话框
      */
     private void showProgressDialog() {
-        dialog = new ProgressDialog(context);
+        dialog = new ProgressDialog(getActivity());
         dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         dialog.setCancelable(false);
         dialog.setCanceledOnTouchOutside(false);

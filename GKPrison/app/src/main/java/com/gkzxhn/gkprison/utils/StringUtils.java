@@ -13,6 +13,8 @@ import java.util.Locale;
  */
 public class StringUtils {
 
+    private static final String TAG = StringUtils.class.getName();
+
     /**
      * 格式化时间
      * @param time  时间毫秒值
@@ -66,6 +68,7 @@ public class StringUtils {
      */
     public static SQLiteDatabase getSQLiteDB(Context context){
         String path = "/data/data/com.gkzxhn.gkprison/databases/chaoshi.db";
+        Log.i(TAG, path);
         return SQLiteDatabase.openDatabase(path, null, SQLiteDatabase.OPEN_READWRITE);
     }
 }

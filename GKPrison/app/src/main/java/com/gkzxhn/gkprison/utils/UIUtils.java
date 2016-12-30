@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 
 /**
  * Author: Huang ZN
@@ -85,12 +86,12 @@ public class UIUtils {
             okListener, DialogInterface.OnClickListener cancelListener, boolean cancelable){
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder
-                .setTitle("提示")
+                .setTitle(R.string.reminder)
                 .setMessage(msg)
-                .setPositiveButton("确定", okListener)
+                .setPositiveButton(R.string.ok, okListener)
                 .setCancelable(cancelable);
         if (cancelListener != null) {
-            builder.setNegativeButton("取消", cancelListener);
+            builder.setNegativeButton(R.string.cancel, cancelListener);
         }
         AlertDialog dialog = builder.create();
         dialog.show();
@@ -146,8 +147,8 @@ public class UIUtils {
      */
     public static AlertDialog showConfirmDialog(Context context, DialogInterface.OnClickListener okListener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage("即将提交注册，注册信息将会严格审核，注册信息一旦通过，将不可修改，确定提交？");
-        builder.setPositiveButton("确定", okListener).setNegativeButton("再确认一下", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.register_confirm_remind);
+        builder.setPositiveButton(R.string.ok, okListener).setNegativeButton(R.string.confirm_again, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -156,6 +157,40 @@ public class UIUtils {
         AlertDialog register_remind_dialog = builder.create();
         register_remind_dialog.show();
         return register_remind_dialog;
+    }
+
+    /**
+     * 获取用户信息失败   提示重新登录
+     * @param context
+     * @param okListener
+     */
+    public static AlertDialog showReLoginDialog(Context context, DialogInterface.OnClickListener okListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.reminder);
+        builder.setMessage(R.string.get_info_failed);
+        builder.setCancelable(false);
+        builder.setPositiveButton(R.string.ok, okListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        return dialog;
+    }
+
+    /**
+     *  云信id在其他设备登录
+     * @param context
+     * @param okListener
+     * @return
+     */
+    public static AlertDialog showKickoutDialog(Context context, DialogInterface.OnClickListener okListener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(R.string.kickout_remind);
+        builder.setCancelable(false);
+        builder.setMessage("您的账号" + SPUtil.get(context, SPKeyConstants.ACCESS_TOKEN, "")
+                + "在其他设备登录，点击重新登录。");
+        builder.setPositiveButton(R.string.relogin, okListener);
+        AlertDialog dialog = builder.create();
+        dialog.show();
+        return dialog;
     }
 
 }

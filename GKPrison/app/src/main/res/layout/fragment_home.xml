@@ -8,10 +8,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/bg">
+            android:background="@color/white">
 
             <include
                 android:id="@+id/rl_carousel"
@@ -24,10 +25,7 @@
                 android:id="@+id/gv_home_options"
                 android:layout_below="@id/rl_carousel"
                 android:layout_width="match_parent"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
+                android:padding="5dp"
                 android:verticalSpacing="5dp"
                 android:horizontalSpacing="5dp"
                 android:layout_height="@dimen/home_options_total_height"
@@ -42,19 +40,26 @@
                 android:background="@color/et_hint"
                 android:layout_below="@id/gv_home_options"/>
 
+            <ImageView
+                android:id="@+id/focus_icon"
+                android:layout_width="@dimen/home_tv_focus_height"
+                android:layout_height="@dimen/home_tv_focus_height"
+                android:background="@color/white"
+                android:src="@drawable/focus"
+                android:padding="5dp"
+                android:layout_below="@+id/view_01"/>
+
             <TextView
                 android:id="@+id/tv_focus_attention"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/home_tv_focus_height"
                 android:layout_below="@+id/view_01"
-                android:text="焦点关注"
+                android:layout_toRightOf="@id/focus_icon"
+                android:text="@string/focus_"
                 android:textColor="@color/tv_gray"
                 android:textSize="@dimen/home_focus_content_tv_size"
                 android:gravity="center_vertical"
-                android:paddingLeft="5dp"
-                android:background="@drawable/item_selector"
-                android:drawablePadding="3dp"
-                android:drawableLeft="@drawable/focus"/>
+                android:background="@color/white"/>
 
             <View
                 android:id="@+id/view_02"
@@ -63,190 +68,11 @@
                 android:background="@color/et_hint"
                 android:layout_below="@id/tv_focus_attention"/>
 
-            <LinearLayout
-                android:id="@+id/ll_home_news1"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/focus_news_list"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/home_focus_news_height"
-                android:layout_below="@id/view_02"
-                android:background="@drawable/item_selector">
-
-                <ImageView
-                    android:id="@+id/iv_home_news_icon1"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="1"
-                    android:src="@drawable/default_img"
-                    android:padding="10dp"
-                    android:scaleType="fitXY"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="2"
-                    android:paddingRight="5dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_home_news_title1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="昭通市食药监局到昭通监狱开展警示教育"
-                        android:maxLines="2"
-                        android:paddingTop="5dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/tv_bg"
-                        android:textSize="@dimen/home_focus_title_tv_size"/>
-
-                    <TextView
-                        android:id="@+id/tv_home_news_content1"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
-                        android:ellipsize="end"
-                        android:maxLines="3"
-                        android:textColor="@color/tv_mid"
-                        android:textSize="@dimen/home_focus_content_tv_size"
-                        android:lineSpacingExtra="3dp"
-                        android:paddingBottom="5dp"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/iv_home_news_go1"
-                    android:layout_width="0dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="0.2"
-                    android:src="@drawable/toright"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"/>
-            </LinearLayout>
-
-            <View
-                android:id="@+id/view_03"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/et_hint"
-                android:layout_below="@id/ll_home_news1"/>
-
-            <LinearLayout
-                android:id="@+id/ll_home_news2"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_focus_news_height"
-                android:layout_below="@id/view_03"
-                android:background="@drawable/item_selector">
-
-                <ImageView
-                    android:id="@+id/iv_home_news_icon2"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="1"
-                    android:src="@drawable/default_img"
-                    android:padding="10dp"
-                    android:scaleType="fitXY"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="2"
-                    android:paddingRight="5dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_home_news_title2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="昭通市食药监局到昭通监狱开展警示教育"
-                        android:maxLines="2"
-                        android:paddingTop="5dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/tv_bg"
-                        android:textSize="@dimen/home_focus_title_tv_size"/>
-
-                    <TextView
-                        android:id="@+id/tv_home_news_content2"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
-                        android:ellipsize="end"
-                        android:maxLines="3"
-                        android:lineSpacingExtra="3dp"
-                        android:textColor="@color/tv_mid"
-                        android:textSize="@dimen/home_focus_content_tv_size"
-                        android:paddingBottom="5dp"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/iv_home_news_go2"
-                    android:layout_width="0dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="0.2"
-                    android:src="@drawable/toright"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"/>
-            </LinearLayout>
-
-            <View
-                android:id="@+id/view_04"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/et_hint"
-                android:layout_below="@id/ll_home_news2"/>
-
-            <LinearLayout
-                android:id="@+id/ll_home_news3"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_focus_news_height"
-                android:layout_below="@id/view_04"
-                android:background="@drawable/item_selector">
-
-                <ImageView
-                    android:id="@+id/iv_home_news_icon3"
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="1"
-                    android:src="@drawable/default_img"
-                    android:padding="10dp"
-                    android:scaleType="fitXY"/>
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/home_focus_news_height"
-                    android:layout_weight="2"
-                    android:paddingRight="5dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/tv_home_news_title3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="昭通市食药监局到昭通监狱开展警示教育"
-                        android:maxLines="2"
-                        android:paddingTop="5dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/tv_bg"
-                        android:textSize="@dimen/home_focus_title_tv_size"/>
-
-                    <TextView
-                        android:id="@+id/tv_home_news_content3"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text="    为深入践行“三严三实”和“忠诚干净担当”专题教育实践活动，加强系统党风廉政建设，提高干部拒腐防变能力，党员干部到昭通监狱接手廉政..."
-                        android:ellipsize="end"
-                        android:maxLines="3"
-                        android:lineSpacingExtra="3dp"
-                        android:textColor="@color/tv_mid"
-                        android:textSize="@dimen/home_focus_content_tv_size"
-                        android:paddingBottom="5dp"/>
-                </LinearLayout>
-
-                <ImageView
-                    android:id="@+id/iv_home_news_go3"
-                    android:layout_width="0dp"
-                    android:layout_height="20dp"
-                    android:layout_weight="0.2"
-                    android:src="@drawable/toright"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginRight="5dp"/>
-            </LinearLayout>
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/view_02"/>
         </RelativeLayout>
     </ScrollView>
 </android.support.v4.widget.SwipeRefreshLayout>

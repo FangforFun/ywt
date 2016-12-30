@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
 import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
@@ -61,7 +61,7 @@ import okhttp3.OkHttpClient;
 /**
  * Created by zhengneng on 2015/12/21.
  */
-public class CanteenFragment extends BaseFragment {
+public class CanteenFragment extends BaseFragmentNew {
     private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private RelativeLayout rl_allclass;
     private RelativeLayout rl_sales;
@@ -155,13 +155,13 @@ public class CanteenFragment extends BaseFragment {
                         Log.d("订单号", a + "");
                         if (a == 200) {
                             settlement.setEnabled(true);
-                            Intent intent = new Intent(context, PaymentActivity.class);
+                            Intent intent = new Intent(getActivity(), PaymentActivity.class);
                             intent.putExtra("totalmoney", send);
                             intent.putExtra("TradeNo", TradeNo);
                             intent.putExtra("times", times);
                             intent.putExtra("cart_id", cart_id);
                             intent.putExtra("bussiness", "(含配送费2元)");
-                            context.startActivity(intent);
+                            getActivity().startActivity(intent);
                         }
                     }
                     break;
@@ -187,8 +187,7 @@ public class CanteenFragment extends BaseFragment {
     }
 
     @Override
-    protected View initView() {
-        View view = View.inflate(context, R.layout.fragment_canteen, null);
+    protected void initUiAndListener(View view) {
         settlement = (Button) view.findViewById(R.id.bt_shopping_cart_commit);
         rl_allclass = (RelativeLayout) view.findViewById(R.id.rl_allclass);
         rl_sales = (RelativeLayout) view.findViewById(R.id.rl_sales);
@@ -201,7 +200,7 @@ public class CanteenFragment extends BaseFragment {
         //sp_zhineng = (Spinner)view.findViewById(R.id.sp_zhineng);
         tv_total_money = (TextView) view.findViewById(R.id.tv_total_money);
         image_buycar = view.findViewById(R.id.image_buycar);
-        badgeView = new BadgeView(context);
+        badgeView = new BadgeView(getActivity());
         badgeView.setTargetView(image_buycar);
         fl = (FrameLayout) view.findViewById(R.id.fl_buycar);
         choose = (FrameLayout) view.findViewById(R.id.fl_choose);
@@ -214,13 +213,17 @@ public class CanteenFragment extends BaseFragment {
         badgeView.setShadowLayer(3, 0, 0, Color.parseColor("#f10000"));
         badgeView.setBadgeGravity(Gravity.TOP | Gravity.RIGHT);
         image_buycar = view.findViewById(R.id.image_buycar);
-        return view;
+    }
+
+    @Override
+    protected int setLayoutResId() {
+        return R.layout.fragment_canteen;
     }
 
     @Override
     protected void initData() {
         TradeNo = getOutTradeNo();
-        sp = context.getSharedPreferences("config", Context.MODE_PRIVATE);
+        sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
         jail_id = sp.getInt("jail_id", 0);
         long time = System.currentTimeMillis();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -305,7 +308,7 @@ public class CanteenFragment extends BaseFragment {
         allclass = new AllClassificationFragment();
         data.putInt("leibie", 0);
         allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         AllchooseAdapter allchooseAdapter = new AllchooseAdapter();
         lv_salsechoose_items.setAdapter(allchooseAdapter);
         lv_allchoose_items.setAdapter(allchooseAdapter);
@@ -320,7 +323,7 @@ public class CanteenFragment extends BaseFragment {
                         sales = new SalesPriorityFragment();
                         data.putInt("leibie", 0);
                         sales.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         clicksalse = 1;
                         break;
@@ -328,7 +331,7 @@ public class CanteenFragment extends BaseFragment {
                         sales = new SalesPriorityFragment();
                         data.putInt("leibie", 1);
                         sales.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         clicksalse = 1;
                         break;
@@ -336,7 +339,7 @@ public class CanteenFragment extends BaseFragment {
                         sales = new SalesPriorityFragment();
                         data.putInt("leibie", 2);
                         sales.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         clicksalse = 1;
                         break;
@@ -344,7 +347,7 @@ public class CanteenFragment extends BaseFragment {
                         sales = new SalesPriorityFragment();
                         data.putInt("leibie", 3);
                         sales.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                         salsechoose.setVisibility(View.GONE);
                         clicksalse = 1;
                         break;
@@ -363,7 +366,7 @@ public class CanteenFragment extends BaseFragment {
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 0);
                         allclass.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                         choose.setVisibility(View.GONE);
                         click = 1;
                         break;
@@ -371,7 +374,7 @@ public class CanteenFragment extends BaseFragment {
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 1);
                         allclass.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                         choose.setVisibility(View.GONE);
                         click = 1;
                         break;
@@ -379,7 +382,7 @@ public class CanteenFragment extends BaseFragment {
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 2);
                         allclass.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                         choose.setVisibility(View.GONE);
                         click = 1;
                         break;
@@ -387,7 +390,7 @@ public class CanteenFragment extends BaseFragment {
                         allclass = new AllClassificationFragment();
                         data.putInt("leibie", 3);
                         allclass.setArguments(data);
-                        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
                         choose.setVisibility(View.GONE);
                         click = 1;
                         break;
@@ -402,33 +405,33 @@ public class CanteenFragment extends BaseFragment {
         allclass = new AllClassificationFragment();
         data.putInt("leibie", 0);
         allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         break;
         case 1:
         allclass = new AllClassificationFragment();
         data.putInt("leibie", 1);
         allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         break;
         case 2:
         allclass = new AllClassificationFragment();
         data.putInt("leibie", 2);
         allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         break;
         case 3:
         allclass = new AllClassificationFragment();
         data.putInt("leibie", 3
         );
         allclass.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
         break;
         }
         }
 
 
         @Override public void onNothingSelected(AdapterView<?> parent) {
-        Toast.makeText(context, "unselected", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "unselected", Toast.LENGTH_SHORT).show();
         }
         });
          **/
@@ -440,8 +443,8 @@ public class CanteenFragment extends BaseFragment {
                     return;
                 }
                 tv_allclass.setTextColor(Color.parseColor("#6495ed"));
-                tv_sales.setTextColor(context.getResources().getColor(R.color.tv_bg));
-                //tv_zhineng.setTextColor(context.getResources().getColor(R.color.tv_bg));
+                tv_sales.setTextColor(getActivity().getResources().getColor(R.color.tv_bg));
+                //tv_zhineng.setTextColor(getActivity().getResources().getColor(R.color.tv_bg));
                 sp_allclass.setBackgroundResource(R.drawable.spinner_down);
                 sp_sales.setBackgroundResource(R.drawable.spinner);
                 //sp_zhineng.setBackgroundResource(R.drawable.spinner);
@@ -453,7 +456,7 @@ public class CanteenFragment extends BaseFragment {
                     choose.setVisibility(View.GONE);
                     allclass = new AllClassificationFragment();
                     allclass.setArguments(data);
-                    ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
+                    ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, allclass).commit();
 
                     click = 1;
                 }
@@ -479,7 +482,7 @@ public class CanteenFragment extends BaseFragment {
                     salsechoose.setVisibility(View.VISIBLE);
                     sales = new SalesPriorityFragment();
                     sales.setArguments(data);
-                    ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
+                    ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, sales).commit();
                     clicksalse = 2;
                 } else if (clicksalse == 2) {
                     salsechoose.setVisibility(View.GONE);
@@ -503,7 +506,7 @@ public class CanteenFragment extends BaseFragment {
         sp_allclass.setBackgroundResource(R.drawable.spinner);
         zhineng = new IntellingentSortingFragment();
         zhineng.setArguments(data);
-        ((BaseActivity) context).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
+        ((BaseActivity) getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fl_commodity, zhineng).commit();
         }
         });
          **/
@@ -518,7 +521,7 @@ public class CanteenFragment extends BaseFragment {
                         sendOrderToServer();
                         settlement.setEnabled(false);
                     } else {
-                        Toast.makeText(context, "请选择商品", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "请选择商品", Toast.LENGTH_SHORT).show();
                     }
                 }
             });
@@ -549,7 +552,7 @@ public class CanteenFragment extends BaseFragment {
 
     public void onEvent(ClickEvent event) {
         // 从事件中获得参数值
-//        Toast.makeText(context, "点我，点我", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getActivity(), "点我，点我", Toast.LENGTH_SHORT).show();
         commodities.clear();
         lcount.clear();
         line_items_attributes.clear();
@@ -720,7 +723,7 @@ public class CanteenFragment extends BaseFragment {
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder viewHolder;
             if (convertView == null) {
-                convertView = View.inflate(context, R.layout.buycar_items, null);
+                convertView = View.inflate(getActivity(), R.layout.buycar_items, null);
                 viewHolder = new ViewHolder();
                 viewHolder.title = (TextView) convertView.findViewById(R.id.tv_title);
                 viewHolder.price = (TextView) convertView.findViewById(R.id.tv_price);
@@ -902,7 +905,7 @@ public class CanteenFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             Holder holder;
             if (convertView == null) {
-                convertView = View.inflate(context, R.layout.choose_item, null);
+                convertView = View.inflate(getActivity(), R.layout.choose_item, null);
                 holder = new Holder();
                 holder.textView = (TextView) convertView.findViewById(R.id.tv_fenlei);
                 convertView.setTag(holder);

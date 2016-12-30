@@ -16,13 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.News;
-import com.gkzxhn.gkprison.userport.requests.ApiRequest;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
-import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.Utils;
 import com.keda.sky.app.PcAppStackManager;
@@ -40,9 +39,6 @@ import java.util.List;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
 /**
  * 工作动态
@@ -229,51 +225,51 @@ public class WorkDynamicActivity extends BaseActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             ApiRequest api = retrofit.create(ApiRequest.class);
-            api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<News>>() {
-                        @Override
-                        public void onCompleted() {}
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e(TAG, "get news failed : " + e.getMessage());
-                            Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
-                            if (getNews_dialog.isShowing()) {
-                                getNews_dialog.dismiss();
-                            }
-                            checkUI();// 相关ui操作
-                        }
-
-                        @Override
-                        public void onNext(List<News> newses) {
-                            newsList.clear();
-                            for (News news : newses){
-                                Log.i(TAG, news.toString());
-                                allnews.add(news);
-                                if(news.getType_id() == 1){
-                                    newsList.add(news);
-                                }
-                            }
-                            sortNews();// 将新闻按新闻id排序
-                            setCarousel(); // 设置轮播
-                            if (myAdapter == null) {
-                                myAdapter = new MyAdapter();
-                                lv_prison_open.setAdapter(myAdapter);
-                            } else {
-                                myAdapter.notifyDataSetChanged();
-                            }
-                            checkUI();// 相关ui操作
-                            if(getType == 1){
-                                showToastMsgShort("刷新成功");
-                            }
-                        }
-                    });
+//            api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(new Observer<List<News>>() {
+//                        @Override
+//                        public void onCompleted() {}
+//
+//                        @Override
+//                        public void onError(Throwable e) {
+//                            Log.e(TAG, "get news failed : " + e.getMessage());
+//                            Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
+//                            if (getNews_dialog.isShowing()) {
+//                                getNews_dialog.dismiss();
+//                            }
+//                            checkUI();// 相关ui操作
+//                        }
+//
+//                        @Override
+//                        public void onNext(List<News> newses) {
+//                            newsList.clear();
+//                            for (News news : newses){
+//                                Log.i(TAG, news.toString());
+//                                allnews.add(news);
+//                                if(news.getType_id() == 1){
+//                                    newsList.add(news);
+//                                }
+//                            }
+//                            sortNews();// 将新闻按新闻id排序
+//                            setCarousel(); // 设置轮播
+//                            if (myAdapter == null) {
+//                                myAdapter = new MyAdapter();
+//                                lv_prison_open.setAdapter(myAdapter);
+//                            } else {
+//                                myAdapter.notifyDataSetChanged();
+//                            }
+//                            checkUI();// 相关ui操作
+//                            if(getType == 1){
+//                                showToastMsgShort("刷新成功");
+//                            }
+//                        }
+//                    });
         } else {
             showToastMsgShort("没有网络");
         }
     }
 
-    /**
+    /**s
      * 将新闻按id排序
      */
     private void sortNews() {

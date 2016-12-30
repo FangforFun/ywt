@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.requests;
+package com.gkzxhn.gkprison.api;
 
 import com.gkzxhn.gkprison.userport.bean.Balance;
 import com.gkzxhn.gkprison.userport.bean.News;
@@ -28,12 +28,11 @@ public interface ApiRequest {
 
     /**
      * 获取用户对应囚犯信息
-     * @param ph 电话
      * @param map uuid
      * @return
      */
     @GET("prisoner")
-    Observable<PrisonerUserInfo> getUserInfo(@Query("phone") String ph, @QueryMap Map<String, String> map);
+    Observable<PrisonerUserInfo> getUserInfo(@QueryMap Map<String, String> map);
 
 
     /**
@@ -63,7 +62,8 @@ public interface ApiRequest {
     /**
      * 获取新闻
      * @param jail_id
-     * @return
+     * @return  @GET("news")
+    Observable<List<News>> getNews(@Query("jail_id") int jail_id);
      */
     @GET("news")
     Observable<List<News>> getNews(@Query("jail_id") int jail_id);

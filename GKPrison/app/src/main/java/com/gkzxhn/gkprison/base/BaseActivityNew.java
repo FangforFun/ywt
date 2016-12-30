@@ -27,11 +27,11 @@ public abstract class BaseActivityNew extends AppCompatActivity {
         getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(setLayoutResId());
+        PcAppStackManager.Instance().pushActivity(this);
         setTranslucentStatus(isApplyTranslucentStatus());
         setStatusBarColor(isApplyStatusBarColor());
         initInjector();
         initUiAndListener();
-        PcAppStackManager.Instance().pushActivity(this);
     }
 
     /**

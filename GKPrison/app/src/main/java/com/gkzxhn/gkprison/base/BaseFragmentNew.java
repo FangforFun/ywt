@@ -1,7 +1,7 @@
 package com.gkzxhn.gkprison.base;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,32 +13,29 @@ import com.gkzxhn.gkprison.utils.ToastUtil;
  * add by hzn 2015.12.03
  * Fragment基类
  */
-public abstract class BaseFragment extends Fragment {
-
-    public Context context;
+public abstract class BaseFragmentNew extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.context = getActivity();
     }
 
-    //view
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return initView();
+        return inflater.inflate(setLayoutResId(), container, false);
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initUiAndListener(view);
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
+    /**
+     * 初始化ui及坚挺着
+     */
+    protected abstract void initUiAndListener(View view);
 
     //填充数据
     @Override
@@ -51,7 +48,7 @@ public abstract class BaseFragment extends Fragment {
      * 子类必须实现  即布局
      * @return
      */
-    protected abstract View initView();
+    protected abstract int setLayoutResId();
 
     /**
      * 子类要想显示动态数据必须实现

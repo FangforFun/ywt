@@ -66,4 +66,34 @@ public class SPKeyConstants {
      * 监狱名称
      */
     public static final String PRISON_NAME = "prisonname";
+
+    /**
+     * 刑期开始日期
+     */
+    public static final String PRISON_TERM_STARTED_AT = "prison_term_started_at";
+
+    /**
+     * 刑期结束日期
+     */
+    public static final String PRISON_TERM_ENDED_AT = "prison_term_ended_at";
+
+    /**
+     * 性别
+     */
+    public static final String GENDER = "gender";
+
+    /**
+     * 囚犯姓名
+     */
+    public static final String PRISONER_NAME = "prisoner_name";
+
+    /**
+     * 监狱id
+     */
+    public static final String JAIL_ID = "jail_id";
+
+    /**
+     * 服刑人员囚号
+     */
+    public static final String PRISONER_NUMBER = "prisoner_number";
 }

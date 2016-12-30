@@ -121,8 +121,6 @@
     <string name="add_text">添加</string>
 
 
-
-
     <string name="app_company_name">国科政信（北京）股份有限公司</string>
     <string name="app_copy_rights">copyright©2006-2015.All right reserved</string>
     <string name="register">注册</string>
@@ -188,6 +186,30 @@
     <string name="code_501">501</string>
     <string name="register_success">注册成功!</string>
     <string name="register_failed">注册失败！</string>
+    <string name="main_page">首页</string>
+    <string name="visit_prison">探监</string>
+    <string name="canteen">电子商务</string>
+    <string name="please_login">请登录</string>
+    <string name="reminder">提示</string>
+    <string name="register_confirm_remind">即将提交注册，注册信息将会严格审核，注册信息一旦通过，将不可修改，确定提交？</string>
+    <string name="confirm_again">再确认一下</string>
+    <string name="get_info_failed">获取用户信息失败，请重新登录</string>
+    <string name="loading">加载中...</string>
+    <string name="kickout_remind">账号下线提示</string>
+    <string name="relogin">重新登录</string>
+    <string name="focus_">焦点关注</string>
+    <string name="focus_news_title">焦点新闻大标题</string>
+    <string name="focus_news_simple">焦点新闻简要描述...</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="user_name">用户名</string>
+    <string name="account_info">账号信息</string>
+    <string name="remittance_record">汇款记录</string>
+    <string name="shopping_record">购物记录</string>
+    <string name="setting">设置</string>
+    <string name="logout">注销</string>
+    <string name="exit_app">再按一次退出程序</string>
 
 
 </resources>

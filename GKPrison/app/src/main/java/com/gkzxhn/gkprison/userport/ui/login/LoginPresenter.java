@@ -190,10 +190,10 @@ public class LoginPresenter implements LoginContract.Presenter {
                 try {
                     String result = responseBody.string();
                     if (result.contains(mContext.getString(R.string.code_200))){
+                        Log.d(TAG, "get verification code success : " + result);
                         loginContractView.showToast(mContext.getString(R.string.sended));
                         return;
                     }
-                    Log.d(TAG, "get verification code success : " + result);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -445,15 +445,6 @@ public class LoginPresenter implements LoginContract.Presenter {
                 return;
 
             }
-        }
-
-        /**
-         * 登录成功/失败
-         *
-         * @param isSuccess
-         */
-        public void loginSuccessed(boolean isSuccess, String failedMsg) {
-
         }
     }
 }

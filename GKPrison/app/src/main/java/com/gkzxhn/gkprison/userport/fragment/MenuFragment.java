@@ -46,7 +46,8 @@ public class MenuFragment extends BaseFragment{
     private static final String TAG = "MenuFragment";
     private ListView lv_home_menu;
     private final String[] menu_options_tv = {"账号信息", "汇款记录", "购物记录", "设置"};
-    private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record, R.drawable.shopping_record, R.drawable.setting};
+    private final int[] menu_options_iv = {R.drawable.user_info, R.drawable.remittance_record,
+            R.drawable.shopping_record, R.drawable.setting};
     private boolean isRegisteredUser;
     private RelativeLayout rl_header_info;
     private ImageView iv_user_icon;
@@ -102,7 +103,7 @@ public class MenuFragment extends BaseFragment{
         isRegisteredUser = (boolean) SPUtil.get(getActivity(), "isRegisteredUser", false);
         if(!isRegisteredUser){
             iv_user_icon.setImageResource(R.drawable.default_icon);
-            tv_menu_user_name.setText("用户名");
+            tv_menu_user_name.setText(R.string.user_name);
             bt_logout.setText("登录");
         }else {
             bt_logout.setText("注销登录");

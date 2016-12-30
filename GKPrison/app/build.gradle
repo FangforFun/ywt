@@ -53,8 +53,8 @@ android {
     }
 
     //修改生成的apk名字
-    applicationVariants. all{ variant->
-        variant.outputs.each { output->
+    applicationVariants.all { variant ->
+        variant.outputs.each { output ->
             def oldFile = output.outputFile
             def newName = '';
             if (variant.buildType.name.equals('release')) {
@@ -79,6 +79,7 @@ dependencies {
     compile project.SUPPORT_V7
     compile project.SUPPORT_V4
     compile project.SUPPORT_DESIGN
+    compile project.RECYCLER_VIEW
     // test
     testCompile project.JUNIT
     compile project.TEST_RUNNER
@@ -106,20 +107,27 @@ dependencies {
     compile project.RXANDROID
     compile project.RXJAVA
     // 依赖注入
+
     // butterknife
     compile project.BUTTER_KNIFE
     apt project.BUTTER_KNIFE_COMPILER
     // dagger2
     apt project.DAGGER_COMPILER
     compile project.DAGGER
-    provided project.JAVAX_ANNOTATION// 添加android缺失的部分javax注解
+    provided project.JAVAX_ANNOTATION
+    // 添加android缺失的部分javax注解
+
     //leakcanary
-//    debugCompile project.LEAKCANARY_DEBUG
-//    releaseCompile project.LEAKCANARY_RELEASE
-//    testCompile project.LEAKCANARY_TEST
+
+    //    debugCompile project.LEAKCANARY_DEBUG
+
+    //    releaseCompile project.LEAKCANARY_RELEASE
+
+    //    testCompile project.LEAKCANARY_TEST
 
     // 安卓常用工具类大全
     compile project.UTIL_CODE
     // 云信基础sdk
     compile project.NIM_SDK_BASE
+    compile 'com.android.support:support-v4:22.2.1'
 }

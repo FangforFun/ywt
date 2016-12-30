@@ -36,7 +36,7 @@
                 <RelativeLayout
                     android:id="@+id/rl_back"
                     android:layout_width="wrap_content"
-                    android:layout_height="48dp"
+                    android:layout_height="@dimen/title_bar_height"
                     android:background="@drawable/img_selector"
                     android:gravity="center_vertical"
                     android:visibility="gone">
@@ -56,6 +56,23 @@
                         android:layout_marginStart="5dp"
                         android:textColor="@color/white"
                         android:src="@drawable/back"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_home_menu"
+                    android:layout_width="@dimen/title_bar_height"
+                    android:layout_height="@dimen/title_bar_height"
+                    android:background="@drawable/img_selector"
+                    android:clickable="true"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/iv_home_menu"
+                        android:layout_width="@dimen/menu_icon_size"
+                        android:layout_height="@dimen/menu_icon_size"
+                        android:src="@drawable/icon_menu"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="@dimen/menu_icon_left_padding"/>
                 </RelativeLayout>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
