@@ -21,6 +21,8 @@ import java.io.OutputStream;
 
 public class FileUtils {
 
+    private static final String TAG = FileUtils.class.getSimpleName();
+
     /**
      * 获取缓存文件夹
      * @param context
@@ -52,8 +54,9 @@ public class FileUtils {
         }
         try {
             DiskLruCache diskLruCache = DiskLruCache.open(cacheDir, SystemUtil.
-                    getVersionCode(context), 20, 10 * 1024 * 1024);
+                    getVersionCode(context), 1, 10 * 1024 * 1024);
             String key = MD5Utils.ecoder(keyContent);
+            Log.i(TAG, "put cache file name: " + key);
             DiskLruCache.Editor editor = diskLruCache.edit(key);
             if (editor != null) {
                 OutputStream outputStream = editor.newOutputStream(0);
@@ -85,6 +88,7 @@ public class FileUtils {
             DiskLruCache diskLruCache = DiskLruCache.open(cacheDir, SystemUtil.
                     getVersionCode(context), 20, 10 * 1024 * 1024);
             String key = MD5Utils.ecoder(keyContent);
+            Log.i(TAG, "get cache file name: " + key);
             DiskLruCache.Snapshot snapshot = diskLruCache.get(key);
             if (snapshot != null){
                 InputStream inputStream = snapshot.getInputStream(0);

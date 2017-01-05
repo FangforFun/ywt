@@ -128,7 +128,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
      *   relationship_with_prisoner,
      *   prisoner_number,
      *   prison_choose,
-     *   identifying_code\
+     *   identifying_code
      *   sex
      * @param avatar  头像位图
      * @param id_01  身份证正反面

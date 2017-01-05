@@ -210,6 +210,8 @@
     <string name="setting">设置</string>
     <string name="logout">注销</string>
     <string name="exit_app">再按一次退出程序</string>
+    <string name="no_meeting">暂无会见</string>
+    <string name="last_meeting_time">上次会见时间：</string>
 
 
 </resources>

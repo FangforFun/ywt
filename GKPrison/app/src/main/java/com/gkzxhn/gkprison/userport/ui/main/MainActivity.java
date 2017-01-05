@@ -36,8 +36,8 @@ import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
-import com.gkzxhn.gkprison.userport.fragment.CanteenBaseFragment;
-import com.gkzxhn.gkprison.userport.fragment.RemoteMeetFragment;
+import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
+import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
 import com.gkzxhn.gkprison.userport.view.AutoCompleteTv;
@@ -134,7 +134,6 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
         setNavigationItemClick();
         setBottomGuideIcon();
         mPresenter.attachView(this);
-//        rg_bottom_guide.check(R.id.rb_bottom_guide_home); // 默认选择首页
         isRegisterUser = (boolean) SPUtil.get(this, SPKeyConstants.IS_REGISTERED_USER, false);
         database = StringUtils.getSQLiteDB(this);
         mPresenter.checkStatus();
@@ -339,10 +338,7 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                         .error(R.drawable.default_icon).into(iv_user_icon);
             }
             mPresenter.downloadAvatar(ICON_URL);
-        }else {
-            iv_user_icon.setImageResource(R.drawable.default_icon);
-            tv_menu_user_name.setText(R.string.user_name);
-            navigationView.getMenu().getItem(4).setTitle(getString(R.string.login_text));
+            mPresenter.doWXPayController(getIntent().getStringExtra("times"), database);
         }
     }
 
@@ -428,7 +424,7 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
      * 添加主Fragment
      */
     @SuppressLint("CommitTransaction")
-    private void addHomeFragment() {
+    public void addHomeFragment() {
         manager = getSupportFragmentManager();
         transaction = manager.beginTransaction();
         if(homeFragment != null && homeFragment.isAdded()){
@@ -437,8 +433,12 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
         if(homeFragment == null){
             homeFragment = new HomeFragment();
         }
-        transaction.add(R.id.fl_main_content, homeFragment);
+        transaction.add(R.id.main_content, homeFragment);
         transaction.commit();
+        // 设置侧拉的相关界面
+        iv_user_icon.setImageResource(R.drawable.default_icon);
+        tv_menu_user_name.setText(R.string.user_name);
+        navigationView.getMenu().getItem(4).setTitle(getString(R.string.login_text));
     }
 
     /**
@@ -496,19 +496,19 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
 
     @Override
     public void onBackPressed() {
-        if (progressDialog.isShowing())
+        if (progressDialog != null && progressDialog.isShowing())
             return;
-        if (reLoginDialog.isShowing())
+        if (reLoginDialog != null && reLoginDialog.isShowing())
             return;
-        if (kickoutDialog.isShowing())
+        if (kickoutDialog != null && kickoutDialog.isShowing())
             return;
-        if (fastLoginDialog.isShowing())
+        if (fastLoginDialog != null && fastLoginDialog.isShowing())
             return;
         if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
             drawerLayout.closeDrawer(Gravity.LEFT);
             return;
         }
-        if (logoutDialog.isShowing()) {
+        if (logoutDialog != null && logoutDialog.isShowing()) {
             logoutDialog.dismiss();
             return;
         }

@@ -96,4 +96,9 @@ public class SPKeyConstants {
      * 服刑人员囚号
      */
     public static final String PRISONER_NUMBER = "prisoner_number";
+
+    /**
+     * 上次会见时间
+     */
+    public static final String LAST_MEETING_TIME = "last_meeting_time";
 }

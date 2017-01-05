@@ -7,13 +7,23 @@ package com.keda.vconf.video.controller;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.hardware.Camera;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -24,13 +34,15 @@ import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 
-import com.kedacom.kdv.mt.api.Configure;
-import com.kedacom.kdv.mt.constant.EmNativeConfType;
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.service.RecordService;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.keda.vconf.controller.VConfFunctionFragment;
 import com.keda.vconf.controller.VConfVideoUI;
 import com.keda.vconf.manager.VConferenceManager;
 import com.keda.vconf.manager.VideoCapServiceManager;
+import com.kedacom.kdv.mt.api.Configure;
+import com.kedacom.kdv.mt.constant.EmNativeConfType;
 import com.kedacom.truetouch.video.capture.VideoCapture;
 import com.kedacom.truetouch.video.player.EGLConfigChooser;
 import com.kedacom.truetouch.video.player.EGLContextFactory;
@@ -38,6 +50,9 @@ import com.kedacom.truetouch.video.player.EGLWindowSurfaceFactory;
 import com.kedacom.truetouch.video.player.Renderer;
 import com.kedacom.truetouch.video.player.Renderer.Channel;
 import com.pc.utils.TerminalUtils;
+
+import static android.app.Activity.RESULT_OK;
+import static android.content.Context.BIND_AUTO_CREATE;
 
 /**
   * 视频会议界面
@@ -153,6 +168,56 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		computePipViewLayoutParams();
 		// 存储本地音视频入会类型为：视频会议
 		VConferenceManager.nativeConfType = EmNativeConfType.VIDEO;
+
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+			String username = (String) SPUtil.get(getActivity(), "token", "");
+			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
+			if (username.length() != 32) {
+				startRecord();
+			}
+		}
+	}
+
+	private void startRecord() {
+		new Handler().postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				manager = (MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+				Intent intent = manager.createScreenCaptureIntent();
+				startActivityForResult(intent, REQUEST_CODE);
+				Intent service = new Intent(getActivity(), RecordService.class);
+				getActivity().bindService(service, connection, BIND_AUTO_CREATE);
+			}
+		}, 1000);
+	}
+
+	private MediaProjectionManager manager;
+	private MediaProjection projection;
+	private RecordService recordService;
+	private ServiceConnection connection = new ServiceConnection() {
+		@Override public void onServiceConnected(ComponentName name, IBinder service) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			RecordService.RecordBinder binder = (RecordService.RecordBinder) service;
+			recordService = binder.getRecordService();
+			recordService.setConfig(metrics.widthPixels, metrics.heightPixels, metrics.densityDpi);
+			com.gkzxhn.gkprison.utils.Log.i("onServiceConnected");
+		}
+
+		@Override public void onServiceDisconnected(ComponentName name) {
+
+		}
+	};
+	private static final int REQUEST_CODE = 1;
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
+		if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
+			com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
+			projection = manager.getMediaProjection(resultCode, data);
+			recordService.setMediaProject(projection);
+			recordService.startRecord();
+		}
 	}
 
 	@Override
@@ -800,6 +865,10 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		}
 
 		VideoCapServiceManager.unBindService();
+
+		if (recordService.isRunning())
+			recordService.stopRecord();
+		getActivity().unbindService(connection);
 
 		super.onDestroy();
 	}

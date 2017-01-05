@@ -58,11 +58,11 @@ android {
             def oldFile = output.outputFile
             def newName = '';
             if (variant.buildType.name.equals('release')) {
-                def releaseApkName = 'yuwutong-nim' + defaultConfig.versionName + '.apk'
+                def releaseApkName = 'yuwutong-kd-vs' + defaultConfig.versionName + '.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }
             if (variant.buildType.name.equals('debug')) {
-                def releaseApkName = 'yuwutong-nim' + defaultConfig.versionName + '-debug.apk'
+                def releaseApkName = 'yuwutong-kd-vs' + defaultConfig.versionName + '-debug.apk'
                 output.outputFile = new File(oldFile.parent, releaseApkName)
             }
         }

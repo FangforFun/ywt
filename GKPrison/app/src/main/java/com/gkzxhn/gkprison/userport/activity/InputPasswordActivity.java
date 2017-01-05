@@ -10,8 +10,8 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.welcome.WelcomeActivity;
 import com.jungly.gridpasswordview.GridPasswordView;
 import com.keda.sky.app.PcAppStackManager;
@@ -83,8 +83,7 @@ public class InputPasswordActivity extends BaseActivity {
                 startActivity(intent);
             } else {
                 if (TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))) {
-                    intent = new Intent(InputPasswordActivity.this, LoadingActivity.class);
-                    startActivity(intent);
+                    LoginActivity.startActivity(InputPasswordActivity.this);
                 } else {
                     if (sp.getBoolean("isCommonUser", true)) {
                         intent = new Intent(InputPasswordActivity.this, MainActivity.class);

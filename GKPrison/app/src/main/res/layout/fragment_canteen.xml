@@ -141,6 +141,7 @@
                     android:layout_marginLeft="20dp"/>
             </RelativeLayout>
         </LinearLayout>
+
         <Button
             android:id="@+id/bt_shopping_cart_commit"
             android:layout_width="0dp"

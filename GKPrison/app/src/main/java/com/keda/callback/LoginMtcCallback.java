@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
-import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
+import com.gkzxhn.gkprison.userport.ui.login.LoginPresenter;
 import com.google.gson.Gson;
 import com.keda.main.MainUI;
 import com.keda.sky.app.GKStateMannager;
@@ -499,12 +499,8 @@ public class LoginMtcCallback {
 			long srvIp = jsonBodyObj.getLong("dwSrvIp");
 			boolean isEnable = jsonBodyObj.getBoolean("bEnable");
 			Activity currActivity = PcAppStackManager.Instance().currentActivity();
-			if (currActivity instanceof LoadingActivity) {
-				if (((LoadingActivity) currActivity).isPerson)
-					((LoadingActivity) currActivity).personLoginFragment.setH323PxyCfgCmdResult(isEnable);
-				else {
-					((LoadingActivity) currActivity).prisonLoginFragment.setH323PxyCfgCmdResult(isEnable);
-				}
+			if (currActivity instanceof LoginActivity) {
+				LoginPresenter.setH323PxyCfgCmdResult(isEnable);
 			}
 		} catch (Exception e) {
 		}

@@ -52,7 +52,7 @@ import static com.gkzxhn.gkprison.userport.ui.main.Utils.keys;
  * function:
  */
 
-public class HomeFragment extends BaseFragmentNew implements View.OnClickListener{
+public class HomeFragment extends BaseFragmentNew{
 
     private static final String TAG = "HomeFragment";
 
@@ -277,44 +277,12 @@ public class HomeFragment extends BaseFragmentNew implements View.OnClickListene
         ll_title_dot.setBackgroundColor(Color.TRANSPARENT);
     }
 
-
     @Override
-    public void onClick(View v) {
-        Intent intent;
-        switch (v.getId()){
-//            case ll_home_news1:
-//                intent = new Intent(getActivity(), NewsDetailActivity.class);
-//                intent.putExtra("type", 1);// 0是轮播图   1是新闻
-//                if(is_request_foucs_news_successed) {
-//                    intent.putExtra("id", focus_news_1.getId());
-//                }else {
-//                    int focus_news_1_id = (int) SPUtil.get(getActivity(), "focus_news_1_id", 0);
-//                    intent.putExtra("id", focus_news_1_id);
-//                }
-//                getActivity().startActivity(intent);
-//                break;
-//            case R.id.ll_home_news2:
-//                intent = new Intent(context, NewsDetailActivity.class);
-//                intent.putExtra("type", 1);// 0是轮播图   1是新闻
-//                if(is_request_foucs_news_successed) {
-//                    intent.putExtra("id", focus_news_2.getId());
-//                }else {
-//                    int focus_news_2_id = (int) SPUtil.get(getActivity(), "focus_news_2_id", 0);
-//                    intent.putExtra("id", focus_news_2_id);
-//                }
-//                context.startActivity(intent);
-//                break;
-//            case R.id.ll_home_news3:
-//                intent = new Intent(context, NewsDetailActivity.class);
-//                intent.putExtra("type", 1);// 0是轮播图   1是新闻
-//                if(is_request_foucs_news_successed) {
-//                    intent.putExtra("id", focus_news_3.getId());
-//                }else {
-//                    int focus_news_3_id = (int) SPUtil.get(getActivity(), "focus_news_3_id", 0);
-//                    intent.putExtra("id", focus_news_3_id);
-//                }
-//                context.startActivity(intent);
-//                break;
+    public void onHiddenChanged(boolean hidden) {
+        if (hidden){
+            if (loadDataDialog != null && loadDataDialog.isShowing()){
+                loadDataDialog.dismiss();
+            }
         }
     }
 }

@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.login.LoadingActivity;
 import com.gkzxhn.gkprison.prisonport.adapter.CalendarViewAdapter;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 import com.gkzxhn.gkprison.prisonport.requests.ApiService;
@@ -257,11 +256,9 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
         builder.setPositiveButton("重新登录", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(DateMeetingListActivity.this, LoadingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                LoginActivity.startActivityClearTask(DateMeetingListActivity.this);
                 // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
                 SPUtil.put(DateMeetingListActivity.this, "is_first", false);
-                startActivity(intent);
                 NIMClient.getService(AuthService.class).logout();
             }
         });

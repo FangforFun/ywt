@@ -16,6 +16,7 @@ import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.userport.ui.register.RegisterActivity;
+import com.gkzxhn.gkprison.utils.ConfigActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
@@ -68,6 +69,25 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
     private int countdown = 60;
 
     private ProgressDialog verify_dialog;
+
+    private int count = 0;
+    private long time = 0;
+
+    @OnClick({R.id.et_personal_username, R.id.et_username})
+    public void onClick(View view){
+        time = System.currentTimeMillis();
+        if (System.currentTimeMillis() - time < 3000){
+            count++;
+            if (count > 10){
+                Intent intent = new Intent(LoginActivity.this, ConfigActivity.class);
+                intent.putExtra("type", view.getId() == R.id.et_personal_username ? 0 : 1);
+                startActivity(intent);
+                count = 0;
+            }
+        }else {
+            count = 0;
+        }
+    }
 
     /**
      * 开启此activity

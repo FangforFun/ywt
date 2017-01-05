@@ -37,6 +37,8 @@ import com.gkzxhn.gkprison.userport.bean.Shoppinglist;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.userport.ui.main.canteen.AllClassificationFragment;
+import com.gkzxhn.gkprison.userport.ui.main.canteen.SalesPriorityFragment;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.Utils;

@@ -108,7 +108,8 @@ public class MainPresenter implements MainContract.Presenter {
                     Log.i(TAG, "get user info failed : " + e.getMessage());
                     // 获取用户信息失败  重新登录
                     mainView.dismissProgress();
-                    mainView.reLoginNotGetUserInfo();
+                    ((MainActivity)mainView).addHomeFragment();
+//                    mainView.reLoginNotGetUserInfo();
                 }
             });
         }else {
@@ -165,7 +166,6 @@ public class MainPresenter implements MainContract.Presenter {
      * 更新微信订单
      */
     public void doWXPayController(final String times, final SQLiteDatabase db) {
-//        String times = getIntent().getStringExtra("times");
         if (times != null){
             final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
             final String str = getXml();

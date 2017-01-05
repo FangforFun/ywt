@@ -10,8 +10,6 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 
-import com.blankj.utilcode.utils.ShellUtils;
-
 /**
  * Created by zhengneng on 2015/12/18.
  */

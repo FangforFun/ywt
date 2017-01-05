@@ -40,11 +40,11 @@ public class KDInitUtil {
     public static boolean isH323;// h323代理
     
     public static void init(){
-        Base.mtStart(EmMtModel.emSkyAndroidPhone, TruetouchGlobal.MTINFO_SKYWALKER, "5.0", getMediaLibDir()
-                + File.separator, MyMtcCallback.getInstance(), "kedacom"); // 启动业务终端，开始接受回调
         Observable.create(new Observable.OnSubscribe<Void>() {
             @Override
             public void call(Subscriber<? super Void> subscriber) {
+                Base.mtStart(EmMtModel.emSkyAndroidPhone, TruetouchGlobal.MTINFO_SKYWALKER, "5.0", getMediaLibDir()
+                        + File.separator, MyMtcCallback.getInstance(), "kedacom"); // 启动业务终端，开始接受回调
                 parseH323();
                 // 设音视频上下文置
                 AudioDeviceAndroid.initialize(MyApplication.getContext());
