@@ -214,6 +214,9 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
 		if (resultCode == RESULT_OK) {
 			if (requestCode == REQUEST_CODE) {
+				if (data == null){
+					return;
+				}
 				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
 				projection = manager.getMediaProjection(resultCode, data);
 				recordService.setMediaProject(projection);

@@ -36,10 +36,11 @@ import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
-import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
-import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
+import com.gkzxhn.gkprison.userport.ui.login.Config;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
+import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
+import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.view.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
@@ -49,6 +50,7 @@ import com.gkzxhn.gkprison.utils.StatusBarUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.gkzxhn.gkprison.utils.UIUtils;
+import com.keda.sky.app.GKStateMannager;
 import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -137,6 +139,16 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
         isRegisterUser = (boolean) SPUtil.get(this, SPKeyConstants.IS_REGISTERED_USER, false);
         database = StringUtils.getSQLiteDB(this);
         mPresenter.checkStatus();
+        tv_title.setOnClickListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        if (!GKStateMannager.mRegisterGK){
+//            showToast("GK重连中...");
+//            GKStateMannager.instance().registerGK();
+//        }
     }
 
     /**
@@ -282,6 +294,9 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                     drawerLayout.openDrawer(Gravity.LEFT);
                 }
                 break;
+            case R.id.tv_title:
+                showToast("当前登录账号为：" + Config.mAccount + ",GK状态：" + GKStateMannager.mRegisterGK);
+                break;
         }
     }
 
@@ -336,8 +351,8 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
             if(!TextUtils.isEmpty(ICON_URL)){
                 Picasso.with(this).load(Constants.RESOURSE_HEAD + ICON_URL)
                         .error(R.drawable.default_icon).into(iv_user_icon);
+                mPresenter.downloadAvatar(Constants.RESOURSE_HEAD + ICON_URL);
             }
-            mPresenter.downloadAvatar(ICON_URL);
             mPresenter.doWXPayController(getIntent().getStringExtra("times"), database);
         }
     }

@@ -15,6 +15,7 @@ import butterknife.ButterKnife;
 
 public class ConfigActivity extends AppCompatActivity {
 
+    private static final java.lang.String TAG = ConfigActivity.class.getSimpleName();
     @BindView(R.id.server_addr)EditText server_addr;
     @BindView(R.id.account)EditText account;
     @BindView(R.id.rate) EditText rate;
@@ -32,12 +33,22 @@ public class ConfigActivity extends AppCompatActivity {
         String mRate = rate.getText().toString().trim();
         if (TextUtils.isEmpty(addr) && TextUtils.isEmpty(acc) && TextUtils.isEmpty(mRate))
             return;
-        if (!TextUtils.isEmpty(addr))
+        if (!TextUtils.isEmpty(addr)) {
+            Log.i(TAG, Config.mAddr + "服务器地址" + addr);
             Config.mAddr = addr;
-        if (!TextUtils.isEmpty(acc))
+            ToastUtil.showShortToast("服务器地址已修改为：" + Config.mAddr);
+        }
+        if (!TextUtils.isEmpty(acc)) {
+            Log.i(TAG, Config.mAccount + "账号" + acc);
             Config.mAccount = acc;
-        if (!TextUtils.isEmpty(mRate))
+            ToastUtil.showShortToast("账号已由修改为：" + Config.mAccount);
+        }
+        if (!TextUtils.isEmpty(mRate)) {
+            Log.i(TAG, VConferenceManager.callRate + "码率" + mRate);
             VConferenceManager.callRate = Integer.parseInt(mRate);
+            ToastUtil.showShortToast("码率已修改为：" + VConferenceManager.callRate);
+        }
         ToastUtil.showShortToast("保存成功");
+        Config.isModify = true;
     }
 }

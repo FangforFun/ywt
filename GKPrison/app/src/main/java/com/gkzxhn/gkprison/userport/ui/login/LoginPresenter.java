@@ -75,6 +75,7 @@ public class LoginPresenter implements LoginContract.Presenter {
         if (isCommonUser) {// 普通用户登录
             mLoginPersonSubscription = LoginWrap.getInstance().loginPersonal(loginService, OkHttpUtils.getRequestBody(str), new SimpleObserver<UserInfo>() {
                 @Override public void onError(Throwable e) {
+                    Log.i("loginPersonal failed: " + e.getMessage());
                     loginContractView.dismissProgress();
                     loginContractView.showToast(mContext.getString(R.string.login_failed_retry));
                 }
@@ -127,9 +128,9 @@ public class LoginPresenter implements LoginContract.Presenter {
 
                     putSP(SPKeyConstants.IS_COMMON_USER, true);
                     putSP(SPKeyConstants.IS_REGISTERED_USER, true);
-                    mAccount = "6010";
                     login();
                 } else {
+                    Log.i("user info is null");
                     loginContractView.dismissProgress();
                     loginContractView.showToast(mContext.getString(R.string.login_failed_retry));
                 }
@@ -138,7 +139,9 @@ public class LoginPresenter implements LoginContract.Presenter {
                 putSP(SPKeyConstants.USERNAME, loginInfo.getAccount());
                 putSP(SPKeyConstants.PASSWORD, loginInfo.getToken());
                 putSP(SPKeyConstants.IS_COMMON_USER, false);
-                mAccount = "6011";
+                if (!Config.isModify) {
+                    mAccount = "6011";
+                }
                 login();
             }
         }

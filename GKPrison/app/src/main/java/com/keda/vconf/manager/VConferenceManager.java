@@ -913,7 +913,7 @@ public class VConferenceManager {
 		if (!GKStateMannager.mRegisterGK) {
 			if (reRegisterGK) {
 				GKStateMannager.instance().registerGK();
-				Toast.makeText(MyApplication.getContext(), "连接中。。。", Toast.LENGTH_SHORT).show();
+				Toast.makeText(MyApplication.getContext(), "GK重连中...", Toast.LENGTH_SHORT).show();
 			}
 
 			return false;

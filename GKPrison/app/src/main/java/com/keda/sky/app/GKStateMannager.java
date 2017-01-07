@@ -167,6 +167,7 @@ public class GKStateMannager {
 	 *  重新注册GK
 	 */
 	public void registerGK() {
+		com.gkzxhn.gkprison.utils.Log.i("registerGK", mRegisteringGK + "xx" + mRegisterGK);
 		if (mRegisteringGK || mRegisterGK) {
 			return;
 		}

@@ -12,7 +12,6 @@ import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.api.wrap.MainWrap;
 import com.gkzxhn.gkprison.app.PerActivity;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
-import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -126,7 +125,7 @@ public class MainPresenter implements MainContract.Presenter {
         if (!isRegisterUser || SystemUtil.isNetWorkUnAvailable()){
             return;
         }
-        Picasso.with(mContext).load(Constants.RESOURSE_HEAD + path).into(new Target() {
+        Picasso.with(mContext).load(path).into(new Target() {
             @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 try {
                     FileOutputStream fos =new FileOutputStream(new File(fileName));
