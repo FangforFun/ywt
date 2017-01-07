@@ -40,18 +40,13 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.unionpay.UPPayAssistEx;
 
-
 import org.apache.http.NameValuePair;
-
 import org.apache.http.message.BasicNameValuePair;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -176,7 +171,7 @@ public class PaymentActivity extends BaseActivity {
                         db.execSQL(sql);
                         Toast.makeText(PaymentActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
+                        Intent intent = new Intent(PaymentActivity.this, com.gkzxhn.gkprison.userport.ui.main.MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         PaymentActivity.this.startActivity(intent);
                         finish();

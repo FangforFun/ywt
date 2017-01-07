@@ -257,9 +257,8 @@ public class DateMeetingListActivity extends BaseActivity implements CalendarCar
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 LoginActivity.startActivityClearTask(DateMeetingListActivity.this);
-                // 防止不重新登录直接退出当再次进来还需要经过欢迎页面
-                SPUtil.put(DateMeetingListActivity.this, "is_first", false);
                 NIMClient.getService(AuthService.class).logout();
+                TruetouchGlobal.logOff();
             }
         });
         AlertDialog dialog = builder.create();

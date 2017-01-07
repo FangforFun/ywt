@@ -93,7 +93,7 @@ public class ZhifubaoPayActivity extends FragmentActivity {
                         db.execSQL(sql);
                         Toast.makeText(ZhifubaoPayActivity.this, "支付成功",
                                 Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(ZhifubaoPayActivity.this,MainActivity.class);
+                        Intent intent = new Intent(ZhifubaoPayActivity.this, com.gkzxhn.gkprison.userport.ui.main.MainActivity.class);
                         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         ZhifubaoPayActivity.this.startActivity(intent);
                         finish();

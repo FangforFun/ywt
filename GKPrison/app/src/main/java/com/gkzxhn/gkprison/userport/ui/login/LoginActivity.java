@@ -80,7 +80,6 @@ public class LoginActivity extends BaseActivityNew implements LoginContract.View
             count++;
             if (count > 10){
                 Intent intent = new Intent(LoginActivity.this, ConfigActivity.class);
-                intent.putExtra("type", view.getId() == R.id.et_personal_username ? 0 : 1);
                 startActivity(intent);
                 count = 0;
             }

@@ -86,7 +86,7 @@ public class InputPasswordActivity extends BaseActivity {
                     LoginActivity.startActivity(InputPasswordActivity.this);
                 } else {
                     if (sp.getBoolean("isCommonUser", true)) {
-                        intent = new Intent(InputPasswordActivity.this, MainActivity.class);
+                        intent = new Intent(InputPasswordActivity.this, com.gkzxhn.gkprison.userport.ui.main.MainActivity.class);
                         startActivity(intent);
                     } else {
                         intent = new Intent(InputPasswordActivity.this, DateMeetingListActivity.class);

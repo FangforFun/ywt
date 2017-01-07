@@ -11,7 +11,6 @@ import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.app.utils.NimInitUtil;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.ToastUtil;
-import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Author: Huang ZN
@@ -47,7 +46,7 @@ public class MyApplication extends MultiDexApplication {
         NimInitUtil.initNim();// 云信SDK相关初始化及后续操作
         KDInitUtil.init();// 科达SDK相关初始化及后续操作
         ToastUtil.registerContext(this);
-        LeakCanary.install(this);
+//        LeakCanary.install(this);
         CrashHandler.getInstance().init(mOurApplication);
     }
 

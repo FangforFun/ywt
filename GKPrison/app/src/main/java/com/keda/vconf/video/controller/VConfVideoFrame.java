@@ -212,11 +212,13 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-		if (requestCode == REQUEST_CODE && resultCode == RESULT_OK){
-			com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-			projection = manager.getMediaProjection(resultCode, data);
-			recordService.setMediaProject(projection);
-			recordService.startRecord();
+		if (resultCode == RESULT_OK) {
+			if (requestCode == REQUEST_CODE) {
+				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
+				projection = manager.getMediaProjection(resultCode, data);
+				recordService.setMediaProject(projection);
+				recordService.startRecord();
+			}
 		}
 	}
 
@@ -866,9 +868,10 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 
 		VideoCapServiceManager.unBindService();
 
-		if (recordService.isRunning())
+		if (recordService != null && recordService.isRunning()) {
 			recordService.stopRecord();
-		getActivity().unbindService(connection);
+			getActivity().unbindService(connection);
+		}
 
 		super.onDestroy();
 	}
@@ -882,9 +885,9 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		}
 
 		mPreviewRenderer.setListener(null);
-		if (null != mVConfVideoUI.getVConfContentFrame().getCurrMainChannel()) {
+//		if (null != mVConfVideoUI.getVConfContentFrame().getCurrMainChannel()) {
 			mPreviewRenderer.destroy();
-		}
+//		}
 	}
 
 	public void registerListeners() {
