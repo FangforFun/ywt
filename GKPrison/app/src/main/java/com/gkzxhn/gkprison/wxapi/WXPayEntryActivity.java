@@ -19,10 +19,10 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
-import com.gkzxhn.gkprison.userport.activity.PaymentActivity;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
+import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
-import com.gkzxhn.gkprison.utils.MD5Utils;
+import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
 import com.tencent.mm.sdk.modelbase.BaseResp;
@@ -31,7 +31,6 @@ import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.entity.StringEntity;
@@ -41,11 +40,6 @@ import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
-import java.util.Random;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
@@ -60,10 +54,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     private TextView tv_finish;
     private RelativeLayout rl_finish;
     private TextView tv_sendgoods;
-    StringBuffer sb;
-    public static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-    OkHttpClient client;
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -82,13 +72,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         setContentView(R.layout.pay_result);
         api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
     }
 
     @Override
@@ -168,22 +151,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                         finish();
                     }
                 });
-                /**
-                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                 View view = this.getLayoutInflater().inflate(R.layout.weixinpay_dialog,null);
-                 Button button = (Button)view.findViewById(R.id.btn_payfinish);
-                 builder.setView(view);
-                 button.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                intent.putExtra("times", times);
-                startActivity(intent);
-                finish();
-                }
-                });
-                 builder.show();
-                 **/
             } else if (resp.errCode == -2) {
                 imge_checkpay.setImageResource(R.drawable.payfail);
                 tv_checkpay.setText("支付失败");
@@ -198,59 +165,10 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
                         finish();
                     }
                 });
-                /**
-                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                 View view = this.getLayoutInflater().inflate(R.layout.weixinpay_dialog,null);
-                 Button button = (Button)view.findViewById(R.id.btn_payfinish);
-                 builder.setView(view);
-                 button.setOnClickListener(new View.OnClickListener() {
-                @Override public void onClick(View v) {
-                Intent intent = new Intent(WXPayEntryActivity.this,MainActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+            }else if (resp.errCode == -1){
+                ToastUtil.showShortToast("请使用正确的app签名文件");
                 finish();
-                }
-                });
-                 builder.show();
-                 **/
             }
         }
     }
-
-
-    private String genAppSign(List<NameValuePair> params) {
-        sb = new StringBuffer();
-        for (int i = 0; i < params.size(); i++) {
-            sb.append(params.get(i).getName());
-            sb.append('=');
-            sb.append(params.get(i).getValue());
-            sb.append('&');
-        }
-        com.gkzxhn.gkprison.utils.Log.d("sa", sb.toString());
-        sb.append("key=");
-        sb.append("d75699d893882dea526ea05e9c7a4090");
-        com.gkzxhn.gkprison.utils.Log.d("dd", sb.toString());
-        //  sb.append("sign str\n" + sb.toString() + "\n\n");
-        String appSign = MD5Utils.ecoder(sb.toString()).toUpperCase();
-        com.gkzxhn.gkprison.utils.Log.d("orion1", appSign);
-        return appSign;
-    }
-
-    private String getRandomString() {
-        String suiji = "";
-        int len = 32;
-        char[] chars = new char[len];
-        Random random = new Random();
-        for (int i = 0; i < len; i++) {
-            if (random.nextBoolean()) {
-                chars[i] = (char) (random.nextInt(25) + 97);
-            } else {
-                chars[i] = (char) (random.nextInt(9) + 48);
-            }
-        }
-        suiji = new String(chars);
-        return suiji;
-    }
-
-
 }

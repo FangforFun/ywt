@@ -30,6 +30,7 @@ import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Prison;
 import com.gkzxhn.gkprison.userport.bean.line_items_attributes;
+import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.StringUtils;

@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
@@ -9,6 +10,7 @@ import com.gkzxhn.gkprison.app.component.DaggerAppComponent;
 import com.gkzxhn.gkprison.app.module.AppModule;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.app.utils.NimInitUtil;
+import com.gkzxhn.gkprison.service.RecordService;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 
@@ -48,6 +50,7 @@ public class MyApplication extends MultiDexApplication {
         ToastUtil.registerContext(this);
 //        LeakCanary.install(this);
         CrashHandler.getInstance().init(mOurApplication);
+        startService(new Intent(this, RecordService.class));
     }
 
     /**

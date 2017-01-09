@@ -187,7 +187,7 @@
     <string name="register_success">注册成功!</string>
     <string name="register_failed">注册失败！</string>
     <string name="main_page">首页</string>
-    <string name="visit_prison">探监</string>
+    <string name="visit_prison">会见</string>
     <string name="canteen">电子商务</string>
     <string name="please_login">请登录</string>
     <string name="reminder">提示</string>
@@ -212,6 +212,17 @@
     <string name="exit_app">再按一次退出程序</string>
     <string name="no_meeting">暂无会见</string>
     <string name="last_meeting_time">上次会见时间：</string>
+    <string name="total_pay">共计:</string>
+    <string name="value_0">0</string>
+    <string name="rmb">元</string>
+    <string name="choose_pay_ment">选择支付方式</string>
+    <string name="pay">支付</string>
+    <string name="pay_order">支付订单</string>
+    <string name="pay_failed">支付失败</string>
+    <string name="zhifubao">支付宝</string>
+    <string name="pay_result_confirming">支付结果确认中</string>
+    <string name="pay_success">支付成功</string>
+    <string name="pay_cancel">支付取消</string>
 
 
 </resources>

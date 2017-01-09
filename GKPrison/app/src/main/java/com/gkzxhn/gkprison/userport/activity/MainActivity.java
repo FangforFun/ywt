@@ -40,6 +40,7 @@ import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 import com.gkzxhn.gkprison.userport.event.MeetingTimeEvent;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
+import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
@@ -756,7 +757,7 @@ public class MainActivity extends BaseActivity {
         String nonce_str = getRandomString();
         List<NameValuePair> list = new LinkedList<NameValuePair>();
         list.add(new BasicNameValuePair("appid", WeixinConstants.APP_ID));
-        list.add(new BasicNameValuePair("mch_id",PaymentActivity.mch_id));
+        list.add(new BasicNameValuePair("mch_id", PaymentActivity.mch_id));
         list.add(new BasicNameValuePair("nonce_str",nonce_str));
         list.add(new BasicNameValuePair("out_trade_no", PaymentActivity.TradeNo));
         String sign = genAppSign(list);

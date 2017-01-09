@@ -69,7 +69,7 @@ import butterknife.ButterKnife;
  * Author: Huang ZN
  * Date: 2016/12/28
  * Email:943852572@qq.com
- * Description:
+ * Description:主页
  */
 public class MainActivity extends BaseActivityNew implements MainContract.View,
         View.OnClickListener, RadioGroup.OnCheckedChangeListener {
@@ -475,6 +475,7 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
      */
     @SuppressLint("CommitTransaction")
     private void switchFragment(int index) {
+        manager = getSupportFragmentManager();
         transaction = manager.beginTransaction();
         for (int i = 0; i < fragments.size(); i++) {
             if(index == i) {

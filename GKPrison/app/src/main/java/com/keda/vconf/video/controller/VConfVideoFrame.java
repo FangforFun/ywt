@@ -6,6 +6,7 @@ package com.keda.vconf.video.controller;
  */
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -26,6 +27,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ import android.widget.ImageView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.service.RecordService;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.keda.vconf.controller.VConfFunctionFragment;
 import com.keda.vconf.controller.VConfVideoUI;
 import com.keda.vconf.manager.VConferenceManager;
@@ -61,7 +64,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
   * @date 2014-10-11
   */
 
-public class VConfVideoFrame extends Fragment implements View.OnClickListener {
+public class VConfVideoFrame extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
 
 	// 切换间隔时间2s
 	private final long TOGGLE_INTERVAL_TIME = 2 * 1000;
@@ -141,6 +144,13 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i("VConfVideo", "VconfVideoFrame-->onCreate ");
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+			String username = (String) SPUtil.get(getActivity(), "token", "");
+			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
+			if (username.length() != 32) {
+//				startRecord();
+			}
+		}
 	}
 
 	@SuppressLint("InflateParams")
@@ -169,15 +179,10 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		// 存储本地音视频入会类型为：视频会议
 		VConferenceManager.nativeConfType = EmNativeConfType.VIDEO;
 
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(getActivity(), "token", "");
-			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
-			if (username.length() != 32) {
-				startRecord();
-			}
-		}
+
 	}
 
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void startRecord() {
 		new Handler().postDelayed(new Runnable() {
 			@Override
@@ -209,12 +214,16 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		}
 	};
 	private static final int REQUEST_CODE = 1;
+
+
+	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
 		if (resultCode == RESULT_OK) {
 			if (requestCode == REQUEST_CODE) {
 				if (data == null){
+					ToastUtil.showShortToast("录制失败1");
 					return;
 				}
 				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
@@ -222,6 +231,8 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 				recordService.setMediaProject(projection);
 				recordService.startRecord();
 			}
+		}else {
+			ToastUtil.showShortToast("录制失败");
 		}
 	}
 
@@ -446,6 +457,7 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 
 		mGlPreview.setDebugFlags(GLSurfaceView.DEBUG_CHECK_GL_ERROR | GLSurfaceView.DEBUG_LOG_GL_CALLS);
 		mGlPreview.setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+		mGlPreview.getHolder().addCallback(this);
 	}
 
 	@Override
@@ -1086,5 +1098,27 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener {
 		if (null != playFrame && null != playFrame.getmMainRenderer()) {
 			playFrame.getmMainRenderer().keepAspectRatio(val);
 		}
+	}
+
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		com.gkzxhn.gkprison.utils.Log.i("surfaceCreated");
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+			String username = (String) SPUtil.get(getActivity(), "token", "");
+			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
+			if (username.length() != 32) {
+				startRecord();
+			}
+		}
+	}
+
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+		com.gkzxhn.gkprison.utils.Log.i("surfaceChanged");
+	}
+
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		com.gkzxhn.gkprison.utils.Log.i("surfaceDestroyed");
 	}
 }

@@ -12,8 +12,13 @@ import android.os.HandlerThread;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import com.gkzxhn.gkprison.utils.Log;
+
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class RecordService extends Service {
@@ -70,11 +75,12 @@ public class RecordService extends Service {
     if (mediaProjection == null || running) {
       return false;
     }
-
+    Log.i("start record");
     initRecorder();
     createVirtualDisplay();
     mediaRecorder.start();
     running = true;
+    Log.i("start record");
     return true;
   }
 
@@ -82,6 +88,7 @@ public class RecordService extends Service {
     if (!running) {
       return false;
     }
+    Log.i("stop record");
     running = false;
     mediaRecorder.stop();
     mediaRecorder.reset();
@@ -115,12 +122,13 @@ public class RecordService extends Service {
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
     mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-    mediaRecorder.setOutputFile(getsaveDirectory() + System.currentTimeMillis() + ".mp4");
-    mediaRecorder.setVideoSize(width, height);//视频分辨率大小
     mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);//视频格式
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);//音频格式
+    mediaRecorder.setVideoSize(width, height);//视频分辨率大小
+//    mediaRecorder.setVideoFrameRate(30);
+    String time = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date(System.currentTimeMillis()));
+    mediaRecorder.setOutputFile(getsaveDirectory() + time + ".mp4");
     mediaRecorder.setVideoEncodingBitRate(5 * 1024 * 1024);//
-    mediaRecorder.setVideoFrameRate(30);
     try {
       mediaRecorder.prepare();
     } catch (IOException e) {
