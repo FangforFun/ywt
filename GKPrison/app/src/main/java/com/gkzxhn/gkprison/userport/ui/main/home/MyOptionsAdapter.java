@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.ui.main.main;
+package com.gkzxhn.gkprison.userport.ui.main.home;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +20,9 @@ import com.gkzxhn.gkprison.userport.activity.WorkDynamicActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 
-import static com.gkzxhn.gkprison.userport.ui.main.Utils.OPTIONS_IVS;
-import static com.gkzxhn.gkprison.userport.ui.main.Utils.OPTIONS_IVS_PRESS;
-import static com.gkzxhn.gkprison.userport.ui.main.Utils.OPTIONS_TVS;
+import static com.gkzxhn.gkprison.userport.ui.main.MainUtils.OPTIONS_IVS;
+import static com.gkzxhn.gkprison.userport.ui.main.MainUtils.OPTIONS_IVS_PRESS;
+import static com.gkzxhn.gkprison.userport.ui.main.MainUtils.OPTIONS_TVS;
 
 /**
  * Author: Huang ZN

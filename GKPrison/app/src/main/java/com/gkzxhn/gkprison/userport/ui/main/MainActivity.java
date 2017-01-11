@@ -39,7 +39,7 @@ import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
 import com.gkzxhn.gkprison.userport.ui.login.Config;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
-import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
+import com.gkzxhn.gkprison.userport.ui.main.home.HomeFragment;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.view.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
@@ -191,7 +191,7 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                         break;
                     case R.id.logout:
                         if (isRegisterUser){
-                            logoutDialog = Utils.showConfirmDialog(MainActivity.this);
+                            logoutDialog = MainUtils.showConfirmDialog(MainActivity.this);
                         }else {
                             LoginActivity.startActivityClearTask(MainActivity.this);
                             MainActivity.this.finish();
@@ -353,7 +353,10 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                         .error(R.drawable.default_icon).into(iv_user_icon);
                 mPresenter.downloadAvatar(Constants.RESOURSE_HEAD + ICON_URL);
             }
-            mPresenter.doWXPayController(getIntent().getStringExtra("times"), database);
+            String times = getIntent().getStringExtra("times");
+            if (!TextUtils.isEmpty(times)) {
+                mPresenter.doWXPayController(times, database);
+            }
         }
     }
 

@@ -5,7 +5,9 @@ import java.util.Map;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Body;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
 import rx.Observable;
 
@@ -28,5 +30,17 @@ public interface PayService {
     Observable<ResponseBody> sendPaymentType(
             @QueryMap Map<String, String> map,
             @Body RequestBody body);
+
+    /**
+     * 微信支付订单信息  通知服务器
+     * @param token
+     * @param body
+     * @return
+     */
+    @PATCH("payment_status")
+    Observable<ResponseBody> sendWXPayOrder(
+            @Query("access_token") String token,
+            @Body RequestBody body
+    );
 
 }

@@ -76,6 +76,7 @@ public class PaymentActivity extends BaseActivityNew {
     private int jail_id;// 监狱id
 
     private AlertDialog warningDialog;
+    private ProgressDialog transitionDialog;
 
     private PayReq req = new PayReq();
     private SQLiteDatabase db;
@@ -87,25 +88,8 @@ public class PaymentActivity extends BaseActivityNew {
     private String mode = "01";
     private String app_id = "";
     public static String mch_id = "";
-    private ProgressDialog transitionDialog;
     private String nonce_str = "";
     private String timeStamp = "";
-
-    /**
-     * 获取结果码
-     * @param json
-     * @return
-     */
-    private int getResultCode(String json) {
-        int a = -1;
-        try {
-            JSONObject jsonObject = new JSONObject(json);
-            a = jsonObject.getInt("code");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return a;
-    }
 
     @Override
     public int setLayoutResId() {
@@ -117,8 +101,16 @@ public class PaymentActivity extends BaseActivityNew {
         ButterKnife.bind(this);
         db = StringUtils.getSQLiteDB(this);
         tv_title.setText(R.string.pay_order);
+        rl_back.setVisibility(View.VISIBLE);
+        initData();
+    }
+
+    /**
+     * 初始化数据
+     */
+    private void initData() {
         TradeNo = getIntent().getStringExtra(PayConstants.TRADE_NO);
-        Log.d("订单号", TradeNo);
+        Log.d(TAG, "trade number: " + TradeNo);
         countMoney = getIntent().getStringExtra(PayConstants.TOTAL_MONEY);
         times = getIntent().getStringExtra(PayConstants.TIMES);
         int cart_id = getIntent().getIntExtra(PayConstants.CART_ID, 0);
@@ -137,17 +129,59 @@ public class PaymentActivity extends BaseActivityNew {
         });
     }
 
-    @OnClick(R.id.bt_pay)
+    @OnClick({R.id.bt_pay, R.id.rl_back})
     public void onClick(View view){
-        bt_pay.setEnabled(false);
-        transitionDialog = UIUtils.showProgressDialog(this);
-        if (payMentAdapter.getWhichChecked() == 0) {
-            payment_type = PayConstants.ALI_PAY;
-            send_payment_type();
-        } else if (payMentAdapter.getWhichChecked() == 1) {
-            payment_type = PayConstants.WEIXIN_PAY;
-            send_payment_type();
+        switch (view.getId()){
+            case R.id.bt_pay:
+                bt_pay.setEnabled(false);
+                transitionDialog = UIUtils.showProgressDialog(this);
+                if (payMentAdapter.getWhichChecked() == 0) {
+                    payment_type = PayConstants.ALI_PAY;
+                    send_payment_type();
+                } else if (payMentAdapter.getWhichChecked() == 1) {
+                    payment_type = PayConstants.WEIXIN_PAY;
+                    send_payment_type();
+                }
+                break;
+            case R.id.rl_back:
+                setBackPressed();
+                break;
         }
+    }
+
+    /**
+     * 返回
+     */
+    private void setBackPressed(){
+        if (warningDialog != null && warningDialog.isShowing()){
+            warningDialog.dismiss();
+            return;
+        }
+        if (transitionDialog != null && transitionDialog.isShowing()){
+            transitionDialog.dismiss();
+            return;
+        }
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setBackPressed();
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (warningDialog != null){
+            if (warningDialog.isShowing())
+                warningDialog.dismiss();
+            warningDialog = null;
+        }
+        if (transitionDialog != null){
+            if (transitionDialog.isShowing())
+                transitionDialog.dismiss();
+            transitionDialog = null;
+        }
+        super.onDestroy();
     }
 
     @Override
@@ -183,7 +217,7 @@ public class PaymentActivity extends BaseActivityNew {
                 try {
                     String result = responseBody.string();
                     Log.i(TAG, "send payment success : " + result);
-                    int code = getResultCode(result);
+                    int code = PayUtils.getResultCode(result);
                     if (code == 200) {
                         if (payment_type.equals(PayConstants.ALI_PAY)) {
                             alipay();// 支付宝支付
@@ -357,8 +391,10 @@ public class PaymentActivity extends BaseActivityNew {
      * @return
      */
     private boolean checkBusinessesInfo() {
-        if (TextUtils.isEmpty(PayConstants.PARTNER) || TextUtils.isEmpty(PayUtils.RSA_PRIVATE) || TextUtils.isEmpty(PayConstants.SELLER)) {
-            warningDialog = UIUtils.showAlertDialog(this, "需要配置PARTNER | RSA_PRIVATE| SELLER", new DialogInterface.OnClickListener() {
+        if (TextUtils.isEmpty(PayConstants.PARTNER) || TextUtils.isEmpty(PayUtils.RSA_PRIVATE)
+                || TextUtils.isEmpty(PayConstants.SELLER)) {
+            warningDialog = UIUtils.showAlertDialog(this, "需要配置PARTNER | RSA_PRIVATE| SELLER",
+                    new DialogInterface.OnClickListener() {
                 @Override public void onClick(DialogInterface dialog, int which) {
                     warningDialog.dismiss();
                     finish();

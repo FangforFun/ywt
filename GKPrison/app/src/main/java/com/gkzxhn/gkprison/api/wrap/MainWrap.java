@@ -60,5 +60,4 @@ public class MainWrap {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
-
 }

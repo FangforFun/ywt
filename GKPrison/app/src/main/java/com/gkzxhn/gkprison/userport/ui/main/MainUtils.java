@@ -18,9 +18,14 @@ import com.netease.nimlib.sdk.auth.AuthService;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -30,7 +35,7 @@ import java.util.Random;
  * Description:主页所需工具方法类
  */
 
-public class Utils {
+public class MainUtils {
 
     public static final int[] OPTIONS_IVS_PRESS = {
             R.drawable.prison_introduction_press,
@@ -154,4 +159,51 @@ public class Utils {
         return dialog;
     }
 
+    /**
+     * 获取输出订单号
+     * @return
+     */
+    public static String getOutTradeNo() {
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
+                Locale.getDefault());
+        Date date = new Date();
+        String key = format.format(date);
+        Random r = new Random();
+        key = key + r.nextInt();
+        key = key.substring(0, 15);
+        return key;
+    }
+
+    /**
+     * 获取结果码  从json字符串中解析
+     * @param result
+     * @return
+     */
+    public static int getResultCode(String result) {
+        int a = 0;
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            a = jsonObject.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return a;
+    }
+
+    /**
+     * 获取订单号  从json字符串中解析
+     * @param s
+     * @return
+     */
+    public static String getResultTradeNo(String s) {
+        String str = "";
+        try {
+            JSONObject jsonObject = new JSONObject(s);
+            JSONObject jsonObject1 = jsonObject.getJSONObject("order");
+            str = jsonObject1.getString("trade_no");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return str;
+    }
 }

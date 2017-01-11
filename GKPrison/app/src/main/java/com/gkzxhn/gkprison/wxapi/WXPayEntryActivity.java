@@ -3,25 +3,22 @@ package com.gkzxhn.gkprison.wxapi;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
+import com.gkzxhn.gkprison.api.PayService;
+import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;
+import com.gkzxhn.gkprison.api.rx.SimpleObserver;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
-import com.gkzxhn.gkprison.prisonport.http.HttpPatch;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.tencent.mm.sdk.constants.ConstantsAPI;
 import com.tencent.mm.sdk.modelbase.BaseReq;
@@ -30,46 +27,42 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.IWXAPIEventHandler;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
-import org.apache.http.util.EntityUtils;
-
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
+/**
+ * Author: Huang ZN
+ * Date: 2016/12/28
+ * Email:943852572@qq.com
+ * Description:微信支付结果回调页面
+ */
 public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
+    private static final String TAG = WXPayEntryActivity.class.getSimpleName();
     private IWXAPI api;
-    private String tradeno;
-    private SharedPreferences sp;
     private String token;
     private String times;
-    private ImageView imge_checkpay;
-    private TextView tv_checkpay;
-    private TextView tv_title;
-    private TextView tv_finish;
-    private RelativeLayout rl_finish;
-    private TextView tv_sendgoods;
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String result = (String) msg.obj;
-                    Log.d("ag", result);
-                    break;
-            }
-        }
-    };
+    @BindView(R.id.iv_pay_result_icon) ImageView iv_pay_result_icon;
+    @BindView(R.id.tv_pay_result) TextView tv_pay_result;
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.tv_send_goods) TextView tv_send_goods;
+    private int resultCode;// 结果码
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pay_result);
+        ButterKnife.bind(this);
         api = WXAPIFactory.createWXAPI(this, WeixinConstants.APP_ID);
         api.handleIntent(getIntent(), this);
     }
@@ -88,87 +81,84 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
     @Override
     public void onResp(BaseResp resp) {
         tv_title = (TextView) findViewById(R.id.tv_title);
-        tv_title.setText("支付结果");
-        rl_finish = (RelativeLayout) findViewById(R.id.rl_remittance);
-        rl_finish.setVisibility(View.VISIBLE);
-        tv_finish = (TextView) findViewById(R.id.tv_remittance);
-        tv_finish.setText("完成");
-        imge_checkpay = (ImageView) findViewById(R.id.image_check);
-        tv_checkpay = (TextView) findViewById(R.id.tv_pay_result);
-        tv_sendgoods = (TextView) findViewById(R.id.tv_send_goods);
-
+        tv_title.setText(R.string.pay_result);
+        resultCode = resp.errCode;
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
-            Log.i("wxpay_errCode", resp.errCode + "----" + resp.errStr);
+            Log.i(TAG, "wx pay response error code : " + resp.errCode + ", error info: " + resp.errStr);
             if (resp.errCode == 0) {
-                sp = getSharedPreferences("config", MODE_PRIVATE);
-                token = sp.getString("token", "");
+                token = (String) SPUtil.get(this, SPKeyConstants.ACCESS_TOKEN, "");
                 times = PaymentActivity.times;
-                tradeno = PaymentActivity.TradeNo;
-                final String str = "{\"order\":{\"trade_no\":\"" + tradeno + "\",\"status\":\"WAIT_FOR_NOTIFY\"}}";
-                Log.d("dds", str);
-                new Thread() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        Message msg = handler.obtainMessage();
-                        HttpClient httpClient = new DefaultHttpClient();
-                        HttpPatch httpPatch = new HttpPatch(Constants.URL_HEAD + "payment_status?access_token=" + token);
-                        Log.d("asd", Constants.URL_HEAD + "payment_status?access_token=" + token);
-                        try {
-                            StringEntity entity = new StringEntity(str, HTTP.UTF_8);
-                            entity.setContentType("application/json");
-                            httpPatch.setEntity(entity);
-                            HttpResponse response = httpClient.execute(httpPatch);
-                            if (response.getStatusLine().getStatusCode() == 200) {
-                                msg.obj = EntityUtils.toString(response.getEntity(), "utf-8");
-                                msg.what = 1;
-                                handler.sendMessage(msg);
-                            } else {
-                                Toast.makeText(getApplicationContext(), "通知服务器失败", Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        } catch (ClientProtocolException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        } finally {
-                            Looper.loop();
-                        }
-                    }
-                }.start();
-                imge_checkpay.setImageResource(R.drawable.checkpay);
-                tv_checkpay.setText("支付成功");
-                tv_sendgoods.setVisibility(View.VISIBLE);
-                tv_checkpay.setTextColor(Color.parseColor("#6495ed"));
-                rl_finish.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        intent.putExtra("times", times);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                sendOrderToServer();// 发送订单至服务器  更新
+                tv_send_goods.setVisibility(View.VISIBLE);
+                tv_pay_result.setTextColor(getResources().getColor(R.color.theme));
             } else if (resp.errCode == -2) {
-                imge_checkpay.setImageResource(R.drawable.payfail);
-                tv_checkpay.setText("支付失败");
-                tv_sendgoods.setVisibility(View.GONE);
-                tv_checkpay.setTextColor(Color.parseColor("#ef492f"));
-                rl_finish.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        startActivity(intent);
-                        finish();
-                    }
-                });
+                iv_pay_result_icon.setImageResource(R.drawable.payfail);
+                tv_pay_result.setText(getString(R.string.pay_failed));
+                tv_send_goods.setVisibility(View.GONE);
+                tv_pay_result.setTextColor(getResources().getColor(R.color.tv_red));
             }else if (resp.errCode == -1){
-                ToastUtil.showShortToast("请使用正确的app签名文件");
+                ToastUtil.showShortToast(getString(R.string.please_use_release_keystore));
                 finish();
             }
         }
+    }
+
+    @OnClick(R.id.tv_complete)
+    public void onClick(View view){
+        Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
+        if (resultCode == 0) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        if (resultCode == -2) {
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.putExtra("times", times);
+        }
+        startActivity(intent);
+        finish();
+    }
+
+    /**
+     * 发送订单至服务器  更新
+     */
+    private void sendOrderToServer() {
+        String trade_no = PaymentActivity.TradeNo;
+        String orderInfo = "{\"order\":{\"trade_no\":\"" + trade_no + "\",\"status\":\"WAIT_FOR_NOTIFY\"}}";
+        Log.d(TAG, "wx pay order info: " + orderInfo);
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+        PayService payService = retrofit.create(PayService.class);
+        synchronizeSubscription = payService.sendWXPayOrder(token, OkHttpUtils.getRequestBody(orderInfo))
+                .subscribeOn(Schedulers.io())
+                .unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<ResponseBody>(){
+                    @Override public void onError(Throwable e) {
+                        ToastUtil.showShortToast(getString(R.string.order_synchronize_failed));
+                        Log.i(TAG, "order synchronize failed : " + e.getMessage());
+                    }
+
+                    @Override public void onNext(ResponseBody responseBody) {
+                        ToastUtil.showShortToast(getString(R.string.pay_success));
+                        try {
+                            String result = responseBody.string();
+                            Log.i(TAG, "order synchronize success : " + result);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+    }
+
+    private Subscription synchronizeSubscription;
+
+    @Override
+    protected void onDestroy() {
+        if (synchronizeSubscription != null && !synchronizeSubscription.isUnsubscribed()){
+            synchronizeSubscription.unsubscribe();
+        }
+        super.onDestroy();
     }
 }

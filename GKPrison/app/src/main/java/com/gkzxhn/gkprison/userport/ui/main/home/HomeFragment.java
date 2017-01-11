@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.ui.main.main;
+package com.gkzxhn.gkprison.userport.ui.main.home;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -42,7 +42,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.gkzxhn.gkprison.userport.ui.main.Utils.keys;
+import static com.gkzxhn.gkprison.userport.ui.main.MainUtils.keys;
 
 
 /**

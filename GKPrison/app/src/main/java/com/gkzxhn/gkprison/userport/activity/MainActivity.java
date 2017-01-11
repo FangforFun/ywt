@@ -42,7 +42,7 @@ import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.fragment.MenuFragment;
 import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
-import com.gkzxhn.gkprison.userport.ui.main.main.HomeFragment;
+import com.gkzxhn.gkprison.userport.ui.main.home.HomeFragment;
 import com.gkzxhn.gkprison.userport.view.CustomDrawerLayout;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;

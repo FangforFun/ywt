@@ -211,10 +211,10 @@ public class PersonLoginFragment extends BaseFragment {
 //                if (TextUtils.isEmpty(username)) {
 //                    showToastMsgShort("手机号为空");
 //                } else {
-//                    if (!Utils.isMobileNO(username)) {
+//                    if (!MainUtils.isMobileNO(username)) {
 //                        showToastMsgShort("请输入正确的用户名");
 //                    } else {
-//                        if (Utils.isNetworkAvailable(getActivity())) {
+//                        if (MainUtils.isNetworkAvailable(getActivity())) {
 //                            final String phone_str = "{\"apply\":{\"phone\":\"" + username + "\"}}";
 //                            initAndShowDialog("正在发送...");
 //                            getVerificationCode(phone_str);
@@ -237,7 +237,7 @@ public class PersonLoginFragment extends BaseFragment {
 ////                if (TextUtils.isEmpty(username) || TextUtils.isEmpty(ic_card_num) || TextUtils.isEmpty(identifying_code)) {
 ////                    Toast.makeText(context, "不能为空", Toast.LENGTH_SHORT).show();
 ////                } else {
-////                    if (Utils.isNetworkAvailable(getActivity())) {
+////                    if (MainUtils.isNetworkAvailable(getActivity())) {
 ////                        initAndShowDialog("正在登录...");
 ////                        setNIMLoginCallBack();// 设置云信id登录回调
 ////                        String str = "{\"session\":{ \"phone\":\"" + username + "\", \"uuid\":\""

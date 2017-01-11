@@ -223,6 +223,20 @@
     <string name="pay_result_confirming">支付结果确认中</string>
     <string name="pay_success">支付成功</string>
     <string name="pay_cancel">支付取消</string>
+    <string name="please_wait_send_goods">请耐心等待监狱方发货</string>
+    <string name="pay_result">支付结果</string>
+    <string name="order_synchronize_failed">支付订单同步失败</string>
+    <string name="please_use_release_keystore">请使用正确的app签名文件</string>
+    <string name="all_class">全部分类</string>
+    <string name="sales_prefer">销量优先</string>
+    <string name="buy_car_total">合计:</string>
+    <string name="_2">(含配送费2元)</string>
+    <string name="settlement">结算</string>
+    <string name="buy_car">购物车</string>
+    <string name="clear_shopping_car">清空购物车</string>
+    <string name="please_select_goods">请选择商品</string>
+    <string name="get_order_failed">生成订单失败，请稍后再试!</string>
+    <string name="not_select_goods">没有选择商品</string>
 
 
 </resources>

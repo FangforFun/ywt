@@ -87,4 +87,18 @@ public interface ApiRequest {
     Observable<ResponseBody> sendMeetingRequest(
             @Query("access_token") String token,
             @Body RequestBody body);
+
+    /**
+     * 获取订单信息
+     * @param jail_id
+     * @param token
+     * @param body
+     * @return
+     */
+    @POST("orders")
+    Observable<ResponseBody> getOrderInfo(
+            @Query("jail_id") int jail_id,
+            @Query("access_token") String token,
+            @Body RequestBody body
+    );
 }

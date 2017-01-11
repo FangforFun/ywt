@@ -206,7 +206,7 @@ public class VConfVideoPlayFrame extends Fragment implements View.OnClickListene
 		// ToDo 显示正在审核图片
 		String logined_account = (String) SPUtil.get(getActivity(), "username", "");
 //		if(!TextUtils.isEmpty(logined_account)){ // 已登录(几乎是肯定的)
-//			if (Utils.isNumeric(logined_account)){ // 全数字组成即手机号登陆的  家属用户
+//			if (MainUtils.isNumeric(logined_account)){ // 全数字组成即手机号登陆的  家属用户
 //				// 家属用户显示正在审核
 //				iv_example.setVisibility(View.VISIBLE);
 //			}else {

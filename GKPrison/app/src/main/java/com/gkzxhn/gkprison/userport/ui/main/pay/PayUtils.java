@@ -108,6 +108,22 @@ public class PayUtils {
     }
 
     /**
+     * 获取结果码
+     * @param json
+     * @return
+     */
+    public static int getResultCode(String json) {
+        int a = -1;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            a = jsonObject.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return a;
+    }
+
+    /**
      * 发送支付方式至服务器
      * @param map url路径参数
      * @param body post请求体
