@@ -237,6 +237,9 @@
     <string name="please_select_goods">请选择商品</string>
     <string name="get_order_failed">生成订单失败，请稍后再试!</string>
     <string name="not_select_goods">没有选择商品</string>
+    <string name="goods_list_update_failed">商品列表更新失败</string>
+    <string name="load_failed">加载失败</string>
+    <string name="last_pager">已到最后一页</string>
 
 
 </resources>

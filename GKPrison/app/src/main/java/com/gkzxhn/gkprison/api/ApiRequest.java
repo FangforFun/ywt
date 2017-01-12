@@ -101,4 +101,14 @@ public interface ApiRequest {
             @Query("access_token") String token,
             @Body RequestBody body
     );
+
+    /**
+     * 获取商品
+     * @param map
+     * @return
+     */
+    @GET("items")
+    Observable<ResponseBody> getCommodities(
+            @QueryMap Map<String, String> map
+    );
 }

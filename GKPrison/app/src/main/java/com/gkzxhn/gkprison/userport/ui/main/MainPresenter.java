@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.ApiRequest;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.api.wrap.MainWrap;
 import com.gkzxhn.gkprison.app.PerActivity;
@@ -36,6 +37,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -59,6 +61,9 @@ public class MainPresenter implements MainContract.Presenter {
     private Context mContext;
     private boolean isRegisterUser;
 
+    private Subscription updateOrderSubscription;
+    private Subscription getUserInfoSubscription;
+
     @Inject
     public MainPresenter(OkHttpClient okHttpClient, ApiRequest apiRequest, Context context){
         this.okHttpClient = okHttpClient;
@@ -75,6 +80,7 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void detachView() {
         mainView = null;
+        RxUtils.unSubscribe(getUserInfoSubscription, updateOrderSubscription);
     }
 
     @Override
@@ -95,7 +101,7 @@ public class MainPresenter implements MainContract.Presenter {
             Map<String, String> map = new HashMap<>();
             map.put("phone", phone);
             map.put("uuid", uuid);
-            MainWrap.getPrisonerUserInfo(apiRequest, map, new SimpleObserver<PrisonerUserInfo>(){
+            getUserInfoSubscription = MainWrap.getPrisonerUserInfo(apiRequest, map, new SimpleObserver<PrisonerUserInfo>(){
                 @Override public void onNext(PrisonerUserInfo prisonerUserInfo) {
                     Log.i(TAG, prisonerUserInfo.getResult().toString());
                     savePrisonerInfo(prisonerUserInfo);
@@ -168,7 +174,7 @@ public class MainPresenter implements MainContract.Presenter {
         if (times != null){
             final String url = "https://api.mch.weixin.qq.com/pay/orderquery";
             final String str = getXml();
-            Observable.create(new Observable.OnSubscribe<String>() {
+            updateOrderSubscription = Observable.create(new Observable.OnSubscribe<String>() {
                 @Override
                 public void call(Subscriber<? super String> subscriber) {
                     RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), str);

@@ -8,6 +8,7 @@ import com.blankj.utilcode.utils.RegexUtils;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.api.wrap.LoginWrap;
 import com.gkzxhn.gkprison.app.PerActivity;
@@ -275,12 +276,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void detachView() {
-        if (mVerifySubscription != null && !mVerifySubscription.isUnsubscribed()){
-            mVerifySubscription.unsubscribe();
-        }
-        if (mLoginPersonSubscription != null && !mLoginPersonSubscription.isUnsubscribed()){
-            mLoginPersonSubscription.unsubscribe();
-        }
+        RxUtils.unSubscribe(mVerifySubscription, mLoginPersonSubscription);
         loginContractView = null;
     }
 

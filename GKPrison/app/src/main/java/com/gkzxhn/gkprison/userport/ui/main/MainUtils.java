@@ -7,6 +7,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
+import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.utils.Log;
@@ -18,10 +19,12 @@ import com.netease.nimlib.sdk.auth.AuthService;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -205,5 +208,32 @@ public class MainUtils {
             e.printStackTrace();
         }
         return str;
+    }
+
+    /**
+     * 解析商品列表
+     *
+     * @param s
+     * @return
+     */
+    public static List<Commodity> analysisCommodityList(String s) {
+        List<Commodity> commodities = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(s);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                Commodity commodity = new Commodity();
+                JSONObject jsonObject = jsonArray.getJSONObject(i);
+                commodity.setId(jsonObject.getInt("id"));
+                commodity.setTitle(jsonObject.getString("title"));
+                commodity.setDescription(jsonObject.getString("description"));
+                commodity.setAvatar_url(jsonObject.getString("avatar_url"));
+                commodity.setPrice(jsonObject.getString("price"));
+                commodity.setCategory_id(jsonObject.getInt("category_id"));
+                commodities.add(commodity);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return commodities;
     }
 }

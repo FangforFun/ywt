@@ -9,6 +9,7 @@ import com.blankj.utilcode.utils.RegexUtils;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.api.wrap.LoginWrap;
 import com.gkzxhn.gkprison.app.PerActivity;
@@ -68,12 +69,7 @@ public class RegisterPresenter implements RegisterContract.Presenter {
 
     @Override
     public void detachView() {
-        if (mVerifySubscription != null && !mVerifySubscription.isUnsubscribed())
-            mVerifySubscription.unsubscribe();
-        if (mCheckSubscription != null && !mCheckSubscription.isUnsubscribed())
-            mCheckSubscription.unsubscribe();
-        if (mRegisterSubscription != null && !mRegisterSubscription.isUnsubscribed())
-            mRegisterSubscription.unsubscribe();
+        RxUtils.unSubscribe(mVerifySubscription, mCheckSubscription,mRegisterSubscription );
         registerView = null;
     }
 

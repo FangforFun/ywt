@@ -23,6 +23,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
@@ -59,6 +60,7 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
 import rx.Subscriber;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -101,7 +103,7 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
     private SalesPriorityFragment salesFragment;
     private Bundle data;// 需要传到商品展示fragment中的bundle
     private BadgeView badgeView;
-    private List<Integer> lcount = new ArrayList<Integer>();
+    private List<Integer> lcount = new ArrayList<>();
     private int allcount;
     private String TradeNo;// 订单号
     private List<line_items_attributes> line_items_attributes = new ArrayList<>();
@@ -298,10 +300,15 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
     }
 
     /**
+     * 数据库操作订阅
+     */
+    private Subscription dbControllerSubscription;
+
+    /**
      * 插入时间记录  根据时间查询购物车id并赋值给变量
      */
     private void insertAndQueryFromDB() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
+        dbControllerSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 String insert_sql = "insert into Cart (time, isfinish, remittance) values ('" + times + "', 0, 0)";
@@ -332,72 +339,76 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
         if (getOrderInfoDialog != null && getOrderInfoDialog.isShowing()){
             getOrderInfoDialog.dismiss();
         }
+        RxUtils.unSubscribe(dbControllerSubscription, getOrderInfoSubscription,
+                addGoodsSubscription, reduceGoodsSubscription, clearBuyCarSubscription);
         super.onDestroy();
     }
 
+    private Subscription eventSubscription;// 事件订阅
+
     public void onEvent(ClickEvent event) {
         // 从事件中获得参数值
-        commodities.clear();
-        lcount.clear();
-        line_items_attributes.clear();
-        allcount = 0;
-        String sql = "select distinct line_items.Items_id,line_items.qty,line_items.id,line_items.price,line_items.title from line_items,Cart where line_items.cart_id = " + cart_id;
-        Cursor cursor = sqLiteDB.rawQuery(sql, null);
-        Log.d("ff", cursor.getCount() + "");
-        total = 0;
-        if (cursor.getCount() == 0) {
-            tv_total_money.setText("0.0");
-            badgeView.setVisibility(View.GONE);
-        } else {
-            badgeView.setVisibility(View.VISIBLE);
-            while (cursor.moveToNext()) {
-                Shoppinglist shoppinglist = new Shoppinglist();
-                shoppinglist.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
-                shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-                shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
-                shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-                commodities.add(shoppinglist);
+        eventSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override
+            public void call(Subscriber<? super Integer> subscriber) {
+                commodities.clear();
+                lcount.clear();
+                line_items_attributes.clear();
+                allcount = 0;
+                String sql = "select distinct line_items.Items_id,line_items.qty,line_items.id,line_items.price,line_items.title from line_items,Cart where line_items.cart_id = " + cart_id;
+                Cursor cursor = sqLiteDB.rawQuery(sql, null);
+                Log.d(TAG, "query result count : " + cursor.getCount());
+                total = 0;
+                if (cursor.getCount() > 0){
+                    while (cursor.moveToNext()) {
+                        Shoppinglist shoppinglist = new Shoppinglist();
+                        shoppinglist.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
+                        shoppinglist.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+                        shoppinglist.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                        shoppinglist.setTitle(cursor.getString(cursor.getColumnIndex("title")));
+                        commodities.add(shoppinglist);
+                    }
+                }
+                for (int i = 0; i < commodities.size(); i++) {
+                    String t = commodities.get(i).getPrice();
+                    float p = Float.parseFloat(t);
+                    int n = commodities.get(i).getQty();
+                    line_items_attributes lineitemsattributes = new line_items_attributes();
+                    lineitemsattributes.setItem_id(commodities.get(i).getId());
+                    lineitemsattributes.setQuantity(n);
+                    line_items_attributes.add(lineitemsattributes);
+                    total += p * n;
+                    lcount.add(n);
+                }
+                //  total += 2;
+                for (int i = 0; i < lcount.size(); i++) {
+                    allcount += lcount.get(i);
+                }
+                subscriber.onNext(cursor.getCount());
+                cursor.close();
             }
-            adapter = new BuyCarAdapter();
-            lv_shopping_car.setAdapter(adapter);
-        }
-        cursor.close();
-        for (int i = 0; i < commodities.size(); i++) {
-            String t = commodities.get(i).getPrice();
-            float p = Float.parseFloat(t);
-            int n = commodities.get(i).getQty();
-            line_items_attributes lineitemsattributes = new line_items_attributes();
-            lineitemsattributes.setItem_id(commodities.get(i).getId());
-            lineitemsattributes.setQuantity(n);
-            line_items_attributes.add(lineitemsattributes);
-            total += p * n;
-            lcount.add(n);
-        }
-        //  total += 2;
-        for (int i = 0; i < lcount.size(); i++) {
-            allcount += lcount.get(i);
-        }
-        Message msg1 = handler.obtainMessage();
-        msg1.obj = allcount;
-        msg1.what = 1;
-        handler.sendMessage(msg1);
-        if (allcount != 0) {
-            DecimalFormat fnum = new DecimalFormat("####0.00");
-            totalMoneyStr = fnum.format(total);
-            Message msg = handler1.obtainMessage();
-            msg.obj = totalMoneyStr;
-            msg.what = 1;
-            handler1.sendMessage(msg);
-        } else if (allcount == 0) {
-            //    total -= 2;
-            DecimalFormat fnum = new DecimalFormat("####0.00");
-            totalMoneyStr = fnum.format(total);
-            Message msg = handler1.obtainMessage();
-            msg.obj = totalMoneyStr;
-            msg.what = 1;
-            handler1.sendMessage(msg);
-        }
+        }).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Integer>() {
+                    @Override
+                    public void call(Integer code) {
+                        if (code <= 0){
+                            tv_total_money.setText("0.0");
+                            badgeView.setVisibility(View.GONE);
+                        }else {
+                            badgeView.setVisibility(View.VISIBLE);
+                            adapter = new BuyCarAdapter();
+                            lv_shopping_car.setAdapter(adapter);
+                        }
+                        badgeView.setText(String.valueOf(allcount));
+//                        if (allcount == 0) total -= 2;
+                        DecimalFormat fnum = new DecimalFormat("####0.00");
+                        totalMoneyStr = fnum.format(total);
+                        tv_total_money.setText(totalMoneyStr);
+                    }
+                });
     }
+
+    private Subscription getOrderInfoSubscription;
 
     /**
      * 获取订单信息
@@ -412,7 +423,7 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                 .build();
         ApiRequest apiRequest = retrofit.create(ApiRequest.class);
         String token = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
-        apiRequest.getOrderInfo(jail_id, token, OkHttpUtils.getRequestBody(orderBody))
+        getOrderInfoSubscription = apiRequest.getOrderInfo(jail_id, token, OkHttpUtils.getRequestBody(orderBody))
                 .subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .map(new Func1<ResponseBody, Boolean>() {
                     @Override
@@ -486,6 +497,11 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
         }
     }
 
+    /**
+     * 加减商品数量订阅
+     */
+    private Subscription addGoodsSubscription;
+    private Subscription reduceGoodsSubscription;
 
     private class BuyCarAdapter extends BaseAdapter {
 
@@ -642,6 +658,11 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
             TextView num;
         }
     }
+
+    /**
+     * 清空购物车订阅
+     */
+    private Subscription clearBuyCarSubscription;
 
     /**
      * 清空购物车相关操作

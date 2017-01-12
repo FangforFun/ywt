@@ -132,5 +132,4 @@ dependencies {
     compile project.UTIL_CODE
     // 云信基础sdk
     compile project.NIM_SDK_BASE
-    compile 'com.android.support:support-v4:22.2.1'
 }
