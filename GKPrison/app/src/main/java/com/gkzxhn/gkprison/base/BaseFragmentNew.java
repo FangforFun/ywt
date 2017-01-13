@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 
 /**
@@ -14,6 +15,10 @@ import com.gkzxhn.gkprison.utils.ToastUtil;
  * Fragment基类
  */
 public abstract class BaseFragmentNew extends Fragment {
+
+    public static final String TAG = BaseFragmentNew.class.getSimpleName();
+    private boolean isFirstLoad = true;
+    private boolean isPrepare = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,6 +35,7 @@ public abstract class BaseFragmentNew extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initUiAndListener(view);
+        isPrepare = true;
     }
 
     /**
@@ -37,11 +43,27 @@ public abstract class BaseFragmentNew extends Fragment {
      */
     protected abstract void initUiAndListener(View view);
 
-    //填充数据
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        initData();
-        super.onActivityCreated(savedInstanceState);
+    public void onResume() {
+        super.onResume();
+        Log.i(TAG, "onResume(): " + getUserVisibleHint());
+        if (getUserVisibleHint())
+            onVisible();
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        Log.i(TAG, "onResume(): " + isVisibleToUser);
+        if (isVisibleToUser)
+            onVisible();
+    }
+
+    private void onVisible(){
+        if (isFirstLoad && isPrepare){
+            initData();
+            isFirstLoad = false;
+        }
     }
 
     /**
@@ -63,7 +85,7 @@ public abstract class BaseFragmentNew extends Fragment {
         ToastUtil.showShortToast(pMsg);
     }
     /**
-     * 弹出toase 显示时长long
+     * 弹出toast 显示时长long
      * @param pMsg
      */
     protected void showToastMsgLong(String pMsg) {

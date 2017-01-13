@@ -102,9 +102,9 @@ public class MyMtcCallback extends MtcCallback {
 			return;
 		}
 
-		System.out.println("-------------callback 1-----------------");
-		System.out.println(result);
-		System.out.println("-------------callback 2-----------------");
+//		System.out.println("-------------callback 1-----------------");
+//		System.out.println(result);
+//		System.out.println("-------------callback 2-----------------");
 
 		String body = "";
 		JSONObject jsonBodyObj = null;

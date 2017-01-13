@@ -84,7 +84,7 @@ public class VideoCapServiceConnect implements ServiceConnection {
 			mVideoCapService.reStartVideoCapture(surfaceHolder, portrait);
 		} catch (Exception e) {
 			Log.i(getClass().getSimpleName(), "reStartVideoCapture", e);
-			System.out.println("  VideoCapture.getParameters() === " + VideoCapture.getParameters());
+//			System.out.println("  VideoCapture.getParameters() === " + VideoCapture.getParameters());
 		}
 	}
 

@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.userport.ui.main.canteen;
 
 
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.gkzxhn.gkprison.utils.UIUtils;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -111,11 +113,13 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
+    private ProgressDialog getDataDialog;
+
     /**
      * 根据类别加载商品数据
      */
     private void loadDataByClass() {
-        //A.map(B).subscribe(C)  <==>  C.onNext (B.call(A.onNext()))
+        getDataDialog = UIUtils.showProgressDialog(getActivity(), "");
         Observable.create(new Observable.OnSubscribe<ResponseBody>() {
             @Override
             public void call(Subscriber<? super ResponseBody> subscriber) {
@@ -172,6 +176,7 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
                 .subscribe(new SimpleObserver<Integer>(){
                     @Override public void onError(Throwable e) {
                         showToastMsgShort(getString(R.string.goods_list_update_failed));
+                        UIUtils.dismissProgressDialog(getDataDialog);
                         Log.i(TAG, e.getMessage());
                     }
 
@@ -180,6 +185,7 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
                         if (code == -1) return;
                         adapter = new SalesAdapter();
                         lv_allclassification.setAdapter(adapter);
+                        UIUtils.dismissProgressDialog(getDataDialog);
                     }
                 });
     }
@@ -187,6 +193,7 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
     /**
      * 根据类别id获取商品列表
      * @param subscriber
+     * @param loadMore 是否是加载更多操作  默认加载page+1页  加载成功page值递增
      */
     private void getCommoditiesByCategoryId(final Subscriber<? super ResponseBody> subscriber
                                                         , final boolean loadMore) {
@@ -217,6 +224,12 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
                     page += 1;// 加载更多成功page+1  否则page不变
             }
         });
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden) UIUtils.dismissProgressDialog(getDataDialog);
     }
 
     /**
@@ -330,11 +343,9 @@ public class AllClassificationFragment extends BaseFragmentNew implements AbsLis
                     }
                 }
             };
-
             viewHolder.rl_add.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
                     String t = viewHolder.tv_num.getText().toString();
                     Items_id = commodities.get(position).getId();
                     String price = commodities.get(position).getPrice();

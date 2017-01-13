@@ -1399,7 +1399,7 @@ public class StringUtils {
 		StringBuffer strTemp = new StringBuffer();
 		for (int i = 0; i < input1.length(); i++) {
 			pos1 = input1.indexOf("<br>", i);
-			System.out.print("pos1=" + pos1);
+//			System.out.print("pos1=" + pos1);
 			if (pos1 - i > lineNum) {
 				strTemp.append(input1.substring(i, i + lineNum) + "<br>");
 				i = i + lineNum - 1;
@@ -1496,7 +1496,7 @@ public class StringUtils {
 		char[] chars = hex.toCharArray();
 		// byte[] bytes = new byte[chars.length/2];
 		byte[] bytes = new byte[hex.length() / 2];
-		System.out.println("hex.length()/2=" + (hex.length() / 2));
+//		System.out.println("hex.length()/2=" + (hex.length() / 2));
 		int byteCount = 0;
 		for (int i = 0; i < chars.length; i += 2) {
 			byte newByte = 0x00;

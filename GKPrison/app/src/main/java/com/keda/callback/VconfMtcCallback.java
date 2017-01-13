@@ -628,7 +628,7 @@ public class VconfMtcCallback {
 
 						Conference.getConfList(0, outBuf, 100, confListType);
 
-						System.out.println("outBuf:" + outBuf);
+//						System.out.println("outBuf:" + outBuf);
 
 						String arrConfNameInfo = outBuf.toString();
 

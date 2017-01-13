@@ -8,8 +8,8 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
-import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
+import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -235,5 +235,44 @@ public class MainUtils {
             e.printStackTrace();
         }
         return commodities;
+    }
+
+    /**
+     * 解析json里的code
+     * @param json
+     * @return
+     */
+    public static int getJsonCode(String json){
+        int code = -1;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            code = jsonObject.getInt("code");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return code;
+    }
+
+    /**
+     * 解析会见申请失败结果
+     * @param result
+     * @return
+     */
+    public static String getApplyFailedResult(String result){
+        String reason = null;
+        try {
+            JSONObject jsonObject = new JSONObject(result);
+            String message = jsonObject.getString("msg");
+            JSONObject jsonObject1 = jsonObject.getJSONObject("errors");
+            JSONArray jsonArray = jsonObject1.getJSONArray("apply_create");
+            if(jsonArray.length() == 1) {
+                reason = jsonArray.getString(0);
+            }else {
+                reason = jsonArray.getString(0) + "," + jsonArray.getString(1);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return reason;
     }
 }

@@ -435,6 +435,9 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
         transaction.add(R.id.main_content, canteenBaseFragment);
         transaction.show(homeFragment).hide(remoteMeetFragment)
                 .hide(canteenBaseFragment);
+        remoteMeetFragment.setUserVisibleHint(false);
+        canteenBaseFragment.setUserVisibleHint(false);
+        homeFragment.setUserVisibleHint(true);
         transaction.commitAllowingStateLoss();
     }
 
@@ -483,8 +486,10 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
         for (int i = 0; i < fragments.size(); i++) {
             if(index == i) {
                 transaction.show(fragments.get(index));
+                fragments.get(i).setUserVisibleHint(true);
             }else {
                 transaction.hide(fragments.get(i));
+                fragments.get(i).setUserVisibleHint(false);
             }
         }
         transaction.commit();

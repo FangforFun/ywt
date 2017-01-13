@@ -1,16 +1,12 @@
 package com.gkzxhn.gkprison.userport.ui.main.canteen;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.app.ProgressDialog;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -21,41 +17,56 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseFragment;
+import com.gkzxhn.gkprison.api.ApiRequest;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
+import com.gkzxhn.gkprison.api.rx.SimpleObserver;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
+import com.gkzxhn.gkprison.userport.ui.main.MainUtils;
+import com.gkzxhn.gkprison.utils.Log;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
+import com.gkzxhn.gkprison.utils.UIUtils;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.ResponseBody;
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SalesPriorityFragment extends BaseFragment implements AbsListView.OnScrollListener {
+public class SalesPriorityFragment extends BaseFragmentNew implements AbsListView.OnScrollListener {
 
+    private static final String TAG = SalesPriorityFragment.class.getSimpleName();
     private SQLiteDatabase db = StringUtils.getSQLiteDB(getActivity());
     private List<Commodity> commodities = new ArrayList<Commodity>();
-    private ListView lv_sale;
+    @BindView(R.id.lv_sales) ListView lv_sale;
+    @BindView(R.id.iv_nothing) ImageView iv_nothing;//当没有商品时显示；
     private SalesAdapter adapter;
     private int cart_id = 0;
     private int qty = 0;
-    private String url;
     private int Items_id;
     private String token;
     private int jail_id;
@@ -63,169 +74,51 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
     private List<Commodity> addcommdity = new ArrayList<>();
     private List<Integer> buycommidty = new ArrayList<>();//已购买的商品
     private List<Integer> buyqty = new ArrayList<>();//已购买商品数量
-    private View loadmore;
-    private ImageView iv_nothing;//当没有商品时显示；
+    private View loadMoreView;
     private int visibleLastIndex = 0; //最后的可视索引；
-    private int visibleItemCount;//当前窗口可见项总数；
     private int category_id;
-    private SharedPreferences sp;
     private int eventint = 0;//接收点击事件传来的数据
     private List<Integer> eventlist = new ArrayList<Integer>();//接收点击事件传来的数据
-    OkHttpClient client = new OkHttpClient();
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String result = (String) msg.obj;
-                    commodities = analysiscommodity(result);
-                    if (commodities.size() == 0) {
-                        iv_nothing.setVisibility(View.VISIBLE);
-                    } else {
-                        iv_nothing.setVisibility(View.GONE);
-                        Log.d("dd", commodities.size() + "");
-                        Collections.sort(commodities, new Comparator<Commodity>() {
-                            @Override
-                            public int compare(Commodity lhs, Commodity rhs) {
-                                int heat1 = lhs.getRanking();
-                                int heat2 = rhs.getRanking();
-                                if (heat1 < heat2) {
-                                    return 1;
-                                }
-                                return -1;
-                            }
-                        });
-                        String sql = "select distinct qty,Items_id from line_items where cart_id = " + cart_id;
-                        Cursor cursor = db.rawQuery(sql, null);
-                        if (cursor.getCount() == 0) {
-                            adapter = new SalesAdapter(context, commodities);
-                            lv_sale.setAdapter(adapter);
-                        } else {
-                            while (cursor.moveToNext()) {
-                                Commodity commodity = new Commodity();
-                                commodity.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
-                                commodity.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
-                                buycommidty.add(commodity.getId());
-                                buyqty.add(commodity.getQty());
-                            }
-                            for (int i = 0; i < commodities.size(); i++) {
-                                for (int j = 0; j < buyqty.size(); j++) {
-                                    if (commodities.get(i).getId() == buycommidty.get(j)) {
-                                        commodities.get(i).setQty(buyqty.get(j));
-                                    }
-                                }
-                            }
-                            adapter = new SalesAdapter(context, commodities);
-                            lv_sale.setAdapter(adapter);
-                        }
-                        cursor.close();
-                    }
-                    break;
-                case 2:
-                    String add = (String) msg.obj;
-                    addcommdity = analysiscommodity(add);
-                    for (int i = 0; i < commodities.size(); i++) {
-                        for (int j = 0; j < addcommdity.size(); j++) {
-                            if (commodities.get(i).getId() == addcommdity.get(j).getId()) {
-                                addcommdity.remove(j);
-                            }
-                        }
-                    }
-                    Collections.sort(addcommdity, new Comparator<Commodity>() {
-                        @Override
-                        public int compare(Commodity lhs, Commodity rhs) {
-                            int heat1 = lhs.getRanking();
-                            int heat2 = rhs.getRanking();
-                            if (heat1 < heat2) {
-                                return 1;
-                            }
-                            return -1;
-                        }
-                    });
-                    if (addcommdity.size() != 0) {
-                        loadDate(addcommdity);
-                        String sql1 = "select distinct qty,Items_id from line_items where cart_id = " + cart_id;
-                        Cursor cursor1 = db.rawQuery(sql1, null);
-                        if (cursor1.getCount() == 0) {
-                            loadmore.setVisibility(View.GONE);
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            for (int i = 0; i < commodities.size(); i++) {
-                                for (int j = 0; j < buyqty.size(); j++) {
-                                    if (commodities.get(i).getId() == buycommidty.get(j)) {
-                                        commodities.get(i).setQty(buyqty.get(j));
-                                    }
-                                }
-                            }
-                            loadmore.setVisibility(View.GONE);
-                            adapter.notifyDataSetChanged();
-                        }
-                        cursor1.close();
-                    } else {
-                        showToastMsgShort("已到最后一页");
-                        loadmore.setVisibility(View.GONE);
-                    }
-                    break;
-            }
-        }
-    };
 
-    private void loadDate(List<Commodity> adddate) {
-        for (int i = 0; i < adddate.size(); i++) {
-            adapter.addItem(adddate.get(i));
+    /**
+     * 添加更多商品
+     * @param commodities
+     */
+    private void addMoreCommodities(List<Commodity> commodities) {
+        for (int i = 0; i < commodities.size(); i++) {
+            adapter.addItem(commodities.get(i));
         }
     }
 
     @Override
-    protected View initView() {
-        View view = View.inflate(context, R.layout.fragment_sales_priority, null);
-        lv_sale = (ListView) view.findViewById(R.id.lv_sales);
-        loadmore = View.inflate(context, R.layout.bottom, null);
-        iv_nothing = (ImageView) view.findViewById(R.id.iv_nothing);
-        return view;
+    protected void initUiAndListener(View view) {
+        ButterKnife.bind(this, view);
+        EventBus.getDefault().register(this);
+        loadMoreView = View.inflate(getActivity(), R.layout.bottom, null);
+        lv_sale.addFooterView(loadMoreView);
+        loadMoreView.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected int setLayoutResId() {
+        return R.layout.fragment_sales_priority;
     }
 
     @Override
     protected void initData() {
-        lv_sale.addFooterView(loadmore);
-        loadmore.setVisibility(View.GONE);
-        sp = getActivity().getSharedPreferences("config", Context.MODE_PRIVATE);
-        jail_id = sp.getInt("jail_id", 1);
-        token = sp.getString("token", "");
-        EventBus.getDefault().register(this);
-        getDate();
+        jail_id = (int) SPUtil.get(getActivity(), SPKeyConstants.JAIL_ID, 1);
+        token = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
         lv_sale.setOnScrollListener(this);
+        getData();
     }
 
+    private ProgressDialog getDataDialog;
 
     /**
-     * 解析商品列表
-     *
-     * @param s
-     * @return
+     * 获取数据
      */
-    private List<Commodity> analysiscommodity(String s) {
-        List<Commodity> commodities = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                Commodity commodity = new Commodity();
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                commodity.setId(jsonObject.getInt("id"));
-                commodity.setTitle(jsonObject.getString("title"));
-                commodity.setDescription(jsonObject.getString("description"));
-                commodity.setAvatar_url(jsonObject.getString("avatar_url"));
-                commodity.setPrice(jsonObject.getString("price"));
-                commodity.setCategory_id(jsonObject.getInt("category_id"));
-                commodities.add(commodity);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return commodities;
-    }
-
-    private void getDate() {
+    private void getData() {
+        getDataDialog = UIUtils.showProgressDialog(getActivity(), "");
         Bundle bundle = getArguments();
         String times = bundle.getString("times");
         category_id = bundle.getInt("leibie", 0);
@@ -235,92 +128,125 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
             cart_id = cursor.getInt(cursor.getColumnIndex("id"));
         }
         cursor.close();
-        if (category_id == 0) {
-            url = Constants.URL_HEAD + "items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id;
-            Log.d("ff", url);
-            new Thread() {
-                @Override
-                public void run() {
-                    Request request = new Request.Builder().url(url).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            Log.d("dd", result);
-                            msg.obj = result;
-                            msg.what = 1;
-                            handler.sendMessage(msg);
+        getCommoditiesByCategoryId(false, new SimpleObserver<ResponseBody>(){
+            @Override public void onError(Throwable e) {
+                Log.e(TAG, "get commodities failed: " + e.getMessage());
+                UIUtils.dismissProgressDialog(getDataDialog);
+                showToastMsgShort(getString(R.string.load_failed));
+                iv_nothing.setVisibility(View.VISIBLE);
+            }
+
+            @Override public void onNext(ResponseBody responseBody) {
+                String result = "";
+                try {
+                    result = responseBody.string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                parseCommoditiesResult(result);
+            }
+        });
+    }
+
+    /**
+     * 解析商品结果订阅
+     */
+    private Subscription parseResultSubscription;
+
+    /**
+     * 解析结果
+     * @param result
+     */
+    private void parseCommoditiesResult(final String result) {
+        parseResultSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override public void call(Subscriber<? super Integer> subscriber) {
+                commodities = MainUtils.analysisCommodityList(result);
+                if (commodities.size() == 0) subscriber.onNext(-1);
+                Collections.sort(commodities, new Comparator<Commodity>() {
+                    @Override public int compare(Commodity lhs, Commodity rhs) {
+                        int heat1 = lhs.getRanking();
+                        int heat2 = rhs.getRanking();
+                        if (heat1 < heat2) return 1;
+                        return -1;
+                    }
+                });
+                String sql = "select distinct qty,Items_id from line_items where cart_id = " + cart_id;
+                Cursor cursor = db.rawQuery(sql, null);
+                if (cursor.getCount() > 0){
+                    while (cursor.moveToNext()) {
+                        Commodity commodity = new Commodity();
+                        commodity.setId(cursor.getInt(cursor.getColumnIndex("Items_id")));
+                        commodity.setQty(cursor.getInt(cursor.getColumnIndex("qty")));
+                        buycommidty.add(commodity.getId());
+                        buyqty.add(commodity.getQty());
+                    }
+                    for (int i = 0; i < commodities.size(); i++) {
+                        for (int j = 0; j < buyqty.size(); j++) {
+                            if (commodities.get(i).getId() == buycommidty.get(j)) {
+                                commodities.get(i).setQty(buyqty.get(j));
+                            }
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
                     }
                 }
-            }.start();
-        } else if (category_id == 1) {
-            url = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Request request = new Request.Builder().url(url).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            Log.d("dd", result);
-                            msg.obj = result;
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                int count = cursor.getCount();
+                cursor.close();
+                subscriber.onNext(count);
+            }
+        }).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<Integer>() {
+                    @Override public void onError(Throwable e) {
+                        Log.e(TAG, "parse failed: " + e.getMessage());
+                        UIUtils.dismissProgressDialog(getDataDialog);
+                        showToastMsgShort(getString(R.string.load_failed));
+                        iv_nothing.setVisibility(View.VISIBLE);
                     }
-                }
-            }.start();
-        } else if (category_id == 2) {
-            url = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Request request = new Request.Builder().url(url).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            Log.d("dd", result);
-                            msg.obj = result;
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+                    @Override public void onNext(Integer integer) {
+                        UIUtils.dismissProgressDialog(getDataDialog);
+                        Log.i(TAG, "parse success : " + integer);
+                        iv_nothing.setVisibility(integer == -1 ? View.VISIBLE : View.GONE);
+                        adapter = new SalesAdapter();
+                        lv_sale.setAdapter(adapter);
                     }
-                }
-            }.start();
-        } else if (category_id == 3) {
-            url = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Request request = new Request.Builder().url(url).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            String result = response.body().string();
-                            Log.d("dd", result);
-                            msg.obj = result;
-                            msg.what = 1;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }.start();
+                });
+    }
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if (hidden){
+            UIUtils.dismissProgressDialog(getDataDialog);
         }
+    }
+
+    /**
+     * 获取商品订阅
+     */
+    private Subscription getCommoditiesSubscription;
+
+    /**
+     * 根据类别id获取商品列表
+     * @param loadMore
+     * @param subscriber
+     */
+    private void getCommoditiesByCategoryId(boolean loadMore, SimpleObserver<ResponseBody> subscriber) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(Constants.URL_HEAD)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        ApiRequest apiRequest = retrofit.create(ApiRequest.class);
+        Map<String, String> map = new HashMap<>();
+        map.put("page", String.valueOf(loadMore ? page + 1 : page));// 加载下一页  第一次进来加载当前页
+        if (category_id != 0) {
+            map.put("category_id", String.valueOf(category_id));
+        }
+        map.put("access_token", token);
+        map.put("jail_id", String.valueOf(jail_id));
+        getCommoditiesSubscription = apiRequest.getCommodities(map).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(subscriber);
     }
 
     @Override
@@ -328,14 +254,13 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         int itemLastIndex = adapter.getCount() - 1;
         int lastIndex = itemLastIndex + 1;
         if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && visibleLastIndex == lastIndex) {
-            loadmore.setVisibility(View.VISIBLE);
-            loadmore();
+            loadMoreView.setVisibility(View.VISIBLE);
+            loadMore();
         }
     }
 
     @Override
     public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-        this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
     }
 
@@ -343,109 +268,91 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
     /**
      * 加载更多商品
      */
-    private void loadmore() {
-        page += 1;
-        if (category_id == 0) {
-            final String addurl = Constants.URL_HEAD + "items?page=" + page + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Request request = new Request.Builder().url(addurl).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            msg.obj = response.body().string();
-                            msg.what = 2;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Looper.loop();
-                    }
+    private void loadMore() {
+        getCommoditiesByCategoryId(true, new SimpleObserver<ResponseBody>(){
+            @Override public void onError(Throwable e) {
+                Log.e(TAG, "load more failed: " + e.getMessage());
+                loadMoreView.setVisibility(View.GONE);
+                showToastMsgShort(getString(R.string.load_failed));
+            }
+
+            @Override public void onNext(ResponseBody responseBody) {
+                String result = "";
+                try {
+                     result = responseBody.string();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            }.start();
-        } else if (category_id == 1) {
-            final String addurl = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Request request = new Request.Builder().url(addurl).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            msg.obj = response.body().string();
-                            msg.what = 2;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Looper.loop();
-                    }
-                }
-            }.start();
-        } else if (category_id == 2) {
-            final String addurl = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Request request = new Request.Builder().url(addurl).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            msg.obj = response.body().string();
-                            msg.what = 2;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Looper.loop();
-                    }
-                }
-            }.start();
-        } else if (category_id == 3) {
-            final String addurl = Constants.URL_HEAD + "items?page=" + page + "&category_id=" + category_id + "&access_token=" + token + "&jail_id=" + jail_id;
-            new Thread() {
-                @Override
-                public void run() {
-                    Looper.prepare();
-                    Request request = new Request.Builder().url(addurl).build();
-                    try {
-                        Message msg = handler.obtainMessage();
-                        Response response = client.newCall(request).execute();
-                        if (response.isSuccessful()) {
-                            msg.obj = response.body().string();
-                            msg.what = 2;
-                            handler.sendMessage(msg);
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    } finally {
-                        Looper.loop();
-                    }
-                }
-            }.start();
-        }
+                page += 1;// 加载更多成功page+1  否则page不变
+                parseLoadMoreResult(result);
+            }
+        });
     }
 
+    private Subscription parseMoreSubscription;
+
+    /**
+     * 解析加载更多的结果
+     * @param result
+     */
+    private void parseLoadMoreResult(final String result) {
+        parseMoreSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
+            @Override public void call(Subscriber<? super Integer> subscriber) {
+                addcommdity = MainUtils.analysisCommodityList(result);
+                for (int i = 0; i < commodities.size(); i++) {
+                    for (int j = 0; j < addcommdity.size(); j++) {
+                        if (commodities.get(i).getId() == addcommdity.get(j).getId()) {
+                            addcommdity.remove(j);
+                        }
+                    }
+                }
+                Collections.sort(addcommdity, new Comparator<Commodity>() {
+                    @Override public int compare(Commodity lhs, Commodity rhs) {
+                        int heat1 = lhs.getRanking();
+                        int heat2 = rhs.getRanking();
+                        if (heat1 < heat2) {
+                            return 1;
+                        }
+                        return -1;
+                    }
+                });
+                if (addcommdity.size() > 0) {
+                    String sql1 = "select distinct qty,Items_id from line_items where cart_id = " + cart_id;
+                    Cursor cursor1 = db.rawQuery(sql1, null);
+                    for (int i = 0; i < commodities.size(); i++) {
+                        for (int j = 0; j < buyqty.size(); j++) {
+                            if (commodities.get(i).getId() == buycommidty.get(j)) {
+                                commodities.get(i).setQty(buyqty.get(j));
+                            }
+                        }
+                    }
+                    int count = cursor1.getCount();
+                    cursor1.close();
+                    subscriber.onNext(count);
+                }
+            }
+        }).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<Integer>(){
+                    @Override public void onError(Throwable e) {
+                        loadMoreView.setVisibility(View.GONE);
+                        Log.e(TAG, "parse more result failed: " + e.getMessage());
+                        showToastMsgShort(getString(R.string.load_failed));
+                    }
+
+                    @Override public void onNext(Integer integer) {
+                        if (addcommdity.size() == 0){
+                            showToastMsgShort(getString(R.string.last_pager));
+                        }else if(addcommdity.size() > 0){
+                            addMoreCommodities(addcommdity);
+                        }
+                        loadMoreView.setVisibility(View.GONE);
+                        adapter.notifyDataSetChanged();
+                    }
+                });
+    }
 
     private class SalesAdapter extends BaseAdapter {
-        private List<Commodity> commodityList;
-        private LayoutInflater inflater;
-
-
-        public SalesAdapter(Context context, List<Commodity> commodityList) {
-            this.commodityList = commodityList;
-            inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        }
 
         @Override
         public int getCount() {
@@ -466,7 +373,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         public View getView(final int position, View convertView, ViewGroup parent) {
             final ViewHolder viewHolder;
             if (convertView == null) {
-                convertView = View.inflate(context, R.layout.sales_item, null);
+                convertView = View.inflate(getActivity(), R.layout.sales_item, null);
                 viewHolder = new ViewHolder();
                 viewHolder.rl_reduce = (RelativeLayout) convertView.findViewById(R.id.rl_reduce);
                 viewHolder.rl_add = (RelativeLayout) convertView.findViewById(R.id.rl_add);
@@ -568,7 +475,7 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
             });
             String t = Constants.RESOURSE_HEAD + commodities.get(position).getAvatar_url();
             Picasso.with(viewHolder.imageView.getContext()).load(t).placeholder(R.drawable.default_img).error(R.drawable.default_img).into(viewHolder.imageView);
-            viewHolder.tv_num.setText(commodities.get(position).getQty() + "");
+            viewHolder.tv_num.setText(String.valueOf(commodities.get(position).getQty()));
             viewHolder.tv_title.setText(commodities.get(position).getTitle());
             // viewHolder.tv_description.setText(commodities.get(position).getDescription());
             viewHolder.tv_money.setText(commodities.get(position).getPrice());
@@ -591,15 +498,14 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
         TextView tv_title;
     }
 
-
     @Override
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
+        RxUtils.unSubscribe(parseMoreSubscription, getCommoditiesSubscription, parseResultSubscription);
     }
 
     public void onEvent(ClickEven1 even1) {
-
         eventint = even1.getDelete();
         eventlist = even1.getList();
         if (eventint == 0) {
@@ -613,44 +519,5 @@ public class SalesPriorityFragment extends BaseFragment implements AbsListView.O
             }
         }
         adapter.notifyDataSetChanged();
-
-        /**
-         commodities.clear();
-         Cursor cursor =null;
-         if (category_id == 0){
-         cursor = db.query("line_items_attributes",null,null,null,null,null,null);
-         }else if (category_id == 1){
-         String sql = "select * from line_items_attributes where category_id = 1";
-         cursor = db.rawQuery(sql,null);
-         }else if (category_id == 2){
-         String sql = "select * from line_items_attributes where category_id = 2";
-         cursor = db.rawQuery(sql,null);
-         }else if (category_id == 3){
-         String sql = "select * from line_items_attributes where category_id = 3";
-         cursor = db.rawQuery(sql,null);
-         }
-         while (cursor.moveToNext()) {
-         if (commodities.size() < cursor.getCount()) {
-         Commodity commodity = new Commodity();
-         commodity.setId(cursor.getInt(cursor.getColumnIndex("id")));
-         commodity.setPrice(cursor.getString(cursor.getColumnIndex("price")));
-         commodity.setDescription(cursor.getString(cursor.getColumnIndex("description")));
-         commodity.setCategory_id(cursor.getInt(cursor.getColumnIndex("category_id")));
-         commodity.setAvatar_url(cursor.getString(cursor.getColumnIndex("avatar_url")));
-         commodity.setTitle(cursor.getString(cursor.getColumnIndex("title")));
-         String sql = "select qty from line_items where line_items.Items_id = "+commodity.getId()+" and line_items.cart_id = "+cart_id;
-         Cursor cursor2 = db.rawQuery(sql,null);
-         if (cursor2.getCount() != 0){
-         while (cursor2.moveToNext()) {
-         commodity.setQty(cursor2.getInt(cursor2.getColumnIndex("qty")));
-         }
-         }else {
-         commodity.setQty(0);
-         }
-         commodities.add(commodity);
-         }
-         }
-         adapter.notifyDataSetChanged();
-         **/
     }
 }

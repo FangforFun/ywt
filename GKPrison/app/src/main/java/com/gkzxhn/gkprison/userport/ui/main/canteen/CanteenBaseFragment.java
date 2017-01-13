@@ -6,8 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,28 +112,6 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
     private int click = 1;
     private int clicksalse = 1;
     private int jail_id;// 监狱id
-    private Handler handler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    int i = (Integer) msg.obj;
-                    badgeView.setText(i + "");
-                    break;
-            }
-        }
-    };
-    private Handler handler1 = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case 1:
-                    String s = (String) msg.obj;
-                    tv_total_money.setText(s);
-                    break;
-            }
-        }
-    };
 
     @Override
     protected void initUiAndListener(View view) {
@@ -204,16 +180,12 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                 tv_sales.setTextColor(getResources().getColor(R.color.tv_bg));
                 sp_all_class.setBackgroundResource(R.drawable.spinner_down);
                 sp_sales.setBackgroundResource(R.drawable.spinner);
-                if (click == 1) {
-                    fl_choose.setVisibility(View.VISIBLE);
-                    click = 2;
-                } else if (click == 2) {
-                    fl_choose.setVisibility(View.GONE);
+                fl_choose.setVisibility(fl_choose.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                if (fl_choose.getVisibility() == View.GONE) {
                     allClassFragment = new AllClassificationFragment();
                     allClassFragment.setArguments(data);
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fl_commodity, allClassFragment).commit();
-                    click = 1;
                 }
                 break;
             case R.id.rl_sales:
@@ -221,16 +193,12 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                 tv_all_class.setTextColor(getResources().getColor(R.color.tv_bg));
                 sp_sales.setBackgroundResource(R.drawable.spinner_down);
                 sp_all_class.setBackgroundResource(R.drawable.spinner);
-                if (clicksalse == 1) {
-                    fl_sales_choose.setVisibility(View.VISIBLE);
+                fl_sales_choose.setVisibility(fl_sales_choose.getVisibility() == View.GONE ? View.VISIBLE : View.GONE);
+                if (fl_sales_choose.getVisibility() == View.GONE) {
                     salesFragment = new SalesPriorityFragment();
                     salesFragment.setArguments(data);
                     getActivity().getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fl_commodity, salesFragment).commit();
-                    clicksalse = 2;
-                } else if (clicksalse == 2) {
-                    fl_sales_choose.setVisibility(View.GONE);
-                    clicksalse = 1;
                 }
                 break;
             case R.id.bt_settlement:
@@ -282,7 +250,6 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_commodity, allClassFragment).commit();
         fl_choose.setVisibility(View.GONE);
-        click = 1;
     }
 
     /**
@@ -296,7 +263,6 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
         getActivity().getSupportFragmentManager().
                 beginTransaction().replace(R.id.fl_commodity, salesFragment).commit();
         fl_sales_choose.setVisibility(View.GONE);
-        clicksalse = 1;
     }
 
     /**
@@ -542,7 +508,7 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                 @Override
                 public void onClick(View v) {
                     // 购物车中条目商品的添加
-                    Observable.create(new Observable.OnSubscribe<Integer>() {
+                    addGoodsSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
                         @Override
                         public void call(Subscriber<? super Integer> subscriber) {
                             String GoodsCount = viewHolder.num.getText().toString().trim();
@@ -589,7 +555,7 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                 @Override
                 public void onClick(View v) {
                     // 购物车中条目商品的减法
-                    Observable.create(new Observable.OnSubscribe<Integer>() {
+                    reduceGoodsSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
                         @Override
                         public void call(Subscriber<? super Integer> subscriber) {
                             String t = viewHolder.num.getText().toString();
@@ -668,7 +634,7 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
      * 清空购物车相关操作
      */
     private void clearShoppingCar() {
-        Observable.create(new Observable.OnSubscribe<Integer>() {
+        clearBuyCarSubscription = Observable.create(new Observable.OnSubscribe<Integer>() {
             @Override
             public void call(Subscriber<? super Integer> subscriber) {
                 String sql = "delete from line_items where cart_id = " + cart_id;
@@ -680,8 +646,6 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                     eventlist.add(commodities.get(i).getPosition());
                 }
                 commodities.clear();
-                EventBus.getDefault().post(new ClickEven1(1, eventlist));
-                eventlist.clear();
                 subscriber.onNext(0);
             }
         }).subscribeOn(Schedulers.io())
@@ -693,6 +657,8 @@ public class CanteenBaseFragment extends BaseFragmentNew implements AdapterView.
                         badgeView.setText(String.valueOf(allcount));
                         tv_total_money.setText(totalMoneyStr);
                         fl_buy_car.setVisibility(View.GONE);
+                        EventBus.getDefault().post(new ClickEven1(1, eventlist));
+                        eventlist.clear();
                     }
                 });
     }

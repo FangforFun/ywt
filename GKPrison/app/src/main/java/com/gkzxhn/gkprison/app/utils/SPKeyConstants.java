@@ -101,4 +101,14 @@ public class SPKeyConstants {
      * 上次会见时间
      */
     public static final String LAST_MEETING_TIME = "last_meeting_time";
+
+    /**
+     * 提交会见的时间
+     */
+    public static final String COMMITTED_MEETING_TIME = "committed_meeting_time";
+
+    /**
+     * 实地探监提交时间
+     */
+    public static final String COMMITTED_TIME = "committed_time";
 }

@@ -296,9 +296,9 @@ public class FormatTransfer {
 	public static void printBytes(byte[] bb) {
 		int length = bb.length;
 		for (int i = 0; i < length; i++) {
-			System.out.print(bb + " ");
+//			System.out.print(bb + " ");
 		}
-		System.out.println("");
+//		System.out.println("");
 	}
 
 	public static void logBytes(byte[] bb) {
