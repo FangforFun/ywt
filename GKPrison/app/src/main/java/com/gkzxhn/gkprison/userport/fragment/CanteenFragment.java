@@ -30,7 +30,7 @@ import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.http.HttpRequestUtil;
-import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
+import com.gkzxhn.gkprison.userport.ui.pay.PaymentActivity;
 import com.gkzxhn.gkprison.userport.bean.AA;
 import com.gkzxhn.gkprison.userport.bean.Order;
 import com.gkzxhn.gkprison.userport.bean.Shoppinglist;

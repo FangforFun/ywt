@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.ui.main.pay;
+package com.gkzxhn.gkprison.userport.ui.pay;
 
 import android.content.Context;
 import android.view.View;

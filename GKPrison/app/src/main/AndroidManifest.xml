@@ -184,7 +184,7 @@
             android:name=".userport.activity.RemittanceWaysActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.ui.main.pay.PaymentActivity"
+            android:name=".userport.ui.pay.PaymentActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
         <activity

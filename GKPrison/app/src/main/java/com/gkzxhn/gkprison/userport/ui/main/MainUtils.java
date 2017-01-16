@@ -9,7 +9,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.userport.bean.Commodity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
-import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
+import com.gkzxhn.gkprison.userport.ui.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;

@@ -16,7 +16,7 @@ import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.constant.WeixinConstants;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
-import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
+import com.gkzxhn.gkprison.userport.ui.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;

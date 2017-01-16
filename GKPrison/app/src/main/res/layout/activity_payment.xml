@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     android:orientation="vertical"
-    tools:context=".userport.ui.main.pay.PaymentActivity">
+    tools:context=".userport.ui.pay.PaymentActivity">
 
     <include layout="@layout/toolbar_layout" />
 

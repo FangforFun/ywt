@@ -12,7 +12,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
 import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
-import com.gkzxhn.gkprison.welcome.WelcomeActivity;
+import com.gkzxhn.gkprison.userport.ui.splash.welcome.WelComeActivity;
 import com.jungly.gridpasswordview.GridPasswordView;
 import com.keda.sky.app.PcAppStackManager;
 
@@ -79,7 +79,7 @@ public class InputPasswordActivity extends BaseActivity {
         public void run() {
             Intent intent;
             if (sp.getBoolean("is_first", true)) {
-                intent = new Intent(InputPasswordActivity.this, WelcomeActivity.class);
+                intent = new Intent(InputPasswordActivity.this, WelComeActivity.class);
                 startActivity(intent);
             } else {
                 if (TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))) {

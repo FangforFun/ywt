@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.ui.main.pay;
+package com.gkzxhn.gkprison.userport.ui.pay;
 
 import com.gkzxhn.gkprison.api.PayService;
 import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;

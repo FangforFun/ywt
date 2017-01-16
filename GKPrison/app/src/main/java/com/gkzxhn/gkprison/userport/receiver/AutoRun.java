@@ -4,7 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.gkzxhn.gkprison.welcome.SplashActivity;
+import com.gkzxhn.gkprison.userport.ui.splash.SplashActivity;
+
 
 public class AutoRun extends BroadcastReceiver {
     public AutoRun() {

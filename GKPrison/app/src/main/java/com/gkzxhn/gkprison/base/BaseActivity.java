@@ -12,7 +12,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.login.view.NiceSpinner;
 
 /**
  * activity基类
@@ -29,9 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     protected ImageView iv_home_menu;// 菜单
     protected View ly_title_bar;
     protected TextView tv_remittance;// 汇款
-    protected RelativeLayout rl_regist;
 //    protected TextView tv_user_type;
-    protected NiceSpinner ns_login_type;// 登录类型选择下拉
     protected Toolbar tool_bar;
     protected RelativeLayout rl_message;// 消息
     protected RelativeLayout rl_refresh;// 刷新
@@ -53,9 +50,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         tv_remittance = (TextView)findViewById(R.id.tv_remittance);
         iv_home_menu = (ImageView) findViewById(R.id.iv_home_menu);
         rl_home_menu = (RelativeLayout) findViewById(R.id.rl_home_menu);
-        rl_regist = (RelativeLayout)findViewById(R.id.rl_regist);
 //        tv_user_type = (TextView) findViewById(R.id.tv_user_type);
-        ns_login_type = (NiceSpinner) findViewById(R.id.ns_login_type);
         rl_message = (RelativeLayout) findViewById(R.id.rl_message);
         rl_refresh = (RelativeLayout) findViewById(R.id.rl_refresh);
         iv_refresh = (ImageView) findViewById(R.id.iv_refresh);
@@ -134,10 +129,6 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
 
     protected void setTextContent(String s){
         tv_remittance.setText(s);
-    }
-
-    protected void setRegistVisiblity(int visiblity){
-        rl_regist.setVisibility(visiblity);
     }
 
     /**

@@ -99,23 +99,6 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:id="@+id/rl_regist"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/title_bar_height"
-                android:layout_alignParentRight="true"
-                android:background="@drawable/img_selector"
-                android:visibility="gone">
-                <com.gkzxhn.gkprison.login.view.NiceSpinner
-                    android:id="@+id/ns_login_type"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:focusable="false"
-                    android:textSize="@dimen/small_title_size"
-                    android:textColor="@android:color/white" />
-            </RelativeLayout>
-
-            <RelativeLayout
                 android:id="@+id/rl_message"
                 android:layout_width="@dimen/title_bar_height"
                 android:layout_height="@dimen/title_bar_height"

@@ -9,7 +9,6 @@ import android.widget.AutoCompleteTextView;
 import com.gkzxhn.gkprison.api.UtilsService;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.login.adapter.AutoTextAdapater;
 import com.gkzxhn.gkprison.userport.bean.PrisonList;
 import com.gkzxhn.gkprison.utils.Log;
 

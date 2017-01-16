@@ -34,7 +34,7 @@ import com.gkzxhn.gkprison.userport.event.ClickEven1;
 import com.gkzxhn.gkprison.userport.event.ClickEvent;
 import com.gkzxhn.gkprison.userport.ui.main.MainUtils;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.adapter.AllChooseAdapter;
-import com.gkzxhn.gkprison.userport.ui.main.pay.PaymentActivity;
+import com.gkzxhn.gkprison.userport.ui.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
