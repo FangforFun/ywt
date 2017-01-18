@@ -3,6 +3,7 @@ package com.gkzxhn.gkprison.app.module;
 import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.prisonport.requests.ApiService;
 
 import java.util.concurrent.TimeUnit;
 
@@ -51,5 +52,10 @@ public class ApiModule {
     @Provides
     public ApiRequest provideApiRequest(Retrofit retrofit){
         return retrofit.create(ApiRequest.class);
+    }
+
+    @Provides
+    public ApiService provideApiService(Retrofit retrofit){
+        return retrofit.create(ApiService.class);
     }
 }

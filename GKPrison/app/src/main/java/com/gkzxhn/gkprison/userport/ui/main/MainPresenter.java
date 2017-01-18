@@ -41,7 +41,7 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.gkzxhn.gkprison.prisonport.activity.CallUserActivity.fileName;
+import static com.gkzxhn.gkprison.prisonport.ui.CallUserActivity.fileName;
 import static com.gkzxhn.gkprison.userport.ui.main.MainUtils.getXml;
 
 /**

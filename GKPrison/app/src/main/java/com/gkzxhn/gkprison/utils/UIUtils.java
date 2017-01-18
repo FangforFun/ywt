@@ -52,12 +52,16 @@ public class UIUtils {
      * dismiss
      * @param dialog
      */
-    public static void dismissProgressDialog(ProgressDialog dialog){
+    public static void dismissProgressDialog(ProgressDialog... dialog){
         if (Thread.currentThread() != Looper.getMainLooper().getThread()){
             throw new IllegalStateException("this controller must in main thread");
         }
-        if (dialog != null && dialog.isShowing())
-            dialog.dismiss();
+        if (dialog == null || dialog.length < 1)
+            return;
+        for (ProgressDialog d : dialog) {
+            if (d != null && d.isShowing())
+                d.dismiss();
+        }
     }
 
     /**
@@ -191,6 +195,23 @@ public class UIUtils {
         AlertDialog dialog = builder.create();
         dialog.show();
         return dialog;
+    }
+
+    /**
+     * dismiss dialog
+     * @param alertDialogs
+     */
+    public static void dismissAlertDialog(AlertDialog... alertDialogs){
+        if (Thread.currentThread() != Looper.getMainLooper().getThread())
+            throw new IllegalStateException("dismiss dialog must be in main thread");
+        if (alertDialogs == null || alertDialogs.length < 1)
+            return;
+        for (AlertDialog dialog : alertDialogs){
+            if (dialog != null) {
+                if (dialog.isShowing())
+                    dialog.dismiss();
+            }
+        }
     }
 
 }

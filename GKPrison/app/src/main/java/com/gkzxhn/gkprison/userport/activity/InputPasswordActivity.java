@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivity;
-import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.splash.welcome.WelComeActivity;
 import com.jungly.gridpasswordview.GridPasswordView;

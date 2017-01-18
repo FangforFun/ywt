@@ -204,11 +204,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".prisonport.activity.DateMeetingListActivity"
+            android:name=".prisonport.ui.home.DateMeetingListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".prisonport.activity.CallUserActivity"
+            android:name=".prisonport.ui.CallUserActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.splash.welcome.WelComeActivity"

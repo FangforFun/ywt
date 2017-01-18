@@ -13,7 +13,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.userport.ui.register.RegisterActivity;
 import com.gkzxhn.gkprison.utils.ConfigActivity;

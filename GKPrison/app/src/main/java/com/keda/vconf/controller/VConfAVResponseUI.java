@@ -31,7 +31,7 @@ import com.megvii.livenesslib.LivenessActivity2;
 import com.megvii.livenesslib.util.ConUtil;
 import com.pc.utils.NetWorkUtils;
 
-import static com.gkzxhn.gkprison.prisonport.activity.CallUserActivity.fileName;
+import static com.gkzxhn.gkprison.prisonport.ui.CallUserActivity.fileName;
 
 /**
   * 音视频应答

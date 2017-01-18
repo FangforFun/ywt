@@ -27,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gkzxhn.gkprison.BuildConfig;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
@@ -255,31 +256,8 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
     @Override
     protected void onDestroy() {
         Log.i(TAG, TAG + " onDestroy");
-        if (progressDialog != null){
-            if (progressDialog.isShowing())
-                progressDialog.dismiss();
-            progressDialog = null;
-        }
-        if (reLoginDialog != null){
-            if (reLoginDialog.isShowing())
-                reLoginDialog.dismiss();
-            reLoginDialog = null;
-        }
-        if (fastLoginDialog != null){
-            if (fastLoginDialog.isShowing())
-                fastLoginDialog.dismiss();
-            fastLoginDialog = null;
-        }
-        if (kickoutDialog != null){
-            if (kickoutDialog.isShowing())
-                kickoutDialog.dismiss();
-            kickoutDialog = null;
-        }
-        if (logoutDialog != null){
-            if (logoutDialog.isShowing())
-                logoutDialog.dismiss();
-            logoutDialog = null;
-        }
+        UIUtils.dismissProgressDialog(progressDialog);
+        UIUtils.dismissAlertDialog(reLoginDialog, fastLoginDialog, kickoutDialog, logoutDialog);
         super.onDestroy();
         mPresenter.detachView();
     }
@@ -294,8 +272,10 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                     drawerLayout.openDrawer(Gravity.LEFT);
                 }
                 break;
-            case R.id.tv_title:
-                showToast("当前登录账号为：" + Config.mAccount + ",GK状态：" + GKStateMannager.mRegisterGK);
+            case R.id.tv_title:// debug模式下
+                if (BuildConfig.DEBUG) {
+                    showToast("当前登录账号为：" + Config.mAccount + ",GK状态：" + GKStateMannager.mRegisterGK);
+                }
                 break;
         }
     }

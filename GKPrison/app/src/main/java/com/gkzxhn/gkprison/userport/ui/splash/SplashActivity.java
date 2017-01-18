@@ -5,7 +5,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.prisonport.activity.DateMeetingListActivity;
+import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
@@ -80,7 +80,7 @@ public class SplashActivity extends BaseActivityNew implements SplashContract.Vi
 
     private void setUpBackGroundResources() {
         if (SystemUtil.isTablet(this)){
-            splash.setBackgroundResource(R.drawable.splash_tablet);
+            splash.setBackgroundResource(R.drawable.splash_common_tablet);
         }
     }
 

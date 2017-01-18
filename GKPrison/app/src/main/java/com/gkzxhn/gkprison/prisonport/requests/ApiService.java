@@ -4,7 +4,6 @@ import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
 
 import java.util.List;
-import java.util.Map;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -14,7 +13,6 @@ import retrofit2.http.Headers;
 import retrofit2.http.PATCH;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
-import retrofit2.http.QueryMap;
 import rx.Observable;
 
 /**
@@ -29,13 +27,13 @@ public interface ApiService {
     /**
      * 获取会见列表
      * @param username
-     * @param map
+     * @param date
      * @return
      */
     @GET("applies")
     Observable<List<MeetingInfo>> getMeetingList(
             @Query("accid") String username,
-            @QueryMap Map<String, String> map);
+            @Query("app_date") String date);
 
     /**
      * 取消视频会见

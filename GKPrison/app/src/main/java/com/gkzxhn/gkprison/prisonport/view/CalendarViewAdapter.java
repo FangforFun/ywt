@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.prisonport.adapter;
+package com.gkzxhn.gkprison.prisonport.view;
 
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
