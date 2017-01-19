@@ -15,7 +15,7 @@ import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
-import com.gkzxhn.gkprison.prisonport.requests.ApiService;
+import com.gkzxhn.gkprison.api.ApiService;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;

@@ -28,6 +28,17 @@ public class StringUtils {
     }
 
     /**
+     * 格式化时间  默认当前系统时间
+     * @param pattern 格式
+     * @return 返回格式化后的时间
+     */
+    public static String formatTime(String pattern){
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat format = new SimpleDateFormat(pattern, Locale.getDefault());
+        return format.format(date);
+    }
+
+    /**
      * 将格式化的时间转化为毫秒值
      * @param time 格式化后的时间
      * @param pattern 格式

@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.prisonport.requests;
+package com.gkzxhn.gkprison.api;
 
 import com.gkzxhn.gkprison.prisonport.bean.FamilyMeetingInfo;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;

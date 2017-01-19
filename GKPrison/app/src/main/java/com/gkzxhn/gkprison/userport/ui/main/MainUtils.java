@@ -13,6 +13,7 @@ import com.gkzxhn.gkprison.userport.ui.pay.PaymentActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.MD5Utils;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.StringUtils;
 import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
 import com.netease.nimlib.sdk.auth.AuthService;
@@ -23,12 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 /**
@@ -167,10 +165,7 @@ public class MainUtils {
      * @return
      */
     public static String getOutTradeNo() {
-        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss",
-                Locale.getDefault());
-        Date date = new Date();
-        String key = format.format(date);
+        String key = StringUtils.formatTime("MMddHHmmss");
         Random r = new Random();
         key = key + r.nextInt();
         key = key.substring(0, 15);

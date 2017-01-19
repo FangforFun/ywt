@@ -10,7 +10,7 @@ import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.PerActivity;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
-import com.gkzxhn.gkprison.prisonport.requests.ApiService;
+import com.gkzxhn.gkprison.api.ApiService;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;

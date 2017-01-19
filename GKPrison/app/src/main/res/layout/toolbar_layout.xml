@@ -112,6 +112,18 @@
                     android:textColor="@color/white"
                     android:gravity="center"
                     android:padding="20dp"/>
+
+                <TextView
+                    android:id="@+id/tv_remittance"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/title_bar_height"
+                    android:text="@string/remittance"
+                    android:textSize="16sp"
+                    android:textColor="@color/white"
+                    android:gravity="center"
+                    android:layout_alignParentRight="true"
+                    android:padding="10dp"/>
             </RelativeLayout>
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>

@@ -266,6 +266,36 @@
     <string name="call">呼 叫</string>
     <string name="remote_meeting">远程会见</string>
     <string name="get_id_photo_failed">获取身份证照片失败</string>
+    <string name="recharge_count">请选择充值金额</string>
+    <string name="_5">5元</string>
+    <string name="_20">20元</string>
+    <string name="_50">50元</string>
+    <string name="_100">100元</string>
+    <string name="recharge">充值</string>
+    <string name="recharge_description_info">充值说明:\n1、狱务通为用户免费提供远程探监业务,
+        但用户需承担租赁服务器以及视频通话业务的相关费用。\n2、用户充值后,可点击“
+        申请远程探监”按钮进行申请,系统审核通过后方扣费,系统审核不通过不扣费。\n3
+        、审核通过后,无论您是否接听视频通话,都将扣除一定费用,费用不返还,不累计到下
+        一次使用。\n4、当可用次数为“0”时,狱务通远程探监申请将不可点击,请您及时续费。
+    </string>
+    <string name="prisoner_num">囚号：</string>
+    <string name="sex">性别：</string>
+    <string name="crime_type">犯罪类型：</string>
+    <string name="prison_sentence">刑期起止：</string>
+    <string name="xxxx">xxxx</string>
+    <string name="to">&#160;&#160;&#160;&#160;至&#160;&#160;&#160;&#160;</string>
+    <string name="balance">余额:&#160;&#160;</string>
+    <string name="_￥">&#160;&#160;元</string>
+    <string name="current_month_money">本月可用额度:&#160;&#160;</string>
+    <string name="_0_0">0.0</string>
+    <string name="remittance">汇款</string>
+    <string name="family_server">家属服务</string>
+    <string name="load_data_failed">加载数据失败</string>
+    <string name="remittance_count">请输入汇款金额：</string>
+    <string name="input_remittance_count">请输入汇款金额</string>
+    <string name="out_of_800">抱歉，您本月汇款总额已超出800元限额！</string>
+    <string name="please_expect">敬请期待</string>
+    <string name="prison_introduction">监狱简介</string>
 
 
 </resources>

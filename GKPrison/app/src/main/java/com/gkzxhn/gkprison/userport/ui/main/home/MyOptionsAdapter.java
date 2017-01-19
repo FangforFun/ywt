@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
-import com.gkzxhn.gkprison.userport.activity.FamilyServiceActivity;
+import com.gkzxhn.gkprison.userport.ui.FamilyServiceActivity;
 import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonIntroductionActivity;
 import com.gkzxhn.gkprison.userport.activity.PrisonOpenActivity;

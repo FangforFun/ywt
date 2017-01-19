@@ -259,4 +259,15 @@
         <item name="android:background">@drawable/btn_toggle_selector</item>
     </style>
 
+    <!-- 汇款金额选项按钮样式 -->
+    <style name="recharge_button" >
+        <item name="android:textColor">@drawable/tab_textcolor</item>
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/radio_selector</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">@dimen/ok_cancel_title_size</item>
+    </style>
 </resources>

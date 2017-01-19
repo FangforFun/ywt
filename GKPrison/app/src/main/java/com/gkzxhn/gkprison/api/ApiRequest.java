@@ -1,6 +1,7 @@
 package com.gkzxhn.gkprison.api;
 
 import com.gkzxhn.gkprison.userport.bean.Balance;
+import com.gkzxhn.gkprison.userport.bean.FamilyServerBean;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 
@@ -33,7 +34,6 @@ public interface ApiRequest {
      */
     @GET("prisoner")
     Observable<PrisonerUserInfo> getUserInfo(@QueryMap Map<String, String> map);
-
 
     /**
      * 发送意见反馈
@@ -110,5 +110,15 @@ public interface ApiRequest {
     @GET("items")
     Observable<ResponseBody> getCommodities(
             @QueryMap Map<String, String> map
+    );
+
+    /**
+     * 获取家属服务信息
+     * @param token
+     * @return
+     */
+    @GET("services")
+    Observable<FamilyServerBean> getFamilyServerInfo(
+            @Query("access_token") String token
     );
 }

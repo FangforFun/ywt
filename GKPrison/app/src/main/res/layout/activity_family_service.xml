@@ -1,182 +1,175 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
-    tools:context=".userport.activity.FamilyServiceActivity">
-    <RelativeLayout
-        android:id="@+id/rl_messge"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout" />
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white">
-        <TextView
-            android:id="@+id/tv_prisonnum"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="囚号："
-            android:layout_marginTop="5dp"
-            android:layout_marginLeft="10dp"/>
-        <TextView
-            android:id="@+id/tv_prison_num"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="xxxxxxxxx"
-            android:layout_alignBaseline="@+id/tv_prisonnum"
-            android:layout_toRightOf="@+id/tv_prisonnum"
-            />
-        <TextView
-            android:id="@+id/tv_mail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="性别："
-            android:layout_alignBaseline="@+id/tv_prisonnum"
-            android:layout_toRightOf="@+id/tv_prison_num"
-            android:layout_marginLeft="50dp"
-            />
-        <TextView
-            android:id="@+id/tv_mail_sex"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:layout_alignBaseline="@+id/tv_prisonnum"
-            android:text="男"
-            android:layout_toRightOf="@+id/tv_mail"
-            />
-        <TextView
-            android:id="@+id/tv_crime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="犯罪类型："
-            android:layout_below="@+id/tv_prisonnum"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            />
-        <TextView
-            android:id="@+id/tv_crime_accent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/tv_crime"
-            android:layout_alignBaseline="@+id/tv_crime"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="抢劫罪"
-            />
-        <TextView
-            android:id="@+id/tv_sentence"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_crime"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="刑期起止："
-            />
-        <TextView
-            android:id="@+id/tv_sentence_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="2011"
-            android:layout_alignBaseline="@+id/tv_sentence"
-            android:layout_toRightOf="@+id/tv_sentence"/>
-        <TextView
-            android:id="@+id/tv_zhi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/tv_bg"
-            android:textSize="16sp"
-            android:text="至"
-            android:layout_toRightOf="@+id/tv_sentence_time"
-            android:layout_alignBaseline="@+id/tv_sentence_time"/>
-        <TextView
-            android:id="@+id/tv_sentence_time_end"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/tv_bg"
-            android:text="2012"
-            android:layout_toRightOf="@+id/tv_zhi"
-            android:layout_alignBaseline="@+id/tv_sentence_time"/>
-        <TextView
-            android:id="@+id/tv_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="#333333"
-            android:text="余额:"
-            android:layout_below="@+id/tv_sentence"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            />
-        <TextView
-            android:id="@+id/tv_balance_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_toRightOf="@+id/tv_balance"
-            android:layout_alignBaseline="@+id/tv_balance"
-            android:textColor="#1f9300"
-            android:text="10000"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#1f9300"
-            android:textSize="14sp"
-            android:text="元"
-            android:layout_toRightOf="@+id/tv_balance_money"
-            android:layout_alignBaseline="@+id/tv_balance"/>
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <TextView
-            android:id="@+id/tv_danwei"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#1f9300"
-            android:textSize="14sp"
-            android:text="元"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:layout_alignBaseline="@+id/tv_balance"/>
-        <TextView
-            android:id="@+id/tv_keyong_money"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_toLeftOf="@+id/tv_danwei"
-            android:layout_alignBaseline="@+id/tv_balance"
-            android:textColor="#1f9300"
-            android:text="400"/>
-        <TextView
-            android:id="@+id/tv_keyong"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:layout_toLeftOf="@+id/tv_keyong_money"
-            android:layout_alignBaseline="@+id/tv_balance"
-            android:textColor="#333333"
-            android:text="本月可用额度:"/>
+            android:gravity="center_vertical">
 
-    </RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/prisoner_num"/>
+
+            <TextView
+                android:id="@+id/tv_prison_num"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/sex"
+                android:layout_marginLeft="80dp" />
+
+            <TextView
+                android:id="@+id/tv_mail_sex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/crime_type"/>
+
+            <TextView
+                android:id="@+id/tv_crime_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/prison_sentence"/>
+
+            <TextView
+                android:id="@+id/tv_sentence_time_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/xxxx"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/to"/>
+
+            <TextView
+                android:id="@+id/tv_sentence_time_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/xxxx"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_bg"
+                android:text="@string/balance" />
+
+            <TextView
+                android:id="@+id/tv_balance_money"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_green"
+                android:text="@string/_0_0"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/small_title_size"
+                android:textColor="@color/tv_green"
+                android:text="@string/_￥"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingRight="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/small_title_size"
+                    android:textColor="@color/tv_bg"
+                    android:text="@string/current_month_money"/>
+
+                <TextView
+                    android:id="@+id/tv_current_month_available_money"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/small_title_size"
+                    android:textColor="@color/tv_green"
+                    android:text="@string/_0_0"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/small_title_size"
+                    android:textColor="@color/tv_green"
+                    android:text="@string/_￥"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
 
     <ExpandableListView
-        android:id="@+id/el_messge"
+        android:id="@+id/el_items"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@color/white"
         android:dividerHeight="5dp"
         android:layout_marginTop="5dp"
-        android:childDivider="@color/white"
-        android:layout_below="@+id/rl_messge">
+        android:childDivider="@color/white">
     </ExpandableListView>
-
-
-</RelativeLayout>
+</LinearLayout>

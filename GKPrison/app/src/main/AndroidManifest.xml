@@ -143,7 +143,7 @@
             android:name=".userport.activity.PrisonWardenActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.FamilyServiceActivity"
+            android:name=".userport.ui.FamilyServiceActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.PrisonOpenActivity"
@@ -181,28 +181,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.RemittanceWaysActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".userport.ui.pay.PaymentActivity"
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.BankPayActivity"
             android:screenOrientation="portrait"/>
-        <activity
-            android:name=".userport.activity.ZhifubaoPayActivity"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".userport.activity.WeixinPayActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <data android:scheme="wx4973a8b575999262"/>
-            </intent-filter>
-        </activity>
         <activity
             android:name=".prisonport.ui.home.DateMeetingListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
@@ -236,7 +220,7 @@
             android:name=".userport.activity.ContactUsActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.ReChargeActivity"
+            android:name=".userport.ui.ReChargeActivity"
             android:screenOrientation="portrait"/>
         <!-- 微信回调该activity 显示错误代码 -->
         <activity
@@ -301,7 +285,7 @@
             android:name=".userport.receiver.AlarmReceiver"
             android:process=":remote"/>
 
-        <receiver android:name=".userport.activity.AppRegister">
+        <receiver android:name=".userport.receiver.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP"/>
             </intent-filter>

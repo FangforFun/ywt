@@ -15,7 +15,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.prisonport.bean.MeetingInfo;
-import com.gkzxhn.gkprison.prisonport.requests.ApiService;
+import com.gkzxhn.gkprison.api.ApiService;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;

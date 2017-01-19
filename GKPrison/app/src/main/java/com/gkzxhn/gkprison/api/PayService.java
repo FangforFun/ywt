@@ -42,5 +42,4 @@ public interface PayService {
             @Query("access_token") String token,
             @Body RequestBody body
     );
-
 }

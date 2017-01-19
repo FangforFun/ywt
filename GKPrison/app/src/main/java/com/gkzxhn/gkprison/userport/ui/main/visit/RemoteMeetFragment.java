@@ -21,7 +21,7 @@ import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.activity.ReChargeActivity;
+import com.gkzxhn.gkprison.userport.ui.ReChargeActivity;
 import com.gkzxhn.gkprison.userport.bean.Balance;
 import com.gkzxhn.gkprison.userport.ui.main.MainUtils;
 import com.gkzxhn.gkprison.utils.Log;

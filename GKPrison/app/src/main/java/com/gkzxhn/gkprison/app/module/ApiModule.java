@@ -3,7 +3,7 @@ package com.gkzxhn.gkprison.app.module;
 import com.gkzxhn.gkprison.api.ApiRequest;
 import com.gkzxhn.gkprison.api.LoginService;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.prisonport.requests.ApiService;
+import com.gkzxhn.gkprison.api.ApiService;
 
 import java.util.concurrent.TimeUnit;
 

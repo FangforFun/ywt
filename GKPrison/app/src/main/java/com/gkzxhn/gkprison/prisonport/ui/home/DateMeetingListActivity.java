@@ -68,7 +68,7 @@ public class DateMeetingListActivity extends BaseActivityNew implements Calendar
     private int mCurrentIndex = 498;
     private CalendarViewAdapter<CalendarCard> adapter;
     private SildeDirection mDirection = SildeDirection.NO_SILDE;
-    private com.gkzxhn.gkprison.prisonport.ui.home.MeetingListAdapter meetingListAdapter;
+    private MeetingListAdapter meetingListAdapter;
     private long mExitTime;//add by hzn 退出按键时间间隔
     private CalendarCard[] views;
     private CustomDate mDate;
@@ -271,7 +271,7 @@ public class DateMeetingListActivity extends BaseActivityNew implements Calendar
             tv_no_list.setVisibility(View.GONE);
             lv_meeting_list.setVisibility(View.VISIBLE);
             if (meetingListAdapter == null) {
-                meetingListAdapter = new com.gkzxhn.gkprison.prisonport.ui.home.MeetingListAdapter(this, meetingInfos, new com.gkzxhn.gkprison.prisonport.ui.home.MeetingListAdapter.OnCancelSuccessListener() {
+                meetingListAdapter = new MeetingListAdapter(this, meetingInfos, new com.gkzxhn.gkprison.prisonport.ui.home.MeetingListAdapter.OnCancelSuccessListener() {
                     @Override
                     public void onSuccess(int position) {
                         handler.postDelayed(dismissProgressDialogTask, 1500);

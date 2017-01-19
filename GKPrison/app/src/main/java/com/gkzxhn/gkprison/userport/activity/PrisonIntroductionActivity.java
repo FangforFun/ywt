@@ -1,44 +1,46 @@
 package com.gkzxhn.gkprison.userport.activity;
 
-import android.content.SharedPreferences;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.view.pb.NumberProgressBar;
 import com.gkzxhn.gkprison.utils.Log;
-import com.keda.sky.app.PcAppStackManager;
+import com.gkzxhn.gkprison.utils.SPUtil;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * 监狱简介
  */
-public class PrisonIntroductionActivity extends BaseActivity {
+public class PrisonIntroductionActivity extends BaseActivityNew {
 
-    private WebView wv_news_detail;
-    private NumberProgressBar npb_loading;
-    private int id;
-    private SharedPreferences sp;
+    @BindView(R.id.wv_news_detail) WebView wv_news_detail;
+    @BindView(R.id.npb_loading) NumberProgressBar npb_loading;
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
 
-    @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(this, R.layout.activity_prison_introduction, null);
-        wv_news_detail = (WebView) view.findViewById(R.id.wv_news_detail);
-        npb_loading = (NumberProgressBar) view.findViewById(R.id.npb_loading);
-        return view;
-    }
     // http://10.93.1.10:3000/api/v1/news?access_token=d56e241a101d011c399211e9e24b0acd&jail_id=1
 
     @Override
-    protected void initData() {
-        setTitle("");
-        setBackVisibility(View.VISIBLE);
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        id = sp.getInt("jail_id",1);
+    public int setLayoutResId() {
+        return R.layout.activity_prison_introduction;
+    }
+
+    @Override
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
+        tv_title.setText(R.string.prison_introduction);
+        rl_back.setVisibility(View.VISIBLE);
+        int id = (int) SPUtil.get(this, SPKeyConstants.JAIL_ID, -1);
         wv_news_detail.loadUrl(Constants.RESOURSE_HEAD+"/jails/" + id);
         Log.i("jail_id is :", id + "");
         WebSettings webSettings = wv_news_detail.getSettings();
@@ -63,11 +65,19 @@ public class PrisonIntroductionActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
-        super.onDestroy();
+    protected void initInjector() {
+
     }
 
+    @Override
+    protected boolean isApplyStatusBarColor() {
+        return true;
+    }
+
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
