@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.userport.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -17,40 +17,48 @@ import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.ApiRequest;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
+import com.gkzxhn.gkprison.api.rx.SimpleObserver;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.gkzxhn.gkprison.utils.UIUtils;
 import com.gkzxhn.gkprison.utils.Utils;
-import com.keda.sky.app.PcAppStackManager;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * 工作动态
  */
-public class WorkDynamicActivity extends BaseActivity {
+public class WorkDynamicActivity extends BaseActivityNew {
 
     private static final java.lang.String TAG = "WorkDynamicActivity";
-    private ListView lv_prison_open;
+    @BindView(R.id.lv_prison_open) ListView lv_prison_open;
+    @BindView(R.id.swipe_container) RefreshLayout mRefreshLayout;
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
+
     private RelativeLayout rl_carousel;
     private RollViewPager vp_carousel;
     private View layout_roll_view;
@@ -62,12 +70,12 @@ public class WorkDynamicActivity extends BaseActivity {
     private List<News> newsList = new ArrayList<>();
     private ProgressDialog getNews_dialog;
     private MyAdapter myAdapter;// 新闻列表适配器
-    private RefreshLayout mRefreshLayout;
     private View footerLayout;
     private TextView textMore;
     private ProgressBar progressBar;
     private int jail_id;
     private boolean isLoadingMore = false;
+    private Subscription getNewsSubscription;
 
     /**
      * 相关UI操作
@@ -80,7 +88,6 @@ public class WorkDynamicActivity extends BaseActivity {
             mRefreshLayout.setLoading(false);
             textMore.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
-            Toast.makeText(WorkDynamicActivity.this, "加载完成", Toast.LENGTH_SHORT).show();
             isLoadingMore = false;
         }
     }
@@ -132,9 +139,7 @@ public class WorkDynamicActivity extends BaseActivity {
         vp_carousel.startRoll();
         top_news_viewpager.removeAllViews();
         top_news_viewpager.addView(vp_carousel);
-        if (getNews_dialog.isShowing()) {
-            getNews_dialog.dismiss();
-        }
+        UIUtils.dismissProgressDialog(getNews_dialog);
     }
 
     /**
@@ -142,37 +147,18 @@ public class WorkDynamicActivity extends BaseActivity {
      */
     private List<View> dotList = new ArrayList<>();
 
-
     @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
-        lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
-        mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
-//        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
-        layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
-        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
-        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
-        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
-//        rl_carousel.addView(layout_roll_view);
-        lv_prison_open.addHeaderView(layout_roll_view);
-
-        footerLayout = getLayoutInflater().inflate(R.layout.listview_footer, null);
-        textMore = (TextView) footerLayout.findViewById(R.id.text_more);
-        progressBar = (ProgressBar) footerLayout.findViewById(R.id.load_progress_bar);
-
-        lv_prison_open.addFooterView(footerLayout);
-        mRefreshLayout.setChildView(lv_prison_open);
-
-        mRefreshLayout.setColorSchemeResources(R.color.theme);
-        return view;
+    public int setLayoutResId() {
+        return R.layout.activity_prison_open;
     }
 
     @Override
-    protected void initData() {
-        setTitle("工作动态");
-        setBackVisibility(View.VISIBLE);
-        jail_id = (int) SPUtil.get(this, "jail_id", 0);
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
+        findViews();
+        tv_title.setText(R.string.work_dynamic);
+        rl_back.setVisibility(View.VISIBLE);
+        jail_id = (int) SPUtil.get(this, SPKeyConstants.JAIL_ID, 0);
         getNews(0);// 获取工作动态新闻
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -207,17 +193,39 @@ public class WorkDynamicActivity extends BaseActivity {
     }
 
     /**
+     * find views
+     */
+    private void findViews() {
+        layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
+        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
+        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
+        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
+        lv_prison_open.addHeaderView(layout_roll_view);
+        footerLayout = View.inflate(this, R.layout.listview_footer, null);
+        textMore = (TextView) footerLayout.findViewById(R.id.text_more);
+        progressBar = (ProgressBar) footerLayout.findViewById(R.id.load_progress_bar);
+        lv_prison_open.addFooterView(footerLayout);
+        mRefreshLayout.setChildView(lv_prison_open);
+        mRefreshLayout.setColorSchemeResources(R.color.theme);
+    }
+
+    @Override
+    protected boolean isApplyStatusBarColor() {
+        return true;
+    }
+
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
+    }
+
+    /**
      * 获取新闻
      */
     private void getNews(final int getType) {
         if (Utils.isNetworkAvailable(this)) {
             if (getType == 0) {// 进入页面
-                getNews_dialog = new ProgressDialog(this);
-                getNews_dialog.setMessage("正在加载...");
-                getNews_dialog.setCanceledOnTouchOutside(false);
-                getNews_dialog.setCancelable(false);
-                getNews_dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                getNews_dialog.show();
+                getNews_dialog = UIUtils.showProgressDialog(this);
             } else if (getType == 2) {// 上拉加载
                 textMore.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -229,13 +237,9 @@ public class WorkDynamicActivity extends BaseActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             ApiRequest api = retrofit.create(ApiRequest.class);
-            api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<News>>() {
-                        @Override
-                        public void onCompleted() {}
-
-                        @Override
-                        public void onError(Throwable e) {
+            getNewsSubscription = api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SimpleObserver<List<News>>() {
+                        @Override public void onError(Throwable e) {
                             Log.e(TAG, "get news failed : " + e.getMessage());
                             Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
                             if (getNews_dialog.isShowing()) {
@@ -244,8 +248,7 @@ public class WorkDynamicActivity extends BaseActivity {
                             checkUI();// 相关ui操作
                         }
 
-                        @Override
-                        public void onNext(List<News> newses) {
+                        @Override public void onNext(List<News> newses) {
                             newsList.clear();
                             for (News news : newses){
                                 Log.i(TAG, news.toString());
@@ -264,12 +267,12 @@ public class WorkDynamicActivity extends BaseActivity {
                             }
                             checkUI();// 相关ui操作
                             if(getType == 1){
-                                showToastMsgShort("刷新成功");
+                                ToastUtil.showShortToast(getString(R.string.refresh_success));
                             }
                         }
                     });
         } else {
-            showToastMsgShort("没有网络");
+            ToastUtil.showShortToast(getString(R.string.net_broken));
         }
     }
 
@@ -311,28 +314,6 @@ public class WorkDynamicActivity extends BaseActivity {
             dots_ll.addView(view, layoutParams);
             dotList.add(view);
         }
-    }
-
-    private List<News> analysisNews(String s) {
-        List<News> newses = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(s);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                News news = new News();
-                JSONObject jsonObject = jsonArray.getJSONObject(i);
-                news.setId(jsonObject.getInt("id"));
-                news.setTitle(jsonObject.getString("title"));
-                news.setContents(jsonObject.getString("contents"));
-                news.setJail_id(jsonObject.getInt("jail_id"));
-                news.setImage_url(jsonObject.getString("image_url"));
-                news.setType_id(jsonObject.getInt("type_id"));
-                newses.add(news);
-            }
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return newses;
     }
 
     private class MyAdapter extends BaseAdapter {
@@ -382,8 +363,13 @@ public class WorkDynamicActivity extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
+        UIUtils.dismissProgressDialog(getNews_dialog);
+        RxUtils.unSubscribe(getNewsSubscription);
         super.onDestroy();
     }
 
+    @OnClick(R.id.rl_back)
+    public void onClick(View v) {
+        finish();
+    }
 }

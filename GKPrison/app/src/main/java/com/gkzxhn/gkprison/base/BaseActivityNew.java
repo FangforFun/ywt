@@ -56,9 +56,9 @@ public abstract class BaseActivityNew extends AppCompatActivity {
     protected abstract void initUiAndListener();
 
     /**
-     * 初始化注入器
+     * 初始化注入器  默认空实现  mvp模式的页面可选择实现
      */
-    protected abstract void initInjector();
+    protected void initInjector(){}
 
     /**
      * 是否开启自定义状态栏颜色

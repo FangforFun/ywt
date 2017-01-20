@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.api;
 
 import com.gkzxhn.gkprison.userport.bean.Balance;
 import com.gkzxhn.gkprison.userport.bean.FamilyServerBean;
+import com.gkzxhn.gkprison.userport.bean.Laws;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.bean.PrisonerUserInfo;
 
@@ -119,6 +120,18 @@ public interface ApiRequest {
      */
     @GET("services")
     Observable<FamilyServerBean> getFamilyServerInfo(
+            @Query("access_token") String token
+    );
+
+    /**
+     * 获取法律法规列表
+     * @param jail_id
+     * @param token
+     * @return
+     */
+    @GET("laws")
+    Observable<Laws> getLawsAndRegulationsList(
+            @Query("jail_id") int jail_id,
             @Query("access_token") String token
     );
 }

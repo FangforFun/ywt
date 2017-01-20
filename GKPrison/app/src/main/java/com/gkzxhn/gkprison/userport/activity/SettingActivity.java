@@ -25,22 +25,14 @@ import butterknife.OnClick;
  */
 public class SettingActivity extends BaseActivity {
 
-    @BindView(R.id.tb_clock_remind)
-    ToggleButton tb_clock_remind;
-    @BindView(R.id.tb_pwd_set)
-    ToggleButton tb_pwd_set;
-    @BindView(R.id.rl_opinion_feedback)
-    RelativeLayout rl_opinion_feedback;
-    @BindView(R.id.tv_version)
-    TextView tv_version;
-    @BindView(R.id.rl_version_update)
-    RelativeLayout rl_version_update;
-    @BindView(R.id.ll_setting_options)
-    LinearLayout ll_setting_options;
-    @BindView(R.id.tv_agreement)
-    TextView tv_agreement;
-    @BindView(R.id.tv_contact_us)
-    TextView tv_contact_us;
+    @BindView(R.id.tb_clock_remind) ToggleButton tb_clock_remind;
+    @BindView(R.id.tb_pwd_set) ToggleButton tb_pwd_set;
+    @BindView(R.id.rl_opinion_feedback) RelativeLayout rl_opinion_feedback;
+    @BindView(R.id.tv_version) TextView tv_version;
+    @BindView(R.id.rl_version_update) RelativeLayout rl_version_update;
+    @BindView(R.id.ll_setting_options) LinearLayout ll_setting_options;
+    @BindView(R.id.tv_agreement) TextView tv_agreement;
+    @BindView(R.id.tv_contact_us) TextView tv_contact_us;
     private AlertDialog agreement_dialog;
     private String token;
     private boolean isLock;

@@ -1,4 +1,4 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.userport.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -11,20 +11,25 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.ApiRequest;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
+import com.gkzxhn.gkprison.api.rx.SimpleObserver;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
+import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.gkzxhn.gkprison.userport.view.RefreshLayout;
 import com.gkzxhn.gkprison.userport.view.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
-import com.gkzxhn.gkprison.utils.Utils;
-import com.keda.sky.app.PcAppStackManager;
+import com.gkzxhn.gkprison.utils.SystemUtil;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.gkzxhn.gkprison.utils.UIUtils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,20 +39,25 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import rx.Observer;
+import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
  * 狱务公开页面
  */
-public class PrisonOpenActivity extends BaseActivity {
+public class PrisonOpenActivity extends BaseActivityNew {
 
     private static final java.lang.String TAG = "PrisonOpenActivity";
     @BindView(R.id.lv_prison_open) ListView lv_prison_open;
+    @BindView(R.id.swipe_container) RefreshLayout mRefreshLayout;
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
+
     private RollViewPager vp_carousel;
     private View layout_roll_view;
     private LinearLayout dots_ll;
@@ -55,15 +65,15 @@ public class PrisonOpenActivity extends BaseActivity {
     private LinearLayout top_news_viewpager;
     private final List<String> list_news_title = new ArrayList<>();
     private int jail_id;
-    private List<News> allnews = new ArrayList<>();
     private List<News> newsList = new ArrayList<>();
     private ProgressDialog getNews_Dialog;
     private MyAdapter myAdapter;// 新闻列表适配器
-    private RefreshLayout mRefreshLayout;
     private View footerLayout;
     private TextView textMore;
     private ProgressBar progressBar;
     private boolean isLoadingMore = false;
+
+    private Subscription getNewsSubscription;
 
     /**
      * 相关ui操作
@@ -76,7 +86,6 @@ public class PrisonOpenActivity extends BaseActivity {
             mRefreshLayout.setLoading(false);
             textMore.setVisibility(View.GONE);
             progressBar.setVisibility(View.GONE);
-            showToastMsgShort("加载完成");
             isLoadingMore = false;
         }
     }
@@ -143,36 +152,17 @@ public class PrisonOpenActivity extends BaseActivity {
     private List<View> dotList = new ArrayList<>();
 
     @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(getApplicationContext(), R.layout.activity_prison_open, null);
-        ButterKnife.bind(this, view);
-        lv_prison_open = (ListView) view.findViewById(R.id.lv_prison_open);
-        mRefreshLayout = (RefreshLayout) view.findViewById(R.id.swipe_container);
-//        rl_carousel = (RelativeLayout) view.findViewById(R.id.rl_carousel);
-        layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
-        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
-        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
-        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
-//        rl_carousel.addView(layout_roll_view);
-        lv_prison_open.addHeaderView(layout_roll_view);
-
-        footerLayout = getLayoutInflater().inflate(R.layout.listview_footer, null);
-        textMore = (TextView) footerLayout.findViewById(R.id.text_more);
-        progressBar = (ProgressBar) footerLayout.findViewById(R.id.load_progress_bar);
-
-        lv_prison_open.addFooterView(footerLayout);
-        mRefreshLayout.setChildView(lv_prison_open);
-
-        mRefreshLayout.setColorSchemeResources(R.color.theme);
-        return view;
+    public int setLayoutResId() {
+        return R.layout.activity_prison_open;
     }
 
     @Override
-    protected void initData() {
-        setTitle("狱务公开");
-        setBackVisibility(View.VISIBLE);
-        jail_id = (int) SPUtil.get(this, "jail_id", 0);
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
+        findViews();// 初始化view
+        tv_title.setText(R.string.prison_open);
+        rl_back.setVisibility(View.VISIBLE);
+        jail_id = (int) SPUtil.get(this, SPKeyConstants.JAIL_ID, 0);
         getNews(0);// 获取新闻
         lv_prison_open.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -206,9 +196,37 @@ public class PrisonOpenActivity extends BaseActivity {
         });
     }
 
+    /**
+     * find views
+     */
+    private void findViews() {
+        layout_roll_view = View.inflate(getApplicationContext(), R.layout.layout_roll_view, null);
+        dots_ll = (LinearLayout) layout_roll_view.findViewById(R.id.dots_ll);
+        top_news_title = (TextView) layout_roll_view.findViewById(R.id.top_news_title);
+        top_news_viewpager = (LinearLayout) layout_roll_view.findViewById(R.id.top_news_viewpager);
+        lv_prison_open.addHeaderView(layout_roll_view);
+        footerLayout = View.inflate(this, R.layout.listview_footer, null);
+        textMore = (TextView) footerLayout.findViewById(R.id.text_more);
+        progressBar = (ProgressBar) footerLayout.findViewById(R.id.load_progress_bar);
+        lv_prison_open.addFooterView(footerLayout);
+        mRefreshLayout.setChildView(lv_prison_open);
+        mRefreshLayout.setColorSchemeResources(R.color.theme);
+    }
+
+    @Override
+    protected boolean isApplyStatusBarColor() {
+        return true;
+    }
+
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
+    }
+
     @Override
     protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
+        UIUtils.dismissProgressDialog(getNews_Dialog);
+        RxUtils.unSubscribe(getNewsSubscription);
         super.onDestroy();
     }
 
@@ -217,9 +235,9 @@ public class PrisonOpenActivity extends BaseActivity {
      * 获取新闻
      */
     private void getNews(final int getType) {
-        if (Utils.isNetworkAvailable(this)) {
+        if (!SystemUtil.isNetWorkUnAvailable()) {
             if (getType == 0) {// 进入页面
-                showProgressDialog();
+                getNews_Dialog = UIUtils.showProgressDialog(this);
             }else if (getType == 2) {// 上拉加载
                 textMore.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -231,27 +249,19 @@ public class PrisonOpenActivity extends BaseActivity {
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
             ApiRequest api = retrofit.create(ApiRequest.class);
-            api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<List<News>>() {
-                        @Override
-                        public void onCompleted() {}
-
-                        @Override
-                        public void onError(Throwable e) {
+            getNewsSubscription = api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new SimpleObserver<List<News>>() {
+                        @Override public void onError(Throwable e) {
                             Log.e(TAG, "get news failed : " + e.getMessage());
-                            Toast.makeText(getApplicationContext(), "加载数据失败", Toast.LENGTH_SHORT).show();
-                            if (getNews_Dialog.isShowing()) {
-                                getNews_Dialog.dismiss();
-                            }
+                            ToastUtil.showShortToast(getString(R.string.load_data_failed));
+                            UIUtils.dismissProgressDialog(getNews_Dialog);
                             checkUI();// 相关ui操作
                         }
 
-                        @Override
-                        public void onNext(List<News> newses) {
+                        @Override public void onNext(List<News> newses) {
                             newsList.clear();
                             for (News news : newses){
                                 Log.i(TAG, news.toString());
-                                allnews.add(news);
                                 if(news.getType_id() == 1){
                                     newsList.add(news);
                                 }
@@ -267,12 +277,12 @@ public class PrisonOpenActivity extends BaseActivity {
                             }
                             checkUI();// 相关ui操作
                             if(getType == 1){
-                                showToastMsgShort("刷新成功");
+                                ToastUtil.showShortToast(getString(R.string.refresh_success));
                             }
                         }
                     });
         } else {
-            showToastMsgShort("没有网络");
+            ToastUtil.showShortToast(getString(R.string.net_broken));
         }
     }
 
@@ -291,18 +301,6 @@ public class PrisonOpenActivity extends BaseActivity {
                 return -1;
             }
         });
-    }
-
-    /**
-     * 初始化并显示进度条对话框
-     */
-    private void showProgressDialog() {
-        getNews_Dialog = new ProgressDialog(this);
-        getNews_Dialog.setMessage("正在加载...");
-        getNews_Dialog.setCanceledOnTouchOutside(false);
-        getNews_Dialog.setCancelable(false);
-        getNews_Dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        getNews_Dialog.show();
     }
 
     /**
@@ -328,9 +326,9 @@ public class PrisonOpenActivity extends BaseActivity {
         }
     }
 
-    @Override
+    @OnClick(R.id.rl_back)
     public void onClick(View v) {
-        super.onClick(v);
+        finish();
     }
 
     private class MyAdapter extends BaseAdapter {

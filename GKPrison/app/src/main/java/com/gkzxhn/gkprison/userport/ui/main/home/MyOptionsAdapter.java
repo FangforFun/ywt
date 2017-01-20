@@ -12,11 +12,11 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.userport.ui.FamilyServiceActivity;
-import com.gkzxhn.gkprison.userport.activity.LawsRegulationsActivity;
-import com.gkzxhn.gkprison.userport.activity.PrisonIntroductionActivity;
-import com.gkzxhn.gkprison.userport.activity.PrisonOpenActivity;
-import com.gkzxhn.gkprison.userport.activity.PrisonWardenActivity;
-import com.gkzxhn.gkprison.userport.activity.WorkDynamicActivity;
+import com.gkzxhn.gkprison.userport.ui.LawsRegulationsActivity;
+import com.gkzxhn.gkprison.userport.ui.PrisonIntroductionActivity;
+import com.gkzxhn.gkprison.userport.ui.PrisonOpenActivity;
+import com.gkzxhn.gkprison.userport.ui.PrisonWardenActivity;
+import com.gkzxhn.gkprison.userport.ui.WorkDynamicActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 

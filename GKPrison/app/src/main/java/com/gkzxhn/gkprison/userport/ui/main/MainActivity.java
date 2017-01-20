@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -36,7 +37,7 @@ import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.activity.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
-import com.gkzxhn.gkprison.userport.activity.UserInfoActivity;
+import com.gkzxhn.gkprison.userport.ui.UserInfoActivity;
 import com.gkzxhn.gkprison.userport.ui.login.Config;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
@@ -45,7 +46,6 @@ import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
 import com.gkzxhn.gkprison.userport.view.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
-import com.gkzxhn.gkprison.utils.ResourceUtil;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StatusBarUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
@@ -126,17 +126,17 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
 
     @Override
     protected void initUiAndListener() {
+        mPresenter.attachView(this);
         ButterKnife.bind(this);
         setSupportActionBar(tool_bar);
         tv_title.setText(getString(R.string.main_page));
         rl_home_menu.setVisibility(View.VISIBLE);
         rl_home_menu.setOnClickListener(this);
         rg_bottom_guide.setOnCheckedChangeListener(this);
-        StatusBarUtil.setColorForDrawerLayout(this, drawerLayout, ResourceUtil.getThemeColor(this), 0);
         setNavigationViewWidth();
+        StatusBarUtil.setColorForDrawerLayout(this, drawerLayout, Color.parseColor("#EE6495ed"), 0);
         setNavigationItemClick();
         setBottomGuideIcon();
-        mPresenter.attachView(this);
         isRegisterUser = (boolean) SPUtil.get(this, SPKeyConstants.IS_REGISTERED_USER, false);
         database = StringUtils.getSQLiteDB(this);
         mPresenter.checkStatus();
@@ -245,12 +245,12 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
 
     @Override
     protected boolean isApplyStatusBarColor() {
-        return true;
+        return false;
     }
 
     @Override
     protected boolean isApplyTranslucentStatus() {
-        return true;
+        return false;
     }
 
     @Override

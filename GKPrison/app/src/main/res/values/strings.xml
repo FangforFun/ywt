@@ -296,6 +296,13 @@
     <string name="out_of_800">抱歉，您本月汇款总额已超出800元限额！</string>
     <string name="please_expect">敬请期待</string>
     <string name="prison_introduction">监狱简介</string>
+    <string name="laws_regulations">法律法规</string>
+    <string name="no_data">没有数据</string>
+    <string name="prison_open">狱务公开</string>
+    <string name="work_dynamic">工作动态</string>
+    <string name="warden">投诉建议</string>
+    <string name="publish_info">公示信息</string>
+    <string name="complaint_feedback">投诉反馈</string>
 
 
 </resources>

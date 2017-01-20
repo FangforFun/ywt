@@ -1,14 +1,22 @@
-<com.gkzxhn.gkprison.userport.view.RefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/swipe_container"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:orientation="vertical">
 
-    <ListView
-        android:id="@+id/lv_prison_open"
+    <include layout="@layout/toolbar_layout" />
+
+    <com.gkzxhn.gkprison.userport.view.RefreshLayout
+        android:id="@+id/swipe_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="5dp"></ListView>
+        android:layout_height="match_parent"
+        android:background="@color/bg">
 
-</com.gkzxhn.gkprison.userport.view.RefreshLayout>
+        <ListView
+            android:id="@+id/lv_prison_open"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:divider="@android:color/transparent"
+            android:dividerHeight="5dp"/>
+
+    </com.gkzxhn.gkprison.userport.view.RefreshLayout>
+</LinearLayout>
