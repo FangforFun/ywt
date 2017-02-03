@@ -11,6 +11,7 @@ import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.app.component.AppComponent;
 import com.gkzxhn.gkprison.app.module.ActivityModule;
 import com.gkzxhn.gkprison.utils.ResourceUtil;
+import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.StatusBarUtil;
 import com.keda.sky.app.PcAppStackManager;
 
@@ -131,5 +132,15 @@ public abstract class BaseActivityNew extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         PcAppStackManager.Instance().popActivity(this);
+    }
+
+    /**
+     * 获取sp值
+     * @param key
+     * @param defaultValue
+     * @return
+     */
+    public Object getSPValue(String key, Object defaultValue){
+        return SPUtil.get(this, key, defaultValue);
     }
 }

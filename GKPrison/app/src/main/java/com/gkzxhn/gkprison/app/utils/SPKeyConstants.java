@@ -111,4 +111,14 @@ public class SPKeyConstants {
      * 实地探监提交时间
      */
     public static final String COMMITTED_TIME = "committed_time";
+
+    /**
+     * 闹钟提醒sp
+     */
+    public static final String IS_MSG_REMIND = "isMsgRemind";
+
+    /**
+     * app的密码
+     */
+    public static final String APP_PASSWORD = "app_password";
 }

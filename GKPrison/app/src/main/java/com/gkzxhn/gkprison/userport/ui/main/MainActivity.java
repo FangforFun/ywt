@@ -35,7 +35,7 @@ import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
-import com.gkzxhn.gkprison.userport.activity.SettingActivity;
+import com.gkzxhn.gkprison.userport.ui.SettingActivity;
 import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
 import com.gkzxhn.gkprison.userport.ui.UserInfoActivity;
 import com.gkzxhn.gkprison.userport.ui.login.Config;

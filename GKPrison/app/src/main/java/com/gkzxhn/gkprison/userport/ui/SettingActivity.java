@@ -1,81 +1,85 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.userport.ui;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
+import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
-import com.keda.sky.app.PcAppStackManager;
-import com.zcw.togglebutton.ToggleButton;
+import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.gkzxhn.gkprison.utils.UIUtils;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnCheckedChanged;
 import butterknife.OnClick;
 
 /**
  * 设置页面
  */
-public class SettingActivity extends BaseActivity {
+public class SettingActivity extends BaseActivityNew {
 
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
     @BindView(R.id.tb_clock_remind) ToggleButton tb_clock_remind;
     @BindView(R.id.tb_pwd_set) ToggleButton tb_pwd_set;
-    @BindView(R.id.rl_opinion_feedback) RelativeLayout rl_opinion_feedback;
     @BindView(R.id.tv_version) TextView tv_version;
-    @BindView(R.id.rl_version_update) RelativeLayout rl_version_update;
-    @BindView(R.id.ll_setting_options) LinearLayout ll_setting_options;
-    @BindView(R.id.tv_agreement) TextView tv_agreement;
-    @BindView(R.id.tv_contact_us) TextView tv_contact_us;
     private AlertDialog agreement_dialog;
-    private String token;
-    private boolean isLock;
-    private boolean isMsgRemind;
 
     @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(getApplicationContext(), R.layout.activity_setting, null);
-        ButterKnife.bind(this, view);
-        return view;
+    public int setLayoutResId() {
+        return R.layout.activity_setting;
     }
 
     @Override
-    protected void initData() {
-        token = (String) SPUtil.get(this, "token", "");
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
         checkStatus();// 检查相关设置状态
-        setTitle("设置");
-        setBackVisibility(View.VISIBLE);
+        tv_title.setText(getString(R.string.setting));
+        rl_back.setVisibility(View.VISIBLE);
         tv_version.setText("V " + SystemUtil.getVersionName(getApplicationContext()));
-        tb_clock_remind.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                if (on) {
+    }
+
+    @OnCheckedChanged({R.id.tb_clock_remind, R.id.tb_pwd_set})
+    public void onCheckedChanged(ToggleButton view, boolean isChecked){
+        switch (view.getId()){
+            case R.id.tb_clock_remind:
+                if (isChecked) {
                     showReminderDialog();// 开启闹钟提醒对话框
-                    SPUtil.put(SettingActivity.this, "isMsgRemind", true);
+                    SPUtil.put(SettingActivity.this, SPKeyConstants.IS_MSG_REMIND, true);
                 } else {
-                    showToastMsgShort("闹钟提醒已关闭");
-                    SPUtil.put(SettingActivity.this, "isMsgRemind", false);
+                    ToastUtil.showShortToast(getString(R.string.clock_close));
+                    SPUtil.put(SettingActivity.this, SPKeyConstants.IS_MSG_REMIND, false);
                 }
-            }
-        });
-        tb_pwd_set.setOnToggleChanged(new ToggleButton.OnToggleChanged() {
-            @Override
-            public void onToggle(boolean on) {
-                startPwsSetting(on);// 设置密码开关
-            }
-        });
+                break;
+            case R.id.tb_pwd_set:
+                startPwsSetting(isChecked);// 设置密码开关
+                break;
+        }
+    }
+
+    @Override
+    protected boolean isApplyStatusBarColor() {
+        return true;
+    }
+
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
     }
 
     @Override
     protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
+        UIUtils.dismissAlertDialog(agreement_dialog);
         super.onDestroy();
     }
 
@@ -101,7 +105,7 @@ public class SettingActivity extends BaseActivity {
     private void showReminderDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(SettingActivity.this);
         builder.setMessage(R.string.alarm_reminder_msg);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -115,18 +119,10 @@ public class SettingActivity extends BaseActivity {
      * 判断是否枷锁和闹钟提醒
      */
     private void checkStatus() {
-        isLock = (boolean) SPUtil.get(this, "isLock", false);
-        if (isLock) {
-            tb_pwd_set.setToggleOn();
-        } else {
-            tb_pwd_set.setToggleOff();
-        }
-        isMsgRemind = (boolean) SPUtil.get(this, "isMsgRemind", false);
-        if (isMsgRemind) {
-            tb_clock_remind.setToggleOn();
-        } else {
-            tb_clock_remind.setToggleOff();
-        }
+        boolean isLock = (boolean) SPUtil.get(this, SPKeyConstants.APP_LOCK, false);
+        tb_pwd_set.setChecked(isLock);
+        boolean isMsgRemind = (boolean) SPUtil.get(this, SPKeyConstants.IS_MSG_REMIND, false);
+        tb_clock_remind.setChecked(isMsgRemind);
     }
 
     @Override
@@ -137,23 +133,32 @@ public class SettingActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
+        finishPage();
+    }
+
+    /**
+     * 关闭页面
+     */
+    private void finishPage() {
         if (agreement_dialog != null && agreement_dialog.isShowing()) {
             agreement_dialog.dismiss();
         } else {
-            super.onBackPressed();
+            finish();
         }
     }
 
-    @OnClick({R.id.rl_opinion_feedback, R.id.rl_version_update, R.id.tv_agreement, R.id.tv_contact_us})
+    @OnClick({R.id.rl_opinion_feedback, R.id.rl_version_update,
+            R.id.tv_agreement, R.id.tv_contact_us, R.id.rl_back})
     public void onClick(View view) {
         Intent intent;
         switch (view.getId()) {
             case R.id.rl_opinion_feedback:
+                String token = (String) SPUtil.get(this, SPKeyConstants.ACCESS_TOKEN, "");
                 if (!TextUtils.isEmpty(token)) {
                     intent = new Intent(SettingActivity.this, OpinionFeedbackActivity.class);
                     startActivity(intent);
                 } else {
-                    showToastMsgShort("登录后可用");
+                    ToastUtil.showShortToast(getString(R.string.enable_logined));
                 }
                 break;
             case R.id.rl_version_update:
@@ -166,6 +171,9 @@ public class SettingActivity extends BaseActivity {
             case R.id.tv_contact_us:
                 intent = new Intent(this, ContactUsActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.rl_back:
+                finishPage();
                 break;
         }
     }

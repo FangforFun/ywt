@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg">
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/toolbar_layout"/>
 
     <TextView
-        android:id="@+id/tv_contact_us"
         android:layout_width="match_parent"
         android:layout_height="@dimen/contact_us_height"
-        android:text="联系我们"
+        android:text="@string/contract_us"
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:textSize="@dimen/goods_car_tv_size"
@@ -24,8 +26,7 @@
         android:paddingRight="20dp"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
-        android:background="@color/white"
-        android:layout_below="@id/tv_contact_us">
+        android:background="@color/white">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,7 +35,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="地址："
+                android:text="@string/company_address_"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"/>
 
@@ -42,7 +43,7 @@
                 android:id="@+id/tv_address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="北京市海淀区西三旗建材城中路3号程远大厦A座5层"
+                android:text="@string/company_address"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
@@ -56,7 +57,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="邮编："
+                android:text="@string/email_"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"/>
 
@@ -64,7 +65,7 @@
                 android:id="@+id/tv_zip_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="100086"
+                android:text="@string/post_code"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
@@ -78,7 +79,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="客服电话："
+                android:text="@string/customer_service_phone"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"/>
 
@@ -86,10 +87,10 @@
                 android:id="@+id/tv_tell"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="010-82911287-5032"
+                android:text="@string/company_phone"
                 android:textColor="@color/tv_bg"
                 android:textSize="@dimen/goods_car_tv_size"
                 android:lineSpacingExtra="5dp"/>
         </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

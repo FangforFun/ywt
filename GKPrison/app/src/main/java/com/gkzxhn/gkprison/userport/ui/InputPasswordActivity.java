@@ -1,61 +1,63 @@
-package com.gkzxhn.gkprison.userport.activity;
+package com.gkzxhn.gkprison.userport.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.splash.welcome.WelComeActivity;
 import com.jungly.gridpasswordview.GridPasswordView;
-import com.keda.sky.app.PcAppStackManager;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * 输入app解锁密码
  */
-public class InputPasswordActivity extends BaseActivity {
+public class InputPasswordActivity extends BaseActivityNew {
 
-    private TextView tv_pwd_error;
-    private GridPasswordView gpv_input_pwd;
-    private SharedPreferences sp;
-    private Handler handler = new Handler();
+    @BindView(R.id.tv_pwd_error) TextView tv_pwd_error;
+    @BindView(R.id.gpv_input_pwd) GridPasswordView gpv_input_pwd;
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
 
+    /**
+     * 开启当前activity
+     * @param mContext
+     */
     public static void startActivity(Context mContext){
         Intent intent = new Intent(mContext, InputPasswordActivity.class);
         mContext.startActivity(intent);
     }
 
     @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(this, R.layout.activity_input_password, null);
-        tv_pwd_error = (TextView) view.findViewById(R.id.tv_pwd_error);
-        gpv_input_pwd = (GridPasswordView) view.findViewById(R.id.gpv_input_pwd);
-        return view;
+    public int setLayoutResId() {
+        return R.layout.activity_input_password;
     }
 
     @Override
-    protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        setTitle("输入密码");
-        setBackVisibility(View.VISIBLE);
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
+        tv_title.setText(R.string.input_pwd);
+        rl_back.setVisibility(View.VISIBLE);
         gpv_input_pwd.setOnPasswordChangedListener(new GridPasswordView.OnPasswordChangedListener() {
-            @Override
-            public void onTextChanged(String psw) {
+            @Override public void onTextChanged(String psw) {
                 tv_pwd_error.setVisibility(View.GONE);
             }
 
-            @Override
-            public void onInputFinish(String psw) {
-                if(sp.getString("app_password", "").equals(psw)){
-//                    handler.postDelayed(go_to_next_task, 1000);
-                    handler.post(go_to_next_task);
+            @Override public void onInputFinish(String psw) {
+                String app_password = (String)getSPValue(SPKeyConstants.APP_PASSWORD, "");
+                if(!TextUtils.isEmpty(app_password) && app_password.equals(psw)){
+                    new Handler().post(go_to_next_task);
                 }else {
                     tv_pwd_error.setVisibility(View.VISIBLE);
                     gpv_input_pwd.clearPassword();
@@ -65,11 +67,14 @@ public class InputPasswordActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
-        super.onDestroy();
+    protected boolean isApplyStatusBarColor() {
+        return true;
     }
 
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
+    }
 
     /**
      * 密码输入正确，下一步
@@ -78,14 +83,15 @@ public class InputPasswordActivity extends BaseActivity {
         @Override
         public void run() {
             Intent intent;
-            if (sp.getBoolean("is_first", true)) {
+            if ((boolean)getSPValue(SPKeyConstants.FIRST_LOGIN, true)) {
                 intent = new Intent(InputPasswordActivity.this, WelComeActivity.class);
                 startActivity(intent);
             } else {
-                if (TextUtils.isEmpty(sp.getString("username", "")) || TextUtils.isEmpty(sp.getString("password", ""))) {
+                if (TextUtils.isEmpty((String)getSPValue(SPKeyConstants.USERNAME, "")) ||
+                        TextUtils.isEmpty((String)getSPValue(SPKeyConstants.PASSWORD, ""))) {
                     LoginActivity.startActivity(InputPasswordActivity.this);
                 } else {
-                    if (sp.getBoolean("isCommonUser", true)) {
+                    if ((boolean)getSPValue(SPKeyConstants.IS_COMMON_USER, true)) {
                         intent = new Intent(InputPasswordActivity.this, com.gkzxhn.gkprison.userport.ui.main.MainActivity.class);
                         startActivity(intent);
                     } else {
@@ -97,4 +103,9 @@ public class InputPasswordActivity extends BaseActivity {
             InputPasswordActivity.this.finish();
         }
     };
+
+    @OnClick(R.id.rl_back)
+    public void onClick(){
+        finish();
+    }
 }

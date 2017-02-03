@@ -155,7 +155,7 @@
             android:name=".userport.activity.ShoppingRecoderActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.SettingActivity"
+            android:name=".userport.ui.SettingActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.UserInfoActivity"
@@ -182,9 +182,6 @@
             android:launchMode="singleTop"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.BankPayActivity"
-            android:screenOrientation="portrait"/>
-        <activity
             android:name=".prisonport.ui.home.DateMeetingListActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait"/>
@@ -202,19 +199,19 @@
             android:name=".userport.ui.LawsDetailActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.OpinionFeedbackActivity"
+            android:name=".userport.ui.OpinionFeedbackActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.SettingPasswordActivity"
+            android:name=".userport.ui.SettingPasswordActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.InputPasswordActivity"
+            android:name=".userport.ui.InputPasswordActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.activity.AlarmActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.ContactUsActivity"
+            android:name=".userport.ui.ContactUsActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.ReChargeActivity"

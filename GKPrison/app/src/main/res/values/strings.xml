@@ -303,6 +303,35 @@
     <string name="warden">投诉建议</string>
     <string name="publish_info">公示信息</string>
     <string name="complaint_feedback">投诉反馈</string>
+    <string name="copyright">国科政信科技（北京）股份有限公司\ncopyright©2006-2015.All right reserved</string>
+    <string name="contract_us">联系我们</string>
+    <string name="soft_agreement">狱务通软件使用协议</string>
+    <string name="version">V 1.0</string>
+    <string name="version_update">版本更新</string>
+    <string name="opinion_feedback">意见反馈</string>
+    <string name="pwd_setting">独立密码设置</string>
+    <string name="clock_remind">闹钟提醒</string>
+    <string name="clock_close">闹钟提醒已关闭</string>
+    <string name="company_address_">地址：</string>
+    <string name="company_address">北京市海淀区西三旗建材城中路3号程远大厦A座5层</string>
+    <string name="email_">邮编：</string>
+    <string name="post_code">100086</string>
+    <string name="customer_service_phone">客服电话：</string>
+    <string name="company_phone">010-82911287-5032</string>
+    <string name="password_failed">您的密码输入有误，请重新输入</string>
+    <string name="input_password">请输入解锁密码</string>
+    <string name="input_pwd">输入密码</string>
+    <string name="pwd_not_match">密码不匹配，请重新输入</string>
+    <string name="set_pwd">设置密码</string>
+    <string name="confirm_pwd">确认密码</string>
+    <string name="set_success">设置成功</string>
+    <string name="feedback_hint">请写下您在使用狱务通中遇到的问题吧!</string>
+    <string name="commit">提交</string>
+    <string name="out_of_length">长度不合法</string>
+    <string name="input_content">请输入内容</string>
+    <string name="commit_wait">正在提交，请稍候...</string>
+    <string name="commit_failed_retry">提交失败，请稍后再试</string>
+    <string name="commit_success_">提交成功，感谢您的反馈</string>
 
 
 </resources>

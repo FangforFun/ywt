@@ -6,7 +6,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
-import com.gkzxhn.gkprison.userport.activity.InputPasswordActivity;
+import com.gkzxhn.gkprison.userport.ui.InputPasswordActivity;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.userport.ui.splash.welcome.WelComeActivity;

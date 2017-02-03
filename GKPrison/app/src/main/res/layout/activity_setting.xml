@@ -1,5 +1,4 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:toggle="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg">
@@ -10,6 +9,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:background="@color/bg">
+
+        <include layout="@layout/toolbar_layout" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -27,25 +28,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/laws_item_height"
-                android:text="闹钟提醒"
+                android:text="@string/clock_remind"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
-            <com.zcw.togglebutton.ToggleButton
+            <ToggleButton
                 android:id="@+id/tb_clock_remind"
-                android:layout_width="54dp"
-                toggle:onColor="#c1eaf7"
-                toggle:offColor="#bcbcbc"
-                toggle:spotColor="#32b1df"
-                toggle:offBorderColor="#bcbcbc"
-                toggle:borderWidth="2dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_alignParentRight="true">
-            </com.zcw.togglebutton.ToggleButton>
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -64,25 +59,19 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/laws_item_height"
-                android:text="独立密码设置"
+                android:text="@string/pwd_setting"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
                 android:textColor="@color/tv_bg"/>
 
-            <com.zcw.togglebutton.ToggleButton
+            <ToggleButton
                 android:id="@+id/tb_pwd_set"
-                android:layout_width="54dp"
-                toggle:onColor="#c1eaf7"
-                toggle:offColor="#bcbcbc"
-                toggle:spotColor="#32b1df"
-                toggle:offBorderColor="#bcbcbc"
-                toggle:borderWidth="2dp"
-                android:layout_height="25dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_alignParentRight="true">
-            </com.zcw.togglebutton.ToggleButton>
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="10dp"/>
         </RelativeLayout>
 
         <RelativeLayout
@@ -102,7 +91,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/laws_item_height"
-                android:text="意见反馈"
+                android:text="@string/opinion_feedback"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
@@ -127,7 +116,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/laws_item_height"
-                android:text="版本更新"
+                android:text="@string/version_update"
                 android:gravity="center_vertical"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_marginLeft="50dp"
@@ -137,7 +126,7 @@
                 android:id="@+id/tv_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="V 3.0"
+                android:text="@string/version"
                 android:textColor="@color/tv_mid"
                 android:textSize="@dimen/setting_item_tv_size"
                 android:layout_alignParentRight="true"
@@ -146,53 +135,5 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:paddingBottom="20dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_alignParentBottom="true">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <TextView
-                android:id="@+id/tv_agreement"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="狱务通软件使用协议"
-                android:textColor="@color/theme"
-                android:textSize="@dimen/setting_bottom_tv_size"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="|"
-                android:textColor="@color/theme"
-                android:textSize="12sp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"/>
-
-            <TextView
-                android:id="@+id/tv_contact_us"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="联系我们"
-                android:textColor="@color/theme"
-                android:textSize="@dimen/setting_bottom_tv_size"/>
-        </LinearLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="国科政信科技（北京）股份有限公司\ncopyright©2006-2015.All right reserved"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_marginTop="5dp"
-            android:lineSpacingExtra="5dp"
-            android:textColor="@color/tv_gray"
-            android:textSize="@dimen/setting_bottom_tv_size"/>
-    </LinearLayout>
+    <include layout="@layout/layout_agreement_right" />
 </RelativeLayout>
