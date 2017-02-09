@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@color/bg">
+
+    <include layout="@layout/toolbar_layout" />
 
     <RelativeLayout
         android:id="@+id/rl_update"
@@ -22,7 +25,7 @@
             android:id="@+id/bt_update"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="检查更新"
+            android:text="@string/check_update"
             android:textColor="@color/white"
             android:textSize="18sp"
             android:padding="10dp"
@@ -55,7 +58,6 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/rl_update"
         android:orientation="vertical">
 
         <LinearLayout
@@ -67,7 +69,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:text="当前版本："
+                android:text="@string/current_vs"
                 android:gravity="center_vertical"
                 android:textSize="16sp"
                 android:textColor="@color/theme"/>
@@ -76,7 +78,6 @@
                 android:id="@+id/tv_version_code"
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
-                android:text="2.0"
                 android:gravity="center_vertical"
                 android:textSize="16sp"
                 android:textColor="@color/theme"/>
@@ -86,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="50dp"
                 android:layout_marginLeft="60dp"
-                android:text="新版本：3.0"
+                android:text="@string/new_vs"
                 android:textSize="16sp"
                 android:textColor="@color/theme"
                 android:visibility="gone"/>
@@ -102,7 +103,7 @@
             android:id="@+id/tv_new_function"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="已经是最新版本!"
+            android:text="@string/newest_vs"
             android:lineSpacingExtra="10dp"
             android:textColor="@color/tv_mid"
             android:textSize="16sp"
@@ -113,7 +114,6 @@
             android:id="@+id/tv_new_function_contents"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="新增家属服务\n修复弹出bug"
             android:lineSpacingExtra="10dp"
             android:textColor="@color/tv_mid"
             android:textSize="16sp"
@@ -121,4 +121,4 @@
             android:paddingRight="20dp"
             android:visibility="gone"/>
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.userport.activity.WriteMessageActivity;
 import com.gkzxhn.gkprison.userport.fragment.InterractiveMailboxFragment;
 import com.gkzxhn.gkprison.userport.fragment.ReplyPublicityFragment;
 

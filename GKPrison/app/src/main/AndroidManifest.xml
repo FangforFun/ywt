@@ -174,7 +174,7 @@
             android:name=".userport.activity.VersionUpdateActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.WriteMessageActivity"
+            android:name=".userport.ui.WriteMessageActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity

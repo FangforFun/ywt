@@ -127,7 +127,7 @@ public class LawsRegulationsActivity extends BaseActivityNew {
                 @Override public void onNext(Laws laws) {
                     Log.i(TAG, "get data result: " + laws.getError() + ", size: " + laws.getLaws().size());
                     UIUtils.dismissProgressDialog(dialog);
-                    if (laws.getError() == 200){
+                    if (laws.getError() == 0){// 成功返回
                         if (laws.getLaws().size() > 0){
                             LawsRegulationsActivity.this.laws = laws;
                             lv_laws_regulations.setAdapter(new MyAdapter(laws.getLaws()));

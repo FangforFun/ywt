@@ -155,7 +155,7 @@ public class OpinionFeedbackActivity extends BaseActivityNew {
                             public void run() {
                                 OpinionFeedbackActivity.this.finish();
                             }
-                        }, 2000);
+                        }, 1500);
                     }
                 });
     }

@@ -2,7 +2,6 @@ package com.gkzxhn.gkprison.userport.activity;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.Handler;
@@ -14,17 +13,17 @@ import android.view.animation.RotateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.base.BaseActivity;
+import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
 import com.gkzxhn.gkprison.userport.bean.VersionInfo;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.google.gson.Gson;
-import com.keda.sky.app.PcAppStackManager;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.ResponseInfo;
@@ -33,20 +32,25 @@ import com.lidroid.xutils.http.client.HttpRequest;
 
 import java.io.File;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * 版本更新页面
  */
-public class VersionUpdateActivity extends BaseActivity {
+public class VersionUpdateActivity extends BaseActivityNew{
 
     private static final java.lang.String TAG = "VersionUpdateActivity";
-    private ImageView iv_check_update;
-    private Button bt_update;// 检查更新&更新按钮
-    private TextView tv_version_code;// 当前版本号
-    private TextView tv_new_function;// 新功能tv
-    private TextView tv_new_version;// 新版本号
-    private TextView tv_new_function_contents;// 新版本功能内容
+    @BindView(R.id.tv_title) TextView tv_title;
+    @BindView(R.id.rl_back) RelativeLayout rl_back;
+    @BindView(R.id.iv_check_update) ImageView iv_check_update;
+    @BindView(R.id.bt_update) Button bt_update;// 检查更新&更新按钮
+    @BindView(R.id.tv_version_code) TextView tv_version_code;// 当前版本号
+    @BindView(R.id.tv_new_function) TextView tv_new_function;// 新功能tv
+    @BindView(R.id.tv_new_version) TextView tv_new_version;// 新版本号
+    @BindView(R.id.tv_new_function_contents) TextView tv_new_function_contents;// 新版本功能内容
     private RotateAnimation ra;
-    private SharedPreferences sp;
     private VersionInfo versionInfo;
     private TextView tv_progress;
     private ProgressBar pb_update;
@@ -60,28 +64,6 @@ public class VersionUpdateActivity extends BaseActivity {
         }
     };
 
-    @Override
-    protected View initView() {
-        PcAppStackManager.Instance().pushActivity(this);
-        View view = View.inflate(this, R.layout.activity_version_update, null);
-        iv_check_update = (ImageView) view.findViewById(R.id.iv_check_update);
-        bt_update = (Button) view.findViewById(R.id.bt_update);
-        tv_version_code = (TextView) view.findViewById(R.id.tv_version_code);
-        tv_new_function = (TextView) view.findViewById(R.id.tv_new_function);
-        tv_new_version = (TextView) view.findViewById(R.id.tv_new_version);
-        tv_new_function_contents = (TextView) view.findViewById(R.id.tv_new_function_contents);
-        return view;
-    }
-
-    @Override
-    protected void initData() {
-        sp = getSharedPreferences("config", MODE_PRIVATE);
-        setTitle("版本更新");
-        setBackVisibility(View.VISIBLE);
-        bt_update.setOnClickListener(this);
-        tv_version_code.setText(SystemUtil.getVersionName(getApplicationContext()));
-    }
-
     private Runnable rotateTask = new Runnable() {
         @Override
         public void run() {
@@ -94,14 +76,35 @@ public class VersionUpdateActivity extends BaseActivity {
     };
 
     @Override
-    protected void onDestroy() {
-        PcAppStackManager.Instance().popActivity(this, false);
-        super.onDestroy();
+    public int setLayoutResId() {
+        return R.layout.activity_version_update;
     }
 
     @Override
+    protected void initUiAndListener() {
+        ButterKnife.bind(this);
+        tv_title.setText(R.string.vs_update);
+        rl_back.setVisibility(View.VISIBLE);
+        tv_version_code.setText(SystemUtil.getVersionName(getApplicationContext()));
+    }
+
+    @Override
+    protected boolean isApplyStatusBarColor() {
+        return true;
+    }
+
+    @Override
+    protected boolean isApplyTranslucentStatus() {
+        return true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @OnClick({R.id.bt_update, R.id.rl_back})
     public void onClick(View v) {
-        super.onClick(v);
         switch (v.getId()){
             case R.id.bt_update:
                 if(!has_new_version) {
@@ -112,6 +115,9 @@ public class VersionUpdateActivity extends BaseActivity {
                     bt_update.setClickable(false);
                     showUpdateDialog();
                 }
+                break;
+            case R.id.rl_back:
+                finish();
                 break;
         }
     }
