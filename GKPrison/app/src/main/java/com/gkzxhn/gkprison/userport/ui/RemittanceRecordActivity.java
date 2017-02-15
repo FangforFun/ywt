@@ -120,6 +120,7 @@ public class RemittanceRecordActivity extends BaseActivityNew {
                         return -1;
                     }
                 });
+                subscriber.onNext(null);
             }
         }).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread()).subscribe(new SimpleObserver<Object>(){

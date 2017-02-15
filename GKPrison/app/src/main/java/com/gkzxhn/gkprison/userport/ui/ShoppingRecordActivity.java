@@ -124,6 +124,7 @@ public class ShoppingRecordActivity extends BaseActivityNew {
                     carts.get(i).setCommodityList(commodities);
                     cursor1.close();
                 }
+                subscriber.onNext(null);
             }
         }).subscribeOn(Schedulers.io()).unsubscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
