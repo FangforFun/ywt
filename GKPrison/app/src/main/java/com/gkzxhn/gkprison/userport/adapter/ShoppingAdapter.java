@@ -1,16 +1,15 @@
 package com.gkzxhn.gkprison.userport.adapter;
 
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
+import com.gkzxhn.gkprison.userport.ui.ShoppingRecordActivity;
 import com.gkzxhn.gkprison.userport.bean.Cart;
-import com.gkzxhn.gkprison.userport.view.CustomListView;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
+import com.gkzxhn.gkprison.widget.CustomListView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +18,13 @@ import java.util.List;
  * Created by admin on 2016/1/14.
  */
 public class ShoppingAdapter extends BaseAdapter {
-    private LayoutInflater inflater;
     private List<Cart> list;
     List<CommidtyAdapter> commodityAdapterList = new ArrayList<CommidtyAdapter>();
-    ShoppingRecoderActivity context;
+    ShoppingRecordActivity context;
 
-    public ShoppingAdapter(ShoppingRecoderActivity context, List<Cart> list) {
+    public ShoppingAdapter(ShoppingRecordActivity context, List<Cart> list) {
         this.context = context;
         this.list = list;
-        this.inflater = LayoutInflater.from(context);
         for (int i = 0; i < list.size(); i++) {
             CommidtyAdapter commidtyAdapter = new CommidtyAdapter(this,i,context,
                      list.get(i).getCommodityList());
@@ -54,7 +51,7 @@ public class ShoppingAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHoler viewHoler;
         if (convertView == null){
-            convertView = inflater.inflate(R.layout.shoppingrecode_item,null);
+            convertView = View.inflate(context, R.layout.shoppingrecode_item, null);
             viewHoler = new ViewHoler();
             viewHoler.tv_paytime = (TextView)convertView.findViewById(R.id.tv_paytime);
             viewHoler.tv_qty = (TextView)convertView.findViewById(R.id.tv_qty);

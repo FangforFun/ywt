@@ -34,16 +34,16 @@ import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.activity.RemittanceRecordActivity;
+import com.gkzxhn.gkprison.userport.ui.RemittanceRecordActivity;
 import com.gkzxhn.gkprison.userport.ui.SettingActivity;
-import com.gkzxhn.gkprison.userport.activity.ShoppingRecoderActivity;
+import com.gkzxhn.gkprison.userport.ui.ShoppingRecordActivity;
 import com.gkzxhn.gkprison.userport.ui.UserInfoActivity;
 import com.gkzxhn.gkprison.userport.ui.login.Config;
 import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.ui.main.home.HomeFragment;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
-import com.gkzxhn.gkprison.userport.view.AutoCompleteTv;
+import com.gkzxhn.gkprison.widget.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -180,7 +180,7 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
                         break;
                     case R.id.shopping_record:
                         if (isRegisterUser) {
-                            intent = new Intent(MainActivity.this, ShoppingRecoderActivity.class);
+                            intent = new Intent(MainActivity.this, ShoppingRecordActivity.class);
                             startActivity(intent);
                         } else {
                             showToast(getString(R.string.enable_logined));

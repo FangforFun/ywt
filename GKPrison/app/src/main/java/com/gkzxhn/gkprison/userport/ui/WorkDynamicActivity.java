@@ -22,10 +22,9 @@ import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
-import com.gkzxhn.gkprison.userport.view.RefreshLayout;
-import com.gkzxhn.gkprison.userport.view.RollViewPager;
+import com.gkzxhn.gkprison.widget.RefreshLayout;
+import com.gkzxhn.gkprison.widget.RollViewPager;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
@@ -253,7 +252,7 @@ public class WorkDynamicActivity extends BaseActivityNew {
                             for (News news : newses){
                                 Log.i(TAG, news.toString());
                                 allnews.add(news);
-                                if(news.getType_id() == 1){
+                                if(news.getType_id() == 2){
                                     newsList.add(news);
                                 }
                             }

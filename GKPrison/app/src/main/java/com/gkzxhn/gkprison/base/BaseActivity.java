@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.base;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -39,7 +40,9 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         setContentView(R.layout.activity_base);
         ly_title_bar = findViewById(R.id.ly_title_bar);
         rl_content = (RelativeLayout) findViewById(R.id.rl_content);

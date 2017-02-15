@@ -121,4 +121,9 @@ public class SPKeyConstants {
      * app的密码
      */
     public static final String APP_PASSWORD = "app_password";
+
+    /**
+     * 有新消息
+     */
+    public static final String HAS_NEW_NOTIFICATION = "has_new_notification";
 }

@@ -8,7 +8,6 @@
         android:id="@+id/tv_reply_item_title"
         android:layout_width="wrap_content"
         android:layout_height="50dp"
-        android:text="2015年9月份局长信箱答复情况公示"
         android:gravity="center_vertical"
         android:textColor="@color/tv_bg"
         android:textSize="16sp"

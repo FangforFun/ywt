@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import com.gkzxhn.gkprison.userport.activity.AlarmActivity;
+import com.gkzxhn.gkprison.userport.ui.AlarmActivity;
 
 /**
  * created by huangzhengneng on 2016/1/20

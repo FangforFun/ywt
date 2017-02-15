@@ -7,7 +7,6 @@
     <color name="half_transparent_theme">#4e82df</color>
     <color name="white">#ffffff</color>
     <color name="bg">#f0f0f0</color>
-    <color name="shallow_black">#414141</color>
     <color name="tv_mid">#666666</color>
     <color name="tv_bg">#333333</color>
     <color name="tv_red">#f10000</color>
@@ -20,60 +19,11 @@
     <color name="canlendar_text_color">#323232</color>
     <color name="navpage">#FFE1E8EB</color>
 
-    <color name="gplus_color_1">#3e802f</color>
-
-    <!-- 底部弹出框 -->
-    <!--覆盖颜色-->
-    <color name="bgColor_overlay">#60000000</color>
-    <!--窗口背景颜色-->
-    <color name="bgColor_alertview_alert">#f8f8f8</color>
-    <color name="bgColor_alertview_alert_start">#f0f0f0</color>
-    <!--标题颜色-->
-    <color name="textColor_alert_title">#000000</color>
-    <color name="textColor_actionsheet_title">#8f8f8f</color>
-    <!--消息颜色-->
-    <color name="textColor_alert_msg">#000000</color>
-    <color name="textColor_actionsheet_msg">#8f8f8f</color>
-    <!--线条颜色-->
-    <color name="bgColor_divier">#d7d7db</color>
-    <!--取消按钮颜色-->
-    <color name="textColor_alert_button_cancel">#007aff</color>
-    <!--高亮按钮颜色-->
-    <color name="textColor_alert_button_destructive">#ff3b30</color>
-    <!--普通按钮文字颜色-->
-    <color name="textColor_alert_button_others">#6495ed</color>
-    <!--点击颜色-->
-    <color name="bgColor_alert_button_press">#EAEAEA</color>
-    <!--actionsheet模式的取消按钮背景颜色-->
-    <color name="bgColor_actionsheet_cancel_nor">#ffffff</color>
-
-    <!-- sweet-alert-dialog -->
-    <color name="float_transparent">#00000000</color>
-    <color name="sweet_dialog_bg_color">#FFFFFF</color>
-    <color name="button_text_color">#FFFFFF</color>
-    <color name="gray_btn_bg_color">#D0D0D0</color>
-    <color name="gray_btn_bg_pressed_color">#B6B6B6</color>
-    <color name="blue_btn_bg_color">#6495ed</color><!-- #AEDEF4 -->
-    <color name="blue_btn_bg_pressed_color">#96BFD2</color>
-    <color name="red_btn_bg_color">#DD6B55</color>
-    <color name="red_btn_bg_pressed_color">#CD5B55</color>
-    <color name="error_stroke_color">#F27474</color>
-    <color name="success_stroke_color">#6495ed</color><!-- #A5DC86 -->
-    <color name="trans_success_stroke_color">#33A5DC86</color>
-    <color name="warning_stroke_color">#F8BB86</color>
-
     // keda
     <color name="red">#FF0000</color>
 
     <!-- gray -->
     <color name="gray_484848">#484848</color>
-
-    <!-- c -->
-    <!-- meeting list -->
-
-    <color name="grey">#ff58616d</color>
-
-    <!-- black -->
 
     <!-- blue -->
     <color name="blue_008ccd">#008ccd</color>
@@ -81,4 +31,7 @@
     <!-- color -->
     <color name="color_78">#FF787878</color>
     <color name="color_a1">#FFa1a1a1</color>
+
+    <color name="blue_btn_bg_color">#6495ed</color><!-- #AEDEF4 -->
+    <color name="blue_btn_bg_pressed_color">#96BFD2</color>
 </resources>

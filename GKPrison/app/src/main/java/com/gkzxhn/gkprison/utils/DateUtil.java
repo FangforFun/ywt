@@ -2,7 +2,7 @@ package com.gkzxhn.gkprison.utils;
 
 import android.annotation.SuppressLint;
 
-import com.gkzxhn.gkprison.prisonport.view.CustomDate;
+import com.gkzxhn.gkprison.widget.calendar.CustomDate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

@@ -13,7 +13,7 @@
         android:textColor="@color/tv_mid"
         android:padding="10dp"/>
 
-    <com.gkzxhn.gkprison.userport.view.AutoCompleteTv
+    <com.gkzxhn.gkprison.widget.AutoCompleteTv
         android:id="@+id/actv_prison_input"
         android:layout_width="match_parent"
         android:layout_height="50dp"

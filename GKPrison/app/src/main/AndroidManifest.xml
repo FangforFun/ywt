@@ -149,10 +149,10 @@
             android:name=".userport.ui.PrisonOpenActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.RemittanceRecordActivity"
+            android:name=".userport.ui.RemittanceRecordActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.ShoppingRecoderActivity"
+            android:name=".userport.ui.ShoppingRecordActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.SettingActivity"
@@ -161,17 +161,17 @@
             android:name=".userport.ui.UserInfoActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.SystemMessageActivity"
+            android:name=".userport.ui.SystemMessageActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.register.RegisterActivity"
             android:windowSoftInputMode="adjustPan|stateHidden"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.ApplyResultActivity"
+            android:name=".userport.ui.ApplyResultActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.VersionUpdateActivity"
+            android:name=".userport.ui.VersionUpdateActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.WriteMessageActivity"
@@ -192,7 +192,7 @@
             android:name=".userport.ui.splash.welcome.WelComeActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.NewsDetailActivity"
+            android:name=".userport.ui.NewsDetailActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan|stateHidden"/>
         <activity
@@ -208,7 +208,7 @@
             android:name=".userport.ui.InputPasswordActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".userport.activity.AlarmActivity"
+            android:name=".userport.ui.AlarmActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name=".userport.ui.ContactUsActivity"

@@ -9,7 +9,7 @@
         android:id="@+id/tv_msg_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="确定退出当前账号？"
+        android:text="@string/confirm"
         android:textColor="@color/tv_bg"
         android:lineSpacingExtra="5dp"
         android:textSize="@dimen/ok_cancel_title_size"

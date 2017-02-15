@@ -10,7 +10,7 @@
         android:id="@+id/tv_system_msg_left"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:text="您的探监申请已通过"
+        android:text="@string/apply_through"
         android:gravity="center_vertical"
         android:textSize="16sp"
         android:textColor="@color/tv_bg"/>

@@ -196,7 +196,7 @@
                     android:focusable="false"
                     android:fadingEdge="none"
                     android:divider="@color/et_hint"
-                    android:visibility="gone"></ListView>
+                    android:visibility="gone"/>
 
                 <TextView
                     android:id="@+id/tv_no_list"

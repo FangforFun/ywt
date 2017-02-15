@@ -38,7 +38,7 @@ android {
             signingConfig signingConfigs.release
         }
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
         }
     }
 
@@ -90,7 +90,6 @@ dependencies {
     // multiDex
     compile project.MULTI_DEX
     // 数字进度条
-    compile project.SMOOTH_PROGRESSBAR
     compile project.LINK_BUILDER
     // eventbus
     compile project.EVENT_BUS

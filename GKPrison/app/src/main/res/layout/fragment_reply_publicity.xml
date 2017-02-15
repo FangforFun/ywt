@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="暂无公示信息"
+            android:text="@string/no_public"
             android:textSize="14sp"
             android:textColor="#666666"
             android:visibility="gone"/>

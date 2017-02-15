@@ -12,7 +12,6 @@ import android.widget.ToggleButton;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.userport.activity.VersionUpdateActivity;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.SystemUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;

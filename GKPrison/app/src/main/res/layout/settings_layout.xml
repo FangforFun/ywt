@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="15dip"
-            android:text="AES加密：" />
+            android:text="@string/aes" />
 
         <ToggleButton
             android:id="@+id/aesTog"
@@ -125,7 +125,8 @@
                 android:text="随机设置" />
         </RadioGroup>
     </LinearLayout>
-    <TextView
+
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="15dip"

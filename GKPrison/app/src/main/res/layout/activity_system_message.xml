@@ -3,16 +3,21 @@
     android:layout_height="match_parent"
     android:background="@color/bg">
 
+    <include layout="@layout/toolbar_layout"
+        android:id="@+id/toolbar"/>
+
     <ListView
         android:id="@+id/lv_system_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:divider="@color/bg"
+        android:layout_below="@id/toolbar"
         android:dividerHeight="5dp"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@id/toolbar">
 
         <ImageView
             android:id="@+id/iv_no_system_message"

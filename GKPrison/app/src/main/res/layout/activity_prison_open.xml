@@ -5,7 +5,7 @@
 
     <include layout="@layout/toolbar_layout" />
 
-    <com.gkzxhn.gkprison.userport.view.RefreshLayout
+    <com.gkzxhn.gkprison.widget.RefreshLayout
         android:id="@+id/swipe_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,5 +18,5 @@
             android:divider="@android:color/transparent"
             android:dividerHeight="5dp"/>
 
-    </com.gkzxhn.gkprison.userport.view.RefreshLayout>
+    </com.gkzxhn.gkprison.widget.RefreshLayout>
 </LinearLayout>

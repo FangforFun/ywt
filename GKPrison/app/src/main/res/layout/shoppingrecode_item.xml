@@ -73,12 +73,12 @@
             android:layout_height="1dp"
             android:background="#dadada"/>
 
-        <com.gkzxhn.gkprison.userport.view.CustomListView
+        <com.gkzxhn.gkprison.widget.CustomListView
             android:id="@+id/lv_recode"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
-            android:divider="@color/transparent"></com.gkzxhn.gkprison.userport.view.CustomListView>
+            android:divider="@color/transparent"></com.gkzxhn.gkprison.widget.CustomListView>
 
         <LinearLayout
             android:layout_width="match_parent"

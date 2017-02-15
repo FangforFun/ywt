@@ -2,8 +2,6 @@
     <string name="app_name">狱务通</string>
     <string name="app_v">V </string>
 
-    <string name="drawer_open">打开抽屉</string>
-    <string name="drawer_close">关闭抽屉</string>
     <string name="alarm_reminder_msg">闹钟提醒已开启，如您有即将会见的档期，系统将会在会见开始前半小时以闹钟形式提醒您，请注意手机状态。</string>
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -32,18 +30,9 @@
 
 
     <!--下拉刷新-->
-    <string name="pull_to_refresh_pull_label">下拉可以刷新</string>
-    <string name="pull_to_refresh_release_label">释放立即刷新</string>
     <string name="pull_to_refresh_refreshing_label">正在刷新…</string>
 
     <string name="enable_logined">登录后可用</string>
-
-
-    <!-- sweet-alert-dialog -->
-    <string name="dialog_default_title">Here\'s a message!</string>
-    <string name="dialog_ok">OK</string>
-    <string name="dialog_cancel">Cancel</string>
-    <string name="net_broken">网络连接已断开，请检查网络</string>
 
 
     <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
@@ -110,12 +99,9 @@
 
     <!-- comm Text -->
     <string name="ok">确定</string>
-    <string name="save">保存</string>
     <string name="cancel">取消</string>
-    <string name="close">关闭</string>
     <string name="search">搜索</string>
     <string name="definition">清晰度</string>
-    <string name="send">发送</string>
     <string name="microphone">麦克风</string>
     <string name="speaker">扬声器</string>
     <string name="add_text">添加</string>
@@ -202,7 +188,6 @@
     <string name="focus_news_simple">焦点新闻简要描述...</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="user_name">用户名</string>
     <string name="account_info">账号信息</string>
     <string name="remittance_record">汇款记录</string>
@@ -343,6 +328,29 @@
     <string name="new_vs">新版本：3.0</string>
     <string name="newest_vs">已经是最新版本!</string>
     <string name="vs_update">版本更新</string>
+    <string name="confirm">确定退出当前账号？</string>
+    <string name="register_commit_success">注册提交成功！系统正在审核，审核结果将在24小时内以短信形式发送到您的手机上，请您耐心等待。</string>
+    <string name="apply_through">您的探监申请已通过</string>
+    <string name="load_more">加载更多...</string>
+    <string name="server_addr">服务器地址：</string>
+    <string name="input_cancel">请输入取消</string>
+    <string name="cancel_reason">会见的原因：</string>
+    <string name="meeting_name">会议名称:</string>
+    <string name="no_feedback">暂无反馈信息</string>
+    <string name="no_public">暂无公示信息</string>
+    <string name="aes">AES加密：</string>
+    <string name="user_info">个人信息</string>
+    <string name="updating">正在更新：</string>
+    <string name="known">我知道了</string>
+    <string name="comment">写下您的评论吧</string>
+    <string name="comment_">评论</string>
+    <string name="input_comment_content">输入您要评论的内容吧</string>
+    <string name="comment_failed">评论失败，请稍后再试</string>
+    <string name="comment_success">评论成功！</string>
+    <string name="apply_result">申请结果页</string>
+    <string name="query_failed">查询记录失败</string>
+    <string name="system_msg">系统消息</string>
+    <string name="net_broken">网络连接已断开，请检查网络</string>
 
 
 </resources>

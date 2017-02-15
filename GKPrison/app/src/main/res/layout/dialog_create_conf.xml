@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="100dip"
             android:layout_height="wrap_content"
-            android:text="会议名称:" />
+            android:text="@string/meeting_name" />
 
         <EditText
             android:id="@+id/conf_name"

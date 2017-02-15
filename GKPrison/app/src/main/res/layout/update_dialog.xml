@@ -15,7 +15,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="正在更新："
+            android:text="@string/updating"
             android:textColor="@color/tv_bg"
             android:textSize="18sp"/>
 
@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_marginTop="10dp"/>
-    <!--<com.gkzxhn.gkprison.userport.view.DownloadProgressBar-->
+    <!--<com.gkzxhn.gkprison.widget.DownloadProgressBar-->
         <!--android:id="@+id/dpv_update"-->
         <!--android:layout_width="140dp"-->
         <!--android:layout_height="140dp"-->

@@ -7,6 +7,7 @@ import android.hardware.display.VirtualDisplay;
 import android.media.MediaRecorder;
 import android.media.projection.MediaProjection;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Environment;
 import android.os.HandlerThread;
 import android.os.IBinder;
@@ -99,28 +100,32 @@ public class RecordService extends Service {
   }
 
   private void createVirtualDisplay() {
-    virtualDisplay = mediaProjection.createVirtualDisplay("MainScreen", width, height, dpi,
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mediaRecorder.getSurface(), new VirtualDisplay.Callback() {
-              @Override
-              public void onPaused() {
-                super.onPaused();
-              }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      virtualDisplay = mediaProjection.createVirtualDisplay("MainScreen", width, height, dpi,
+              DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, mediaRecorder.getSurface(), new VirtualDisplay.Callback() {
+                @Override
+                public void onPaused() {
+                  super.onPaused();
+                }
 
-              @Override
-              public void onResumed() {
-                super.onResumed();
-              }
+                @Override
+                public void onResumed() {
+                  super.onResumed();
+                }
 
-              @Override
-              public void onStopped() {
-                super.onStopped();
-              }
-            }, null);
+                @Override
+                public void onStopped() {
+                  super.onStopped();
+                }
+              }, null);
+    }
   }
 
   private void initRecorder() {
     mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-    mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+    }
     mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
     mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);//视频格式
     mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);//音频格式

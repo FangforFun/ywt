@@ -14,8 +14,7 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:textSize="14sp"
-        android:textColor="@color/tv_bg"
-        android:text="万宝路"/>
+        android:textColor="@color/tv_bg"/>
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

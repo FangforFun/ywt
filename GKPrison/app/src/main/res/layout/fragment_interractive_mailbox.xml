@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="暂无反馈信息"
+            android:text="@string/no_feedback"
             android:textSize="16sp"
             android:textColor="#666666"
             android:layout_centerInParent="true"/>

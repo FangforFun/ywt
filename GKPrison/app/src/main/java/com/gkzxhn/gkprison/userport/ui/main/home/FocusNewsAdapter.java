@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.activity.NewsDetailActivity;
+import com.gkzxhn.gkprison.userport.ui.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
 import com.squareup.picasso.Picasso;
 
