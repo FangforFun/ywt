@@ -19,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -26,9 +27,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.FrameLayout;
 
-import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.app.utils.KDConstants;
-import com.gkzxhn.gkprison.service.RecordService;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.google.gson.Gson;
@@ -90,7 +91,7 @@ public class VConfVideoUI extends ActionBarActivity {
 		onViewCreated();
 
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(this, "token", "");
+			String username = (String) SPUtil.get(this, SPKeyConstants.ACCESS_TOKEN, "");
 			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
 			if (username.length() != 32) {
 //				startRecord();
@@ -98,12 +99,11 @@ public class VConfVideoUI extends ActionBarActivity {
 		}
 	}
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void startRecord() {
 		new Handler().postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+				MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
 				Intent intent = manager.createScreenCaptureIntent();
 				startActivityForResult(intent, REQUEST_CODE);
 				Intent service = new Intent(VConfVideoUI.this, RecordService.class);
@@ -112,8 +112,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		}, 1000);
 	}
 
-	private MediaProjectionManager manager;
-	private MediaProjection projection;
 	private RecordService recordService;
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {
@@ -132,7 +130,6 @@ public class VConfVideoUI extends ActionBarActivity {
 	private static final int REQUEST_CODE = 1;
 
 
-	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
@@ -142,7 +139,8 @@ public class VConfVideoUI extends ActionBarActivity {
 					return;
 				}
 				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-				projection = manager.getMediaProjection(resultCode, data);
+				MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+				MediaProjection projection = manager.getMediaProjection(resultCode, data);
 				recordService.setMediaProject(projection);
 				recordService.startRecord();
 			}

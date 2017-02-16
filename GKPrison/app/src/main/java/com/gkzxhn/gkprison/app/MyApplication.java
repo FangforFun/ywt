@@ -10,7 +10,7 @@ import com.gkzxhn.gkprison.app.component.DaggerAppComponent;
 import com.gkzxhn.gkprison.app.module.AppModule;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.app.utils.NimInitUtil;
-import com.gkzxhn.gkprison.service.RecordService;
+import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 

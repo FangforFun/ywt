@@ -34,7 +34,7 @@
         android:layout_height="wrap_content"
         style="@android:style/Widget.ProgressBar.Horizontal"
         android:layout_marginTop="10dp"/>
-    <!--<com.gkzxhn.gkprison.widget.DownloadProgressBar-->
+    <!--<com.gkzxhn.gkprison.widget.view.DownloadProgressBar-->
         <!--android:id="@+id/dpv_update"-->
         <!--android:layout_width="140dp"-->
         <!--android:layout_height="140dp"-->

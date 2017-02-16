@@ -100,7 +100,7 @@
                 android:inputType="number"/>
 
 
-            <com.gkzxhn.gkprison.widget.AutoCompleteTv
+            <com.gkzxhn.gkprison.widget.view.auto.AutoCompleteTv
                 android:id="@+id/actv_prison_choose"
                 style="@style/no_bg_small"
                 android:completionThreshold="1"

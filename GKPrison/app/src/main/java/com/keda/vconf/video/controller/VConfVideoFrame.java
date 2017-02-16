@@ -37,7 +37,8 @@ import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 
 import com.gkzxhn.gkprison.R;
-import com.gkzxhn.gkprison.service.RecordService;
+import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
+import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.keda.vconf.controller.VConfFunctionFragment;
@@ -1104,7 +1105,7 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 	public void surfaceCreated(SurfaceHolder holder) {
 		com.gkzxhn.gkprison.utils.Log.i("surfaceCreated");
 		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(getActivity(), "token", "");
+			String username = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
 			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
 			if (username.length() != 32) {
 				startRecord();

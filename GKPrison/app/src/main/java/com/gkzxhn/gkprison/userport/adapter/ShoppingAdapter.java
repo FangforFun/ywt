@@ -9,7 +9,7 @@ import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.userport.ui.ShoppingRecordActivity;
 import com.gkzxhn.gkprison.userport.bean.Cart;
 import com.gkzxhn.gkprison.utils.ListViewParamsUtils;
-import com.gkzxhn.gkprison.widget.CustomListView;
+import com.gkzxhn.gkprison.widget.view.CustomListView;
 
 import java.util.ArrayList;
 import java.util.List;

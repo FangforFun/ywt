@@ -43,7 +43,7 @@ import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.ui.main.home.HomeFragment;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
-import com.gkzxhn.gkprison.widget.AutoCompleteTv;
+import com.gkzxhn.gkprison.widget.view.auto.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;

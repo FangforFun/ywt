@@ -29,7 +29,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseActivityNew;
-import com.gkzxhn.gkprison.widget.AutoCompleteTv;
+import com.gkzxhn.gkprison.widget.view.auto.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.ImageTools;
 import com.gkzxhn.gkprison.utils.Log;

@@ -276,16 +276,16 @@
             <!--</intent-filter>-->
         <!--</receiver>-->
         <receiver
-            android:name=".userport.receiver.AlarmReceiver"
+            android:name=".widget.receiver.AlarmReceiver"
             android:process=":remote"/>
 
-        <receiver android:name=".userport.receiver.AppRegister">
+        <receiver android:name=".widget.receiver.AppRegister">
             <intent-filter>
                 <action android:name="com.tencent.mm.plugin.openapi.Intent.ACTION_REFRESH_WXAPP"/>
             </intent-filter>
         </receiver>
         <receiver
-            android:name=".userport.receiver.AutoRun"
+            android:name=".widget.receiver.AutoRun"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -336,7 +336,7 @@
         <service android:name="com.keda.vconf.modle.service.VideoCapService" >
         </service>
         <activity android:name="com.megvii.livenesslib.LivenessActivity2" />
-        <service android:name=".service.RecordService" />
+        <service android:name=".widget.service.RecordService" />
         <activity android:name=".utils.ConfigActivity" />
     </application>
 </manifest>

@@ -18,7 +18,7 @@ import com.gkzxhn.gkprison.app.MyApplication;
 import com.gkzxhn.gkprison.prisonport.ui.home.DateMeetingListActivity;
 import com.gkzxhn.gkprison.userport.ui.SystemMessageActivity;
 import com.gkzxhn.gkprison.userport.bean.SystemMessage;
-import com.gkzxhn.gkprison.userport.receiver.AlarmReceiver;
+import com.gkzxhn.gkprison.widget.receiver.AlarmReceiver;
 import com.gkzxhn.gkprison.userport.ui.main.MainActivity;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;

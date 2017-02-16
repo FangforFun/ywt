@@ -75,7 +75,7 @@ android {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     // 自定义toggle button
-    compile project(':libraries:ToggleButtonLib')
+
     // 人脸识别库
     compile project(':libraries:livenessLib')
     // android support
