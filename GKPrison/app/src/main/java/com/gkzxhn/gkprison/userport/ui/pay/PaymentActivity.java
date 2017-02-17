@@ -368,6 +368,8 @@ public class PaymentActivity extends BaseActivityNew {
                             String type = getString(R.string.zhifubao);
                             String sql = "update Cart set isfinish = 1,payment_type = '" + type + "' where time = '" + times + "'";
                             db.execSQL(sql);
+//                            // 支付成功通知会见页面更新数据
+//                            EventBus.getDefault().post(new RechargeSuccessEvent());
                             Intent intent = new Intent(PaymentActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                             PaymentActivity.this.startActivity(intent);

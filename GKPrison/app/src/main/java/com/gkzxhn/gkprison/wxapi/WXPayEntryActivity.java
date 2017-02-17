@@ -80,7 +80,6 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     public void onResp(BaseResp resp) {
-        tv_title = (TextView) findViewById(R.id.tv_title);
         tv_title.setText(R.string.pay_result);
         resultCode = resp.errCode;
         if (resp.getType() == ConstantsAPI.COMMAND_PAY_BY_WX) {
@@ -103,7 +102,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
         }
     }
 
-    @OnClick(R.id.tv_complete)
+    @OnClick(R.id.bt_ok)
     public void onClick(View view){
         Intent intent = new Intent(WXPayEntryActivity.this, MainActivity.class);
         if (resultCode == 0) {

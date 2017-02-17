@@ -91,18 +91,6 @@
                 </RelativeLayout>
 
                 <TextView
-                    android:id="@+id/tv_complete"
-                    android:visibility="gone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/title_bar_height"
-                    android:text="@string/complete"
-                    android:textSize="16sp"
-                    android:textColor="@color/white"
-                    android:gravity="center"
-                    android:layout_alignParentRight="true"
-                    android:padding="10dp"/>
-
-                <TextView
                     android:id="@+id/tv_logout"
                     android:visibility="gone"
                     android:layout_width="wrap_content"
