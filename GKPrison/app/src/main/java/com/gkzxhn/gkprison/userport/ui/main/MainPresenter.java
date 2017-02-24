@@ -134,7 +134,12 @@ public class MainPresenter implements MainContract.Presenter {
         Picasso.with(mContext).load(path).into(new Target() {
             @Override public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                 try {
-                    FileOutputStream fos =new FileOutputStream(new File(fileName));
+                    File file = new File(fileName);
+//                    if (file.exists()){
+//                        boolean isDeleteSuccess = file.delete();
+//                        Log.i(TAG, "delete exists avatar result: " + isDeleteSuccess);
+//                    }
+                    FileOutputStream fos =new FileOutputStream(file);
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
                     fos.close();
                     Log.i(TAG, "avatar已下载至:" + fileName);

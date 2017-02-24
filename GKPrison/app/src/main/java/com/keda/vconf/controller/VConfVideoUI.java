@@ -89,62 +89,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		setContentView(c, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
 		initExtras();
 		onViewCreated();
-
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(this, SPKeyConstants.ACCESS_TOKEN, "");
-			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
-			if (username.length() != 32) {
-//				startRecord();
-			}
-		}
-	}
-
-	private void startRecord() {
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-				Intent intent = manager.createScreenCaptureIntent();
-				startActivityForResult(intent, REQUEST_CODE);
-				Intent service = new Intent(VConfVideoUI.this, RecordService.class);
-				bindService(service, connection, BIND_AUTO_CREATE);
-			}
-		}, 1000);
-	}
-
-	private RecordService recordService;
-	private ServiceConnection connection = new ServiceConnection() {
-		@Override public void onServiceConnected(ComponentName name, IBinder service) {
-			DisplayMetrics metrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(metrics);
-			RecordService.RecordBinder binder = (RecordService.RecordBinder) service;
-			recordService = binder.getRecordService();
-			recordService.setConfig(metrics.widthPixels, metrics.heightPixels, metrics.densityDpi);
-			com.gkzxhn.gkprison.utils.Log.i("onServiceConnected");
-		}
-
-		@Override public void onServiceDisconnected(ComponentName name) {
-
-		}
-	};
-	private static final int REQUEST_CODE = 1;
-
-
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-		if (resultCode == RESULT_OK) {
-			if (requestCode == REQUEST_CODE) {
-				if (data == null){
-					return;
-				}
-				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-				MediaProjectionManager manager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-				MediaProjection projection = manager.getMediaProjection(resultCode, data);
-				recordService.setMediaProject(projection);
-				recordService.startRecord();
-			}
-		}
 	}
 
 
@@ -197,17 +141,12 @@ public class VConfVideoUI extends ActionBarActivity {
 	}
 
 	public void initExtras() {
-
 		Bundle extra = getIntent().getExtras();
-		if (null == extra) {
-			return;
-		}
-		if (null != extra) {
-			mConfTitle = extra.getString("VconfName");
-			mE164 = extra.getString(KDConstants.E164NUM);
-			mIsP2PConf = extra.getBoolean("MackCall", false);
-			mIsJoinConf = extra.getBoolean("JoinConf", false);
-		}
+		if (null == extra) return;
+		mConfTitle = extra.getString("VconfName");
+		mE164 = extra.getString(KDConstants.E164NUM);
+		mIsP2PConf = extra.getBoolean("MackCall", false);
+		mIsJoinConf = extra.getBoolean("JoinConf", false);
 
 		if (null != VConferenceManager.mConfInfo) {
 			mConfTitle = VConferenceManager.mConfInfo.achConfName;
@@ -221,11 +160,12 @@ public class VConfVideoUI extends ActionBarActivity {
 		mVConfQuality = extra.getInt("VconfQuality"); //会议质量
 		mDuration = extra.getInt("VconfDuration");//会议时长
 		try {
-			mTMtList = new Gson().fromJson(extra.getString("tMtList"), new TypeToken<List<TMtAddr>>() {
+			mTMtList = new Gson().fromJson(extra.getString("tMtList"),
+					new TypeToken<List<TMtAddr>>() {
 			}.getType());
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
-
 	}
 
 	public Fragment getCurrFragmentView() {
@@ -288,6 +228,7 @@ public class VConfVideoUI extends ActionBarActivity {
 		}
 		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
 			Log.i("VConfVideo", "VconfVideoFrame-->onConfigurationChanged 是否为横屏：true");
+
 		}
 	}
 
@@ -319,10 +260,6 @@ public class VConfVideoUI extends ActionBarActivity {
 		PcAppStackManager.Instance().popActivity(this, false);
 		EventBus.getDefault().unregister(this);
 
-//		if (recordService != null && recordService.isRunning()) {
-//			recordService.stopRecord();
-//			unbindService(connection);
-//		}
 		super.onDestroy();
 	}
 
@@ -374,4 +311,6 @@ public class VConfVideoUI extends ActionBarActivity {
 			ToastUtil.showLongToast(event.getMsg());
 		}
 	}
+
+
 }

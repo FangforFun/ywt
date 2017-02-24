@@ -1,5 +1,6 @@
 package com.gkzxhn.gkprison.widget.service;
 
+import android.annotation.TargetApi;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.display.DisplayManager;
@@ -76,15 +77,16 @@ public class RecordService extends Service {
     if (mediaProjection == null || running) {
       return false;
     }
-    Log.i("start record");
+    Log.i("VConfVideoFrame", "start record");
     initRecorder();
     createVirtualDisplay();
     mediaRecorder.start();
     running = true;
-    Log.i("start record");
+    Log.i("VConfVideoFrame", "start record");
     return true;
   }
 
+  @TargetApi(Build.VERSION_CODES.LOLLIPOP)
   public boolean stopRecord() {
     if (!running) {
       return false;

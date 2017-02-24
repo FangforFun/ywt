@@ -252,7 +252,6 @@ public class NimInitUtil {
         }
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Intent intent = new Intent(context, SystemMessageActivity.class);
-        Log.i("gongju通知", content);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
         Notification notification = new Notification.Builder(context)

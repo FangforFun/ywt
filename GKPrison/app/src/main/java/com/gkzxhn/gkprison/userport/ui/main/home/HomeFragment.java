@@ -19,14 +19,14 @@ import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.base.BaseFragmentNew;
 import com.gkzxhn.gkprison.constant.Constants;
-import com.gkzxhn.gkprison.userport.ui.NewsDetailActivity;
 import com.gkzxhn.gkprison.userport.bean.News;
-import com.gkzxhn.gkprison.widget.view.FullLinearLayout;
-import com.gkzxhn.gkprison.widget.view.RollViewPager;
+import com.gkzxhn.gkprison.userport.ui.NewsDetailActivity;
 import com.gkzxhn.gkprison.utils.FileUtils;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.UIUtils;
+import com.gkzxhn.gkprison.widget.view.FullLinearLayout;
+import com.gkzxhn.gkprison.widget.view.RollViewPager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +37,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -129,10 +128,9 @@ public class HomeFragment extends BaseFragmentNew{
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         ApiRequest api = retrofit.create(ApiRequest.class);
-        api.getNews(jail_id).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<List<News>>() {
-                    @Override public void onCompleted() {}
-
+        api.getNews(jail_id).subscribeOn(Schedulers.io()).
+                observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new SimpleObserver<List<News>>() {
                     @Override public void onError(Throwable e) {
                         Log.e(TAG, e.getMessage());
                         UIUtils.dismissProgressDialog(loadDataDialog);

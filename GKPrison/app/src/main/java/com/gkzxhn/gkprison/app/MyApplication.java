@@ -2,6 +2,7 @@ package com.gkzxhn.gkprison.app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.multidex.MultiDex;
 import android.support.multidex.MultiDexApplication;
 
@@ -10,6 +11,7 @@ import com.gkzxhn.gkprison.app.component.DaggerAppComponent;
 import com.gkzxhn.gkprison.app.module.AppModule;
 import com.gkzxhn.gkprison.app.utils.KDInitUtil;
 import com.gkzxhn.gkprison.app.utils.NimInitUtil;
+import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.gkzxhn.gkprison.utils.CrashHandler;
 import com.gkzxhn.gkprison.utils.ToastUtil;
@@ -50,7 +52,10 @@ public class MyApplication extends MultiDexApplication {
         ToastUtil.registerContext(this);
 //        LeakCanary.install(this);
         CrashHandler.getInstance().init(mOurApplication);
-        startService(new Intent(this, RecordService.class));
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+            startService(new Intent(this, RecordService.class));
+            Log.i(TAG, "record service already start");
+        }
     }
 
     /**

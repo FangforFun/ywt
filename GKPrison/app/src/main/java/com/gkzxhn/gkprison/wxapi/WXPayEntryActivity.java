@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.api.PayService;
 import com.gkzxhn.gkprison.api.okhttp.OkHttpUtils;
+import com.gkzxhn.gkprison.api.rx.RxUtils;
 import com.gkzxhn.gkprison.api.rx.SimpleObserver;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
 import com.gkzxhn.gkprison.constant.Constants;
@@ -155,9 +156,7 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler {
 
     @Override
     protected void onDestroy() {
-        if (synchronizeSubscription != null && !synchronizeSubscription.isUnsubscribed()){
-            synchronizeSubscription.unsubscribe();
-        }
+        RxUtils.unSubscribe(synchronizeSubscription);
         super.onDestroy();
     }
 }

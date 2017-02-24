@@ -20,10 +20,10 @@ import android.media.projection.MediaProjectionManager;
 import android.opengl.GLSurfaceView;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -38,9 +38,9 @@ import android.widget.ImageView;
 
 import com.gkzxhn.gkprison.R;
 import com.gkzxhn.gkprison.app.utils.SPKeyConstants;
-import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.gkzxhn.gkprison.utils.SPUtil;
 import com.gkzxhn.gkprison.utils.ToastUtil;
+import com.gkzxhn.gkprison.widget.service.RecordService;
 import com.keda.vconf.controller.VConfFunctionFragment;
 import com.keda.vconf.controller.VConfVideoUI;
 import com.keda.vconf.manager.VConferenceManager;
@@ -67,6 +67,7 @@ import static android.content.Context.BIND_AUTO_CREATE;
 
 public class VConfVideoFrame extends Fragment implements View.OnClickListener, SurfaceHolder.Callback {
 
+	private static final String TAG = "VConfVideoFrame";
 	// 切换间隔时间2s
 	private final long TOGGLE_INTERVAL_TIME = 2 * 1000;
 
@@ -145,13 +146,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i("VConfVideo", "VconfVideoFrame-->onCreate ");
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(getActivity(), "token", "");
-			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
-			if (username.length() != 32) {
-//				startRecord();
-			}
-		}
 	}
 
 	@SuppressLint("InflateParams")
@@ -185,20 +179,14 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	private void startRecord() {
-		new Handler().postDelayed(new Runnable() {
-			@Override
-			public void run() {
-				manager = (MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
-				Intent intent = manager.createScreenCaptureIntent();
-				startActivityForResult(intent, REQUEST_CODE);
-				Intent service = new Intent(getActivity(), RecordService.class);
-				getActivity().bindService(service, connection, BIND_AUTO_CREATE);
-			}
-		}, 1000);
+		manager = (MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+		Intent intent = manager.createScreenCaptureIntent();
+		startActivityForResult(intent, REQUEST_CODE);
+		Intent service = new Intent(getActivity(), RecordService.class);
+		getActivity().bindService(service, connection, BIND_AUTO_CREATE);
 	}
 
 	private MediaProjectionManager manager;
-	private MediaProjection projection;
 	private RecordService recordService;
 	private ServiceConnection connection = new ServiceConnection() {
 		@Override public void onServiceConnected(ComponentName name, IBinder service) {
@@ -207,7 +195,7 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 			RecordService.RecordBinder binder = (RecordService.RecordBinder) service;
 			recordService = binder.getRecordService();
 			recordService.setConfig(metrics.widthPixels, metrics.heightPixels, metrics.densityDpi);
-			com.gkzxhn.gkprison.utils.Log.i("onServiceConnected");
+			com.gkzxhn.gkprison.utils.Log.i(TAG, "onServiceConnected");
 		}
 
 		@Override public void onServiceDisconnected(ComponentName name) {
@@ -215,20 +203,19 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 		}
 	};
 	private static final int REQUEST_CODE = 1;
-
-
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
+		com.gkzxhn.gkprison.utils.Log.i(TAG,  "onActivityResult");
 		if (resultCode == RESULT_OK) {
 			if (requestCode == REQUEST_CODE) {
 				if (data == null){
 					ToastUtil.showShortToast("录制失败1");
 					return;
 				}
-				com.gkzxhn.gkprison.utils.Log.i("onActivityResult");
-				projection = manager.getMediaProjection(resultCode, data);
+				com.gkzxhn.gkprison.utils.Log.i(TAG, "onActivityResult");
+				manager = (MediaProjectionManager) getActivity().getSystemService(Context.MEDIA_PROJECTION_SERVICE);
+				MediaProjection projection = manager.getMediaProjection(resultCode, data);
 				recordService.setMediaProject(projection);
 				recordService.startRecord();
 			}
@@ -464,6 +451,15 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
+		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
+			String username = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
+			if (!TextUtils.isEmpty(username)) {
+				com.gkzxhn.gkprison.utils.Log.i(TAG, username.length() + "..................");
+				if (username.length() != 32) {
+					startRecord();
+				}
+			}
+		}
 	}
 
 	/**
@@ -1104,13 +1100,6 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		com.gkzxhn.gkprison.utils.Log.i("surfaceCreated");
-		if (Build.VERSION.SDK_INT > Build.VERSION_CODES.KITKAT) {
-			String username = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
-			com.gkzxhn.gkprison.utils.Log.i(username.length() + "");
-			if (username.length() != 32) {
-				startRecord();
-			}
-		}
 	}
 
 	@Override
@@ -1121,5 +1110,18 @@ public class VConfVideoFrame extends Fragment implements View.OnClickListener, S
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		com.gkzxhn.gkprison.utils.Log.i("surfaceDestroyed");
+		if (recordService!= null && recordService.isRunning()){
+			String username = (String) SPUtil.get(getActivity(), SPKeyConstants.ACCESS_TOKEN, "");
+			if (!TextUtils.isEmpty(username)) {
+				com.gkzxhn.gkprison.utils.Log.i(TAG, username.length() + "");
+				if (username.length() != 32) {
+					boolean result = recordService.stopRecord();
+					if (result)
+						com.gkzxhn.gkprison.utils.Log.i(TAG, "record service already stop");
+					else
+						com.gkzxhn.gkprison.utils.Log.i(TAG, "record service stop failed!");
+				}
+			}
+		}
 	}
 }

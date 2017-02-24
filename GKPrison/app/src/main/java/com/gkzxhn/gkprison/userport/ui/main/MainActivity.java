@@ -43,7 +43,6 @@ import com.gkzxhn.gkprison.userport.ui.login.LoginActivity;
 import com.gkzxhn.gkprison.userport.ui.main.canteen.CanteenBaseFragment;
 import com.gkzxhn.gkprison.userport.ui.main.home.HomeFragment;
 import com.gkzxhn.gkprison.userport.ui.main.visit.RemoteMeetFragment;
-import com.gkzxhn.gkprison.widget.view.auto.AutoCompleteTv;
 import com.gkzxhn.gkprison.utils.DensityUtil;
 import com.gkzxhn.gkprison.utils.Log;
 import com.gkzxhn.gkprison.utils.SPUtil;
@@ -51,6 +50,7 @@ import com.gkzxhn.gkprison.utils.StatusBarUtil;
 import com.gkzxhn.gkprison.utils.StringUtils;
 import com.gkzxhn.gkprison.utils.ToastUtil;
 import com.gkzxhn.gkprison.utils.UIUtils;
+import com.gkzxhn.gkprison.widget.view.auto.AutoCompleteTv;
 import com.keda.sky.app.GKStateMannager;
 import com.keda.sky.app.TruetouchGlobal;
 import com.netease.nimlib.sdk.NIMClient;
@@ -146,10 +146,10 @@ public class MainActivity extends BaseActivityNew implements MainContract.View,
     @Override
     protected void onResume() {
         super.onResume();
-//        if (!GKStateMannager.mRegisterGK){
-//            showToast("GK重连中...");
-//            GKStateMannager.instance().registerGK();
-//        }
+        if (!GKStateMannager.mRegisterGK){
+            GKStateMannager.instance().unRegisterGK();
+            GKStateMannager.instance().registerGK();
+        }
     }
 
     /**
